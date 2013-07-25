@@ -12,6 +12,15 @@
 *.la
 *.a
 
+# Viusal C
+*.vcproj
+*.ncb
+*.sln
+*.suo
+*.vcproj.*
+AntTweakBar.dll
+glew32.dll
+
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
