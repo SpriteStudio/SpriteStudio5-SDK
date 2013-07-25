@@ -1,0 +1,2 @@
+SpriteStudio5-SDK
+=================
