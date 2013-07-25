@@ -70,11 +70,10 @@ https://github.com/davidcox/AntTweakBar
 Mac標準ではwgetができないため、これも先にbrewで導入下さい。
 
 
-
-なお、ビルドの確認については下記の環境でテストを行っております。
+ビルド確認環境
 ---
 
-- Visual Studio 2008 2010 (express)
-- XCode Version 4.6.3 (4H1503)
+- Windows7 Visual Studio 2008 2010 (express)
+- MacOSX 10.8.4 XCode Version 4.6.3 (4H1503)
 
 
