@@ -11,3 +11,12 @@
 *.lai
 *.la
 *.a
+
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Debug
+cmake_install.cmake
+project.pbxproj
+sssdk.xcodeproj
+*.swp
