@@ -1,0 +1,21 @@
+<map id="SsPartState" name="SsPartState">
+<area shape="rect" id="node8" href="$class_ss_player.html" title="SsPlayer" alt="" coords="1123,551,1197,577"/>
+<area shape="rect" id="node2" href="$struct_ss_vertex_anime.html" title="頂点変形キーの４頂点変形値 " alt="" coords="474,175,587,201"/>
+<area shape="rect" id="node3" href="$struct_ss_point2.html" title="２次元座標を表現するためのクラスです。 " alt="" coords="233,152,308,179"/>
+<area shape="rect" id="node13" href="$class_ss_animation_settings.html" title="アニメーション再生設定情報です。 " alt="" coords="459,463,603,489"/>
+<area shape="rect" id="node18" href="$class_ss_cell_map.html" title="セルマップデータを表現するためのクラスです。 " alt="" coords="488,13,573,40"/>
+<area shape="rect" id="node7" href="$struct_ss_cell_value.html" title="パーツが使用するセルの情報 " alt="" coords="1285,127,1379,153"/>
+<area shape="rect" id="node19" href="$class_ss_cell.html" title="パーツに使用される画素の矩形範囲を示した構造です。 " alt="" coords="633,125,693,152"/>
+<area shape="rect" id="node4" href="$struct_ss_color_anime.html" title="カラーブレンド使用時のブレンドタイプとカラー値 " alt="" coords="478,412,583,439"/>
+<area shape="rect" id="node5" href="$struct_ss_color_blend_value.html" title="カラーブレンドキーのカラー値 " alt="" coords="203,412,338,439"/>
+<area shape="rect" id="node6" href="$class_ss_t_color.html" title="SsTColor\&lt; u32 \&gt;" alt="" coords="5,412,125,439"/>
+<area shape="rect" id="node9" href="$class_ss_cell_map_manager.html" title="SsCellMapManager" alt="" coords="765,687,899,713"/>
+<area shape="rect" id="node10" href="$class_ss_project.html" title="SsProject" alt="" coords="793,636,871,663"/>
+<area shape="rect" id="node11" href="$class_ss_project_setting.html" title="SsProjectSetting" alt="" coords="471,636,591,663"/>
+<area shape="rect" id="node12" href="$class_ss_animation.html" title="SsAnimation" alt="" coords="784,451,880,477"/>
+<area shape="rect" id="node14" href="$class_ss_anime_pack.html" title="パーツを組み合わせた構造とその構造を使用するアニメーションを格納するデータです。 パーツの組み合わせ構造をSsModel、Modelを使用するアニメデータをSsAnimationで定義しています。 ..." alt="" coords="779,523,885,549"/>
+<area shape="rect" id="node15" href="$class_ss_model.html" title="SsModel" alt="" coords="494,553,567,580"/>
+<area shape="rect" id="node16" href="$struct_ss_player_1_1_animation_change_msg__.html" title="SsPlayer::AnimationChangeMsg_" alt="" coords="723,737,941,764"/>
+<area shape="rect" id="node17" href="$class_ss_cel_map_linker.html" title="SsCelMapLinker" alt="" coords="973,5,1091,32"/>
+<area shape="rect" id="node20" href="$struct_ss_point3.html" title="３次元座標を表現するためのクラスです。 " alt="" coords="493,361,568,388"/>
+</map>
