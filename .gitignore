@@ -37,3 +37,4 @@ sssdk.xcodeproj
 *.ipch
 AntTweakBar64.dll
 glew32mx.dll
+Release/
