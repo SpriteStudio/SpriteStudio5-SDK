@@ -1,5 +1,0 @@
-<map id="SsAnimePack" name="SsAnimePack">
-<area shape="rect" id="node2" href="$class_ss_animation_settings.html" title="アニメーション再生設定情報です。 " alt="" coords="5,109,149,136"/>
-<area shape="rect" id="node3" href="$struct_ss_point2.html" title="２次元座標を表現するためのクラスです。 " alt="" coords="40,5,115,32"/>
-<area shape="rect" id="node4" href="$class_ss_model.html" title="SsModel" alt="" coords="174,109,247,136"/>
-</map>
