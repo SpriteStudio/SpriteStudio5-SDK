@@ -29,3 +29,11 @@ cmake_install.cmake
 project.pbxproj
 sssdk.xcodeproj
 *.swp
+*.vcxproj
+*.filters
+*.user
+*.opensdf
+*.sdf
+*.ipch
+AntTweakBar64.dll
+glew32mx.dll

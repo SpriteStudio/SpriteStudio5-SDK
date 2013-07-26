@@ -3,13 +3,13 @@
 #include "./helper/glHelper.h"
 #include "./player/ssplayer_player.h"
 #include "./helper/XPFileOpenDlg.h"
+//パラメータ等をウインドウへ表示するために使用します。
+#include <AntTweakBar.h>
 
 extern double _time;
 extern unsigned char cubeColor;
 
 
-//パラメータ等をウインドウへ表示するために使用します。
-#include "../opensource/AntTweakBar/include/AntTweakBar.h"
 
 extern TwBar *g_twbar;
 extern float bgColor[];

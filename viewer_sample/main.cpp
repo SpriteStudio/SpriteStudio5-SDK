@@ -2,11 +2,11 @@
 #include <GL/glew.h>
 #endif
 #include <GLFW/glfw3.h>
+#include <AntTweakBar.h>
 
 #include "./helper/tkTask.h"
 #include "./helper/XPFileOpenDlg.h"
 #include "sampleScene.h"
-#include "../opensource/AntTweakBar/include/AntTweakBar.h"
 
 
 
