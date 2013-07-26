@@ -17,7 +17,7 @@
 #pragma comment(lib, "glu32.lib")
 #pragma comment(lib, "AntTweakBar.lib")
 #else
-#define NULL (0)
+//#define NULL (0)
 #endif
 
 

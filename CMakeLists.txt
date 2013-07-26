@@ -85,7 +85,7 @@ ENDIF(WIN32)
 IF(APPLE)
 	SET(SEARCH_DIR "/usr/local/include" )
 	SET(SEARCH_LIB "/usr/local/lib" )
-	SET(LINK_LIB "ssloader /usr/local/lib/libAntTweakBar.dylib /usr/local/lib/libglfw3.a -framework OpenGL -L/usr/local/lib -lglfw -framework AppKit -framework IOKit" )
+	SET(LINK_LIB "ssloader /usr/local/lib/libAntTweakBar.dylib /usr/local/lib/libglfw3.a -framework OpenGL -framework AppKit -framework IOKit" )
     ADD_DEFINITIONS(-APPLE)
 ENDIF()
 
