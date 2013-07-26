@@ -10,7 +10,7 @@ SpriteStudio5-SDK
 
 また、XMLファイルフォーマットにつきましては、documentフォルダにhtml形式でのドキュメントがありますのでそちらを別途参照下さい。
 
-viewer_sampleについては、win32の実行形式でbinフォルダにzipで格納を行っております。
+viewer_sampleについては、win32の実行形式及びOSXコマンドラインアプリとしてbinフォルダにzipで格納を行っております。
 
 
 ビルド方法について
