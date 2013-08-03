@@ -59,7 +59,7 @@ http://www.glfw.org/
 
 http://www.glfw.org/download.html
 
-dawnloadページでSource archiveからソースをダウンロードして下さい。
+downloadページでSource archiveからソースをダウンロードして下さい。
 cmake用のCmakeListがありますので、cmakeを実行してxcodeもしくは
 gcc用のmakeファイルを作成してください。
 その後、xcodeであれば、ALLBUILD、Installのプロジェクトを実行してください。
