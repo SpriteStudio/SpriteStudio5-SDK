@@ -13,6 +13,32 @@ SpriteStudio5-SDK
 viewer_sampleについては、win32の実行形式及びOSXコマンドラインアプリとしてbinフォルダにzipで格納を行っております。
 
 
+使用しているオープンソースライブラリについて
+----------------
+このサンプル、SDKでは以下のライブラリを使用しています。
+各ライブラリのライセンス等につきましては、下記ページよりご確認ください。
+
+ローダー部分
+- TinyXML2
+http://www.grinninglizard.com/tinyxml/
+- Babel
+http://tricklib.com/cxx/ex/babel/
+
+レンダラー
+- OpenGL 
+http://www.opengl.org/
+- glew ( WIndows )
+http://glew.sourceforge.net/
+
+サンプルのGUI部分
+- glfw3 
+http://www.glfw.org/
+- anttweakbar
+http://anttweakbar.sourceforge.net/doc/tools:anttweakbar:download
+
+
+
+
 ビルド方法について
 -----------------
 本ソースのビルドには以下のライブラリが必要です。
