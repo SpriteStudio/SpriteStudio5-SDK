@@ -230,7 +230,6 @@ private:
 	void	updateState( int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
 	void	updateMatrix(SsPart* part , SsPartAnime* anime , SsPartState* state);
 	void	updateVertices(SsPart* part , SsPartAnime* anime , SsPartState* state);
-	void	draw_part( SsPartState* state );
 
 
 public:
@@ -243,8 +242,6 @@ public:
 		if ( partState )
 			delete [] partState;
 	}
-
-	static void	shaderInit();
 
 	void	update();
 	void	draw();

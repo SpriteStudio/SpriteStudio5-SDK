@@ -169,9 +169,9 @@ void	SampleScene::init()
     g_twbar = TwNewBar("Main Panel");
 	UIRebuild();
 
-	m_player = new SsPlayer();
-	SsPlayer::shaderInit();
 
+	m_player = new SsPlayer();
+	
 
 }
 

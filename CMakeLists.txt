@@ -59,6 +59,8 @@ viewer_sample/helper/glHelper.h
 viewer_sample/helper/WinMain.cpp 
 viewer_sample/player/ssplayer_player.h 
 viewer_sample/player/ssplayer_player.cpp 
+viewer_sample/player/ssplayer_render.h 
+viewer_sample/player/ssplayer_render.cpp 
 viewer_sample/player/ssplayer_matrix.h 
 viewer_sample/player/ssplayer_matrix.cpp
 viewer_sample/player/ssplayer_shader.h 
@@ -68,6 +70,38 @@ viewer_sample/helper/XPFileOpenDlg.h
 viewer_sample/helper/OSXFileOpen.mm
 viewer_sample/helper/OSXFileOpen.h
 )
+
+
+IF (WIN32)
+	ADD_EXECUTABLE(viewer_sample_dx9
+	viewer_sample/main.cpp 
+	viewer_sample/sampleScene.cpp 
+	viewer_sample/sampleScene.h 
+	viewer_sample/helper/stb_image.c 
+	viewer_sample/helper/stb_image.h 
+	viewer_sample/helper/tkTask.cpp 
+	viewer_sample/helper/tkTask.h 
+	viewer_sample/helper/tkTexture.cpp 
+	viewer_sample/helper/tkTexture.h 
+	viewer_sample/helper/tkObject.cpp 
+	viewer_sample/helper/tkObject.h 
+	viewer_sample/helper/tkScene.cpp 
+	viewer_sample/helper/tkScene.h 
+	viewer_sample/helper/glHelper.cpp 
+	viewer_sample/helper/glHelper.h 
+	viewer_sample/helper/WinMain.cpp 
+	viewer_sample/player/ssplayer_player.h 
+	viewer_sample/player/ssplayer_player.cpp 
+	viewer_sample/player/ssplayer_matrix.h 
+	viewer_sample/player/ssplayer_matrix.cpp
+	viewer_sample/player/ssplayer_shader.h 
+	viewer_sample/player/ssplayer_shader.cpp
+	viewer_sample/helper/XPFileOpenDlg.cpp
+	viewer_sample/helper/XPFileOpenDlg.h
+	)
+ENDIF (WIN32)
+
+
 
 IF (WIN32)
     SET_TARGET_PROPERTIES (viewer_sample PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")
