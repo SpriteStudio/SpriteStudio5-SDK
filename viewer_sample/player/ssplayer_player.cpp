@@ -649,11 +649,6 @@ void	SsPlayer::updateState( int nowTime , SsPart* part , SsPartAnime* anime , Ss
 		}
 	}
 
-	// 非表示キーがないか、先頭の非表示キーより手前の場合は常に非表示にする。
-	if (!hidekey_find)
-	{
-		state->hide = true;
-	}
 
 
 	// カラー値だけアニメが無いと設定されないので初期値を入れておく。
@@ -687,7 +682,13 @@ void	SsPlayer::updateState( int nowTime , SsPart* part , SsPartAnime* anime , Ss
 			state->hide = state->parent->hide;
 	}
 
-
+/*本体機能がリリース前なので一度コメント
+	// 非表示キーがないか、先頭の非表示キーより手前の場合は常に非表示にする。(継承関係なし)
+	if (!hidekey_find)
+	{
+		state->hide = true;
+	}
+*/
 	// 頂点の設定
 	if ( part->type == SsPartType::normal )
 	{
