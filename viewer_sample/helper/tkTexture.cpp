@@ -11,7 +11,7 @@
 #endif
 
 #include "stb_image.h"
-#include "glHelper.h"
+#include "tkHelper.h"
 #include "tkTexture.h"
 
 

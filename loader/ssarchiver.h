@@ -45,7 +45,7 @@ public:
 		m_xml = ar->getxml()->FirstChildElement( element_name );
 	}
 
-	void	setDocumet(XMLDocument* doc , const char* element_name)
+	void	setDocumet( tinyxml2::XMLDocument* doc , const char* element_name)
 	{
 		m_xml = doc->FirstChildElement(element_name);
 	}
@@ -94,7 +94,7 @@ public:
 	{
 		firstChild( ar , element_name );
 	}
-	SsXmlIArchiver(XMLDocument* doc , const char* element_name)
+	SsXmlIArchiver( tinyxml2::XMLDocument* doc , const char* element_name)
 	{
 		setDocumet( doc , element_name );
 	}

@@ -10,11 +10,13 @@
 #include "tkScene.h"
 #include "tkTexture.h"
 
+
+/*
 void DrawSprite(float x, float y, float width, float height, SsVector2 uv1,
 	SsVector2 uv2, const SsFColor& color);
+*/
 
-
-// nが2のべき乗かどうかチェック
+// nが2のべき乗かどうかチェックする
 inline bool SsGL_isPow2(int n)
 {
 

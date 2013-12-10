@@ -2,7 +2,7 @@
 #define __SSPLAYER_PLAYER__
 
 #include "../../loader/ssloader.h"
-#include "../helper/glHelper.h"
+#include "../helper/tkHelper.h"
 
 
 

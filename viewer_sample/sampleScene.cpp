@@ -1,6 +1,6 @@
 ﻿#include "sampleScene.h"
 #include "./helper/tkTexture.h"
-#include "./helper/glHelper.h"
+#include "./helper/tkHelper.h"
 #include "./player/ssplayer_player.h"
 #include "./helper/XPFileOpenDlg.h"
 //パラメータ等をウインドウへ表示するために使用します。
@@ -29,11 +29,11 @@ struct SampleScene::AnimePackSelecterType
 
 void	SampleScene::draw()
 {
-
+/*
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
-
+*/
 	m_player->draw();
 	
 }
