@@ -1,5 +1,5 @@
 ﻿#include "sampleScene.h"
-#include "./helper/tkTexture.h"
+
 #include "./helper/tkHelper.h"
 #include "./player/ssplayer_player.h"
 #include "./helper/XPFileOpenDlg.h"
@@ -38,12 +38,8 @@ void	SampleScene::draw()
 	
 }
 
-void	SampleScene::update()
+void	SampleScene::update(double delta)
 {
-	static double back = glfwGetTime();
-	double t = glfwGetTime();
-	double delta = t - back;
-	back = t;
 
 	if ( m_player )
 	{

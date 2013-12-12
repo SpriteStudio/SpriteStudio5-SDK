@@ -7,7 +7,8 @@
 #include "./helper/tkTask.h"
 #include "./helper/XPFileOpenDlg.h"
 #include "sampleScene.h"
-
+#include "./helper/ISSTexture.h"
+#include "./helper/SSTextureGL.h"
 
 
 #ifdef _WIN32
@@ -36,9 +37,12 @@ float displayscale = 1.0f;
 ===================================================================================== */
 static void	update()
 {
-	//double time = glfwGetTime();
+	static double back = glfwGetTime();
+	double t = glfwGetTime();
+	double delta = t - back;
+	back = t;
 
-	task_manager_singleton::getinst()->exec_resist_tasks();
+	task_manager_singleton::getinst()->exec_resist_tasks(delta);
 
 	glClear( GL_COLOR_BUFFER_BIT );
 	glClearColor( bgColor[0] , bgColor[1] , bgColor[2] , 1.0f );
@@ -164,7 +168,7 @@ int main(void)
 
 	/* Create task system */
 	new task_manager_singleton();
-
+	SSTextureFactory*	texfactory = new SSTextureFactory( new SSTextureGL() );
 
     // Initialize AntTweakBar
     TwInit(TW_OPENGL, NULL);
@@ -227,8 +231,10 @@ int main(void)
         glfwPollEvents();
     }
 
+	delete texfactory;
 	task_manager_destroy();
     glfwTerminate();
+
     return 0;
 }
 

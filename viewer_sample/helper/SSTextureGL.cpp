@@ -12,8 +12,7 @@
 
 #include "stb_image.h"
 #include "tkHelper.h"
-#include "tkTexture.h"
-
+#include "SSTextureGL.h"
 
 
 /* =====================================================================================
@@ -28,8 +27,8 @@ GLuint	LoadTextureGL( const char* Filename ,int& width , int& height)
 
 	int target = GL_TEXTURE_RECTANGLE_ARB;
 	 
-	if (SsGL_isPow2(width) &&
-		SsGL_isPow2(height))
+	if (SsUtTextureisPow2(width) &&
+		SsUtTextureisPow2(height))
 	{
 		target = GL_TEXTURE_2D;
 	}
@@ -60,12 +59,12 @@ GLuint	LoadTextureGL( const char* Filename ,int& width , int& height)
 
 
 
-tkTexture::~tkTexture()
+SSTextureGL::~SSTextureGL()
 {
 	glDeleteTextures( 1 , &tex );
 }
 
-bool tkTexture::LoadImage( const char* fname )
+bool SSTextureGL::LoadImage( const char* fname )
 {
 	//int tex_width;
 	//int tex_height;

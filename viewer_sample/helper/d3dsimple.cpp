@@ -1,14 +1,6 @@
 //#include "stdafx.h"
 #include <d3d9.h>
 #include "d3dsimple.h"
-//#include "Sprite.h"
-//#include "../Misc/Task.h"
-//#include "../Misc/Debug.h"
-
-//extern	void	InitGameShader();
-//extern	void	ExitGameShader();
-
-/* コンパイルオプション */
 
 
 //スタティック変数

@@ -46,7 +46,7 @@ public:
 	}
 
 	virtual void	draw();
-	virtual void	update();
+	virtual void	update(double delta);
 	virtual void	init();
 
 	void	ProjectFileLoad();

@@ -11,6 +11,8 @@
 #endif
 
 
+#include "../helper/SSTextureGL.h"
+
 #include "ssplayer_player.h"
 #include "ssplayer_render.h"
 #include "ssplayer_matrix.h"
@@ -21,13 +23,13 @@
 #define PROGRAMABLE_SHADER_ON (1)
 
 static const char* glshader_sprite_vs = 
-#include "shaderGl/sprite.vs";
+#include "GLSL/sprite.vs";
 
 static const char* glshader_sprite_fs = 
-#include "shaderGl/sprite.fs";
+#include "GLSL/sprite.fs";
 
 static const char* glshader_sprite_fs_pot = 
-#include "shaderGl/sprite_pot.fs";
+#include "GLSL/sprite_pot.fs";
 
 
 bool SsRender::m_isInit = false;
@@ -120,7 +122,12 @@ void	SsRender::RenderPart( SsPartState* state )
 
 	SsCell * cell = state->cellValue.cell;
 	if ( cell == 0 ) return ;
-	int		cellimage = state->cellValue.texture;
+
+
+	//int		cellimage = state->cellValue.texture;
+	ISSTexture*	texture = state->cellValue.texture;
+
+
 	if ( state->cellValue.cellmapl == 0  ) return ;
 
 	SsCellMap* map = state->cellValue.cellmapl->cellMap;
@@ -135,8 +142,8 @@ void	SsRender::RenderPart( SsPartState* state )
 	if (cell)
 	{
 		// テクスチャのサイズが2のべき乗かチェック
-		if (SsGL_isPow2(map->pixelSize.x) &&
-			SsGL_isPow2(map->pixelSize.y))
+		if (SsUtTextureisPow2(map->pixelSize.x) &&
+			SsUtTextureisPow2(map->pixelSize.y))
 		{
 			// 2のべき乗
 			texture_is_pow2 = true;
@@ -158,7 +165,10 @@ void	SsRender::RenderPart( SsPartState* state )
 			glActiveTexture(GL_TEXTURE0);
 		}
 #endif
-		glBindTexture(gl_target, cellimage);
+
+		SSTextureGL* tex_gl = (SSTextureGL*)texture;
+		glBindTexture(gl_target, tex_gl->tex);
+
 
 		// フィルタ
 		GLint filterMode;

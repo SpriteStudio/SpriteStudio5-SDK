@@ -222,7 +222,8 @@ public:
 
 
 	virtual void	draw(){};
-	virtual void	update(){};
+//	virtual void	update(){};
+	virtual void	update(double delta){};
 	virtual void	init(){};
 
 };
@@ -237,9 +238,9 @@ class task_manager{
 private:
 	
 	int			m_priority_max;
-	task_base* m_root;
+	task_base*  m_root;
 
-	void exec_resist_tasks_sub(task_base* task);	
+	void exec_resist_tasks_sub(task_base* task ,double delta_time);	
 	void draw_resist_tasks_sub(task_base* task );
 	
 public:
@@ -250,7 +251,7 @@ public:
 	void resist_task( task_base *parent , task_base* reg_task);
 	void unresist_task( task_base *parent , task_base* unreg_task);
 
-	void exec_resist_tasks();
+	void exec_resist_tasks(double delta_time);
 	void draw_resist_tasks();
 	task_base* get_root(){ return m_root;} 	
 	void destroy_tasks();
@@ -298,9 +299,9 @@ inline void task_resist_task( task_base *parent , task_base* reg_task)
 	}
 }
 
-inline void task_manager_exec()
+inline void task_manager_exec(double delta_time)
 {
-	get_rstaskmanager()->exec_resist_tasks();	
+	get_rstaskmanager()->exec_resist_tasks(delta_time);	
 }
 
 inline void task_manager_draw()

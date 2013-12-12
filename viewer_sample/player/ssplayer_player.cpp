@@ -366,7 +366,7 @@ void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyfra
 	v.cellmapl = l;
 	if ( l->tex )
 	{
-		v.texture = l->tex->tex;
+		v.texture = l->tex;
 	}else v.texture = 0;
 
 	calcUvs( &v );

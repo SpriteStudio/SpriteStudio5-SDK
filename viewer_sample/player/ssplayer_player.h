@@ -23,7 +23,8 @@ struct SsCellValue
 	SsPlayer*		player;		///SsPlayerのポインタ　（SsCellMapManager使用のため）
 	SsCell*			cell;		///参照しているセル
 	SsCelMapLinker*	cellmapl;	///参照しているセルが所属しているSsCelMapLinker
-	int				texture;	///テクスチャID 
+	ISSTexture*		texture;	///テクスチャ
+
 	SsVector2		uvs[5];		///使用するUV座標
 
 	SsCellValue() : player(0) , cell(0) , cellmapl(0) , texture(0) {}
@@ -126,8 +127,8 @@ typedef std::pair<SsPart*,SsPartAnime*>	SsPartAndAnime;
 class SsCelMapLinker
 {
 public:
-	SsCellMap*	cellMap;
-	tkTexture*	tex;
+	SsCellMap*			cellMap;
+	ISSTexture*	tex;
 
 	std::map<SsString,SsCell*>	CellDic;
 
@@ -146,7 +147,8 @@ public:
 			CellDic[cellMap->cells[i]->name] = cellMap->cells[i];
 		}
 
-		tex = new tkTexture();
+		//tex = new ISSGraphTexture();
+		tex = SSTextureFactory::create();
 
 		SsString fullpath = filePath + cellmap->imagePath;
 

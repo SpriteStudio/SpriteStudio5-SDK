@@ -8,27 +8,11 @@
 #include "tkObject.h"
 #include "tkTask.h"
 #include "tkScene.h"
-#include "tkTexture.h"
+//#include "tkTexture.h"
 
+#include "ISSTexture.h"
+//#include "SSTextureDX9.h"
 
-/*
-void DrawSprite(float x, float y, float width, float height, SsVector2 uv1,
-	SsVector2 uv2, const SsFColor& color);
-*/
-
-// nが2のべき乗かどうかチェックする
-inline bool SsGL_isPow2(int n)
-{
-
-	for (int i = 0; i < 30; i++)
-	{
-		if (n == (1 << i))
-		{
-			return true;
-		}
-	}
-	return false;
-}
 
 
 

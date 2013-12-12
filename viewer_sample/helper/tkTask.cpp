@@ -76,30 +76,30 @@ void task_manager::draw_resist_tasks()
 	draw_resist_tasks_sub(ptr);		
 }
 
-void task_manager::exec_resist_tasks_sub(task_base* task)
+void task_manager::exec_resist_tasks_sub(task_base* task,double delta_time)
 {
 
 	if ( !task->ispause() )
 	{
-		task->update();
+		task->update(delta_time);
 		
 		if ( task->get_child() )
 		{
-			exec_resist_tasks_sub( task->get_child() );
+			exec_resist_tasks_sub( task->get_child(),delta_time );
 		}
 	}
 	if ( task->get_sibling() )
 	{
-		exec_resist_tasks_sub( task->get_sibling() );
+		exec_resist_tasks_sub( task->get_sibling(),delta_time );
 	}
 }
 
 
-void task_manager::exec_resist_tasks()
+void task_manager::exec_resist_tasks(double delta_time)
 {
 	
 	task_base* ptr = get_root();
-	exec_resist_tasks_sub(ptr);
+	exec_resist_tasks_sub(ptr,delta_time);
 	
 }
 

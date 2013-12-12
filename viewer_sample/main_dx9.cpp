@@ -123,8 +123,9 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 static void	update()
 {
 	//double time = glfwGetTime();
+	double delta = 0.033f; //‚ ‚Æ‚Å·‚µ‘Ö‚¦‚é
 
-	task_manager_singleton::getinst()->exec_resist_tasks();
+	task_manager_singleton::getinst()->exec_resist_tasks(delta);
 
 //	glClear( GL_COLOR_BUFFER_BIT );
 //	glClearColor( bgColor[0] , bgColor[1] , bgColor[2] , 1.0f );
