@@ -3,7 +3,7 @@
 
 
 #include "stb_image.h"
-#include "tkHelper.h"
+#include "ssHelper.h"
 #include "SSTextureDX9.h"
 
 #if 0

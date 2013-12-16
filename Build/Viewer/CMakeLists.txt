@@ -68,6 +68,19 @@ ADD_EXECUTABLE(viewer_sample_gl
 ./source/myscene.h
 )
 
+ADD_EXECUTABLE(viewer_sample_dx9
+../../Common/Helper/DirectX/d3dsimple.cpp
+../../Common/Helper/DirectX/d3dsimple.h
+../../Common/Helper/DirectX/SSTextureDX9.cpp
+../../Common/Helper/DirectX/SSTextureDX9.h
+../../Common/Drawer/ssplayer_render_dx9.h
+../../Common/Drawer/ssplayer_render_dx9.cpp
+./source/main_dx9.cpp
+./source/myscene.cpp
+./source/myscene.h
+)
+
+
 
 IF (WIN32)
     SET_TARGET_PROPERTIES (viewer_sample_gl PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")
@@ -75,10 +88,10 @@ IF (WIN32)
     SET_TARGET_PROPERTIES (viewer_sample_gl PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows")
     SET_TARGET_PROPERTIES (viewer_sample_gl PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:windows")
 
-#    SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")
-#    SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:windows")
-#    SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows")
-#    SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:windows")
+    SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")
+    SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:windows")
+    SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows")
+    SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:windows")
 ENDIF (WIN32)
 
 IF(WIN32)
@@ -107,6 +120,7 @@ target_link_libraries(viewer_sample_gl ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${
 
 IF (WIN32)
 #target_link_libraries(viewer_sample_dx9 ${LINK_LIB})
+target_link_libraries(viewer_sample_dx9 ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4})
 ENDIF()
 
 

@@ -2,7 +2,7 @@
 #define __SSTEXTUREDX9__
 
 
-#include "ISSTexture.h"
+#include "IsshTexture.h"
 
 //テクスチャクラス ( DirectX9 )
 class	SSTextureDX9 : public ISSTexture

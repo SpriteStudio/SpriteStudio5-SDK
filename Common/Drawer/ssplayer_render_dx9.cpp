@@ -3,7 +3,7 @@
 
 
 
-#include "../helper/SSTextureDX9.h"
+#include "../helper/DirectX/SSTextureDX9.h"
 #include "ssplayer_animedecode.h"
 #include "ssplayer_render_dx9.h"
 #include "ssplayer_matrix.h"
