@@ -1,10 +1,10 @@
 ﻿#ifndef __SAMPLESCENE__
 #define __SAMPLESCENE__
 
-#include "./helper/tkScene.h"
-#include "./player/ssplayer_animedecode.h"
+#include "ssHelper.h"
+//#include "./player/ssplayer_animedecode.h"
 
-
+class SsAnimeDecoder;
 ///サンプル用のシーンクラス　
 class SampleScene : public tkScene
 {

@@ -1,7 +1,7 @@
 ﻿#ifndef __TKTEXTURE__
 #define __TKTEXTURE__
 
-#include "ISSTexture.h"
+#include "IsshTexture.h"
 
 
 

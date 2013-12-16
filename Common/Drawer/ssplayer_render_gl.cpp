@@ -11,11 +11,12 @@
 #endif
 
 
-#include "../helper/SSTextureGL.h"
+#include "../helper/OpenGL/SSTextureGL.h"
 
-#include "ssplayer_animedecode.h"
+#include "../Animator/ssplayer_animedecode.h"
+#include "../Animator/ssplayer_matrix.h"
+
 #include "ssplayer_render_gl.h"
-#include "ssplayer_matrix.h"
 #include "ssplayer_shader_gl.h"
 
 

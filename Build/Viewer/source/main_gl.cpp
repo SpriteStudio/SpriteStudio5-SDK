@@ -4,15 +4,15 @@
 #include <GLFW/glfw3.h>
 #include <AntTweakBar.h>
 
-#include "./helper/tkTask.h"
-#include "./helper/XPFileOpenDlg.h"
-#include "sampleScene.h"
-#include "./helper/ISSTexture.h"
-#include "./helper/SSTextureGL.h"
+#include "ssHelper.h"
+#include "myscene.h"
 
-#include "./player/ssplayer_shader_gl.h"
-#include "./player/ssplayer_render.h"
-#include "./player/ssplayer_render_gl.h"
+#include "OpenGL/SSTextureGL.h"
+
+
+#include "ssplayer_shader_gl.h"
+//#include "ssplayer_render.h"
+#include "ssplayer_render_gl.h"
 
 
 #ifdef _WIN32

@@ -10,8 +10,8 @@
     #include <GL/GL.h>
 #endif
 
-#include "stb_image.h"
-#include "tkHelper.h"
+#include "../stb_image.h"
+#include "../ssHelper.h"
 #include "SSTextureGL.h"
 
 

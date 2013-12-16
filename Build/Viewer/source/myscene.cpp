@@ -1,8 +1,8 @@
-﻿#include "sampleScene.h"
+﻿#include "myscene.h"
 
-#include "./helper/tkHelper.h"
-#include "./player/ssplayer_animedecode.h"
-#include "./helper/XPFileOpenDlg.h"
+#include "ssHelper.h"
+#include "ssplayer_animedecode.h"
+
 //パラメータ等をウインドウへ表示するために使用します。
 #include <AntTweakBar.h>
 

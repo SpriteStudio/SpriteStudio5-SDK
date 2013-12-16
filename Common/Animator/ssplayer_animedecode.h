@@ -1,8 +1,8 @@
 ﻿#ifndef __SSPLAYER_PLAYER__
 #define __SSPLAYER_PLAYER__
 
-#include "../../loader/ssloader.h"
-#include "../helper/tkHelper.h"
+#include "../loader/ssloader.h"
+#include "../Helper/ssHelper.h"
 
 
 

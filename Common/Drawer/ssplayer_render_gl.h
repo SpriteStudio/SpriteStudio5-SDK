@@ -1,7 +1,7 @@
 ﻿#ifndef __SSPLAYER_RENDER_GL__
 #define __SSPLAYER_RENDER_GL__
 
-#include "ssplayer_render.h"
+#include "../Animator/ssplayer_render.h"
 
 struct SsPartState;
 

@@ -2,7 +2,7 @@
 #define __TKTEXTURE__
 
 #include <GLFW/glfw3.h>
-#include "ISSTexture.h"
+#include "../IsshTexture.h"
 
 
 class	SSTextureGL : public ISSTexture

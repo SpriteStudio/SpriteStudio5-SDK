@@ -1,7 +1,7 @@
 ﻿#ifndef __TKOBJECT__
 #define __TKOBJECT__
 
-#include "tkTask.h"
+#include "sshTask.h"
 
 
 class	tkObject : public task_base{

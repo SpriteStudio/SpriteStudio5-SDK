@@ -2,8 +2,8 @@
 #include <cstdlib>
 
 #include "stb_image.h"
-#include "tkHelper.h"
-#include "SSTextureBMP.h"
+#include "ssHelper.h"
+#include "sshTextureBMP.h"
 
 
 

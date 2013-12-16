@@ -8,7 +8,7 @@
 //  Created by kurooka on 2013/07/18.
 //
 //
-#include "OSXFileOpen.h"
+#include "MacOS/OSXFileOpen.h"
 #include "XPFileOpenDlg.h"
 
 #ifdef _WIN32

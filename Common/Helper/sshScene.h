@@ -2,7 +2,7 @@
 #define __TKSCENE__
 
 
-#include "tkObject.h"
+#include "sshObject.h"
 
 ///シーングラフを構築するためのクラス
 ///色々オミットする シーンを既定できればOK
