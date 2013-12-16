@@ -8,8 +8,9 @@
 
 
 
-class SsPlayer;
+class SsAnimeDecoder;
 class SsCelMapLinker;
+
 
 ///頂点変形キーの４頂点変形値
 struct SsVertexAnime
@@ -20,7 +21,7 @@ struct SsVertexAnime
 ///パーツが使用するセルの情報
 struct SsCellValue
 {
-	SsPlayer*		player;		///SsPlayerのポインタ　（SsCellMapManager使用のため）
+	SsAnimeDecoder*	player;		///SsPlayerのポインタ　（SsCellMapManager使用のため）
 	SsCell*			cell;		///参照しているセル
 	SsCelMapLinker*	cellmapl;	///参照しているセルが所属しているSsCelMapLinker
 	ISSTexture*		texture;	///テクスチャ
@@ -123,6 +124,17 @@ struct SsPartState
 typedef std::pair<SsPart*,SsPartAnime*>	SsPartAndAnime;
 
 
+//パーツのソート順
+class SsPartStateLess
+{
+public:
+	bool operator()(const SsPartState* lhs, const SsPartState* rhs) const
+	{
+		if (lhs->prio == rhs->prio)
+			return lhs->index < rhs->index;
+		return lhs->prio < rhs->prio;
+	}
+};
 
 class SsCelMapLinker
 {
@@ -147,12 +159,10 @@ public:
 			CellDic[cellMap->cells[i]->name] = cellMap->cells[i];
 		}
 
-		//tex = new ISSGraphTexture();
 		tex = SSTextureFactory::create();
-
 		SsString fullpath = filePath + cellmap->imagePath;
 
-		if ( !tex->LoadImage( fullpath.c_str() ) )
+		if ( !tex->Load( fullpath.c_str() ) )
 		{
 			delete tex;
 			tex = 0;
@@ -202,7 +212,7 @@ public:
 };
 
 
-class SsPlayer
+class SsAnimeDecoder
 {
 public:
 	SsProject*		project;
@@ -227,7 +237,7 @@ public:
 		int		anime;
 	}AnimationChangeMsg;
 
-
+	
 private:
 	void	updateState( int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
 	void	updateMatrix(SsPart* part , SsPartAnime* anime , SsPartState* state);
@@ -235,8 +245,8 @@ private:
 
 
 public:
-	SsPlayer();
-	virtual ~SsPlayer()
+	SsAnimeDecoder();
+	virtual ~SsAnimeDecoder()
 	{
 		if ( curCellMapManager )
 			delete curCellMapManager;
@@ -245,8 +255,9 @@ public:
 			delete [] partState;
 	}
 
-	void	update();
-	void	draw();
+	virtual void	update();
+	virtual void	draw();
+
 	void	setProject( SsProject* proj , int packIndex = 0, int animeIndex = 0) ;
 	void	changeAnimation(int packIndex = 0, int animeIndex = 0);
 

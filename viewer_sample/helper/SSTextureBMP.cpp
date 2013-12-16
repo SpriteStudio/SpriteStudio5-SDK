@@ -9,7 +9,7 @@
 
 
 
-bool SSTextureBMP::LoadImage( const char* fname )
+bool SSTextureBMP::Load( const char* fname )
 {
 	int bpp;
 	stbi_uc* image = stbi_load( fname, &tex_width , &tex_height , &bpp , 0 );

@@ -15,7 +15,7 @@ public:
 public:
 	SSTextureGL() : tex_width(0) , tex_height(0) , tex(0){}
 	virtual ~SSTextureGL();
-	bool LoadImage( const char* fname );	
+	bool Load( const char* fname );	
 
 	virtual int	getWidth() { return tex_width; }
 	virtual int	getHeight() { return tex_height; }

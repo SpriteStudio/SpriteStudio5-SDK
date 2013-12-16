@@ -1,20 +1,39 @@
 ﻿#ifndef __SSPLAYER_RENDER__
 #define __SSPLAYER_RENDER__
 
-class SsPartState;
+struct SsPartState;
 
-class SsRender
+
+class ISsRenderer
+{
+public:
+	virtual void	initialize() = 0;
+	virtual void	renderSetup() = 0;
+	virtual void	renderPart(SsPartState* state) = 0;
+};
+
+class	SsCurrentRenderer
 {
 private:
-	static bool	m_isInit;
-
+	static ISsRenderer*	m_currentrender;
 public:
-	SsRender(){}
-	virtual ~SsRender(){}
-
-	static void	shaderInit();
-	static void	RenderPart( SsPartState* state );
+	SsCurrentRenderer(){}
+	SsCurrentRenderer(ISsRenderer* render)
+	{
+		SetCurrentRender(render);
+	}
+	virtual ~SsCurrentRenderer()
+	{
+		if ( m_currentrender ) delete m_currentrender;
+	}
+	static void	SetCurrentRender( ISsRenderer* render )
+	{ 
+		render->initialize();
+		m_currentrender = render; 
+	}
+	static ISsRenderer*	getRender(){ return m_currentrender; } 
 };
+
 
 
 #endif

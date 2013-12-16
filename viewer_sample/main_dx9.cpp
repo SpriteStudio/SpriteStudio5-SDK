@@ -10,10 +10,9 @@
 #include "./helper/XPFileOpenDlg.h"
 #include "sampleScene.h"
 
-
-IDirect3D9 *            g_D3D = NULL;
-IDirect3DDevice9 *      g_D3DDev = NULL;
-D3DPRESENT_PARAMETERS   g_D3Dpp;
+#include "./helper/SSTextureDX9.h"
+#include "./player/ssplayer_render.h"
+#include "./player/ssplayer_render_dx9.h"
 
 
 #ifdef _WIN32
@@ -22,13 +21,9 @@ D3DPRESENT_PARAMETERS   g_D3Dpp;
 #endif
 
 
-#define USING_OPENGLES (0)
-
-GLFWvidmode mode;   // GLFW video mode
 TwBar *g_twbar;         // Pointer to a tweak bar
     
 float bgColor[] = { 0.1f, 0.2f, 0.4f };         // Background color 
-
 float displayscale = 1.0f;
 
 
@@ -134,6 +129,20 @@ static void	update()
 
 }
 
+/* =====================================================================================
+	initialize
+===================================================================================== */
+static void	initialize()
+{
+	SsCurrentRenderer::SetCurrentRender( new SsRenderDX9() );
+
+	SSTextureFactory*	texfactory = new SSTextureFactory( new SSTextureDX9() );
+
+	SampleScene* sample = new SampleScene();
+	task_resist_task( 0 , sample );
+
+
+}
 
 #if 1
 extern HINSTANCE g_hInstance;
@@ -161,9 +170,8 @@ int main(void)
 		return 0;
 	}
 
-
-    TwBar *bar = TwNewBar("TweakBar");
-
+    //TwBar *bar = TwNewBar("TweakBar");
+	int state = 0;
     // Main message loop
     MSG msg = {0};
     while( WM_QUIT != msg.message )
@@ -176,10 +184,12 @@ int main(void)
         else
         {
 			CD3D.BeginScene();
-
+			if ( state == 0 )
+			{
+				initialize();
+				state = 1;
+			}
 			update();
-
-
 			TwDraw();
 			CD3D.EndScene();
         }

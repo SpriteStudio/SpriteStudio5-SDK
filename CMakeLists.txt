@@ -41,7 +41,7 @@ unittest/unit_ssloader_ssae.cc
 TARGET_LINK_LIBRARIES(sssdk_test ssloader)
 
 ADD_EXECUTABLE(viewer_sample
-viewer_sample/main.cpp 
+viewer_sample/main_gl.cpp 
 viewer_sample/sampleScene.cpp 
 viewer_sample/sampleScene.h 
 viewer_sample/helper/stb_image.c 
@@ -61,14 +61,16 @@ viewer_sample/helper/tkScene.h
 viewer_sample/helper/tkHelper.cpp 
 viewer_sample/helper/tkHelper.h 
 viewer_sample/helper/WinMain.cpp 
-viewer_sample/player/ssplayer_player.h 
-viewer_sample/player/ssplayer_player.cpp 
+viewer_sample/player/ssplayer_animedecode.h 
+viewer_sample/player/ssplayer_animedecode.cpp 
 viewer_sample/player/ssplayer_render.h 
 viewer_sample/player/ssplayer_render.cpp 
+viewer_sample/player/ssplayer_render_gl.h 
+viewer_sample/player/ssplayer_render_gl.cpp 
 viewer_sample/player/ssplayer_matrix.h 
 viewer_sample/player/ssplayer_matrix.cpp
-viewer_sample/player/ssplayer_shader.h 
-viewer_sample/player/ssplayer_shader.cpp
+viewer_sample/player/ssplayer_shader_gl.h 
+viewer_sample/player/ssplayer_shader_gl.cpp
 viewer_sample/helper/XPFileOpenDlg.cpp
 viewer_sample/helper/XPFileOpenDlg.h
 viewer_sample/helper/OSXFileOpen.mm
@@ -104,12 +106,14 @@ IF (WIN32)
 	viewer_sample/helper/SSTextureBMP.h 	 
 	viewer_sample/helper/tkScene.cpp 
 	viewer_sample/helper/tkScene.h 
-	viewer_sample/player/ssplayer_player.h 
-	viewer_sample/player/ssplayer_player.cpp 
+	viewer_sample/player/ssplayer_animedecode.h 
+	viewer_sample/player/ssplayer_animedecode.cpp 
 	viewer_sample/player/ssplayer_render.h 
 	viewer_sample/player/ssplayer_render.cpp 
-	viewer_sample/player/ssplayer_shader.h 
-	viewer_sample/player/ssplayer_shader.cpp
+	viewer_sample/player/ssplayer_render_dx9.h 
+	viewer_sample/player/ssplayer_render_dx9.cpp 
+#	viewer_sample/player/ssplayer_shader.h 
+#	viewer_sample/player/ssplayer_shader.cpp
 	)
 ENDIF (WIN32)
 

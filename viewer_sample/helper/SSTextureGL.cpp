@@ -64,7 +64,7 @@ SSTextureGL::~SSTextureGL()
 	glDeleteTextures( 1 , &tex );
 }
 
-bool SSTextureGL::LoadImage( const char* fname )
+bool SSTextureGL::Load( const char* fname )
 {
 	//int tex_width;
 	//int tex_height;

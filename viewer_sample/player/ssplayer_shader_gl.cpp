@@ -5,7 +5,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
 #endif
-#include "ssplayer_shader.h"
+#include "ssplayer_shader_gl.h"
 
 #include	<fstream>
 #include	<iostream>
@@ -45,7 +45,7 @@ int SsGL_CheckShaderReady( void )
   return -1;
 }
 
-SSOpenGLShader::SSOpenGLShader( const SsString&  name , const SsString& str, const GLenum shader_type )
+SSOpenGLShader::SSOpenGLShader( const std::string&  name , const std::string& str, const GLenum shader_type )
 	: myname( name ) , source( str )
 {
 	h = glCreateShaderObjectARB( shader_type );
@@ -65,7 +65,7 @@ SSOpenGLShader::SSOpenGLShader( const SsString&  name , const SsString& str, con
 
 }
 
-SSOpenGLShader::SSOpenGLShader( const SsString& filename, const GLenum shader_type )
+SSOpenGLShader::SSOpenGLShader( const std::string& filename, const GLenum shader_type )
 	: myname( filename )
 {
 	// create
@@ -75,7 +75,7 @@ SSOpenGLShader::SSOpenGLShader( const SsString& filename, const GLenum shader_ty
 //		SsLogInfo( _D( "SSOpenGLShader : cannot create shader object: ") , myname );
 	}
 
-	static SsString fname;
+	static std::string fname;
 
 	ifstream	f_in( 
 		filename.c_str() , ios::binary );
@@ -146,12 +146,12 @@ int SSOpenGLShader::Compile( void )
 
 
 //------------------------------------------------------------------
-SSOpenGLVertexShader::SSOpenGLVertexShader( const SsString& filename )
+SSOpenGLVertexShader::SSOpenGLVertexShader( const std::string& filename )
 	: SSOpenGLShader( filename, GL_VERTEX_SHADER_ARB )
 {
 }
 
-SSOpenGLVertexShader::SSOpenGLVertexShader( const SsString& name , const SsString& str )
+SSOpenGLVertexShader::SSOpenGLVertexShader( const std::string& name , const std::string& str )
 	: SSOpenGLShader( name , str, GL_VERTEX_SHADER_ARB )
 {
 
@@ -159,11 +159,11 @@ SSOpenGLVertexShader::SSOpenGLVertexShader( const SsString& name , const SsStrin
 
 
 
-SSOpenGLFragmentShader::SSOpenGLFragmentShader( const SsString& filename )
+SSOpenGLFragmentShader::SSOpenGLFragmentShader( const std::string& filename )
 	: SSOpenGLShader( filename, GL_FRAGMENT_SHADER_ARB )
 {
 }
-SSOpenGLFragmentShader::SSOpenGLFragmentShader( const SsString& name , const SsString& str )
+SSOpenGLFragmentShader::SSOpenGLFragmentShader( const std::string& name , const std::string& str )
 	: SSOpenGLShader( name , str, GL_FRAGMENT_SHADER_ARB )
 {
 

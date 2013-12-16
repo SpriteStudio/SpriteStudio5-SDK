@@ -1,9 +1,8 @@
 ﻿#ifndef __SAMPLESCENE__
 #define __SAMPLESCENE__
 
-//#include <GLFW/glfw3.h>
 #include "./helper/tkScene.h"
-#include "./player/ssplayer_player.h"
+#include "./player/ssplayer_animedecode.h"
 
 
 ///サンプル用のシーンクラス　
@@ -15,7 +14,7 @@ public:
 
 private:
 //	GLuint tex;
-	SsPlayer*	m_player;
+	SsAnimeDecoder*	m_player;
 
 	SsProject*	m_proj;
 	int			m_select_animepack_index;
@@ -26,7 +25,6 @@ private:
 	int			m_nowPlayFrame;
 	double		m_nowPlayFrameD;
 
-
 	bool		m_isAnimeAutoPlay;
 
 	//UIへの情報表示用
@@ -35,8 +33,6 @@ private:
 
 	float		m_Zoom;
 	float		m_Speed;
-
-
 
 public:
 	SampleScene() : m_isAnimeAutoPlay (false) {}

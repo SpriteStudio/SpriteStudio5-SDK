@@ -1,14 +1,6 @@
 ﻿#include <stdio.h>
 #include <cstdlib>
 
-#ifndef _WIN32
-    #include <OpenGL/gl.h>
-    #include <OpenGL/glu.h>
-    #include <OpenGL/glext.h>
-#else
-    #include <GL/glew.h>
-    #include <GL/GL.h>
-#endif
 
 #include "stb_image.h"
 #include "tkHelper.h"
@@ -59,12 +51,12 @@ GLuint	LoadTextureGL( const char* Filename ,int& width , int& height)
 #endif
 
 
-SSGraphTextureDX9::~SSGraphTextureDX9()
+SSTextureDX9::~SSTextureDX9()
 {
 	//glDeleteTextures( 1 , &tex );
 }
 
-bool SSGraphTextureDX9::LoadImage( const char* fname )
+bool SSTextureDX9::Load( const char* filename )
 {
 	//tex = LoadTextureGL( fname , tex_width , tex_height );
 	//return tex != 0;

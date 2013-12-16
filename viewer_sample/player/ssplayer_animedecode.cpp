@@ -2,9 +2,9 @@
 #include <cstdlib>
 
 #include "../../loader/ssloader.h"
-#include "ssplayer_player.h"
-#include "ssplayer_render.h"
+#include "ssplayer_animedecode.h"
 #include "ssplayer_matrix.h"
+#include "ssplayer_render.h"
 
 
 #define foreach(T, c, i) for(T::iterator i = c.begin(); i!=c.end(); ++i)
@@ -14,11 +14,6 @@
 
 //stdでののforeach宣言　
 #define USE_TRIANGLE_FIN (0)
-
-
-
-
-
 
 
 
@@ -111,7 +106,7 @@ static void calcUvs( SsCellValue* cellv )
 }
 
 
-SsPlayer::SsPlayer() : 
+SsAnimeDecoder::SsAnimeDecoder() : 
 	nowPlatTime(0) ,
 	project(0) ,
 	curAnime(0) ,
@@ -120,17 +115,13 @@ SsPlayer::SsPlayer() :
 	curCellMapManager(0),
 	partState(0)
 	{
-		//AnimationChangeMsg.
 		AnimationChangeMsg.change = false;
 		AnimationChangeMsg.animePack = 0;
 		AnimationChangeMsg.anime = 0;
-
-		SsRender::shaderInit();
-
 	}
 
 
-void SsPlayer::setProject( SsProject* _proj , int packIndex , int animeIndex)
+void SsAnimeDecoder::setProject( SsProject* _proj , int packIndex , int animeIndex)
 {
 	SsProject* proj = _proj;
 	if ( _proj == 0 ) proj = project;
@@ -199,7 +190,7 @@ void SsPlayer::setProject( SsProject* _proj , int packIndex , int animeIndex)
 
 }
 
-void	SsPlayer::changeAnimation(int packIndex, int animeIndex)
+void	SsAnimeDecoder::changeAnimation(int packIndex, int animeIndex)
 {
 	AnimationChangeMsg.change = true;
 	AnimationChangeMsg.animePack = packIndex;
@@ -499,7 +490,7 @@ static SsVector2 GetLocalScale( float matrix[16] )
 
 
 ///現在の時間からパーツのアトリビュートの補間値を計算する
-void	SsPlayer::updateState( int nowTime , SsPart* part , SsPartAnime* anime , SsPartState* state )
+void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anime , SsPartState* state )
 {
 
 	//ステートの初期値を設定
@@ -706,7 +697,7 @@ void	SsPlayer::updateState( int nowTime , SsPart* part , SsPartAnime* anime , Ss
 
 }
 
-void	SsPlayer::updateMatrix(SsPart* part , SsPartAnime* anime , SsPartState* state)
+void	SsAnimeDecoder::updateMatrix(SsPart* part , SsPartAnime* anime , SsPartState* state)
 {
 
 	IdentityMatrix( state->matrix );
@@ -749,7 +740,7 @@ void	SsPlayer::updateMatrix(SsPart* part , SsPartAnime* anime , SsPartState* sta
 }
 
 
-void	SsPlayer::updateVertices(SsPart* part , SsPartAnime* anime , SsPartState* state)
+void	SsAnimeDecoder::updateVertices(SsPart* part , SsPartAnime* anime , SsPartState* state)
 {
 
 	SsCell * cell = state->cellValue.cell;
@@ -854,7 +845,7 @@ void	SsPlayer::updateVertices(SsPart* part , SsPartAnime* anime , SsPartState* s
 
 ///SS5の場合  SsPartのarrayIndexは、親子順　（子は親より先にいない）と
 ///なっているためそのまま木構造を作らずUpdateを行う
-void	SsPlayer::update()
+void	SsAnimeDecoder::update()
 {
 	if ( AnimationChangeMsg.change )
 	{
@@ -876,40 +867,21 @@ void	SsPlayer::update()
 
 }
 
-class SsPartStateLess
-{
-public:
-	bool operator()(const SsPartState* lhs, const SsPartState* rhs) const
-	{
-		if (lhs->prio == rhs->prio)
-			return lhs->index < rhs->index;
-		return lhs->prio < rhs->prio;
-	}
-};
 static SsPartStateLess _ssPartStateLess;
 
-void	SsPlayer::draw()
+
+//描画
+void	SsAnimeDecoder::draw()
 {
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glEnable(GL_TEXTURE_2D);
 
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.0);
-
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	SsCurrentRenderer::getRender()->renderSetup();
 
 	sortList.sort(_ssPartStateLess);
-
 
 	foreach( std::list<SsPartState*> , sortList , e )
 	{
 		SsPartState* state = (*e);
-		SsRender::RenderPart( state );
+		SsCurrentRenderer::getRender()->renderPart(state);
 	}
-
 }
 

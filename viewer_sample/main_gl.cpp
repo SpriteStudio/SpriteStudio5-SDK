@@ -10,6 +10,10 @@
 #include "./helper/ISSTexture.h"
 #include "./helper/SSTextureGL.h"
 
+#include "./player/ssplayer_shader_gl.h"
+#include "./player/ssplayer_render.h"
+#include "./player/ssplayer_render_gl.h"
+
 
 #ifdef _WIN32
 #pragma comment(lib, "glew32.lib")
@@ -56,6 +60,8 @@ static void	update()
 ===================================================================================== */
 static void	initialize()
 {
+//	SsRender::shaderInit();
+	SsCurrentRenderer::SetCurrentRender( new SsRenderGL() );
 
 	SampleScene* sample = new SampleScene();
 	task_resist_task( 0 , sample );
@@ -217,8 +223,6 @@ int main(void)
 		if (state == 0 )
 		{
 			initialize();
-
-            
 			state = 1;
 		}else{
 			update();

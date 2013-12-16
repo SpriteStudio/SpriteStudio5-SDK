@@ -1,9 +1,8 @@
 ﻿#ifndef __SSOPENGLSHADER__
 #define __SSOPENGLSHADER__
 
-#include "../../loader/ssloader.h"
 #include <string>
-
+#include <vector>
 
 #define PUT_UNIFORM_WARNIG	(1)
 
@@ -13,12 +12,12 @@ public:
 	GLhandleARB	h;
 
 protected:
-	SsString	myname;
+	std::string	myname;
 	std::string	source;
 
 public:
-	SSOpenGLShader( const SsString& str, const GLenum shader_type );
-	SSOpenGLShader( const SsString& name, const SsString& str, const GLenum shader_type );
+	SSOpenGLShader( const std::string& str, const GLenum shader_type );
+	SSOpenGLShader( const std::string& name, const std::string& str, const GLenum shader_type );
 	virtual	~SSOpenGLShader();
 	virtual	int Compile( void );
 	inline GLhandleARB GetHandle( void )	const { return h; }
@@ -28,8 +27,8 @@ public:
 class	SSOpenGLVertexShader : public SSOpenGLShader
 {
 public:
-	SSOpenGLVertexShader( const SsString& str );
-	SSOpenGLVertexShader( const SsString& name , const SsString& str );
+	SSOpenGLVertexShader( const std::string& str );
+	SSOpenGLVertexShader( const std::string& name , const std::string& str );
 	virtual	~SSOpenGLVertexShader(){}
 
 };
@@ -38,8 +37,8 @@ public:
 class	SSOpenGLFragmentShader : public SSOpenGLShader
 {
 public:
-	SSOpenGLFragmentShader( const SsString& filename );
-	SSOpenGLFragmentShader( const SsString& name , const SsString& str );
+	SSOpenGLFragmentShader( const std::string& filename );
+	SSOpenGLFragmentShader( const std::string& name , const std::string& str );
 	virtual	~SSOpenGLFragmentShader(){}
 
 };

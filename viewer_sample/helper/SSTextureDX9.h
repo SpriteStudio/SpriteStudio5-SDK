@@ -1,8 +1,8 @@
-﻿#ifndef __TKTEXTURE__
-#define __TKTEXTURE__
+﻿#ifndef __SSTEXTUREDX9__
+#define __SSTEXTUREDX9__
 
 
-
+#include "ISSTexture.h"
 
 //テクスチャクラス ( DirectX9 )
 class	SSTextureDX9 : public ISSTexture
@@ -14,12 +14,12 @@ public:
 public:
 	SSTextureDX9() : tex_width(0) , tex_height(0){}
 	virtual ~SSTextureDX9();
-	bool LoadImage( const char* filename );	
-	virtual ISSGraphTexture* create(){ return new SSGraphTextureDX9(); }
+	bool Load( const char* filename );	
 
 	virtual int	getWidth() { return tex_width; }
 	virtual int	getHeight() { return tex_height; }
 	
+	virtual ISSTexture* create(){ return new SSTextureDX9(); }
 };
 
 

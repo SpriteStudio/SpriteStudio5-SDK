@@ -1,7 +1,7 @@
 ﻿#include "sampleScene.h"
 
 #include "./helper/tkHelper.h"
-#include "./player/ssplayer_player.h"
+#include "./player/ssplayer_animedecode.h"
 #include "./helper/XPFileOpenDlg.h"
 //パラメータ等をウインドウへ表示するために使用します。
 #include <AntTweakBar.h>
@@ -24,7 +24,6 @@ struct SampleScene::AnimePackSelecterType
 	int				animeindex;
 	SampleScene*	myclass;
 };
-
 
 
 void	SampleScene::draw()
@@ -166,7 +165,7 @@ void	SampleScene::init()
 	UIRebuild();
 
 
-	m_player = new SsPlayer();
+	m_player = new SsAnimeDecoder();
 	
 
 }
@@ -206,7 +205,7 @@ void	SampleScene::ProjectFileLoad()
 		}
 
 		delete m_player;
-		m_player = new SsPlayer();
+		m_player = new SsAnimeDecoder();
         m_player->setProject( m_proj );
 
 	}
