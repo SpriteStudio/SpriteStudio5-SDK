@@ -1,7 +1,15 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(sssdk)
 
-find_package(OpenGL)
+#SET(BOOST_ROOT "C:/boost-1_55_0")
+SET(BOOST_ROOT "C:/Boost/include/boost-1_55/")
+SET(BOOST_PYTHON_LIB "C:/Boost/lib" )
+SET(PYTHON_IHNCLUDE "C:/Python27/include")
+
+SET(PYTHON_LIB "C:/Python27/libs")
+
+
+link_directories(${SEARCH_LIB} ${BOOST_PYTHON_LIB} ${PYTHON_LIB}  )
 
 
 ADD_LIBRARY(ssloader 
@@ -81,6 +89,15 @@ ADD_EXECUTABLE(viewer_sample_dx9
 )
 
 
+ADD_EXECUTABLE(scriptbase_converter
+../Converter/script_base_conv.cpp
+../Converter/bind_SSXML.cpp
+../Converter/bind_SSXML.h
+../Converter/bind_Animation.cpp
+../Converter/bind_Animation.h
+../Converter/package_SpriteStudio.cpp
+../Converter/package_SpriteStudio.h
+)
 
 IF (WIN32)
     SET_TARGET_PROPERTIES (viewer_sample_gl PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")
@@ -92,6 +109,8 @@ IF (WIN32)
     SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:windows")
     SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows")
     SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:windows")
+
+
 ENDIF (WIN32)
 
 IF(WIN32)
@@ -101,6 +120,7 @@ IF(WIN32)
 	SET(LINK_LIB3 "ssHelper")
 	SET(LINK_LIB4 "")
     ADD_DEFINITIONS(-_WIN32)
+	SET(SEARCH_LIB "" )
 ENDIF(WIN32)
 
 IF(APPLE)
@@ -114,12 +134,14 @@ IF(APPLE)
 ENDIF()
 
 
-include_directories(${SEARCH_DIR} ; ../../Common/Helper/ ; ../../Common/Drawer/ ; ../../Common/Animator)
-link_directories(${SEARCH_LIB})
-target_link_libraries(viewer_sample_gl ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4})
+include_directories(;${SEARCH_DIR} ; ${PYTHON_IHNCLUDE} ; ${BOOST_ROOT} ; ../../Common/Loader/ ;../../Common/Helper/ ; ../../Common/Drawer/ ; ../../Common/Animator)
+target_link_libraries(viewer_sample_gl ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4} )
+
+
+target_link_libraries(scriptbase_converter ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4} )
+
 
 IF (WIN32)
-#target_link_libraries(viewer_sample_dx9 ${LINK_LIB})
 target_link_libraries(viewer_sample_dx9 ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4})
 ENDIF()
 

@@ -9,13 +9,7 @@
 #include "ssHelper.h"
 #include "myscene.h"
 #include "DirectX/d3dsimple.h"
-
 #include "DirectX/SSTextureDX9.h"
-/*
-#include "./helper/tkTask.h"
-#include "./helper/XPFileOpenDlg.h"
-#include "sampleScene.h"
-*/
 
 #include "ssplayer_render.h"
 #include "ssplayer_render_dx9.h"

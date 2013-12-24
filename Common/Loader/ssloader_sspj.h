@@ -133,9 +133,6 @@ public:
 		return str ;
 	}
 
-
-
-
 };
 
 ///sspjのローダークラスです。
