@@ -15,6 +15,8 @@ using namespace std;
 #include "package_SpriteStudio.h"
 
 
+
+
 //PythonÉÇÉWÉÖÅ[ÉãÇÃê›íË
 BOOST_PYTHON_MODULE(SpriteStudio)
 {
@@ -24,8 +26,15 @@ BOOST_PYTHON_MODULE(SpriteStudio)
         .def("init", &Animation::init)
 		;
 
+	class_<Bind_SsAnimeDecoder>("Bind_SsAnimeDecoder")
+		.def("debug" , &Bind_SsAnimeDecoder::debug )
+		;
+
 	class_<Bind_SsAnimePack>("Bind_SsAnimePack")
 		.def("debug" , &Bind_SsAnimePack::debug )
+		//.def("get" , &Bind_SsAnimePack::get , return_value_policy<reference_existing_object>() )
+		.def("getAnimeDecoderByName" , &Bind_SsAnimePack::getAnimeDecoderByName , return_value_policy<manage_new_object>() )
+		.def("getAnimeDecoderByIndex" , &Bind_SsAnimePack::getAnimeDecoderByIndex , return_value_policy<manage_new_object>() )
 			;
 
 	class_<Bind_SsProject>("Bind_SsProject")

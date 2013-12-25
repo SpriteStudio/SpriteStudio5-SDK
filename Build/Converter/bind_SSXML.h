@@ -1,31 +1,16 @@
 #ifndef __bind_SSXML__
 #define __bind_SSXML__
 
-#define BOOST_PYTHON_STATIC_LIB
-#include    <stdio.h>
-#include    <Python.h>
-#include    <boost/python.hpp>
-
-#include	<fstream>
-#include	<iostream>
-#include	<sstream>
-
-using namespace boost::python;
-using namespace std;
-
-#include "bind_Animation.h"
-#include "ssloader.h"
+#include "package_SpriteStudio.h"
+#include "bind_AnimePack.h"
 
 
+//ssLoaderにあるクラスのラッパークラスをPythonへの参照渡しを行う関係からラッピングする
+//データのスクリプト側への受け渡しのため各ポインタはBind_SsProjectにあるm_projectのポインタ参照になる。
+//SSXMLが解放されたタイミングでこれらの参照が消える仕組みとする。
+//本来的には消えない方がpythonでの利用上適切ではあるが、解放タイミングのわかりやすさを重視してこのようにする。
 
-class Bind_SsAnimePack
-{
-public:
-	SsAnimePack*	m_animepack;
 
-	Bind_SsAnimePack(){}
-	bool debug(){ return true; }
-};
 
 
 class Bind_SsProject {

@@ -14,11 +14,16 @@ using namespace boost::python;
 using namespace std;
 
 
+#include "ssloader.h"
+
+
 #include "bind_Animation.h"
+#include "bind_SsAnimeDecoder.h"
+#include "bind_AnimePack.h"
 #include "bind_SSXML.h"
 
 
-
+void PYDEBUG_PRINTF( const char* strFormat, ...   );
 
 
 

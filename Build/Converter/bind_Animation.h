@@ -1,19 +1,7 @@
 #ifndef __bind_ANIMATION__
 #define __bind_ANIMATION__
 
-
-#define BOOST_PYTHON_STATIC_LIB
-#include    <stdio.h>
-#include    <Python.h>
-#include    <boost/python.hpp>
-
-#include	<fstream>
-#include	<iostream>
-#include	<sstream>
-
-using namespace boost::python;
-using namespace std;
-
+#include "package_SpriteStudio.h"
 
 
 class Animation {

@@ -3,6 +3,7 @@
 
 
 
+
 SSXML::SSXML() 
  : m_bind_project(0) { 
 	puts("construct SSXML"); 
@@ -27,17 +28,16 @@ bool	SSXML::Load( const char* name )
 }
 
 
+#define DEBUG_OUT(x) sprintf( buffer , x ); puts( buffer );
+
 bool Bind_SsProject::debug()
 {
 //	puts( "SsProject");
 	if ( m_project )
 	{
-		char buffer[256];
-
 		//アニメパックの数
-		sprintf( buffer , "AnimePack Num = %d" , m_project->getAnimePackNum() ); puts( buffer );
-		sprintf( buffer , "CellMap Num = %d" , m_project->getCellMapNum() ); puts( buffer );
-
+		PYDEBUG_PRINTF( "AnimePack Num = %d" , m_project->getAnimePackNum() );
+		PYDEBUG_PRINTF( "CellMap Num = %d" , m_project->getCellMapNum() );
 
 		size_t num = m_project->getAnimePackNum();
 		SsAnimePackList& list = m_project->getAnimePackList();
@@ -53,3 +53,6 @@ bool Bind_SsProject::debug()
 
 	return true;
 }
+
+
+

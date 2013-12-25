@@ -3,21 +3,28 @@ import SpriteStudio
 #
 #------------------------------------------
 def main() : 
-	ssio = SpriteStudio.SSXML()
+	ssxml = SpriteStudio.SSXML()
 	print "sspj Load ..."
 	
 	#車のデータを読んでみるよ
-	if ssio.Load("../TestData/car.sspj") == True :
-		proj = ssio.GetPrj() #ssio.Loadで直接オブジェクトを得るで良いような
+	if ssxml.Load("../TestData/car.sspj") == True :
+		proj = ssxml.GetPrj() #ssxml.Loadで直接オブジェクトを得るで良いような
 		proj.debug() #情報の取得
 
+		#アニメパックを取得する
 		#プロジェクトに格納されているアニメパックの数を得る
 		print proj.getAnimePackNum()
 
-		#アニメパックを取得する
 		print "== Testing AnimePack =="
+		#プロジェクトからアニメパックを取得（０番）
 		animepack = proj.AnimePackAt(0)
 		print animepack.debug()
+
+		print "== Testing AnimeDecoder =="
+		#アニメデコーダーの取得 animedevoderは使用済みになったら破棄される
+		anime_decoder = animepack.getAnimeDecoderByName("motion 1")
+		if anime_decoder != 0 :
+			anime_decoder.debug()
 
 		#セルマップの取得
 		print "== Testing Cellmap =="
