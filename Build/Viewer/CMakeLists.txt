@@ -95,8 +95,8 @@ ADD_EXECUTABLE(scriptbase_converter
 ../Converter/bind_SSXML.h
 ../Converter/bind_Animation.cpp
 ../Converter/bind_Animation.h
-../Converter/bind_AnimeState.cpp
-../Converter/bind_AnimeState.h
+../Converter/bind_SsAnimeDecoder.cpp
+../Converter/bind_SsAnimeDecoder.h
 ../Converter/bind_AnimePack.cpp
 ../Converter/bind_AnimePack.h
 ../Converter/package_SpriteStudio.cpp
