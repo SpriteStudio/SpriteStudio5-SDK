@@ -37,7 +37,10 @@ static const char* glshader_sprite_fs_pot =
 #include "shader/sprite_pot.fs";
 
 
-
+template <typename T> T clamp(const T& value, const T& low, const T& high) 
+{
+	return value < low ? low : (value > high ? high : value); 
+}
 
 
 enum{
@@ -352,6 +355,21 @@ static void	GetColorValue( const SsKeyframe* key , SsColorAnime& v )
 
 }
 
+
+static void	SsInterpolation(SsInterpolationType::_enum ipType, const SsCurve& curve, float time, const SsColor& startValue, const SsColor& endValue, SsColor * out)
+{
+	int i;
+	i = SsInterpolate(ipType, time, startValue.r, endValue.r, &curve);
+	out->r = clamp(i, 0, 255);
+	i = SsInterpolate(ipType, time, startValue.g, endValue.g, &curve);
+	out->g = clamp(i, 0, 255);
+	i = SsInterpolate(ipType, time, startValue.b, endValue.b, &curve);
+	out->b = clamp(i, 0, 255);
+	i = SsInterpolate(ipType, time, startValue.a, endValue.a, &curve);
+	out->a = clamp(i, 0, 255);
+}
+
+
 void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsColorAnime& v )
 {
 	//☆Mapを使っての参照なので高速化必須
@@ -366,7 +384,6 @@ void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyfra
 
 	GetColorValue( leftkey , leftv );
 	GetColorValue( rightkey , rightv );
-
 
 	SsCurve curve;
 	curve = leftkey->curve;
@@ -384,16 +401,10 @@ void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyfra
 	{
 		for ( int i = 0 ; i < 4 ; i++ )
 		{
-			v.colors[i].rgba.a = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.a , rightv.colors[i].rgba.a  , &curve );	
-			v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.r , rightv.colors[i].rgba.r  , &curve );	
-			v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.g , rightv.colors[i].rgba.g  , &curve );	
-			v.colors[i].rgba.b = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.b , rightv.colors[i].rgba.b  , &curve );	
+			SsInterpolation( leftkey->ipType , curve , now , leftv.colors[i].rgba, rightv.colors[i].rgba  , &v.colors[i].rgba );
 		}
 	}else{
-		v.color.rgba.a = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.a , rightv.color.rgba.a  , &curve );	
-		v.color.rgba.r = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.r , rightv.color.rgba.r  , &curve );	
-		v.color.rgba.g = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.g , rightv.color.rgba.g  , &curve );	
-		v.color.rgba.b = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.b , rightv.color.rgba.b  , &curve );	
+		SsInterpolation( leftkey->ipType , curve , now , leftv.color.rgba, rightv.color.rgba  , &v.color.rgba );
 	}
 
 }
@@ -729,13 +740,9 @@ void	SsPlayer::updateState( int nowTime , SsPart* part , SsPartAnime* anime , Ss
 			state->hide = state->parent->hide;
 	}
 
-/*本体機能がリリース前なので一度コメント
 	// 非表示キーがないか、先頭の非表示キーより手前の場合は常に非表示にする。(継承関係なし)
-	if (!hidekey_find)
-	{
-		state->hide = true;
-	}
-*/
+	if (!hidekey_find) state->hide = true;
+
 	// 頂点の設定
 	if ( part->type == SsPartType::normal )
 	{
