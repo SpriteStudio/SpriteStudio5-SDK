@@ -38,3 +38,4 @@ sssdk.xcodeproj
 AntTweakBar64.dll
 glew32mx.dll
 Release/
+Build/Viewer/python27_d.dll

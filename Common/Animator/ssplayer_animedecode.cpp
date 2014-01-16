@@ -17,116 +17,86 @@
 
 
 
-void	SsCellMapManager::clear()
-{
-	CellMapDic.clear();
-}
-
-
-void	SsCellMapManager::setCellMapPath(  const SsString& filepath )
-{
-	CellMapPath = filepath;
-}
-
-void	SsCellMapManager::add(SsProject* proj)
-{
-	for ( size_t i = 0 ; i < proj->cellmapList.size() ; i++ )
-	{
-		add( proj->cellmapList[i] );
-	}
-}
-
-void	SsCellMapManager::set(SsProject* proj)
-{
-	CellMapDic.clear();
-	setCellMapPath( proj->getImageBasepath() );
-	add( proj );
-}
-
-void	SsCellMapManager::add(SsCellMap* cellmap)
-{
-	SsCelMapLinker* linker = new SsCelMapLinker(cellmap , this->CellMapPath );
-	CellMapDic[ cellmap->name+".ssce" ] = linker ;
-}
-
-SsCelMapLinker*	SsCellMapManager::getCellMapLink( const SsString& name )
-{
-	SsCelMapLinker* l = CellMapDic[name];
-	if ( l != 0 ) return l;
-
-	return 0;
-}
-
-
-static void calcUvs( SsCellValue* cellv )
-{
-	SsCellMap* map = cellv->cellmapl->cellMap;
-	SsCell* cell = cellv->cell;
-
-	if ( cell == 0 || map == 0)
-	{
-		cellv->uvs[0].x = cellv->uvs[0].y = 0;
-		cellv->uvs[1].x = cellv->uvs[1].y = 0;
-		cellv->uvs[2].x = cellv->uvs[2].y = 0;
-		cellv->uvs[3].x = cellv->uvs[3].y = 0;
-		return;
-	}
-
-	SsVector2 wh = map->pixelSize;
-	// 右上に向かって＋になる
-	float left = cell->pos.x / wh.x;
-	float right = (cell->pos.x + cell->size.x) / wh.x;
-
-
-	// LB->RB->LT->RT 順
-	// 頂点をZ順にしている都合上UV値は上下逆転させている
-	float top = cell->pos.y / wh.y;
-	float bottom = ( cell->pos.y + cell->size.y) / wh.y;
-
-	if (cell->rotated)
-	{
-		// 反時計回りに９０度回転されているため起こして描画されるようにしてやる。
-		// 13
-		// 02
-		cellv->uvs[0].x = cellv->uvs[1].x = left;
-		cellv->uvs[2].x = cellv->uvs[3].x = right;
-		cellv->uvs[1].y = cellv->uvs[3].y = top;
-		cellv->uvs[0].y = cellv->uvs[2].y = bottom;
-	}
-	else
-	{
-		// そのまま。頂点の順番は下記の通り
-		// 01
-		// 23
-		cellv->uvs[0].x = cellv->uvs[2].x = left;
-		cellv->uvs[1].x = cellv->uvs[3].x = right;
-		cellv->uvs[0].y = cellv->uvs[1].y = top;
-		cellv->uvs[2].y = cellv->uvs[3].y = bottom;
-	}
-}
 
 
 SsAnimeDecoder::SsAnimeDecoder() : 
+	curAnimeFPS(0),
+	curAnimeEndFrame(0),
 	nowPlatTime(0) ,
-	project(0) ,
-	curAnime(0) ,
-	curModel(0) ,
-	curAnimePack(0) ,
+//	project(0) ,
+//	curAnime(0) ,
+//	curModel(0) ,
+//	curAnimePack(0) ,
 	curCellMapManager(0),
 	partState(0)
 	{
+/*
 		AnimationChangeMsg.change = false;
 		AnimationChangeMsg.animePack = 0;
 		AnimationChangeMsg.anime = 0;
+*/
 	}
 
+void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellMapList* cellmap )
+{
+	//セルマップリストを取得
+	curCellMapManager = cellmap;
 
+	//partStateをパーツ分作成する
+	PartAnimeDic.clear();
+
+	//パーツの数
+	size_t panum = anime->partAnimes.size();
+	for ( size_t i = 0 ; i < panum ; i++ )
+	{
+		SsPartAnime* panime = anime->partAnimes[i];
+		PartAnimeDic[panime->partName] = panime;
+	}
+	//パーツとパーツアニメを関連付ける
+	size_t partNum = model->partList.size();
+
+	if ( partState ) delete [] partState;
+	partState = new SsPartState[partNum]();
+	sortList.clear();
+	part_anime.clear();
+
+	for ( size_t i = 0 ; i < partNum ; i++ ) 
+	{
+		SsPart* p = model->partList[i];
+
+		SsPartAndAnime _temp;
+		_temp.first = p;
+		_temp.second = PartAnimeDic[p->name];
+		part_anime.push_back( _temp );
+
+		//親子関係の設定
+		if ( p->parentIndex != -1 )
+		{
+			partState[i].parent = &partState[p->parentIndex];
+		}else{
+			partState[i].parent = 0;
+		}
+
+		//継承率の設定
+		partState[i].inheritRates = p->inheritRates;
+		partState[i].index = i;
+
+		sortList.push_back( &partState[i] );
+	}
+
+	//アニメの最大フレーム数を取得
+	curAnimeEndFrame = anime->settings.frameCount;
+	curAnimeFPS = anime->settings.fps;
+
+}
+
+
+#if 0
 void SsAnimeDecoder::setProject( SsProject* _proj , int packIndex , int animeIndex)
 {
 	SsProject* proj = _proj;
 	if ( _proj == 0 ) proj = project;
 	project = proj;
-
 
 	//セルマップの関連付け
 	//最終的には分離
@@ -169,7 +139,6 @@ void SsAnimeDecoder::setProject( SsProject* _proj , int packIndex , int animeInd
 		_temp.second = PartAnimeDic[p->name];
 		part_anime.push_back( _temp );
 
-
 		//親子関係
 		if ( p->parentIndex != -1 )
 		{
@@ -184,11 +153,11 @@ void SsAnimeDecoder::setProject( SsProject* _proj , int packIndex , int animeInd
 		sortList.push_back( &partState[i] );
 	}
 
-
 	//アニメの最大フレーム数を取得
 	curAnimeEndFrame = curAnime->settings.frameCount;
 
 }
+
 
 void	SsAnimeDecoder::changeAnimation(int packIndex, int animeIndex)
 {
@@ -196,12 +165,12 @@ void	SsAnimeDecoder::changeAnimation(int packIndex, int animeIndex)
 	AnimationChangeMsg.animePack = packIndex;
 	AnimationChangeMsg.anime = animeIndex;
 }
+#endif
 
 
 void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsVertexAnime& v )
 {
 	//☆Mapを使っての参照なので高速化必須
-
 	SsVertexAnime	lv;
 	SsVertexAnime	rv;
 
@@ -345,6 +314,8 @@ void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyfra
 
 void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsCellValue& v )
 {
+/*
+
 	int id = leftkey->value["mapId"].get<int>();
 
 	//leftkey->value["name"].get<SsString>();
@@ -361,7 +332,7 @@ void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyfra
 	}else v.texture = 0;
 
 	calcUvs( &v );
-	
+*/	
 }
 
 //float , int , bool基本型はこれで値の補間を行う
@@ -407,11 +378,6 @@ int	SsGetKeyValue( int time , SsAttribute* attr , mytype&  value )
 		return useTime;
 	}
 
-    if ( time == 1 )
-    {
-        int a = 0;
-        a ++;
-    }
 	const SsKeyframe* lkey = attr->findLeftKey( time );
 
 	//無い場合は、最初のキーを採用する
@@ -531,7 +497,7 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 					break;
 				case SsAttributeKind::cell:		///< 参照セル
 					{
-						state->cellValue.player = this;
+						//state->cellValue.player = this;
 						SsGetKeyValue( nowTime , attr , state->cellValue );
 						state->noCells = false;
 					}
@@ -673,13 +639,12 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 			state->hide = state->parent->hide;
 	}
 
-/*本体機能がリリース前なので一度コメント
 	// 非表示キーがないか、先頭の非表示キーより手前の場合は常に非表示にする。(継承関係なし)
 	if (!hidekey_find)
 	{
 		state->hide = true;
 	}
-*/
+
 	// 頂点の設定
 	if ( part->type == SsPartType::normal )
 	{
@@ -847,12 +812,13 @@ void	SsAnimeDecoder::updateVertices(SsPart* part , SsPartAnime* anime , SsPartSt
 ///なっているためそのまま木構造を作らずUpdateを行う
 void	SsAnimeDecoder::update()
 {
+/*
 	if ( AnimationChangeMsg.change )
 	{
 		this->setProject( 0 , AnimationChangeMsg.animePack , AnimationChangeMsg.anime );
 		AnimationChangeMsg.change = false;
 	}
-
+*/
 	int	time = (int)nowPlatTime;
 
 	int cnt = 0;

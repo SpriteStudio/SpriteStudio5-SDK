@@ -34,7 +34,7 @@ Bind_SsAnimeDecoder*	Bind_SsAnimePack::getAnimeDecoderByName( const char* animen
 			itr != animeList.end() ; itr ++ )
 		{
 			if ( (*itr)->name == animename )
-			{
+			{				
 				SsAnimation* anime = (*itr);				
 				return new Bind_SsAnimeDecoder();
 			}

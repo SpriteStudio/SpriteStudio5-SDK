@@ -5,6 +5,9 @@
 //#include "./player/ssplayer_animedecode.h"
 
 class SsAnimeDecoder;
+class SsCellMapList;
+
+
 ///サンプル用のシーンクラス　
 class SampleScene : public tkScene
 {
@@ -13,8 +16,10 @@ public:
 
 
 private:
-//	GLuint tex;
+
 	SsAnimeDecoder*	m_player;
+	SsCellMapList*	m_cellmap;
+
 
 	SsProject*	m_proj;
 	int			m_select_animepack_index;

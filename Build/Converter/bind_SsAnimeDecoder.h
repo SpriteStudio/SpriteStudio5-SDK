@@ -5,16 +5,18 @@
 #include "package_SpriteStudio.h"
 
 
-
+class SsAnimeDecoder;
 class Bind_SsAnimeDecoder
 {
+private:
+
 public:
-	Bind_SsAnimeDecoder()
-	{
-		puts("construct Bind_SsAnimeState");	
-	}
+	SsAnimeDecoder*	m_decoder;
+
+	Bind_SsAnimeDecoder();
 	virtual ~Bind_SsAnimeDecoder()
 	{
+		delete m_decoder;
 		puts( "destruct Bind_SsAnimeState" );
 	}
 	bool debug()
@@ -22,6 +24,7 @@ public:
 		puts( "debug Bind_SsAnimeState" );
 		return true;
 	}
+
 };
 
 

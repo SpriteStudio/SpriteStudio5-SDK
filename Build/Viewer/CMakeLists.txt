@@ -38,6 +38,10 @@ ADD_LIBRARY(ssloader
 
 
 ADD_LIBRARY(ssAnimater
+../../Common/Animator/ssplayer_types.h
+../../Common/Animator/ssplayer_cellmap.h
+../../Common/Animator/ssplayer_cellmap.cpp
+../../Common/Animator/ssplayer_PartState.h
 ../../Common/Animator/ssplayer_render.cpp
 ../../Common/Animator/ssplayer_render.h
 ../../Common/Animator/ssplayer_matrix.cpp
