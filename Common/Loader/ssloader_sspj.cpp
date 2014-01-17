@@ -78,3 +78,18 @@ SsProject*	ssloader_sspj::Load(const std::string& filename )
 	return 0;
 }
 
+SsCellMap* SsProject::findCellMap( SsString& str )
+{
+	for ( SsSsCellMapListItr itr = cellmapList.begin() ; 
+		itr != cellmapList.end() ; itr ++) 
+	{
+		SsString _name = (*itr)->name;
+		_name+=".ssce";
+
+		if ( _name == str )
+		{
+			return (*itr);
+		}
+	}
+	return 0;
+}

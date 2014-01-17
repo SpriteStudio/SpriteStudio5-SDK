@@ -14,7 +14,7 @@ using namespace std;
 
 #include "package_SpriteStudio.h"
 
-
+#include "sshTextureBMP.h"
 
 
 //Pythonモジュールの設定
@@ -54,6 +54,9 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 
 int main(int argc, char* argv[])
 {
+
+	SSTextureFactory*	texfactory = new SSTextureFactory( new SSTextureBMP() );
+
     if(PyImport_AppendInittab("SpriteStudio", initSpriteStudio) == -1)
         puts("helloモジュールのセットアップに失敗");
     
@@ -87,7 +90,7 @@ int main(int argc, char* argv[])
     
     Py_Finalize();
     
-
+	delete texfactory;
 	fgetc(stdin);
     return 0;
 }

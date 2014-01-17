@@ -1,6 +1,13 @@
 //
 #include "package_SpriteStudio.h"
 #include "bind_AnimePack.h"
+#include "ssplayer_animedecode.h"
+
+Bind_SsAnimePack::Bind_SsAnimePack()
+ : m_animepack(0) , m_cellmap(0)
+{
+	
+}
 
 
 bool Bind_SsAnimePack::debug()
@@ -35,8 +42,21 @@ Bind_SsAnimeDecoder*	Bind_SsAnimePack::getAnimeDecoderByName( const char* animen
 		{
 			if ( (*itr)->name == animename )
 			{				
-				SsAnimation* anime = (*itr);				
-				return new Bind_SsAnimeDecoder();
+				SsAnimation* anime = (*itr);		
+				Bind_SsAnimeDecoder* ad = new Bind_SsAnimeDecoder();
+
+
+				SsModel* model = &m_animepack->Model;
+				if ( m_cellmap ) delete m_cellmap;
+				m_cellmap = new SsCellMapList();
+				m_cellmap->set( m_proj , m_animepack );
+
+				//インスタンスの寿命管理を考えること
+				SsAnimeDecoder* player = new SsAnimeDecoder();
+				ad->m_decoder = player;
+				player->setAnimation( model , anime , m_cellmap );
+
+				return ad;
 			}
 		}
 	}

@@ -54,6 +54,7 @@ class SsCellMap;
 
 typedef std::vector<SsAnimePack*> SsAnimePackList;
 typedef std::vector<SsCellMap*> SsSsCellMapList;
+typedef std::vector<SsCellMap*>::iterator SsSsCellMapListItr;
 
 
 /// XMLドキュメントとなっているsspjファイルのデータ保持を提供するクラスです。
@@ -92,6 +93,8 @@ public:
 	///セルマップデータのコンテナを取得する
 	SsSsCellMapList&	getCellMapList(){ return cellmapList;}
 	
+
+	SsCellMap* findCellMap( SsString& str );
 
 
 	///シリアライズのための宣言です。

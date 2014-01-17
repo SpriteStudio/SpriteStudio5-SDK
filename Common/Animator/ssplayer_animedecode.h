@@ -9,6 +9,7 @@
 #include "ssplayer_cellmap.h"
 #include "ssplayer_PartState.h"
 
+#define foreach(T, c, i) for(T::iterator i = c.begin(); i!=c.end(); ++i)
 
 
 class SsAnimeDecoder;
@@ -41,9 +42,9 @@ private:
 	std::vector<SsPartAndAnime>		part_anime;
 	std::map<SsString,SsPartAnime*> PartAnimeDic;
 
-	SsCellMapList*				curCellMapManager;
-	SsPartState*				partState;			///パーツの現在の状態が格納されています。
-	std::list<SsPartState*>		sortList;			///ソート状態
+	SsCellMapList*					curCellMapManager;
+	SsPartState*					partState;			///パーツの現在の状態が格納されています。
+	std::list<SsPartState*>			sortList;			///ソート状態
 
 	float	nowPlatTime;
 	int		curAnimeEndFrame;
@@ -69,7 +70,6 @@ public:
 	virtual void	update();
 	virtual void	draw();
 
-
 	void	setAnimation( SsModel*	model , SsAnimation* anime , SsCellMapList* cellmap );
 
 	void	setProject( SsProject* proj , int packIndex = 0, int animeIndex = 0){}
@@ -78,7 +78,20 @@ public:
 
 	void	setPlayFrame( float time ) { nowPlatTime = time; }
 	int		getAnimeEndFrame() { return curAnimeEndFrame; }
-	int		getAnimeFPS() { return curAnimeFPS; }		
+	int		getAnimeFPS() { 
+		return curAnimeFPS; }		
+
+
+	std::list<SsPartState*>&	getPartSortList(){return sortList;}
+
+	
+	template<typename mytype> int	SsGetKeyValue( int time , SsAttribute* attr , mytype&  value );
+	template<typename mytype> void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , mytype& v );
+	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsCellValue& v );
+	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsColorAnime& v );
+	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsVertexAnime& v );
+
+
 
 };
 

@@ -207,24 +207,17 @@ void	SampleScene::ProjectFileLoad()
 			}
 		}
 
-/*
-		delete m_player;
-		m_player = new SsAnimeDecoder();
+//		SsModel* model = &m_proj->getAnimePackList()[0]->Model;
 
-		delete m_cellmap;
-		m_cellmap = new SsCellMapList();
-*/
+		SsAnimePack* animepack = m_proj->getAnimePackList()[0]; 
+		SsModel* model = &animepack->Model;
+		SsAnimation* anime = animepack->animeList[0]; 
 
-		
-		SsModel* model = &m_proj->getAnimePackList()[0]->Model;
-		SsAnimation* anime = m_proj->getAnimePackList()[0]->animeList[0]; 
-		m_cellmap->clear();
-		m_cellmap->set( m_proj );
+		m_cellmap->set( m_proj , animepack );
 
 		m_player->setAnimation( model , anime , m_cellmap );
 
-
-        //m_player->setProject( m_proj );
+		
 
 	}
 }

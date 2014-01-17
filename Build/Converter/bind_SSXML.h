@@ -18,8 +18,10 @@ public:
 	std::vector<Bind_SsAnimePack>	m_animepacklist;
 
 	SsProject *m_project;
-    Bind_SsProject(){ puts("construct Animation"); }
+    Bind_SsProject();
 	bool debug();
+
+	void createAnimepack();
 
 	///<プロジェクトに格納されたアニメーションのファイル数を取得する
 	int	getAnimePackNum(){ 

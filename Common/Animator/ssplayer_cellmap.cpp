@@ -19,25 +19,26 @@ void	SsCellMapList::setCellMapPath(  const SsString& filepath )
 	CellMapPath = filepath;
 }
 
-void	SsCellMapList::add(SsProject* proj)
-{
-	for ( size_t i = 0 ; i < proj->cellmapList.size() ; i++ )
-	{
-		add( proj->cellmapList[i] );
-	}
-}
 
-void	SsCellMapList::set(SsProject* proj)
+void	SsCellMapList::set(SsProject* proj , SsAnimePack* animepack )
 {
-	CellMapDic.clear();
+	clear();
 	setCellMapPath( proj->getImageBasepath() );
-	add( proj );
+
+	for ( size_t i = 0 ; i < animepack->cellmapNames.size() ; i++ )
+	{
+		SsCellMap* cell = proj->findCellMap( animepack->cellmapNames[i] );
+		add( cell );
+	}
+
 }
 
 void	SsCellMapList::add(SsCellMap* cellmap)
 {
 	SsCelMapLinker* linker = new SsCelMapLinker(cellmap , this->CellMapPath );
 	CellMapDic[ cellmap->name+".ssce" ] = linker ;
+	CellMapList.push_back( linker );
+
 }
 
 SsCelMapLinker*	SsCellMapList::getCellMapLink( const SsString& name )

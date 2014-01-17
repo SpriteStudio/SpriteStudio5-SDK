@@ -26,6 +26,8 @@ public:
 		if ( m_texture_base_class )
 			delete m_texture_base_class;
 	}
+
+	static bool	isExist(){ return m_myInst != 0; }
 	
 	static ISSTexture*	create(){ return m_texture_base_class->create(); }
 };

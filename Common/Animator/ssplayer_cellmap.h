@@ -10,10 +10,9 @@ class SsCelMapLinker;
 ///パーツが使用するセルの情報
 struct SsCellValue
 {
-	//SsAnimeDecoder*	player;		///SsPlayerのポインタ　（SsCellMapManager使用のため）
-
 	SsCell*			cell;		///参照しているセル
-	SsCelMapLinker*	cellmapl;	///参照しているセルが所属しているSsCelMapLinker
+	SsCelMapLinker*	cellmapl;	///参照しているセルが所属しているSsCelMapLinker -> ★SsCellMapへの参照でも良い気がする
+
 	ISSTexture*		texture;	///テクスチャ
 	SsVector2		uvs[5];		///使用するUV座標
 
@@ -46,6 +45,12 @@ public:
 			CellDic[cellMap->cells[i]->name] = cellMap->cells[i];
 		}
 
+		if (!SSTextureFactory::isExist() )
+		{
+			puts( "SSTextureFactory not created yet." );
+			throw;
+		}
+
 		tex = SSTextureFactory::create();
 		SsString fullpath = filePath + cellmap->imagePath;
 
@@ -69,14 +74,20 @@ public:
 	
 };
 
-
+//プロジェクト全体で保持しているセルマップ
+//現在はprojectのセルマップの列挙とssaeの列挙は同一
 class	SsCellMapList
 {
 private:
 	//同名セルマップは上書き
 	std::map<SsString,SsCelMapLinker*>		CellMapDic;
+	std::vector<SsCelMapLinker*>			CellMapList;//添え字参照用
+
 	typedef std::map<SsString,SsCelMapLinker*>::iterator CellMapDicItr;
 	SsString	CellMapPath;
+
+private:
+	void	add(SsCellMap* cellmap);
 
 public:
 	SsCellMapList(){}
@@ -91,11 +102,17 @@ public:
 
 	void	clear();
 	void	setCellMapPath(  const SsString& filepath );
-	void	set(SsProject* proj);
-	void	add(SsProject* proj);
-	void	add(SsCellMap* cellmap);
+
+	//projectとanimepackからアニメーションの再生に必要なセルマップのリストを作成する
+	void	set(SsProject* proj , SsAnimePack* animepack );
+
+	SsCelMapLinker*	getCellMapLink( const SsString& name );
+	SsCelMapLinker*	getCellMapLink( int index )
+	{	
+		return CellMapList[index];
+	}
 	
-	 SsCelMapLinker*	getCellMapLink( const SsString& name );
+
 };
 
 void calcUvs( SsCellValue* cellv );

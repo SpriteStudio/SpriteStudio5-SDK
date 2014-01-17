@@ -7,7 +7,6 @@
 #include "ssplayer_render.h"
 
 
-#define foreach(T, c, i) for(T::iterator i = c.begin(); i!=c.end(); ++i)
 #define __PI__	(3.14159265358979323846f)
 #define RadianToDegree(Radian) ((double)Radian * (180.0f / __PI__))
 #define DegreeToRadian(Degree) ((double)Degree * (__PI__ / 180.0f))
@@ -23,18 +22,9 @@ SsAnimeDecoder::SsAnimeDecoder() :
 	curAnimeFPS(0),
 	curAnimeEndFrame(0),
 	nowPlatTime(0) ,
-//	project(0) ,
-//	curAnime(0) ,
-//	curModel(0) ,
-//	curAnimePack(0) ,
 	curCellMapManager(0),
 	partState(0)
 	{
-/*
-		AnimationChangeMsg.change = false;
-		AnimationChangeMsg.animePack = 0;
-		AnimationChangeMsg.anime = 0;
-*/
 	}
 
 void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellMapList* cellmap )
@@ -84,6 +74,7 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 		sortList.push_back( &partState[i] );
 	}
 
+
 	//アニメの最大フレーム数を取得
 	curAnimeEndFrame = anime->settings.frameCount;
 	curAnimeFPS = anime->settings.fps;
@@ -91,84 +82,9 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 }
 
 
-#if 0
-void SsAnimeDecoder::setProject( SsProject* _proj , int packIndex , int animeIndex)
-{
-	SsProject* proj = _proj;
-	if ( _proj == 0 ) proj = project;
-	project = proj;
-
-	//セルマップの関連付け
-	//最終的には分離
-	if ( curCellMapManager ) delete curCellMapManager;
-	curCellMapManager = new SsCellMapManager();
-	curCellMapManager->set( proj );
-
-	//モデルデータの作成
-	SsAnimePack* animePack = proj->animeList[packIndex];
-	curAnimePack = animePack;
-	curAnime = animePack->animeList[animeIndex];
-	curModel = &animePack->Model;
-    
-    //UnicodeString str;
-	//パーツアニメの名称を保持
-	PartAnimeDic.clear();
-	size_t anum = curAnime->partAnimes.size();
-    
-    
-	for ( size_t i = 0 ; i < anum ; i++ )
-	{
-		SsPartAnime* panime = curAnime->partAnimes[i];
-		PartAnimeDic[panime->partName] = panime;
-	}
-
-	//パーツとパーツアニメを関連付ける
-	size_t partNum = curModel->partList.size();
-
-	if ( partState ) delete [] partState;
-	partState = new SsPartState[partNum]();
-	sortList.clear();
-	part_anime.clear();
-
-	for ( size_t i = 0 ; i < partNum ; i++ ) 
-	{
-		SsPart* p = curModel->partList[i];
-
-		SsPartAndAnime _temp;
-		_temp.first = p;
-		_temp.second = PartAnimeDic[p->name];
-		part_anime.push_back( _temp );
-
-		//親子関係
-		if ( p->parentIndex != -1 )
-		{
-			partState[i].parent = &partState[p->parentIndex];
-		}else{
-			partState[i].parent = 0;
-		}
-
-		partState[i].inheritRates = p->inheritRates;
-		partState[i].index = i;
-
-		sortList.push_back( &partState[i] );
-	}
-
-	//アニメの最大フレーム数を取得
-	curAnimeEndFrame = curAnime->settings.frameCount;
-
-}
 
 
-void	SsAnimeDecoder::changeAnimation(int packIndex, int animeIndex)
-{
-	AnimationChangeMsg.change = true;
-	AnimationChangeMsg.animePack = packIndex;
-	AnimationChangeMsg.anime = animeIndex;
-}
-#endif
-
-
-void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsVertexAnime& v )
+void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsVertexAnime& v )
 {
 	//☆Mapを使っての参照なので高速化必須
 	SsVertexAnime	lv;
@@ -265,7 +181,7 @@ static void	GetColorValue( const SsKeyframe* key , SsColorAnime& v )
 
 }
 
-void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsColorAnime& v )
+void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsColorAnime& v )
 {
 	//☆Mapを使っての参照なので高速化必須
 	if ( rightkey == 0 )
@@ -273,7 +189,7 @@ void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyfra
 		GetColorValue( leftkey , v );
 		return ;
 	}
-
+	
 	SsColorAnime leftv;
 	SsColorAnime rightv;
 
@@ -312,18 +228,12 @@ void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyfra
 }
 
 
-void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsCellValue& v )
+void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsCellValue& v )
 {
-/*
-
 	int id = leftkey->value["mapId"].get<int>();
-
-	//leftkey->value["name"].get<SsString>();
 	SsString name = leftkey->value["name"].get<SsString>();
 
-	//☆Mapを使っての参照なので高速化必須
-	SsString& str = v.player->curAnimePack->cellmapNames[id];
-	SsCelMapLinker* l = v.player->curCellMapManager->getCellMapLink( str );
+	SsCelMapLinker* l = this->curCellMapManager->getCellMapLink( id );
 	v.cell = l->findCell( name );
 	v.cellmapl = l;
 	if ( l->tex )
@@ -332,12 +242,12 @@ void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyfra
 	}else v.texture = 0;
 
 	calcUvs( &v );
-*/	
+
 }
 
 //float , int , bool基本型はこれで値の補間を行う
 template<typename mytype>
-void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , mytype& v )
+void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , mytype& v )
 {
 	if ( rightkey == 0 )
 	{
@@ -367,8 +277,8 @@ void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyfra
 }
 
 
-template<class mytype>
-int	SsGetKeyValue( int time , SsAttribute* attr , mytype&  value )
+
+template<typename mytype> int	SsAnimeDecoder::SsGetKeyValue( int time , SsAttribute* attr , mytype&  value )
 {
 	int	useTime = 0;
 
@@ -807,6 +717,7 @@ void	SsAnimeDecoder::updateVertices(SsPart* part , SsPartAnime* anime , SsPartSt
 
 }
 
+static SsPartStateLess _ssPartStateLess;
 
 ///SS5の場合  SsPartのarrayIndexは、親子順　（子は親より先にいない）と
 ///なっているためそのまま木構造を作らずUpdateを行う
@@ -831,9 +742,10 @@ void	SsAnimeDecoder::update()
 		cnt++;
 	}
 
+	sortList.sort(_ssPartStateLess);
+
 }
 
-static SsPartStateLess _ssPartStateLess;
 
 
 //描画
@@ -841,8 +753,6 @@ void	SsAnimeDecoder::draw()
 {
 
 	SsCurrentRenderer::getRender()->renderSetup();
-
-	sortList.sort(_ssPartStateLess);
 
 	foreach( std::list<SsPartState*> , sortList , e )
 	{

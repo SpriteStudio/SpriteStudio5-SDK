@@ -7,12 +7,16 @@
 
 
 class Bind_SsAnimeDecoder;
+class SsCellMapList;
+
 class Bind_SsAnimePack
 {
 public:
-	SsAnimePack*	m_animepack;
+	SsAnimePack*		m_animepack;
+	SsCellMapList*		m_cellmap;
+	SsProject*			m_proj;
 
-	Bind_SsAnimePack() : m_animepack(0){}
+	Bind_SsAnimePack();
 	bool debug();
 
 	Bind_SsAnimeDecoder*	getAnimeDecoderByName( const char* animename );

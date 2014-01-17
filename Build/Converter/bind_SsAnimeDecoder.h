@@ -14,16 +14,8 @@ public:
 	SsAnimeDecoder*	m_decoder;
 
 	Bind_SsAnimeDecoder();
-	virtual ~Bind_SsAnimeDecoder()
-	{
-		delete m_decoder;
-		puts( "destruct Bind_SsAnimeState" );
-	}
-	bool debug()
-	{
-		puts( "debug Bind_SsAnimeState" );
-		return true;
-	}
+	virtual ~Bind_SsAnimeDecoder();
+	bool debug();
 
 };
 
