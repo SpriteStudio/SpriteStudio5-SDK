@@ -39,10 +39,15 @@ class SsAnimeDecoder
 public:
 
 private:
-	std::vector<SsPartAndAnime>		part_anime;
-	std::map<SsString,SsPartAnime*> PartAnimeDic;
 
-	SsCellMapList*					curCellMapManager;
+	///パーツ情報とパーツアニメーションを結びつけアレイにしたもの
+	std::vector<SsPartAndAnime>		partAnime;
+
+	///パーツ名からアニメ情報をとるために使うもし、そういった用途が無い場合はローカル変数でも機能する
+	std::map<SsString,SsPartAnime*> partAnimeDic;
+	
+	SsCellMapList*					curCellMapManager;///アニメに関連付けられているセルマップ
+
 	SsPartState*					partState;			///パーツの現在の状態が格納されています。
 	std::list<SsPartState*>			sortList;			///ソート状態
 
@@ -72,18 +77,14 @@ public:
 
 	void	setAnimation( SsModel*	model , SsAnimation* anime , SsCellMapList* cellmap );
 
-	void	setProject( SsProject* proj , int packIndex = 0, int animeIndex = 0){}
-	void	changeAnimation(int packIndex = 0, int animeIndex = 0){}
-
-
 	void	setPlayFrame( float time ) { nowPlatTime = time; }
 	int		getAnimeEndFrame() { return curAnimeEndFrame; }
 	int		getAnimeFPS() { 
 		return curAnimeFPS; }		
 
 
-	std::list<SsPartState*>&	getPartSortList(){return sortList;}
-
+	std::list<SsPartState*>&		getPartSortList(){return sortList;}
+	std::vector<SsPartAndAnime>&	getPartAnime(){ return	partAnime; }
 	
 	template<typename mytype> int	SsGetKeyValue( int time , SsAttribute* attr , mytype&  value );
 	template<typename mytype> void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , mytype& v );

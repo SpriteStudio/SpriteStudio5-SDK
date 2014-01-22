@@ -136,7 +136,23 @@ void	SampleScene::UIRebuild()
 
 void	SampleScene::ChangeAnimation( int packIndex , int animeIndex )
 {
-	m_player->changeAnimation( packIndex , animeIndex );
+
+	//アニメパックを選択
+	SsAnimePack* animepack = m_proj->getAnimePackList()[packIndex]; 
+
+	//アニメパックのパーツ構造を取得
+	SsModel* model = &animepack->Model;
+
+	//アニメパック内のアニメーションを選択
+	SsAnimation* anime = animepack->animeList[animeIndex]; 
+
+	//セルマップ情報を作成
+	m_cellmap->set( m_proj , animepack );
+
+	//パーツ構造　アニメーション　セルマップからアニメ再生情報を作成する
+	m_player->setAnimation( model , anime , m_cellmap );
+
+//	m_player->changeAnimation( packIndex , animeIndex );
 }
 
 
@@ -207,17 +223,7 @@ void	SampleScene::ProjectFileLoad()
 			}
 		}
 
-//		SsModel* model = &m_proj->getAnimePackList()[0]->Model;
-
-		SsAnimePack* animepack = m_proj->getAnimePackList()[0]; 
-		SsModel* model = &animepack->Model;
-		SsAnimation* anime = animepack->animeList[0]; 
-
-		m_cellmap->set( m_proj , animepack );
-
-		m_player->setAnimation( model , anime , m_cellmap );
-
-		
+		ChangeAnimation( 0 , 0 );
 
 	}
 }

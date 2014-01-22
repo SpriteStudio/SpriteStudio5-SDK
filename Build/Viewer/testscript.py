@@ -1,4 +1,8 @@
 import SpriteStudio
+from struct import *
+
+
+
 #------------------------------------------
 #
 #------------------------------------------
@@ -21,10 +25,35 @@ def main() :
 		print animepack.debug()
 
 		print "== Testing AnimeDecoder =="
-		#アニメデコーダーの取得 animedevoderは使用済みになったら破棄される
+		#アニメデコーダーの取得 animedecoderは使用済みになったら破棄される
 		anime_decoder = animepack.getAnimeDecoderByName("motion 1")
 		if anime_decoder != 0 :
+			# 1フレーム毎の計算済みデータの取得
+			#0フレーム目
+			anime_decoder.setFrame(0)
+			anime_decoder.update()			
 			anime_decoder.debug()
+			#10フレーム目
+			anime_decoder.setFrame(10)
+			anime_decoder.update()			
+			anime_decoder.debug()
+
+			loopnum = anime_decoder.getPartNum()
+
+			for i in range(loopnum):
+				part = anime_decoder.getPart(i)
+				#part.debug()
+				print "== part Method Test =="
+				print "part:name=%s" % part.name()
+				print "part:arrayIndex=%s" % part.arrayIndex()
+				print "part:parentIndex=%s" % part.parentIndex()
+				print "part:type=%s" % part.type()
+				print "part:boundsType=%s" % part.boundsType()
+				print "part:inheritType=%s" % part.inheritType()
+				print "part:alphaBlendType=%s" % part.alphaBlendType()
+				print "part:show=%s" % part.show()
+				print "part:locked=%s" % part.locked()
+				print "part:inheritRates(0)=%s" % part.inheritRates(0)
 
 		#セルマップの取得
 		print "== Testing Cellmap =="
@@ -32,11 +61,9 @@ def main() :
 
 
 	#バイナリ形式で出力してみるよ
-	with open("test.dat", "wb") as fout:
-		bary = bytearray([0xFF, 0x12, 0x89])
-		bary.append(0)
-		bary.extend([1, 127])
-		fout.write(bary)
+	f = open("test.dat", "wb")
+	f.write(pack('B', 0x01))
+	f.close();
 
 #------------------------------------------
 if  __name__ =="__main__":

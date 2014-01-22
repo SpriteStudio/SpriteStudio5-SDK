@@ -33,14 +33,14 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 	curCellMapManager = cellmap;
 
 	//partStateをパーツ分作成する
-	PartAnimeDic.clear();
+	partAnimeDic.clear();
 
 	//パーツの数
 	size_t panum = anime->partAnimes.size();
 	for ( size_t i = 0 ; i < panum ; i++ )
 	{
 		SsPartAnime* panime = anime->partAnimes[i];
-		PartAnimeDic[panime->partName] = panime;
+		partAnimeDic[panime->partName] = panime;
 	}
 	//パーツとパーツアニメを関連付ける
 	size_t partNum = model->partList.size();
@@ -48,7 +48,7 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 	if ( partState ) delete [] partState;
 	partState = new SsPartState[partNum]();
 	sortList.clear();
-	part_anime.clear();
+	partAnime.clear();
 
 	for ( size_t i = 0 ; i < partNum ; i++ ) 
 	{
@@ -56,8 +56,8 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 
 		SsPartAndAnime _temp;
 		_temp.first = p;
-		_temp.second = PartAnimeDic[p->name];
-		part_anime.push_back( _temp );
+		_temp.second = partAnimeDic[p->name];
+		partAnime.push_back( _temp );
 
 		//親子関係の設定
 		if ( p->parentIndex != -1 )
@@ -733,7 +733,7 @@ void	SsAnimeDecoder::update()
 	int	time = (int)nowPlatTime;
 
 	int cnt = 0;
-	foreach( std::vector<SsPartAndAnime> , part_anime , e )
+	foreach( std::vector<SsPartAndAnime> , partAnime , e )
 	{
 		SsPart* part = e->first;
 		SsPartAnime* anime = e->second;

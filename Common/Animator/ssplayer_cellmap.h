@@ -104,6 +104,9 @@ public:
 	void	setCellMapPath(  const SsString& filepath );
 
 	//projectとanimepackからアニメーションの再生に必要なセルマップのリストを作成する
+	//アニメパックのセルリストに登載されている順にセルマップを読み込みインデックス化する
+	//SsProjectを介してセルを検索しているのはセルがそこにアレイで確保されているから
+	//もし既に読み込み済みだったりする場合は、アニメパックのセルＩＤ順にセルマップを登録すればいい
 	void	set(SsProject* proj , SsAnimePack* animepack );
 
 	SsCelMapLinker*	getCellMapLink( const SsString& name );

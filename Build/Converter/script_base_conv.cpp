@@ -26,8 +26,26 @@ BOOST_PYTHON_MODULE(SpriteStudio)
         .def("init", &Animation::init)
 		;
 
+	class_<Bind_SsPart>("Bind_SsPart")
+		.def("debug" , &Bind_SsPart::debug )
+		.def("name" , &Bind_SsPart::name )
+		.def("arrayIndex" , &Bind_SsPart::arrayIndex )
+		.def("parentIndex" , &Bind_SsPart::parentIndex )
+		.def("type" , &Bind_SsPart::type )
+		.def("boundsType" , &Bind_SsPart::boundsType )
+		.def("inheritType" , &Bind_SsPart::inheritType )
+		.def("alphaBlendType" , &Bind_SsPart::alphaBlendType )
+		.def("show" , &Bind_SsPart::show )
+		.def("locked" , &Bind_SsPart::locked )
+		.def("inheritRates" , &Bind_SsPart::inheritRates )
+		;
+
 	class_<Bind_SsAnimeDecoder>("Bind_SsAnimeDecoder")
 		.def("debug" , &Bind_SsAnimeDecoder::debug )
+		.def("setFrame" , &Bind_SsAnimeDecoder::setFrame )
+		.def("update" , &Bind_SsAnimeDecoder::update )
+		.def("getPartNum" , &Bind_SsAnimeDecoder::getPartNum )
+		.def("getPart" , &Bind_SsAnimeDecoder::getPart , return_value_policy<manage_new_object>() )
 		;
 
 	class_<Bind_SsAnimePack>("Bind_SsAnimePack")

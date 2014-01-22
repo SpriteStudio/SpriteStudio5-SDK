@@ -11,6 +11,7 @@
 void	SsCellMapList::clear()
 {
 	CellMapDic.clear();
+	CellMapList.clear();
 }
 
 
