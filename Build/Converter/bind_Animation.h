@@ -4,9 +4,9 @@
 #include "package_SpriteStudio.h"
 
 
-class Animation {
+class Bind_Animation {
 public:
-    Animation(){ puts("construct Animation"); }
+    Bind_Animation(){ puts("construct Animation"); }
     char const* init(){
         return "Animation init";
     }

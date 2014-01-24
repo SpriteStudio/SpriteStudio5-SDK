@@ -22,11 +22,25 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 {
 	using namespace boost::python;
 
-    class_<Animation>("Animation")
-        .def("init", &Animation::init)
+	
+
+    class_<Bind_SsKeyframe>("SsKeyframe")
+		.def("debug" , &Bind_SsKeyframe::debug )
+		.def("time" , &Bind_SsKeyframe::time )
 		;
 
-	class_<Bind_SsPart>("Bind_SsPart")
+    class_<Bind_SsAttribute>("SsAttribute")
+		.def("debug" , &Bind_SsAttribute::debug )
+		.def("firstKey" , &Bind_SsAttribute::firstKey , return_value_policy<manage_new_object>() )
+		.def("nextKey" , &Bind_SsAttribute::nextKey , return_value_policy<manage_new_object>() )
+		.def("findRightKey" , &Bind_SsAttribute::findRightKey , return_value_policy<manage_new_object>() )
+		.def("findLeftKey" , &Bind_SsAttribute::findLeftKey , return_value_policy<manage_new_object>() )
+		;
+    class_<Bind_Animation>("Animation")
+        .def("init", &Bind_Animation::init)
+		;
+
+	class_<Bind_SsPart>("SsPart")
 		.def("debug" , &Bind_SsPart::debug )
 		.def("name" , &Bind_SsPart::name )
 		.def("arrayIndex" , &Bind_SsPart::arrayIndex )
@@ -40,22 +54,28 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 		.def("inheritRates" , &Bind_SsPart::inheritRates )
 		;
 
-	class_<Bind_SsAnimeDecoder>("Bind_SsAnimeDecoder")
+	class_<Bind_SsPartAnime>("SsPartAnime")
+		.def("name" , &Bind_SsPartAnime::name )
+		.def("getAttribute" , &Bind_SsPartAnime::getAttribute , return_value_policy<manage_new_object>() )
+		;
+
+	class_<Bind_SsAnimeDecoder>("SsAnimeDecoder")
 		.def("debug" , &Bind_SsAnimeDecoder::debug )
 		.def("setFrame" , &Bind_SsAnimeDecoder::setFrame )
 		.def("update" , &Bind_SsAnimeDecoder::update )
 		.def("getPartNum" , &Bind_SsAnimeDecoder::getPartNum )
 		.def("getPart" , &Bind_SsAnimeDecoder::getPart , return_value_policy<manage_new_object>() )
+		.def("getPartAnime" , &Bind_SsAnimeDecoder::getPartAnime , return_value_policy<manage_new_object>() )
 		;
 
-	class_<Bind_SsAnimePack>("Bind_SsAnimePack")
+	class_<Bind_SsAnimePack>("SsAnimePack")
 		.def("debug" , &Bind_SsAnimePack::debug )
 		//.def("get" , &Bind_SsAnimePack::get , return_value_policy<reference_existing_object>() )
 		.def("getAnimeDecoderByName" , &Bind_SsAnimePack::getAnimeDecoderByName , return_value_policy<manage_new_object>() )
 		.def("getAnimeDecoderByIndex" , &Bind_SsAnimePack::getAnimeDecoderByIndex , return_value_policy<manage_new_object>() )
 			;
 
-	class_<Bind_SsProject>("Bind_SsProject")
+	class_<Bind_SsProject>("SsProject")
 		.def("debug" , &Bind_SsProject::debug )
 		.def("getAnimePackNum" , &Bind_SsProject::getAnimePackNum )
 		.def("getCellMapNum" , &Bind_SsProject::getCellMapNum )
@@ -103,9 +123,15 @@ int main(int argc, char* argv[])
 	f_in.close();
 
 	const char	*s = txt.c_str();
+	try{
+		handle<>( PyRun_String( s, Py_file_input, main_namespace.get(), main_namespace.get()) );
+	}catch(error_already_set const &)
+	{
+		// âΩÇÁÇ©ÇÃï˚ñ@Ç≈ó·äOÇèàóùÇ∑ÇÈ
+		PyErr_Print();		
+	}
 
-    handle<>( PyRun_String( s, Py_file_input, main_namespace.get(), main_namespace.get()) );
-    
+
     Py_Finalize();
     
 	delete texfactory;

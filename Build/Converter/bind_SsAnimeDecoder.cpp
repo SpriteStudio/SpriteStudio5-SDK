@@ -55,7 +55,7 @@ bool Bind_SsAnimeDecoder::debug()
 		std::vector<SsPartAndAnime>& partAnimeList = this->m_decoder->getPartAnime();
 
 		size_t n = partAnimeList.size();
-		for ( int i = 0 ; i < partAnimeList.size() ; i++ )
+		for ( size_t i = 0 ; i < partAnimeList.size() ; i++ )
 		{
 			SsPart*	part = partAnimeList[i].first;
 			SsPartAnime* panime = partAnimeList[i].second;
@@ -65,8 +65,6 @@ bool Bind_SsAnimeDecoder::debug()
 			const SsKeyframe* key = panime->attributes[0]->findLeftKey(0);
 			PYDEBUG_PRINTF( "key time = %d" , key->time );
 		}
-		
-
 
 	}
 
@@ -94,10 +92,14 @@ Bind_SsPart*	Bind_SsAnimeDecoder::getPart(int index)
 }
 
 
-
-
-bool	Bind_SsPart::debug()
+Bind_SsPartAnime*	Bind_SsAnimeDecoder::getPartAnime(int index)
 {
-	PYDEBUG_PRINTF( "my name Bind_SsPart" );
-	return true;
+	std::vector<SsPartAndAnime>& partAnimeList = this->m_decoder->getPartAnime();
+	if ( index > partAnimeList.size() ) return 0;
+
+	SsPartAnime*	partAnime = partAnimeList[index].second;
+	if ( partAnime == 0 ) return 0;
+
+
+	return new Bind_SsPartAnime(partAnime);
 }

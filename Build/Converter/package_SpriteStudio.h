@@ -14,16 +14,40 @@ using namespace boost::python;
 using namespace std;
 
 
+
+
+
+void PYDEBUG_PRINTF( const char* strFormat, ...   );
+
+
+template<class myclass>
+class	myPyBinder
+{
+public:
+	myclass*	bind_inst;
+
+	myPyBinder(){}
+
+	virtual ~myPyBinder(){}
+	virtual bool debug(){ return true; }
+	void	bind(myclass* c) { bind_inst = c;}
+};
+
+
+
+
+
 #include "ssloader.h"
 
 
 #include "bind_Animation.h"
 #include "bind_SsAnimeDecoder.h"
+#include "bind_SsAttribute.h"
+#include "bind_SsKeyframe.h"
 #include "bind_AnimePack.h"
+#include "bind_SsPart.h"
+#include "bind_SsPartAnime.h"
 #include "bind_SSXML.h"
-
-
-void PYDEBUG_PRINTF( const char* strFormat, ...   );
 
 
 
