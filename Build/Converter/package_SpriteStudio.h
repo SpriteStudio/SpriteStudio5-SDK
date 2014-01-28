@@ -31,6 +31,7 @@ public:
 	virtual ~myPyBinder(){}
 	virtual bool debug(){ return true; }
 	void	bind(myclass* c) { bind_inst = c;}
+	bool	isNull(){ return bind_inst ==0 ; }
 };
 
 

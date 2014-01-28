@@ -18,5 +18,5 @@ Bind_SsAttribute*	Bind_SsPartAnime::getAttribute(int Kind )
 
 	}
 
-	return 0; 
+	return new Bind_SsAttribute(0); 
 }

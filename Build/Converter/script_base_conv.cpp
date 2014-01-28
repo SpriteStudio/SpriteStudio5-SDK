@@ -22,15 +22,69 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 {
 	using namespace boost::python;
 
+	//基本的にリードオンリーで定義しておく
+	class_<SsColor>("SsColor")
+		.def("toARGB" , &SsColor::toARGB )
+		.def_readonly("a", &SsColor::a)
+		.def_readonly("r", &SsColor::r)
+		.def_readonly("g", &SsColor::g)
+		.def_readonly("b", &SsColor::b)
+		;
 	
+	class_<SsPoint2>("SsPoint2")
+		.def_readonly("x", &SsPoint2::x)
+		.def_readonly("y", &SsPoint2::y)
+		;
+
+	class_<SsColorBlendValue>("SsColorBlendValue")
+		.def_readonly("rgba", &SsColorBlendValue::rgba)
+		.def_readonly("rate", &SsColorBlendValue::rate)
+		;	
+	
+	class_<SsVertexAnime>("SsVertexAnime")
+		.def("offsets" , &SsVertexAnime::getOffsets , return_value_policy<reference_existing_object>())
+		;
+
+	class_<SsColorAnime>("SsColorAnime")
+		.add_property("target", &SsColorAnime::getTargetToInt)
+		.add_property("blendType", &SsColorAnime::getBlendTypeToInt)
+		.def_readonly("color", &SsColorAnime::color)
+		.def("colors" , &SsColorAnime::getColors , return_value_policy<reference_existing_object>())
+		;
+
+	//read onlyのプロパティとしてインポート
+	class_<SsCurve>("SsCurve")
+		.def_readonly("startTime", &SsCurve::startTime)
+		.def_readonly("startValue", &SsCurve::startValue)
+		.def_readonly("endTime", &SsCurve::endTime)
+		.def_readonly("endValue", &SsCurve::endValue)
+		.def_readonly("startKeyTime", &SsCurve::startKeyTime)
+		.def_readonly("endKeyTime", &SsCurve::endKeyTime)
+		;
+
+
+    class_<Bind_SsKeyValue>("Bind_SsKeyValue")
+		.def("getType" , &Bind_SsKeyValue::getType )
+		.def("toInt" , &Bind_SsKeyValue::toInt )
+		.def("toFloat" , &Bind_SsKeyValue::toFloat )
+		.def("toBool" , &Bind_SsKeyValue::toBool )
+		;
 
     class_<Bind_SsKeyframe>("SsKeyframe")
 		.def("debug" , &Bind_SsKeyframe::debug )
 		.def("time" , &Bind_SsKeyframe::time )
+		.def("isNull" , &Bind_SsKeyframe::isNull )
+		.def("interpolationType" , &Bind_SsKeyframe::InterpolationType )
+		.def("getCurveParam" , &Bind_SsKeyframe::getCurveParam , return_value_policy<reference_existing_object>())
+		.def("getValue" , &Bind_SsKeyframe::getValue , return_value_policy<reference_existing_object>())
+		.def("getColorAnime" , &Bind_SsKeyframe::getColorAnime , return_value_policy<reference_existing_object>() )
+		.def("getVertexAnime" , &Bind_SsKeyframe::getVertexAnime , return_value_policy<reference_existing_object>() )
 		;
+	
 
     class_<Bind_SsAttribute>("SsAttribute")
 		.def("debug" , &Bind_SsAttribute::debug )
+		.def("isNull" , &Bind_SsAttribute::isNull )
 		.def("firstKey" , &Bind_SsAttribute::firstKey , return_value_policy<manage_new_object>() )
 		.def("nextKey" , &Bind_SsAttribute::nextKey , return_value_policy<manage_new_object>() )
 		.def("findRightKey" , &Bind_SsAttribute::findRightKey , return_value_policy<manage_new_object>() )

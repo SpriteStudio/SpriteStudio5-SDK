@@ -19,7 +19,6 @@ public:
 	
 	Bind_SsAttribute*	getAttribute(int Kind );
 
-
 };
 
 

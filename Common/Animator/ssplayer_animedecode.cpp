@@ -83,45 +83,25 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 
 
 
-
+//頂点変形アニメデータの取得
 void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsVertexAnime& v )
 {
-	//☆Mapを使っての参照なので高速化必須
+	//☆Mapを使っての参照なので高速化必須 
+	//todo ロード時に SsVertexAnimeを作成してしまうようにする
 	SsVertexAnime	lv;
 	SsVertexAnime	rv;
 
-	const SsString& sLLT = leftkey->value["LT"].get<SsString>();
-	const SsString& sLRT = leftkey->value["RT"].get<SsString>();
-	const SsString& sLLB = leftkey->value["LB"].get<SsString>();
-	const SsString& sLRB = leftkey->value["RB"].get<SsString>();
-	
-	if ( rightkey == 0 )
+	if ( rightkey == 0 ) //右側が０出会った場合
 	{
-		StringToPoint2( sLLT , v.offsets[0] );
-		StringToPoint2( sLRT , v.offsets[1] );
-		StringToPoint2( sLLB , v.offsets[2] );
-		StringToPoint2( sLRB , v.offsets[3] );
+		GetSsVertexAnime( leftkey , v );
 		return ;
 	}
-	StringToPoint2( sLLT , lv.offsets[0] );
-	StringToPoint2( sLRT , lv.offsets[1] );
-	StringToPoint2( sLLB , lv.offsets[2] );
-	StringToPoint2( sLRB , lv.offsets[3] );
 
+	GetSsVertexAnime(leftkey,lv);
+	GetSsVertexAnime(rightkey,rv);
 
-	const SsString& sRLT = rightkey->value["LT"].get<SsString>();
-	const SsString& sRRT = rightkey->value["RT"].get<SsString>();
-	const SsString& sRLB = rightkey->value["LB"].get<SsString>();
-	const SsString& sRRB = rightkey->value["RB"].get<SsString>();
-	
-	StringToPoint2( sRLT , rv.offsets[0] );
-	StringToPoint2( sRRT , rv.offsets[1] );
-	StringToPoint2( sRLB , rv.offsets[2] );
-	StringToPoint2( sRRB , rv.offsets[3] );
-	
 	int range = rightkey->time - leftkey->time;
 	float now = (float)(time - leftkey->time) / range;
-
 
 	SsCurve curve;
 	curve = leftkey->curve;
@@ -131,8 +111,6 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 		curve.startKeyTime = leftkey->time;
 		curve.endKeyTime = rightkey->time;
 	}
-
-
 
 	for ( int i = 0 ; i < 4 ; i++ )
 	{
@@ -144,57 +122,21 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 
 
 
-static void	GetColorValue( const SsKeyframe* key , SsColorAnime& v )
-{
-	SsColorBlendTarget::_enum target;
-	__StringToEnum_( key->value["target"].get<SsString>() , target );
-		SsBlendType::_enum blendtype;
-	__StringToEnum_( key->value["blendType"].get<SsString>() , blendtype);
-
-	v.blendType = blendtype;
-	v.target = target;
-
-	if ( target == SsColorBlendTarget::vertex )
-	{
-		SsHash lt = key->value["LT"].get<SsHash>();
-		SsHash rt = key->value["RT"].get<SsHash>();
-		SsHash lb = key->value["LB"].get<SsHash>();
-		SsHash rb = key->value["RB"].get<SsHash>();
-
-		ConvertStringToSsColor( lt["rgba"].get<SsString>() , v.colors[0].rgba);
-		v.colors[0].rate = lt["rate"].get<float>();
-
-		ConvertStringToSsColor( rt["rgba"].get<SsString>() , v.colors[2].rgba);
-		v.colors[1].rate = rt["rate"].get<float>();
-
-		ConvertStringToSsColor( lb["rgba"].get<SsString>() , v.colors[2].rgba);
-		v.colors[2].rate = lb["rate"].get<float>();
-
-		ConvertStringToSsColor( rb["rgba"].get<SsString>() , v.colors[3].rgba);
-		v.colors[3].rate = rb["rate"].get<float>();
-
-	}else{
-		SsHash color = key->value["color"].get<SsHash>();
-		ConvertStringToSsColor( color["rgba"].get<SsString>() , v.color.rgba);
-		v.color.rate = color["rate"].get<float>();
-	}
-
-}
 
 void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsColorAnime& v )
 {
 	//☆Mapを使っての参照なので高速化必須
 	if ( rightkey == 0 )
 	{
-		GetColorValue( leftkey , v );
+		GetSsColorValue( leftkey , v );
 		return ;
 	}
 	
 	SsColorAnime leftv;
 	SsColorAnime rightv;
 
-	GetColorValue( leftkey , leftv );
-	GetColorValue( rightkey , rightv );
+	GetSsColorValue( leftkey , leftv );
+	GetSsColorValue( rightkey , rightv );
 
 
 	SsCurve curve;

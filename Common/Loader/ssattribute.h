@@ -92,5 +92,8 @@ public:
 };
 
 
+void	GetSsColorValue( const SsKeyframe* key , SsColorAnime& v );
+void	GetSsVertexAnime( const SsKeyframe* key , SsVertexAnime& v );
+
 
 #endif

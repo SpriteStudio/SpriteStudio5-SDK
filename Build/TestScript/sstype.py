@@ -33,6 +33,27 @@ class AttributeKind:
 	user=30
 	num = 31
 
+class InterpolationType:
+	invalid = -1
+	none = 0
+	linear = 1
+	hermite = 2
+	bezier = 3
+	acceleration = 4
+	deceleration = 5
+	num = 6
+
+
+InterpolationTypeDic = {
+	-1:"invalid",
+	0  : "none",
+	1  : "linear",
+	2  : "hermite",
+	3  : "bezier",
+	4  : "acceleration",
+	5  : "deceleration",
+}
+
 AttributeKindDic = {
 	"invalid" : -1,
 	"cell" : 0,
@@ -105,3 +126,7 @@ AttributeKindSS4Dic = {
 
 def AttributeKindToSS4Tag(kind):
 	return AttributeKindSS4Dic[kind]
+
+
+def InterpolationTypeToString(kind):
+	return InterpolationTypeDic[kind]
