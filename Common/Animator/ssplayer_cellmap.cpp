@@ -53,10 +53,11 @@ SsCelMapLinker*	SsCellMapList::getCellMapLink( const SsString& name )
 
 void calcUvs( SsCellValue* cellv )
 {
-	SsCellMap* map = cellv->cellmapl->cellMap;
+	//SsCellMap* map = cellv->cellmapl->cellMap;
 	SsCell* cell = cellv->cell;
 
-	if ( cell == 0 || map == 0)
+//	if ( cell == 0 || map == 0)
+	if ( cell == 0 )
 	{
 		cellv->uvs[0].x = cellv->uvs[0].y = 0;
 		cellv->uvs[1].x = cellv->uvs[1].y = 0;
@@ -65,7 +66,11 @@ void calcUvs( SsCellValue* cellv )
 		return;
 	}
 
-	SsVector2 wh = map->pixelSize;
+	SsVector2 wh;
+	wh.x = cellv->texture->getWidth();
+	wh.y = cellv->texture->getHeight();
+
+//	SsVector2 wh = map->pixelSize;
 	// 右上に向かって＋になる
 	float left = cell->pos.x / wh.x;
 	float right = (cell->pos.x + cell->size.x) / wh.x;

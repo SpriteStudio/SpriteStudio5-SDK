@@ -96,6 +96,47 @@ typedef unsigned int u32;
 typedef unsigned char u8;
 
 
+
+
+/// 矩形
+template <typename T>
+class SsTRect
+{
+public:
+	T	x, y, w, h;
+
+	SsTRect(): x(0), y(0), w(0), h(0)  {}
+	SsTRect(T ax, T ay, T aw, T ah): x(ax), y(ay), w(aw), h(ah) {}
+	SsTRect(const SsTRect& r): x(r.x), y(r.y), w(r.w), h(r.h) {}
+
+	bool	operator ==(const SsTRect& r) const {return x == r.x && y == r.y && w == r.w && h == r.h;}
+	bool	operator !=(const SsTRect& r) const {return !(*this == r);}
+
+//	virtual SsString	ToString() const
+//	{
+//		return SS_STR_NAME(x) + SS_STR_NAME(y) + SS_STR_NAME(w) + SS_STR_NAME(h);
+//	}
+//	virtual	operator SsString() const {return ToString();}
+
+private:
+};
+
+/*
+/// SsTRect のメンバ全体の補間
+template <typename T>
+void	SsInterpolate(SsInterpolationType::_enum ipType, const SsCurve& curve, float time, const SsTRect<T>& startValue, const SsTRect<T>& endValue, SsTRect<T> * out)
+{
+	out->x = SsInterpolate(ipType, time, startValue.x, endValue.x, &curve);
+	out->y = SsInterpolate(ipType, time, startValue.y, endValue.y, &curve);
+	out->w = SsInterpolate(ipType, time, startValue.w, endValue.w, &curve);
+	out->h = SsInterpolate(ipType, time, startValue.h, endValue.h, &curve);
+}
+*/
+
+typedef SsTRect<int>	SsIRect;
+
+
+
 ///カラー値を定義するテンプレートクラスです。
 template <typename T>
 class SsTColor
@@ -441,6 +482,11 @@ struct SsVertexAnime
 	SsPoint2&	getOffsets(int index){ return offsets[index];}
 };
 
+class ISSTexture;
+class SsCell;
+
+
+
 ///カラーブレンド使用時のブレンドタイプとカラー値
 struct SsColorAnime
 {
@@ -455,8 +501,34 @@ struct SsColorAnime
 	
 };
 
+//参照セル値
+struct SsRefCell
+{
+	int			mapid;
+	std::string	name;
+
+	
+};
+class SsUserDataAnime
+{
+public:
+	bool			useInteger;	///<整数が使用されているか
+	bool			usePoint;	///<座標データが使用されているか
+	bool			useRect;	///<矩形データが使用されているか
+	bool			useString;	///<文字列データが使用されているか 
+
+	int				integer;	///< 整数
+	SsPoint2		point;		///< 座標
+	SsIRect			rect;		///< 矩形
+	SsString		string;		///< 文字列
+
+	SsUserDataAnime() : 
+		useInteger(false),
+		usePoint(false),
+		useRect(false),
+		useString(false){}
 
 
-
+};
 
 #endif

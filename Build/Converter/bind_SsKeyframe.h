@@ -21,10 +21,8 @@ public:
 	float	toFloat(){ return m_value->get<float>();}
 	bool	toBool(){ return m_value->get<bool>();}
 
-//	SsColorAnime*	toColorAnime(); //内部でnewするのでバインド時注意
-//	SsVertexAnime*	toVertexAnime(); //内部でnewするのでバインド時注意
-
 };
+
 
 
 class Bind_SsKeyframe : public myPyBinder<SsKeyframe>
@@ -32,9 +30,6 @@ class Bind_SsKeyframe : public myPyBinder<SsKeyframe>
 private:
 	Bind_SsKeyValue	m_tempValue;
 	SsAttributeKind::_enum	m_attributeKind;
-
-	SsColorAnime	m_tempcolor;
-	SsVertexAnime	m_tempvertex;
 
 public:
 
@@ -52,10 +47,10 @@ public:
 		return m_tempValue; }
 
 
-	SsColorAnime&	getColorAnime(); 
-	SsVertexAnime&	getVertexAnime(); 
-
-
+	SsColorAnime*		getColorAnime();
+	SsVertexAnime*		getVertexAnime(); 
+	SsRefCell*			getRefCell();
+	SsUserDataAnime*	getUserDataAnime();
 
 };
 

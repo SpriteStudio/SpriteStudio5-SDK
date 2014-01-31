@@ -144,14 +144,12 @@ void	SsRenderGL::renderPart( SsPartState* state )
 	SsCell * cell = state->cellValue.cell;
 	if ( cell == 0 ) return ;
 
-
-	//int		cellimage = state->cellValue.texture;
 	ISSTexture*	texture = state->cellValue.texture;
+	if ( texture == 0 ) return ;
 
-
-	if ( state->cellValue.cellmapl == 0  ) return ;
-
-	SsCellMap* map = state->cellValue.cellmapl->cellMap;
+	SsPoint2 texturePixelSize;
+	texturePixelSize.x = state->cellValue.texture->getWidth();
+	texturePixelSize.y = state->cellValue.texture->getHeight();
 
 	if (cell)
 	{
@@ -163,8 +161,7 @@ void	SsRenderGL::renderPart( SsPartState* state )
 	if (cell)
 	{
 		// テクスチャのサイズが2のべき乗かチェック
-		if (SsUtTextureisPow2(map->pixelSize.x) &&
-			SsUtTextureisPow2(map->pixelSize.y))
+		if ( texture->isPow2() )
 		{
 			// 2のべき乗
 			texture_is_pow2 = true;
@@ -193,9 +190,10 @@ void	SsRenderGL::renderPart( SsPartState* state )
 
 		// フィルタ
 		GLint filterMode;
+		SsTexFilterMode::_enum fmode = state->cellValue.filterMode;
+		SsTexWrapMode::_enum wmode = state->cellValue.wrapMode;
 
-		SsTexFilterMode::_enum fmode = state->cellValue.cellmapl->cellMap->filterMode;
-		SsTexWrapMode::_enum wmode = state->cellValue.cellmapl->cellMap->wrapMode;
+
 
 		switch (fmode)
 		{
@@ -252,12 +250,13 @@ void	SsRenderGL::renderPart( SsPartState* state )
 		}
 		else
 		{
-			uv_trans.x = state->uvTranslate.x * map->pixelSize.x;
-			uv_trans.y = state->uvTranslate.y * map->pixelSize.y;
+			uv_trans.x = state->uvTranslate.x * texturePixelSize.x;
+			uv_trans.y = state->uvTranslate.y * texturePixelSize.y;
+
 
 			//中心座標を計算
-			uvw*= map->pixelSize.x;
-			uvh*= map->pixelSize.y;
+			uvw*= texturePixelSize.x;
+			uvh*= texturePixelSize.y;
 		}
 
 		uvw/=2.0f;
@@ -299,8 +298,8 @@ void	SsRenderGL::renderPart( SsPartState* state )
 			if (texture_is_pow2 == false)
 			{
 				// GL_TEXTURE_RECTANGLE_ARBではuv座標系が0～1ではなくピクセルになるので変換
-				uvs[idx * 2] = state->cellValue.uvs[i].x * map->pixelSize.x;
-				uvs[idx * 2 + 1] = state->cellValue.uvs[i].y * map->pixelSize.y;
+				uvs[idx * 2] = state->cellValue.uvs[i].x * texturePixelSize.x;
+				uvs[idx * 2 + 1] = state->cellValue.uvs[i].y * texturePixelSize.y;
 
 #if USE_TRIANGLE_FIN
 				//きれいな頂点変形への対応

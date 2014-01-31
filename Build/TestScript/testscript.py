@@ -9,10 +9,7 @@ def sstype_test() :
 	print AttributeKindToSS4Tag(AttributeKind.prio)
 
 
-#------------------------------------------
-#
-#------------------------------------------
-def main() : 
+def test_ssxml() :
 	ssxml = SpriteStudio.SSXML()
 	print "sspj Load ..."
 	print  os.getcwd()
@@ -143,11 +140,61 @@ def main() :
 						#次のキーを取得
 						key = attribute.nextKey()
 						
-						
+
+				attribute = panime.getAttribute(AttributeKind.cell)
+				if attribute.isNull() :
+					print "cell attibute is null."
+				else:
+					key = attribute.firstKey()
+					while key.isNull() == False:
+						#参照セル値を取得する
+						cell = key.getRefCell()
+
+						print "cell.mapid=<%s>" % cell.mapid 
+						print "cell.name=<%s>" % cell.name 
+
+						#次のキーを取得
+						key = attribute.nextKey()
+
+
+				attribute = panime.getAttribute(AttributeKind.user)
+				if attribute.isNull() :
+					print "udat attibute is null."
+				else:
+					key = attribute.firstKey()
+					while key.isNull() == False:
+						#参照セル値を取得する
+						udat = key.getUserDataAnime()
+
+						print "udat.useInteger=<%s>" % udat.useInteger						
+						print "udat.usePoint=<%s>" % udat.usePoint
+						print "udat.useRect=<%s>" % udat.useRect
+						print "udat.useString=<%s>" % udat.useString
+
+
+						print "udat.integer=<%s>" % udat.integer					
+						print "udat.point=(%s,%s)" % ( udat.point.x , udat.point.y )
+						print "udat.point=(%s,%s,%s,%s)" % ( udat.rect.x , udat.rect.y , udat.rect.w , udat.rect.h )
+						print "udat.string=<%s>" % udat.string
+
+
+						#次のキーを取得
+						key = attribute.nextKey()
+
+
+
 		#セルマップの取得
 		print "== Testing Cellmap =="
 		print proj.getCellMapNum()
 
+
+
+#------------------------------------------
+#
+#------------------------------------------
+def main() : 
+
+	test_ssxml()
 
 	#バイナリ形式で出力してみるよ	（途中
 	f = open("test.dat", "wb")

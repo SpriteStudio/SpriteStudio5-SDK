@@ -172,12 +172,15 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 
 void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsCellValue& v )
 {
-	int id = leftkey->value["mapId"].get<int>();
-	SsString name = leftkey->value["name"].get<SsString>();
+	SsRefCell cell;
+	GetSsRefCell( leftkey , cell );
 
-	SsCelMapLinker* l = this->curCellMapManager->getCellMapLink( id );
-	v.cell = l->findCell( name );
-	v.cellmapl = l;
+	SsCelMapLinker* l = this->curCellMapManager->getCellMapLink( cell.mapid );
+	v.cell = l->findCell( cell.name );
+
+	v.filterMode = l->cellMap->filterMode;
+	v.wrapMode = l->cellMap->wrapMode;
+
 	if ( l->tex )
 	{
 		v.texture = l->tex;
@@ -349,7 +352,6 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 					break;
 				case SsAttributeKind::cell:		///< 参照セル
 					{
-						//state->cellValue.player = this;
 						SsGetKeyValue( nowTime , attr , state->cellValue );
 						state->noCells = false;
 					}

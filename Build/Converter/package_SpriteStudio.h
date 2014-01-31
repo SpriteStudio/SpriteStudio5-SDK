@@ -44,12 +44,12 @@ public:
 #include "bind_Animation.h"
 #include "bind_SsAnimeDecoder.h"
 #include "bind_SsAttribute.h"
-#include "bind_SsKeyframe.h"
 #include "bind_AnimePack.h"
 #include "bind_SsPart.h"
 #include "bind_SsPartAnime.h"
 #include "bind_SSXML.h"
 
+#include "bind_SsKeyframe.h"
 
 
 #endif

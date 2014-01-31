@@ -112,3 +112,23 @@ void	GetSsVertexAnime( const SsKeyframe* key , SsVertexAnime& v )
 	StringToPoint2( sRB , v.offsets[3] );
 
 }
+
+
+void	GetSsRefCell( const SsKeyframe* key , SsRefCell& v )
+{
+	int id = key->value["mapId"].get<int>();
+	SsString name = key->value["name"].get<SsString>();
+
+	v.mapid = id;
+	v.name = name;
+}
+
+
+void	GetSsUserDataAnime( const SsKeyframe* key , SsUserDataAnime& v )
+{
+	v.integer = 0;
+	v.point.x = v.point.y = 0;
+	v.rect.x = v.rect.y = v.rect.w = v.rect.h = 0; 
+	v.string = "";
+
+}

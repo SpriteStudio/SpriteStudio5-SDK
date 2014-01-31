@@ -22,6 +22,23 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 {
 	using namespace boost::python;
 
+	class_<SsRefCell>("SsRefCell")
+		.def_readonly("mapid", &SsRefCell::mapid)
+		.def_readonly("name", &SsRefCell::name)
+		;
+
+	class_<SsUserDataAnime>("SsUserDataAnime")
+		.def_readonly("useInteger", &SsUserDataAnime::useInteger)
+		.def_readonly("usePoint", &SsUserDataAnime::usePoint)
+		.def_readonly("useRect", &SsUserDataAnime::useRect)
+		.def_readonly("useString", &SsUserDataAnime::useString)
+		.def_readonly("integer", &SsUserDataAnime::integer)
+		.def_readonly("point", &SsUserDataAnime::point)
+		.def_readonly("rect", &SsUserDataAnime::rect)
+		.def_readonly("string", &SsUserDataAnime::string)
+		;
+
+
 	//基本的にリードオンリーで定義しておく
 	class_<SsColor>("SsColor")
 		.def("toARGB" , &SsColor::toARGB )
@@ -34,6 +51,13 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 	class_<SsPoint2>("SsPoint2")
 		.def_readonly("x", &SsPoint2::x)
 		.def_readonly("y", &SsPoint2::y)
+		;
+
+	class_<SsIRect>("SsIRect")
+		.def_readonly("x", &SsIRect::x)
+		.def_readonly("y", &SsIRect::y)
+		.def_readonly("w", &SsIRect::w)
+		.def_readonly("h", &SsIRect::h)
 		;
 
 	class_<SsColorBlendValue>("SsColorBlendValue")
@@ -77,8 +101,10 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 		.def("interpolationType" , &Bind_SsKeyframe::InterpolationType )
 		.def("getCurveParam" , &Bind_SsKeyframe::getCurveParam , return_value_policy<reference_existing_object>())
 		.def("getValue" , &Bind_SsKeyframe::getValue , return_value_policy<reference_existing_object>())
-		.def("getColorAnime" , &Bind_SsKeyframe::getColorAnime , return_value_policy<reference_existing_object>() )
-		.def("getVertexAnime" , &Bind_SsKeyframe::getVertexAnime , return_value_policy<reference_existing_object>() )
+		.def("getColorAnime" , &Bind_SsKeyframe::getColorAnime , return_value_policy<manage_new_object>() )
+		.def("getVertexAnime" , &Bind_SsKeyframe::getVertexAnime , return_value_policy<manage_new_object>() )
+		.def("getRefCell" , &Bind_SsKeyframe::getRefCell , return_value_policy<manage_new_object>() )
+		.def("getUserDataAnime" , &Bind_SsKeyframe::getUserDataAnime , return_value_policy<manage_new_object>() )
 		;
 	
 

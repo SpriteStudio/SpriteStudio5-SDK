@@ -6,20 +6,19 @@
 class SsAnimeDecoder;
 class SsCelMapLinker;
 
-
 ///パーツが使用するセルの情報
 struct SsCellValue
 {
-	SsCell*			cell;		///参照しているセル
-	SsCelMapLinker*	cellmapl;	///参照しているセルが所属しているSsCelMapLinker -> ★SsCellMapへの参照でも良い気がする
-
-	ISSTexture*		texture;	///テクスチャ
-	SsVector2		uvs[5];		///使用するUV座標
-
+	SsCell*						cell;		///参照しているセル
+	ISSTexture*					texture;	///テクスチャ
+	SsVector2					uvs[5];		///使用するUV座標
+	SsTexWrapMode::_enum		wrapMode;	///< テクスチャのラップモード
+	SsTexFilterMode::_enum		filterMode;	///< テクスチャのフィルタモード
 
 	SsCellValue() :  
-	cell(0) , cellmapl(0) , texture(0) 
-	{}
+		cell(0) ,  
+		texture(0)
+		{}
 };
 
 class SsCelMapLinker

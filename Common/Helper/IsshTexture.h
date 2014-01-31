@@ -1,6 +1,16 @@
 #ifndef __ISSGraphTexture__
 #define __ISSGraphTexture__
 
+// nが2のべき乗かどうかチェックする
+inline bool SsUtTextureisPow2(int n)
+{
+	for (int i = 0; i < 16; i++)
+	{
+		if (n == (1 << i)) return true;
+	}
+	return false;
+}
+
 
 class ISSTexture
 {
@@ -10,6 +20,12 @@ public:
 
 	virtual bool	Load( const char* filename ) = 0;
 	virtual ISSTexture* create() = 0;
+
+	bool	isPow2()
+	{
+		return SsUtTextureisPow2( getWidth() ) && SsUtTextureisPow2( getHeight() );
+	}
+
 };
 
 class	SSTextureFactory
@@ -32,16 +48,6 @@ public:
 	static ISSTexture*	create(){ return m_texture_base_class->create(); }
 };
 
-
-// nが2のべき乗かどうかチェックする
-inline bool SsUtTextureisPow2(int n)
-{
-	for (int i = 0; i < 16; i++)
-	{
-		if (n == (1 << i)) return true;
-	}
-	return false;
-}
 
 
 #endif //ifdef __ISSGraphTexture__

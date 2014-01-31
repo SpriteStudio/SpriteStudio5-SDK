@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<SpriteStudioAnimePack version="1.00.00">
+<SpriteStudioAnimePack version="1.00.01">
 	<settings>
 		<fps>30</fps>
 		<frameCount>11</frameCount>
@@ -9,6 +9,7 @@
 		<bgColor>FF323232</bgColor>
 		<gridSize>32</gridSize>
 		<gridColor>FF808080</gridColor>
+		<outStartNum>0</outStartNum>
 	</settings>
 	<name>robo_x</name>
 	<exportPath></exportPath>
@@ -21,6 +22,13 @@
 				<type>null</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -32,6 +40,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -43,6 +58,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -54,6 +76,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -65,6 +94,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -76,6 +112,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -87,6 +130,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -98,6 +148,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -109,6 +166,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -120,6 +184,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -131,6 +202,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -142,6 +220,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -153,6 +238,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -164,6 +256,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -175,6 +274,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -186,6 +292,13 @@
 				<type>normal</type>
 				<boundsType>none</boundsType>
 				<inheritType>parent</inheritType>
+				<ineheritRates>
+					<FLPH>0</FLPH>
+					<FLPV>0</FLPV>
+					<HIDE>0</HIDE>
+					<IFLH>0</IFLH>
+					<IFLV>0</IFLV>
+				</ineheritRates>
 				<alphaBlendType>mix</alphaBlendType>
 				<show>1</show>
 				<locked>0</locked>
@@ -208,8 +321,9 @@
 				<bgColor>00000000</bgColor>
 				<gridSize>32</gridSize>
 				<gridColor>FF808080</gridColor>
+				<outStartNum>0</outStartNum>
 			</settings>
-			<labels/>
+			<labels />
 			<partAnimes>
 				<partAnime>
 					<partName>robo_x</partName>
@@ -232,6 +346,18 @@
 						<attribute tag="HIDE">
 							<key time="0">
 								<value>0</value>
+							</key>
+						</attribute>
+						<attribute tag="USER">
+							<key time="0">
+								<value>
+									<integer>2</integer>
+								</value>
+							</key>
+							<key time="9">
+								<value>
+									<integer>-13</integer>
+								</value>
 							</key>
 						</attribute>
 					</attributes>
@@ -842,6 +968,13 @@
 						<attribute tag="PVTY">
 							<key time="0" ipType="linear">
 								<value>0.125</value>
+							</key>
+						</attribute>
+						<attribute tag="USER">
+							<key time="0">
+								<value>
+									<integer>5</integer>
+								</value>
 							</key>
 						</attribute>
 					</attributes>
