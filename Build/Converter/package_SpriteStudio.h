@@ -35,6 +35,7 @@ public:
 };
 
 
+#define	BIND_RETURN_PROP( _a ) this->bind_inst->_a
 
 
 
@@ -50,6 +51,7 @@ public:
 #include "bind_SSXML.h"
 
 #include "bind_SsKeyframe.h"
+#include "bind_Cellmap.h"
 
 
 #endif

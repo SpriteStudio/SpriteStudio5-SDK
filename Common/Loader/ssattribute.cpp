@@ -130,5 +130,32 @@ void	GetSsUserDataAnime( const SsKeyframe* key , SsUserDataAnime& v )
 	v.point.x = v.point.y = 0;
 	v.rect.x = v.rect.y = v.rect.w = v.rect.h = 0; 
 	v.string = "";
+	v.useInteger = key->value.IsExistHashkey("integer");
+	v.usePoint = key->value.IsExistHashkey("point");
+	v.useRect = key->value.IsExistHashkey("rect");
+	v.useString = key->value.IsExistHashkey("string");
+
+	if ( v.useInteger )
+	{
+		v.integer = key->value["integer"].get<int>();
+	}
+
+	if ( v.usePoint )
+	{
+		const SsString& str = key->value["point"].get<SsString>();
+		StringToPoint2( str , v.point );
+	}
+	
+	if ( v.useRect )
+	{
+		const SsString& str = key->value["rect"].get<SsString>();
+		StringToIRect( str , v.rect );
+	}
+
+	if ( v.useString )
+	{
+		const SsString& str = key->value["string"].get<SsString>();
+		v.string = str;
+	}
 
 }

@@ -13,7 +13,8 @@ public:
 	SsString	name;			///< セル名称
 	SsPoint2	pos;			///< 左上の座標
 	SsPoint2	size;			///< WHピクセルサイズ
-	SsVector2	pivot;			///< 原点。size /2 が中央=0,0になる。
+	SsPoint2	pivot;			///< WHピクセルサイズ
+//	SsVector2	pivot;			///< 原点。size /2 が中央=0,0になる。
 	bool		rotated;		///< 左方向に９０度回転されている。uvs の割り当てが変わる。
 
 	SsCell(){}

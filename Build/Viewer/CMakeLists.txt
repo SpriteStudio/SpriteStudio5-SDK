@@ -113,6 +113,8 @@ ADD_EXECUTABLE(scriptbase_converter
 ../Converter/bind_SsKeyframe.h
 ../Converter/package_SpriteStudio.cpp
 ../Converter/package_SpriteStudio.h
+../Converter/bind_Cellmap.cpp
+../Converter/bind_Cellmap.h
 )
 
 IF (WIN32)

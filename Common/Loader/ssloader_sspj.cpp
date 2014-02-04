@@ -93,3 +93,8 @@ SsCellMap* SsProject::findCellMap( SsString& str )
 	}
 	return 0;
 }
+
+SsCellMap* SsProject::getCellMap( int index )
+{
+	return cellmapList[index];
+}

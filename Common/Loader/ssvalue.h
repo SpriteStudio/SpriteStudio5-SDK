@@ -147,6 +147,17 @@ public:
 		return *this;
 	}
 
+	bool	IsExistHashkey( const std::string& key ) const
+	{
+		if ( type == hash_type )
+		{
+			SsHash::const_iterator i = _hash->find(key);
+			return i != _hash->end();
+		}
+
+		return false;
+	}
+
 };
 
 template <> inline const SsString& SsValue::get<SsString>() const {

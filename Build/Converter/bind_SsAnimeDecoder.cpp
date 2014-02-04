@@ -22,7 +22,7 @@ Bind_SsAnimeDecoder::~Bind_SsAnimeDecoder()
 
 void Bind_SsAnimeDecoder::setFrame( int f )
 {
-	m_decoder->setPlayFrame( f );
+	m_decoder->setPlayFrame( (float)f );
 }
 void Bind_SsAnimeDecoder::update()
 {
@@ -82,7 +82,7 @@ int	Bind_SsAnimeDecoder::getPartNum()
 Bind_SsPart*	Bind_SsAnimeDecoder::getPart(int index)
 {
 	std::vector<SsPartAndAnime>& partAnimeList = this->m_decoder->getPartAnime();
-	if ( index > partAnimeList.size() ) return 0;
+	if ( index > (int)partAnimeList.size() ) return 0;
 
 	SsPart*	part = partAnimeList[index].first;
 	if ( part == 0 ) return 0;
@@ -95,7 +95,7 @@ Bind_SsPart*	Bind_SsAnimeDecoder::getPart(int index)
 Bind_SsPartAnime*	Bind_SsAnimeDecoder::getPartAnime(int index)
 {
 	std::vector<SsPartAndAnime>& partAnimeList = this->m_decoder->getPartAnime();
-	if ( index > partAnimeList.size() ) return 0;
+	if ( index > (int)partAnimeList.size() ) return 0;
 
 	SsPartAnime*	partAnime = partAnimeList[index].second;
 	if ( partAnime == 0 ) return 0;

@@ -352,6 +352,10 @@
 							<key time="0">
 								<value>
 									<integer>2</integer>
+									<point>90 10</point>
+									<rect>12 34 56 78</rect>
+									<string>nikuudon
+</string>
 								</value>
 							</key>
 							<key time="9">

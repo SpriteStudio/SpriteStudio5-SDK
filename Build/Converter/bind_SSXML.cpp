@@ -44,6 +44,40 @@ void Bind_SsProject::createAnimepack()
 	}
 }
 
+Bind_Cellmap*	Bind_SsProject::getCellMapAt( int at )
+{
+
+	//this->m_project->getCellMapList()[at];
+	SsCellMap* cellmap = this->m_project->getCellMap( at );
+
+	Bind_Cellmap* bcell = new Bind_Cellmap();
+	bcell->bind( cellmap );
+
+	return bcell;
+}
+
+
+Bind_Cellmap*	Bind_SsProject::getCellMapFromName( const char* name )
+{
+
+	SsString str = name;
+	SsCellMap* cellmap = this->m_project->findCellMap( str );
+	if ( cellmap == 0)
+	{
+
+		str+=".ssce";
+		cellmap = this->m_project->findCellMap( str );
+	}
+
+
+
+	Bind_Cellmap* bcell = new Bind_Cellmap();
+	bcell->bind( cellmap );
+
+	return bcell;
+
+}
+
 
 Bind_SsProject::Bind_SsProject()
 {

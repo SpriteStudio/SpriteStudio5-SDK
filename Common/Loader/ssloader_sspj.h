@@ -19,8 +19,6 @@
 //	<strictVer4>				//!< Ver4互換
 //	<availableAttributes>		//!< 使用するアトリビュート
 //	<defaultSetAttributes>	//!< 新規キー作成でデフォルトでキーが打たれるアトリビュート
-//	<wrapMode>				//!< テクスチャラップモード
-//	<filterMode>				//!< フィルターモード
 class	SsProjectSetting
 {
 public:
@@ -32,6 +30,8 @@ public:
 	SsString					imageBaseDirectory;			//!< 画像データの読み込み元先基準ディレクトリ。
 	SsString					exportBaseDirectory;		//!< エクスポート先の基準ディレクトリ。
 	bool						queryExportBaseDirectory;	//!< エクスポート先の基準ディレクトリ指定をさせるか？ 
+	SsTexWrapMode::_enum		wrapMode;					//!< テクスチャのラップモード
+	SsTexFilterMode::_enum		filterMode;					//!< テクスチャのフィルタモード
 
 	SsProjectSetting(){}
 	
@@ -43,7 +43,9 @@ public:
 		SSAR_DECLARE(imageBaseDirectory);
 		SSAR_DECLARE(exportBaseDirectory);
 		SSAR_DECLARE(queryExportBaseDirectory);
-	}
+		SSAR_DECLARE_ENUM( wrapMode );
+		SSAR_DECLARE_ENUM( filterMode );
+}
 };
 
 
@@ -95,6 +97,7 @@ public:
 	
 
 	SsCellMap* findCellMap( SsString& str );
+	SsCellMap* getCellMap( int index );
 
 
 	///シリアライズのための宣言です。

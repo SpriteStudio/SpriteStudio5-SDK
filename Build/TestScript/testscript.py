@@ -21,6 +21,17 @@ def test_ssxml() :
 		proj = ssxml.GetPrj() #ssxml.Loadで直接オブジェクトを得るで良いような
 		proj.debug() #情報の取得
 
+		#プロジェクト設定の読み出し
+		print "== Testing Project Setting =="
+		setting = proj.getSettings()
+		print "setting.animeBaseDirectory = %s" % setting.animeBaseDirectory
+		print "setting.cellMapBaseDirectory = %s" % setting.cellMapBaseDirectory
+		print "setting.imageBaseDirectory = %s" % setting.imageBaseDirectory
+		print "setting.exportBaseDirectory = %s" % setting.exportBaseDirectory
+		print "setting.queryExportBaseDirectory = %s" % setting.queryExportBaseDirectory
+		print "setting.wrapMode = %s" % setting.wrapMode
+		print "setting.filterMode = %s" % setting.filterMode
+
 		#アニメパックを取得する
 		#プロジェクトに格納されているアニメパックの数を得る
 		print proj.getAnimePackNum()
@@ -174,7 +185,7 @@ def test_ssxml() :
 
 						print "udat.integer=<%s>" % udat.integer					
 						print "udat.point=(%s,%s)" % ( udat.point.x , udat.point.y )
-						print "udat.point=(%s,%s,%s,%s)" % ( udat.rect.x , udat.rect.y , udat.rect.w , udat.rect.h )
+						print "udat.rect=(%s,%s,%s,%s)" % ( udat.rect.x , udat.rect.y , udat.rect.w , udat.rect.h )
 						print "udat.string=<%s>" % udat.string
 
 
@@ -184,8 +195,36 @@ def test_ssxml() :
 
 
 		#セルマップの取得
+
+		testcell_name = ""
 		print "== Testing Cellmap =="
 		print proj.getCellMapNum()
+		loopnum = proj.getCellMapNum()
+		for i in range(loopnum):
+			cellmap = proj.getCellMapAt(i)
+			if ( i == 0 ) :
+				testcell_name = cellmap.name
+
+			print "cellmap.name = <%s> " % cellmap.name
+			print "cellmap.imagePath = <%s> " % cellmap.imagePath
+			print "cellmap.pixelSize = ( %s , %s )" % ( cellmap.pixelSize.x , cellmap.pixelSize.y )
+			print "cellmap.overrideTexSettings = %s " % cellmap.overrideTexSettings
+			print "cellmap.wrapMode = %s " % cellmap.wrapMode
+			print "cellmap.filterMode = %s " % cellmap.filterMode
+			print "cellmap.length = %s " % cellmap.length
+
+			for n in range(cellmap.length):
+				cell = cellmap.getCell(n)				
+				print "cell.name = <%s>" % cell.name
+				print "cell.pos = (%s,%s)" % ( cell.pos.x , cell.pos.y )
+				print "cell.size = (%s,%s)" % ( cell.size.x , cell.size.y )
+				print "cell.pivot = (%s,%s)" % ( cell.pivot.x , cell.pivot.y )
+				print "cell.rotated = %s" % cell.rotated
+
+
+		print "== Testing Cellmap(getCellMapFromName) =="
+		cellmap = proj.getCellMapFromName(testcell_name)
+		print "cellmap.name = <%s> " % cellmap.name
 
 
 

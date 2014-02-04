@@ -222,6 +222,7 @@ inline bool	__SSAR_DECLARE_ATTRIBUTE_ENUM__( ISsXmlArchiver* ar ,myclass& type, 
 
 
 bool	StringToPoint2( const std::string& str , SsPoint2& point );
+bool	StringToIRect( const std::string& str , SsIRect& rect );
 
 
 ///SpriteStudio XMLデータ読み書きの初期化

@@ -22,6 +22,26 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 {
 	using namespace boost::python;
 
+	class_<Bind_Cell>("Bind_Cell")
+		.def("debug" , &Bind_Cell::debug )
+		.add_property("name", &Bind_Cell::name)
+		.add_property("pos", &Bind_Cell::pos)
+		.add_property("size", &Bind_Cell::size)
+		.add_property("pivot", &Bind_Cell::pivot)
+		.add_property("rotated", &Bind_Cell::rotated)
+		;
+
+	class_<Bind_Cellmap>("Bind_Cellmap")
+		.add_property("name", &Bind_Cellmap::name)
+		.add_property("imagePath", &Bind_Cellmap::imagePath)
+		.add_property("pixelSize", &Bind_Cellmap::pixelSize)
+		.add_property("overrideTexSettings", &Bind_Cellmap::overrideTexSettings)
+		.add_property("wrapMode", &Bind_Cellmap::wrapMode)
+		.add_property("filterMode", &Bind_Cellmap::filterMode)
+		.add_property("length", &Bind_Cellmap::getCellNum)
+		.def("getCell" , &Bind_Cellmap::getCell , return_value_policy<manage_new_object>() )
+		;
+
 	class_<SsRefCell>("SsRefCell")
 		.def_readonly("mapid", &SsRefCell::mapid)
 		.def_readonly("name", &SsRefCell::name)
@@ -155,12 +175,26 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 		.def("getAnimeDecoderByIndex" , &Bind_SsAnimePack::getAnimeDecoderByIndex , return_value_policy<manage_new_object>() )
 			;
 
+	class_<Bind_SsProjectSetting>("Bind_SsProjectSetting")
+		.add_property("animeBaseDirectory", &Bind_SsProjectSetting::animeBaseDirectory)
+		.add_property("cellMapBaseDirectory", &Bind_SsProjectSetting::cellMapBaseDirectory)
+		.add_property("imageBaseDirectory", &Bind_SsProjectSetting::imageBaseDirectory)
+		.add_property("exportBaseDirectory", &Bind_SsProjectSetting::exportBaseDirectory)
+		.add_property("queryExportBaseDirectory", &Bind_SsProjectSetting::queryExportBaseDirectory)
+		.add_property("wrapMode", &Bind_SsProjectSetting::wrapMode)
+		.add_property("filterMode", &Bind_SsProjectSetting::filterMode)
+		;
+
 	class_<Bind_SsProject>("SsProject")
 		.def("debug" , &Bind_SsProject::debug )
 		.def("getAnimePackNum" , &Bind_SsProject::getAnimePackNum )
 		.def("getCellMapNum" , &Bind_SsProject::getCellMapNum )
 		.def("AnimePackAt" , &Bind_SsProject::AnimePackAt , return_value_policy<copy_const_reference>())
-		;
+		.def("getCellMapAt" , &Bind_SsProject::getCellMapAt , return_value_policy<manage_new_object>() )
+		.def("getCellMapFromName" , &Bind_SsProject::getCellMapFromName , return_value_policy<manage_new_object>() )
+//		.add_property("setting", &Bind_SsProject::settings)
+		.def("getSettings" , &Bind_SsProject::settings , return_value_policy<reference_existing_object>())
+	;
 
 	class_<SSXML>("SSXML")
 		.def("Load" , &SSXML::Load )
