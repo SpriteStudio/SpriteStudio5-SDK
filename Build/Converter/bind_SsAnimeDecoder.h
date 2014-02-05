@@ -8,6 +8,8 @@
 class Bind_SsPartAnime;
 class Bind_SsPart;
 class SsAnimeDecoder;
+class Bind_SsPartState;
+
 class Bind_SsAnimeDecoder
 {
 private:
@@ -22,9 +24,15 @@ public:
 	void setFrame( int f );
 	void update();
 
-	Bind_SsPart*		getPart(int index);
 	int					getPartNum();
+	Bind_SsPart*		getPart(int index);
 	Bind_SsPartAnime*	getPartAnime(int index);
+	Bind_SsPartState*	getPartState( int index );
+
+	int	getFrameLength();
+	int	getAnimeFPS();
+
+
 };
 
 

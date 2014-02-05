@@ -1,14 +1,63 @@
 import SpriteStudio
+import numpy
 from struct import *
 from sstype import *
 import os
 
+#===============================================================================
+#bakeデータのテスト
+#===============================================================================
+def test_update() :
+	print "== test_update =="
+	ssxml = SpriteStudio.SSXML()
+
+	if ssxml.Load("../TestData/RoboProject.sspj") == True : #大仏のデータを読んでみるよ
+		proj = ssxml.GetPrj() 
+
+		#プロジェクトからアニメパックを取得
+		animepack = proj.AnimePackAt(5)
+		anime_decoder = animepack.getAnimeDecoderByName("robo_x")
+		if anime_decoder != 0 :
+			print "setting fps = %s" % anime_decoder.getAnimeFPS()
+			print "setting framelength = %s" % anime_decoder.getFrameLength()
+
+			#フレーム数計算する
+			for i in range(anime_decoder.getFrameLength()):
+				#計算するフレームを設定する 
+				anime_decoder.setFrame(i)
+				anime_decoder.update()			
+				loopnum = anime_decoder.getPartNum()
+				for n in range(loopnum):
+					state = anime_decoder.getPartState(n)
+					print "[%s] state.index = %s" % ( n , state.index )
+
+					print "次元数 %s" % state.vertices.ndim #次元数
+					print "サイズ %s" % state.vertices.size #サイズ
+					print "各次元要素 %s" % state.vertices.shape #各次元要素
+					print "1要素のバイト数 %s" % state.vertices.itemsize #1要素のバイト数
+					print "行バイト %s" % state.vertices.strides #行バイト
+					print "配列全体のバイト %s" % state.vertices.nbytes #配列全体のバイト
+					print "配列のタイプ %s" % state.vertices.dtype #配列のタイプ
+
+					for vn in range(3*5):
+						print "state.vertices[%s] = %s" % (vn , state.vertices[vn])
+
+					print "[%s] state.position = (%s,%s,%s)" % ( n , state.position.x , state.position.y , state.position.z )
+					print "[%s] state.rotation = (%s,%s,%s)" % ( n , state.rotation.x , state.rotation.y , state.rotation.z )
+					print "[%s] state.scale = (%s,%s)" % ( n , state.scale.x , state.scale.y )
+					print "[%s] state.alpha = (%s)" % ( n , state.alpha )
 
 
+
+#===============================================================================
+#タグ変換テスト
+#===============================================================================
 def sstype_test() :
 	print AttributeKindToSS4Tag(AttributeKind.prio)
 
-
+#===============================================================================
+#xml読み出しテスト
+#===============================================================================
 def test_ssxml() :
 	ssxml = SpriteStudio.SSXML()
 	print "sspj Load ..."
@@ -37,7 +86,7 @@ def test_ssxml() :
 		print proj.getAnimePackNum()
 
 		print "== Testing AnimePack =="
-		#プロジェクトからアニメパックを取得（０番）
+		#プロジェクトからアニメパックを取得
 		animepack = proj.AnimePackAt(5)
 		print animepack.debug()
 
@@ -46,17 +95,7 @@ def test_ssxml() :
 		#anime_decoder = animepack.getAnimeDecoderByName("motion 1")
 		anime_decoder = animepack.getAnimeDecoderByName("robo_x")
 
-		if anime_decoder != 0 :
-			# 1フレーム毎の計算済みデータの取得
-			#0フレーム目
-			anime_decoder.setFrame(0)
-			anime_decoder.update()			
-			anime_decoder.debug() #デバッグ表示
-			#10フレーム目
-			anime_decoder.setFrame(10)
-			anime_decoder.update()			
-			anime_decoder.debug() #デバッグ表示
-			
+		if anime_decoder != 0 :			
 			#パーツを取得してみる これは計算されておらず純粋にＸＭＬドキュメントを統合して整理されたり
 			#要素同士が結びつけられたデータとなる
 			loopnum = anime_decoder.getPartNum()
@@ -181,21 +220,15 @@ def test_ssxml() :
 						print "udat.usePoint=<%s>" % udat.usePoint
 						print "udat.useRect=<%s>" % udat.useRect
 						print "udat.useString=<%s>" % udat.useString
-
-
 						print "udat.integer=<%s>" % udat.integer					
 						print "udat.point=(%s,%s)" % ( udat.point.x , udat.point.y )
 						print "udat.rect=(%s,%s,%s,%s)" % ( udat.rect.x , udat.rect.y , udat.rect.w , udat.rect.h )
 						print "udat.string=<%s>" % udat.string
-
-
 						#次のキーを取得
 						key = attribute.nextKey()
 
 
-
 		#セルマップの取得
-
 		testcell_name = ""
 		print "== Testing Cellmap =="
 		print proj.getCellMapNum()
@@ -221,7 +254,6 @@ def test_ssxml() :
 				print "cell.pivot = (%s,%s)" % ( cell.pivot.x , cell.pivot.y )
 				print "cell.rotated = %s" % cell.rotated
 
-
 		print "== Testing Cellmap(getCellMapFromName) =="
 		cellmap = proj.getCellMapFromName(testcell_name)
 		print "cellmap.name = <%s> " % cellmap.name
@@ -234,11 +266,8 @@ def test_ssxml() :
 def main() : 
 
 	test_ssxml()
-
-	#バイナリ形式で出力してみるよ	（途中
-	f = open("test.dat", "wb")
-	f.write(pack('B', 0x01))
-	f.close();
+	test_update()
+	
 
 #------------------------------------------
 if  __name__ =="__main__":

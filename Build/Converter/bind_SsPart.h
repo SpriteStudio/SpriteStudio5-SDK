@@ -8,6 +8,8 @@
 class Bind_SsPart : public myPyBinder<SsPart>
 {
 public:
+	float	aaaa[10];
+
 	Bind_SsPart(){}
 	Bind_SsPart(SsPart* p){bind(p);}
 	virtual ~Bind_SsPart(){}
@@ -25,7 +27,13 @@ public:
 	int			show(){return (int)bind_inst->show; }
 	int			locked(){return (int)bind_inst->locked; }
 	float		inheritRates(int type){ return (float)bind_inst->inheritRates[type]; }
+
+	boost::python::numeric::array	array_(){ 
+		boost::python::numeric::array aa(aaaa);
+		return aa; 
+	}
 };
 
 
 #endif
+	

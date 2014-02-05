@@ -4,6 +4,9 @@
 #include    <stdio.h>
 #include    <Python.h>
 #include    <boost/python.hpp>
+#include <boost/python/numeric.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+
 
 #include	<fstream>
 #include	<iostream>
@@ -21,6 +24,42 @@ using namespace std;
 BOOST_PYTHON_MODULE(SpriteStudio)
 {
 	using namespace boost::python;
+
+	//numpyモジュールを使用する
+	numeric::array::set_module_and_type("numpy", "ndarray");
+
+	class_<std::vector<float> > ("PyVecFloat")
+	    .def(boost::python::vector_indexing_suite<std::vector<float> > () )
+		;
+
+	class_<Bind_SsPartState>("Bind_SsPartState")
+		.add_property("index", &Bind_SsPartState::index)
+		.add_property("vertices", &Bind_SsPartState::vertices)
+		.add_property("colors", &Bind_SsPartState::colors)
+		.add_property("uvs", &Bind_SsPartState::uvs)
+		.add_property("matrix", &Bind_SsPartState::matrix)
+		.add_property("position", &Bind_SsPartState::position)
+		.add_property("rotation", &Bind_SsPartState::rotation)
+		.add_property("scale", &Bind_SsPartState::scale)
+		.add_property("alpha", &Bind_SsPartState::alpha)
+		.add_property("prio", &Bind_SsPartState::prio)
+		.add_property("hFlip", &Bind_SsPartState::hFlip)
+		.add_property("vFlip", &Bind_SsPartState::vFlip)
+		.add_property("hide", &Bind_SsPartState::hide)
+		.add_property("pivotOffset", &Bind_SsPartState::pivotOffset)
+		.add_property("anchor", &Bind_SsPartState::anchor)
+		.add_property("size", &Bind_SsPartState::size)
+		.add_property("imageFlipH", &Bind_SsPartState::imageFlipH)
+		.add_property("imageFlipV", &Bind_SsPartState::imageFlipV)
+		.add_property("uvTranslate", &Bind_SsPartState::uvTranslate)
+		.add_property("uvRotation", &Bind_SsPartState::uvRotation)
+		.add_property("uvScale", &Bind_SsPartState::uvScale)
+		.add_property("boundingRadius", &Bind_SsPartState::boundingRadius)
+		.add_property("noCells", &Bind_SsPartState::noCells)
+		.add_property("is_color_blend", &Bind_SsPartState::is_color_blend)
+		.add_property("is_vertex_transform", &Bind_SsPartState::is_vertex_transform)
+		.add_property("alphaBlendType", &Bind_SsPartState::alphaBlendType)
+		;
 
 	class_<Bind_Cell>("Bind_Cell")
 		.def("debug" , &Bind_Cell::debug )
@@ -71,6 +110,12 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 	class_<SsPoint2>("SsPoint2")
 		.def_readonly("x", &SsPoint2::x)
 		.def_readonly("y", &SsPoint2::y)
+		;
+
+	class_<SsVector3>("SsVector3")
+		.def_readonly("x", &SsVector3::x)
+		.def_readonly("y", &SsVector3::y)
+		.def_readonly("z", &SsVector3::z)
 		;
 
 	class_<SsIRect>("SsIRect")
@@ -166,6 +211,9 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 		.def("getPartNum" , &Bind_SsAnimeDecoder::getPartNum )
 		.def("getPart" , &Bind_SsAnimeDecoder::getPart , return_value_policy<manage_new_object>() )
 		.def("getPartAnime" , &Bind_SsAnimeDecoder::getPartAnime , return_value_policy<manage_new_object>() )
+		.def("getFrameLength" , &Bind_SsAnimeDecoder::getFrameLength )
+		.def("getAnimeFPS" , &Bind_SsAnimeDecoder::getAnimeFPS )
+		.def("getPartState" , &Bind_SsAnimeDecoder::getPartState , return_value_policy<manage_new_object>() )
 		;
 
 	class_<Bind_SsAnimePack>("SsAnimePack")

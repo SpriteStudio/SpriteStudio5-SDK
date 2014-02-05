@@ -35,8 +35,32 @@ public:
 };
 
 
-#define	BIND_RETURN_PROP( _a ) this->bind_inst->_a
 
+#define	BIND_RETURN_PROP( _a ) this->bind_inst->_a
+#define	BIND_RETURN_PROPEX( type, _a ) type _a() { return (type)this->bind_inst->_a; }
+
+#if 1 
+
+#define	BIND_RETURN_PROPEX_ARRAY( type , _a ) \
+	boost::python::numeric::array _a() { \
+		std::vector<type> array_;\
+		size_t len = sizeof(this->bind_inst->_a) / sizeof(type);\
+		for ( size_t i = 0 ; i < len ; i++ )\
+		{\
+			array_.push_back(this->bind_inst->_a[i]);\
+		}\
+		boost::python::numeric::array _aa(array_);\
+		return _aa; }\
+
+#else
+
+#define	BIND_RETURN_PROPEX_ARRAY( type , _a ) \
+	boost::python::numeric::array _a() { \
+		boost::python::numeric::array _aa(this->bind_inst->_a);\
+		_aa.resize( 12 );\
+		return _aa; }\
+
+#endif
 
 
 #include "ssloader.h"

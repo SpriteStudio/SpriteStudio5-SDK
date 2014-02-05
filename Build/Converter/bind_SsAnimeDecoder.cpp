@@ -103,3 +103,37 @@ Bind_SsPartAnime*	Bind_SsAnimeDecoder::getPartAnime(int index)
 
 	return new Bind_SsPartAnime(partAnime);
 }
+
+
+Bind_SsPartState*	Bind_SsAnimeDecoder::getPartState( int index )
+{
+	Bind_SsPartState* state = new Bind_SsPartState();
+
+	state->bind(0);
+	std::list<SsPartState*>&	sortlist = this->m_decoder->getPartSortList();
+	int c = 0;
+	foreach( std::list<SsPartState*> , sortlist , e )
+	{
+		if ( index == c ) 
+		{
+			state->bind( *e );
+			return state;
+		}
+		c++;
+	}
+	return state;
+	
+}
+
+
+
+int	Bind_SsAnimeDecoder::getFrameLength()
+{
+	return m_decoder->getAnimeEndFrame();
+}
+
+int	Bind_SsAnimeDecoder::getAnimeFPS()
+{
+	return m_decoder->getAnimeFPS();
+}
+
