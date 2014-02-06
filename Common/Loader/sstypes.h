@@ -498,7 +498,10 @@ struct SsColorAnime
 	SsColorBlendValue&			getColors(int index){ return colors[index];}
 	int							getTargetToInt(){ return (int)target;}
 	int							getBlendTypeToInt(){ return (int)blendType;}
-	
+	SsColorAnime() : 
+			target( SsColorBlendTarget::invalid ) ,
+				blendType( SsBlendType::invalid ){}
+
 };
 
 //参照セル値

@@ -12,7 +12,7 @@ struct SsPartState
 {
 	int				index;				///パーツのインデックスと一対一になるID
 
-	float			vertices[3 * 10];	///< 座標
+	float			vertices[3 * 5];	///< 座標
 	float			colors[4 * 4];		///< カラー (４頂点分）
 	float			uvs[2 * 5];			///< UV		(４隅＋中央)
 	float			matrix[4 * 4];		///< 行列
@@ -54,6 +54,9 @@ struct SsPartState
 	void	init()
 	{
 		memset( vertices , 0 , sizeof( vertices ) );
+		memset( colors , 0 , sizeof( colors ) );
+		memset( uvs , 0 , sizeof( uvs ) );
+		memset( matrix , 0 , sizeof( matrix ) );
 		//cell = 0;
 		position = SsVector3( 0.0f , 0.0f, 0.0f );
 		rotation = SsVector3( 0.0f , 0.0f , 0.0f );

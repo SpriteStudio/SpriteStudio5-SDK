@@ -7,6 +7,8 @@
 #include <boost/python.hpp>
 #include <boost/python/numeric.hpp>
 
+//#include "ssplayer_cellmap.h"
+//#include "bind_Cellmap.h"
 
 class Bind_Animation {
 public:
@@ -16,6 +18,8 @@ public:
     }
 };
 
+
+class Bind_SsCellValue;
 
 class Bind_SsPartState : public myPyBinder<SsPartState>
 {
@@ -27,11 +31,10 @@ public:
 
 	BIND_RETURN_PROPEX( int , index );
 
-	BIND_RETURN_PROPEX_ARRAY( float , vertices );
-	BIND_RETURN_PROPEX_ARRAY( float , colors );
-	BIND_RETURN_PROPEX_ARRAY( float , uvs );
-	BIND_RETURN_PROPEX_ARRAY( float , matrix );
-
+	BIND_RETURN_PROPEX_ARRAY( float , vertices , 5 , 3 );
+	BIND_RETURN_PROPEX_ARRAY( float , colors,	4, 4);
+	BIND_RETURN_PROPEX_ARRAY( float , uvs ,	5, 2);
+	BIND_RETURN_PROPEX_ARRAY( float , matrix,4,4 );
 	BIND_RETURN_PROPEX( SsVector3 , position );
 	BIND_RETURN_PROPEX( SsVector3 , rotation );
 	BIND_RETURN_PROPEX( SsVector2 , scale );
@@ -59,6 +62,13 @@ public:
 
 	BIND_RETURN_PROPEX( int , alphaBlendType );
 
+	BIND_RETURN_PROPEX( SsColorAnime , colorValue );
+	BIND_RETURN_PROPEX( SsVertexAnime , vertexValue );
+
+
+	Bind_SsCellValue*	cellValue();
+
+	//BIND_NEW_PROP_REF(	Bind_SsCellValue , cellValue );
 
 	//以下は別途
 //	SsCellValue		cellValue;		///< セルアニメの値

@@ -38,10 +38,35 @@ public:
 
 #define	BIND_RETURN_PROP( _a ) this->bind_inst->_a
 #define	BIND_RETURN_PROPEX( type, _a ) type _a() { return (type)this->bind_inst->_a; }
+#define	BIND_NEW_PROP( type, _a ) \
+	type* _a() { \
+		type* new_type = new type();\
+		new_type->bind(bind_inst->_a);\
+		return new_type;\
+	}\
+
+
+#define	BIND_NEW_PROP_REF( type, _a ) \
+	type* _a() { \
+		type* new_type = new type();\
+		new_type->bind(&bind_inst->_a);\
+		return new_type;\
+	}\
+
 
 #if 1 
 
-#define	BIND_RETURN_PROPEX_ARRAY( type , _a ) \
+inline void	_bp_array_resize( boost::python::numeric::array& _array , int x , int  y)
+{
+	if ( y == 0 )
+	{
+		_array.resize( x );
+	}else{
+		_array.resize( boost::python::make_tuple(x, y) );
+	}
+}
+
+#define	BIND_RETURN_PROPEX_ARRAY( type , _a ,_dx,_dy) \
 	boost::python::numeric::array _a() { \
 		std::vector<type> array_;\
 		size_t len = sizeof(this->bind_inst->_a) / sizeof(type);\
@@ -50,6 +75,7 @@ public:
 			array_.push_back(this->bind_inst->_a[i]);\
 		}\
 		boost::python::numeric::array _aa(array_);\
+		_bp_array_resize( _aa , _dx , _dy );\
 		return _aa; }\
 
 #else

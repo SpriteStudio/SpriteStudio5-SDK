@@ -126,6 +126,36 @@ void	SsRenderGL::renderSetup()
 }
 
 
+static void	SetAlphaBlendMode(SsPartState* state)
+{
+	glBlendEquation( GL_FUNC_ADD );
+
+	// 演算方法の指定
+	switch (state->alphaBlendType)
+	{
+	case SsBlendType::mix:
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		break;
+	case SsBlendType::mul:
+		// TODO SrcAlpha を透明度として使えない
+		//glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+		glBlendFuncSeparateEXT( GL_ZERO, GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_ONE );
+		break;
+	case SsBlendType::add:
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		//glBlendFuncSeparateEXT( GL_SRC_ALPHA, GL_ONE, GL_SRC_ALPHA, GL_ONE );
+
+		break;
+	case SsBlendType::sub:
+		// TODO SrcAlpha を透明度として使えない
+		glBlendEquation( GL_FUNC_REVERSE_SUBTRACT );
+		glBlendFuncSeparateEXT( GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_DST_ALPHA );
+
+		break;
+	}
+}
+
+
 void	SsRenderGL::renderPart( SsPartState* state )
 {
 	bool texture_is_pow2 = true;
@@ -138,7 +168,7 @@ void	SsRenderGL::renderPart( SsPartState* state )
 	float	rates[5];
 
 
-	if ( state->hide ) return ;
+	if ( state->hide ) return ; //非表示なので処理をしない
 
 
 	SsCell * cell = state->cellValue.cell;
@@ -187,12 +217,10 @@ void	SsRenderGL::renderPart( SsPartState* state )
 		SSTextureGL* tex_gl = (SSTextureGL*)texture;
 		glBindTexture(gl_target, tex_gl->tex);
 
-
 		// フィルタ
 		GLint filterMode;
 		SsTexFilterMode::_enum fmode = state->cellValue.filterMode;
 		SsTexWrapMode::_enum wmode = state->cellValue.wrapMode;
-
 
 
 		switch (fmode)
@@ -341,160 +369,109 @@ void	SsRenderGL::renderPart( SsPartState* state )
         glBindTexture(gl_target, 0);
 	}
 
-	// αブレンド
-	{
-
-		glBlendEquation( GL_FUNC_ADD );
-
-		// 演算方法の指定
-		switch (state->alphaBlendType)
-		{
-		case SsBlendType::mix:
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			break;
-		case SsBlendType::mul:
-			// TODO SrcAlpha を透明度として使えない
-			//glBlendFunc(GL_ZERO, GL_SRC_COLOR);
-			glBlendFuncSeparateEXT( GL_ZERO, GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_ONE );
-			break;
-		case SsBlendType::add:
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-			//glBlendFuncSeparateEXT( GL_SRC_ALPHA, GL_ONE, GL_SRC_ALPHA, GL_ONE );
-
-			break;
-		case SsBlendType::sub:
-			// TODO SrcAlpha を透明度として使えない
-			glBlendEquation( GL_FUNC_REVERSE_SUBTRACT );
-			glBlendFuncSeparateEXT( GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_DST_ALPHA );
-
-			break;
-		}
-	}
+	// αブレンドの設定
+	SetAlphaBlendMode( state );
 
 
-#if 1
 	// 頂点カラーの指定
+	//SsAttrKeyList *	keys = anime ? anime->keyframes(SsAttributeKind::color) : NULL;
+	void* keys = 0;
+	if (state->is_color_blend)
 	{
-		//SsAttrKeyList *	keys = anime ? anime->keyframes(SsAttributeKind::color) : NULL;
-		void* keys = 0;
-		if (state->is_color_blend)
+		colorBlendEnabled = true;
+		// 頂点カラーがある時だけブレンド計算する
+		if ( state->colorValue.target == SsColorBlendTarget::whole)
 		{
-			colorBlendEnabled = true;
-			// 頂点カラーがある時だけブレンド計算する
-			if ( state->colorValue.target == SsColorBlendTarget::whole)
+			// 単色
+			const SsColorBlendValue& cbv = state->colorValue.color;
+			// RGB値の事前ブレンド
+			blendColor_( state->colors, state->colorValue.blendType, cbv);
+			// α値のブレンド。常に乗算とする。
+			state->colors[3] = blendColorValue_(SsBlendType::mul, cbv.rgba.a * state->alpha, cbv.rate);
+			rates[0] = cbv.rate;
+			vertexID[0] = 0;
+
+			// 残り３つは先頭のをコピー
+			for (int i = 1; i < 5; ++i)
 			{
-				// 単色
-				const SsColorBlendValue& cbv = state->colorValue.color;
-				// RGB値の事前ブレンド
-				blendColor_( state->colors, state->colorValue.blendType, cbv);
-				// α値のブレンド。常に乗算とする。
-				state->colors[3] = blendColorValue_(SsBlendType::mul, cbv.rgba.a * state->alpha, cbv.rate);
-				rates[0] = cbv.rate;
-				vertexID[0] = 0;
-
-				// 残り３つは先頭のをコピー
-				for (int i = 1; i < 5; ++i)
-				{
-					memcpy( state->colors + i * 4, state->colors, sizeof(state->colors[0]) * 4);
-					rates[i] = cbv.rate;
-					vertexID[i*2] = 0;
-					vertexID[i*2+1] = 0;
-					//vertexID[i] = 0;
-				}
-			}
-			else
-			{
-
-				color_blend_v4 = true;
-				state->colors[4*4+0] = 0 ;
-				state->colors[4*4+1] = 0 ;
-				state->colors[4*4+2] = 0 ;
-				state->colors[4*4+3] = 0 ;
-				rates[4] = 0 ;
-
-
-				// 頂点単位
-				for (int i = 0; i < 4; ++i)
-				{
-					// RGB値の事前ブレンド
-					const SsColorBlendValue& cbv = state->colorValue.colors[i];
-					blendColor_( state->colors + i * 4, state->colorValue.blendType, cbv);
-					// α値のブレンド。常に乗算とする。
-					state->colors[i * 4 + 3] = blendColorValue_(SsBlendType::mul, cbv.rgba.a * state->alpha, cbv.rate);
-					rates[i] = cbv.rate;
-					vertexID[i*2] = i;
-					vertexID[i*2+1] = i;
-				}
-
-#if USE_TRIANGLE_FIN
-				float a,r,g,b ,rate;
-				a = r = g = b = rate = 0;
-				for  ( int i = 0 ; i < 4 ; i ++ )
-				{
-					a+=state->colors[i*4+0];
-					r+=state->colors[i*4+1];
-					g+=state->colors[i*4+2];
-					b+=state->colors[i*4+3];
-					rate+=rates[i];
-				}
-
-
-
-				//きれいな頂点変形への対応
-				vertexID[4*2] = 4;
-				vertexID[4*2+1] = 4;
-
-				state->colors[4*4+0]=a/4.0f;
-				state->colors[4*4+1]=r/4.0f;
-				state->colors[4*4+2]=g/4.0f;
-				state->colors[4*4+3]=b/4.0f;
-				rates[4]= rate / 4.0f;
-#endif
-
+				memcpy( state->colors + i * 4, state->colors, sizeof(state->colors[0]) * 4);
+				rates[i] = cbv.rate;
+				vertexID[i*2] = 0;
+				vertexID[i*2+1] = 0;
+				//vertexID[i] = 0;
 			}
 		}
 		else
 		{
-			for (int i = 0; i < 5; ++i)
-				state->colors[i * 4 + 3] = state->alpha;
 
-			// カラーは１００％テクスチャ
-			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
-			glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
-			glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE0);
-			// αだけ合成
-			glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
-			glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_TEXTURE0);
-			glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_PRIMARY_COLOR);
-			glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
-			glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
+			color_blend_v4 = true;
+			state->colors[4*4+0] = 0 ;
+			state->colors[4*4+1] = 0 ;
+			state->colors[4*4+2] = 0 ;
+			state->colors[4*4+3] = 0 ;
+			rates[4] = 0 ;
+
+
+			// 頂点単位
+			for (int i = 0; i < 4; ++i)
+			{
+				// RGB値の事前ブレンド
+				const SsColorBlendValue& cbv = state->colorValue.colors[i];
+				blendColor_( state->colors + i * 4, state->colorValue.blendType, cbv);
+				// α値のブレンド。常に乗算とする。
+				state->colors[i * 4 + 3] = blendColorValue_(SsBlendType::mul, cbv.rgba.a * state->alpha, cbv.rate);
+				rates[i] = cbv.rate;
+				vertexID[i*2] = i;
+				vertexID[i*2+1] = i;
+			}
+
+#if USE_TRIANGLE_FIN
+			float a,r,g,b ,rate;
+			a = r = g = b = rate = 0;
+			for  ( int i = 0 ; i < 4 ; i ++ )
+			{
+				a+=state->colors[i*4+0];
+				r+=state->colors[i*4+1];
+				g+=state->colors[i*4+2];
+				b+=state->colors[i*4+3];
+				rate+=rates[i];
+			}
+
+
+
+			//5頂点での頂点変形への対応
+			vertexID[4*2] = 4;
+			vertexID[4*2+1] = 4;
+
+			state->colors[4*4+0]=a/4.0f;
+			state->colors[4*4+1]=r/4.0f;
+			state->colors[4*4+2]=g/4.0f;
+			state->colors[4*4+3]=b/4.0f;
+			rates[4]= rate / 4.0f;
+#endif
+
 		}
+	}
+	else
+	{
+		for (int i = 0; i < 5; ++i)
+			state->colors[i * 4 + 3] = state->alpha;
 
-
-		glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(4, GL_FLOAT, 0, (GLvoid *)state->colors);
+		// カラーは１００％テクスチャ
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
+		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
+		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE0);
+		// αだけ合成
+		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
+		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_TEXTURE0);
+		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_PRIMARY_COLOR);
+		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
+		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
 	}
 
-#else
-	for (int i = 0; i < 5; ++i)
-		state->colors[i * 4 + 3] = state->alpha;
-
-	// カラーは１００％テクスチャ
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
-	glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
-	glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_RGB, GL_TEXTURE0);
-	// αだけ合成
-	glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_MODULATE);
-	glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE0_ALPHA, GL_TEXTURE0);
-	glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_PRIMARY_COLOR);
-	glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
-	glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glColorPointer(4, GL_FLOAT, 0, (GLvoid *)state->colors);
-
-#endif
-
 
 
 	// 頂点バッファの設定
@@ -506,17 +483,12 @@ void	SsRenderGL::renderPart( SsPartState* state )
 
 	// update で計算しておいた行列をロード
 	glMatrixMode(GL_MODELVIEW);
-//	glLoadIdentity();
 	glLoadMatrixf(state->matrix);
 
 	GLint VertexLocation;
-//glpgObject = 0;
 	if (state->noCells)
 	{
-		// TODO とりあえず当たり判定パーツなのでただポリゴンを描く
-		// -> レイアウトビューへ持っていきました  kurooka
-		//glDisable(GL_TEXTURE_2D);
-		//glPopMatrix();
+		//セルが無いので描画を行わない
 	}else{
 
 #if PROGRAMABLE_SHADER_ON
@@ -555,12 +527,10 @@ void	SsRenderGL::renderPart( SsPartState* state )
 #endif
 
 #if USE_TRIANGLE_FIN
-			//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		if ( state->is_vertex_transform || state->is_color_blend )
 		{
 			static const GLubyte indices[] = { 4 , 3, 1, 0, 2 , 3};
 			glDrawElements(GL_TRIANGLE_FAN, 6, GL_UNSIGNED_BYTE, indices);
-//			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}else{
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -593,6 +563,8 @@ void	SsRenderGL::renderPart( SsPartState* state )
 		glDisable(gl_target);
 	}
 	glDisable(GL_TEXTURE_2D);
+
+	//ブレンドモード　減算時の設定を戻す
 	glBlendEquation( GL_FUNC_ADD );
 
 }

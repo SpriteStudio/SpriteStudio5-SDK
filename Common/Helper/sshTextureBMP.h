@@ -14,8 +14,10 @@ public:
 	int tex_width;
 	int	tex_height;
 
+	std::string m_filename;
+
 public:
-	SSTextureBMP() : tex_width(0) , tex_height(0) {}
+	SSTextureBMP() : tex_width(0) , tex_height(0) , m_filename(""){}
 	virtual ~SSTextureBMP(){}
 	bool Load( const char* fname );
 
@@ -23,7 +25,7 @@ public:
 	virtual int	getHeight() { return tex_height; }
 
 	virtual ISSTexture* create(){ return new SSTextureBMP(); }
-
+	virtual const char*	getFilename(){ return m_filename.c_str(); }
 };
 
 

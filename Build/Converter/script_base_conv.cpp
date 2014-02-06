@@ -32,6 +32,20 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 	    .def(boost::python::vector_indexing_suite<std::vector<float> > () )
 		;
 
+	class_<Bind_SsTexture>("Bind_SsTexture")
+		.add_property("width", &Bind_SsTexture::getWidth)
+		.add_property("height", &Bind_SsTexture::getHeight)
+		.add_property("filename", &Bind_SsTexture::getFilename)
+		;
+
+	class_<Bind_SsCellValue>("Bind_SsCellValue")
+		.add_property("wrapMode", &Bind_SsCellValue::wrapMode)
+		.add_property("filterMode", &Bind_SsCellValue::filterMode)
+		.def("getUvs" , &Bind_SsCellValue::getuvs )
+		.def("getCell" , &Bind_SsCellValue::cell , return_value_policy<manage_new_object>() )
+		.def("getTexture" , &Bind_SsCellValue::texture , return_value_policy<manage_new_object>() )
+		;
+
 	class_<Bind_SsPartState>("Bind_SsPartState")
 		.add_property("index", &Bind_SsPartState::index)
 		.add_property("vertices", &Bind_SsPartState::vertices)
@@ -59,6 +73,9 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 		.add_property("is_color_blend", &Bind_SsPartState::is_color_blend)
 		.add_property("is_vertex_transform", &Bind_SsPartState::is_vertex_transform)
 		.add_property("alphaBlendType", &Bind_SsPartState::alphaBlendType)
+		.add_property("colorValue", &Bind_SsPartState::colorValue)
+		.add_property("vertexValue", &Bind_SsPartState::vertexValue)
+		.def("getCellValue" , &Bind_SsPartState::cellValue , return_value_policy<manage_new_object>() )
 		;
 
 	class_<Bind_Cell>("Bind_Cell")
@@ -68,6 +85,7 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 		.add_property("size", &Bind_Cell::size)
 		.add_property("pivot", &Bind_Cell::pivot)
 		.add_property("rotated", &Bind_Cell::rotated)
+		.def("isNull" , &Bind_Cell::isNull )
 		;
 
 	class_<Bind_Cellmap>("Bind_Cellmap")
@@ -297,6 +315,6 @@ int main(int argc, char* argv[])
     Py_Finalize();
     
 	delete texfactory;
-	fgetc(stdin);
+	//fgetc(stdin);
     return 0;
 }

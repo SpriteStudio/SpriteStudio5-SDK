@@ -17,6 +17,7 @@ class ISSTexture
 public:
 	virtual int	getWidth() = 0;
 	virtual int	getHeight() = 0;
+	virtual const char*	getFilename(){ return 0; }
 
 	virtual bool	Load( const char* filename ) = 0;
 	virtual ISSTexture* create() = 0;
