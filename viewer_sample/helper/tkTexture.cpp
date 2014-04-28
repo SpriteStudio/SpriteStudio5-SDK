@@ -37,17 +37,35 @@ GLuint	LoadTextureGL( const char* Filename ,int& width , int& height)
 
 	GLuint glyphTexture = 0;
 	glGenTextures(1, &glyphTexture);
-	//glActiveTexture(GL_TEXTURE0);
 	glBindTexture(target, glyphTexture);
 
+	glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL );
 	glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
 	glTexParameterf(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameterf(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	if ( bpp == 4 )
 	{
+		stbi_uc *ip = image;
+		for ( int i = 0 ; i < width * height ; i++ )
+		{
+			stbi_uc* r = ip; ip ++;
+			stbi_uc* g = ip; ip ++;
+			stbi_uc* b = ip; ip ++;
+			stbi_uc* a = ip; ip ++;
+//			if ( *a == 0 )
+			{
+				//*r = *g = *b = 0xff;
+				int _a = *a;
+				int _r = *r;
+				int _g = *g;
+				int _b = *b;
+				*r = ( _r * _a) >> 8 ;
+				*g = ( _g * _a) >> 8 ;
+				*b = ( _b * _a) >> 8 ;
+			}
+		}
 		glTexImage2D(target, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);	
 	}else if ( bpp == 3 )
 	{

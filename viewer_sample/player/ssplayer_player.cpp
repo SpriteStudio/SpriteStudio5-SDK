@@ -1222,7 +1222,9 @@ void	SsPlayer::draw_part( SsPartState* state )
 		switch (state->alphaBlendType)
 		{
 		case SsBlendType::mix:
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBlendFuncSeparateEXT( GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE );
+
 			break;
 		case SsBlendType::mul:
 			// TODO SrcAlpha を透明度として使えない
