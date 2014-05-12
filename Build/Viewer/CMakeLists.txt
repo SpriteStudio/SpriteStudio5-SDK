@@ -94,27 +94,27 @@ ADD_EXECUTABLE(viewer_sample_dx9
 
 
 ADD_EXECUTABLE(scriptbase_converter
-../Converter/script_base_conv.cpp
-../Converter/bind_SSXML.cpp
-../Converter/bind_SSXML.h
-../Converter/bind_Animation.cpp
-../Converter/bind_Animation.h
-../Converter/bind_SsPart.cpp
-../Converter/bind_SsPart.h
-../Converter/bind_SsPartAnime.cpp
-../Converter/bind_SsPartAnime.h
-../Converter/bind_SsAnimeDecoder.cpp
-../Converter/bind_SsAnimeDecoder.h
-../Converter/bind_AnimePack.cpp
-../Converter/bind_AnimePack.h
-../Converter/bind_SsAttribute.cpp
-../Converter/bind_SsAttribute.h
-../Converter/bind_SsKeyframe.cpp
-../Converter/bind_SsKeyframe.h
-../Converter/package_SpriteStudio.cpp
-../Converter/package_SpriteStudio.h
-../Converter/bind_Cellmap.cpp
-../Converter/bind_Cellmap.h
+../PythonBinder/script_base_conv.cpp
+../PythonBinder/bind_SSXML.cpp
+../PythonBinder/bind_SSXML.h
+../PythonBinder/bind_Animation.cpp
+../PythonBinder/bind_Animation.h
+../PythonBinder/bind_SsPart.cpp
+../PythonBinder/bind_SsPart.h
+../PythonBinder/bind_SsPartAnime.cpp
+../PythonBinder/bind_SsPartAnime.h
+../PythonBinder/bind_SsAnimeDecoder.cpp
+../PythonBinder/bind_SsAnimeDecoder.h
+../PythonBinder/bind_AnimePack.cpp
+../PythonBinder/bind_AnimePack.h
+../PythonBinder/bind_SsAttribute.cpp
+../PythonBinder/bind_SsAttribute.h
+../PythonBinder/bind_SsKeyframe.cpp
+../PythonBinder/bind_SsKeyframe.h
+../PythonBinder/package_SpriteStudio.cpp
+../PythonBinder/package_SpriteStudio.h
+../PythonBinder/bind_Cellmap.cpp
+../PythonBinder/bind_Cellmap.h
 )
 
 IF (WIN32)
