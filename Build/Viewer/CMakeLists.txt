@@ -117,6 +117,21 @@ ADD_EXECUTABLE(scriptbase_converter
 ../PythonBinder/bind_Cellmap.h
 )
 
+
+ADD_EXECUTABLE(Ss5Converter
+../Converter/main.cpp
+../Converter/BinaryDataWriter.cpp
+../Converter/BinaryDataWriter.h
+../Converter/FileUtil.cpp
+../Converter/FileUtil.h
+../Converter/Lump.cpp
+../Converter/Lump.h
+../Converter/LumpExporter.cpp
+../Converter/LumpExporter.h
+../Converter/SsPlayerConverter.h
+)
+
+
 IF (WIN32)
     SET_TARGET_PROPERTIES (viewer_sample_gl PROPERTIES LINK_FLAGS_DEBUG "/SUBSYSTEM:windows")
     SET_TARGET_PROPERTIES (viewer_sample_gl PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:windows")
@@ -164,6 +179,6 @@ target_link_libraries(viewer_sample_dx9 ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} $
 ENDIF()
 
 
-
+target_link_libraries(Ss5Converter ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} )
 
 
