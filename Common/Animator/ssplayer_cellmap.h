@@ -100,6 +100,8 @@ public:
 	}
 
 	void	clear();
+	size_t	size(){ return CellMapList.size(); }
+
 	void	setCellMapPath(  const SsString& filepath );
 
 	//projectとanimepackからアニメーションの再生に必要なセルマップのリストを作成する

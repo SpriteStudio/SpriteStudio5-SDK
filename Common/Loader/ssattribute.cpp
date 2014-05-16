@@ -159,3 +159,8 @@ void	GetSsUserDataAnime( const SsKeyframe* key , SsUserDataAnime& v )
 	}
 
 }
+
+void	GetSsInstparamAnime( const SsKeyframe* key , SsInstanceAttr& v )
+{
+
+}

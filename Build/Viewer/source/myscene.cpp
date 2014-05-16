@@ -150,9 +150,12 @@ void	SampleScene::ChangeAnimation( int packIndex , int animeIndex )
 	m_cellmap->set( m_proj , animepack );
 
 	//パーツ構造　アニメーション　セルマップからアニメ再生情報を作成する
+	if ( m_cellmap->size() == 0 )
+	{
+		abort();
+	}
 	m_player->setAnimation( model , anime , m_cellmap );
 
-//	m_player->changeAnimation( packIndex , animeIndex );
 }
 
 

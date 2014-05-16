@@ -275,7 +275,7 @@ int main(int argc, char* argv[])
 
 	SSTextureFactory*	texfactory = new SSTextureFactory( new SSTextureBMP() );
 
-    if(PyImport_AppendInittab("SpriteStudio", initSpriteStudio) == -1)
+    if(PyImport_AppendInittab( "SpriteStudio", initSpriteStudio) == -1)
         puts("helloモジュールのセットアップに失敗");
     
     Py_Initialize();

@@ -96,6 +96,6 @@ void	GetSsColorValue( const SsKeyframe* key , SsColorAnime& v );
 void	GetSsVertexAnime( const SsKeyframe* key , SsVertexAnime& v );
 void	GetSsRefCell( const SsKeyframe* key , SsRefCell& v );
 void	GetSsUserDataAnime( const SsKeyframe* key , SsUserDataAnime& v );
-
+void	GetSsInstparamAnime( const SsKeyframe* key , SsInstanceAttr& v );
 
 #endif

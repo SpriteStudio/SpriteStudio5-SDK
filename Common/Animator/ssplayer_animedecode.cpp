@@ -72,6 +72,11 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 		partState[i].index = i;
 
 		sortList.push_back( &partState[i] );
+
+		//インスタンスパーツの場合の初期設定
+
+
+
 	}
 
 
@@ -456,6 +461,8 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 					break;
 				case SsAttributeKind::user:		///< Ver.4 互換ユーザーデータ
 					break;
+				case SsAttributeKind::instance:	///インスタンスパラメータ
+					break;
 			}
 		}
 	}
@@ -667,13 +674,6 @@ static SsPartStateLess _ssPartStateLess;
 ///なっているためそのまま木構造を作らずUpdateを行う
 void	SsAnimeDecoder::update()
 {
-/*
-	if ( AnimationChangeMsg.change )
-	{
-		this->setProject( 0 , AnimationChangeMsg.animePack , AnimationChangeMsg.anime );
-		AnimationChangeMsg.change = false;
-	}
-*/
 	int	time = (int)nowPlatTime;
 
 	int cnt = 0;

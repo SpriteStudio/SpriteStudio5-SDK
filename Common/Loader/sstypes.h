@@ -111,30 +111,11 @@ public:
 
 	bool	operator ==(const SsTRect& r) const {return x == r.x && y == r.y && w == r.w && h == r.h;}
 	bool	operator !=(const SsTRect& r) const {return !(*this == r);}
-
-//	virtual SsString	ToString() const
-//	{
-//		return SS_STR_NAME(x) + SS_STR_NAME(y) + SS_STR_NAME(w) + SS_STR_NAME(h);
-//	}
-//	virtual	operator SsString() const {return ToString();}
-
 private:
 };
 
-/*
-/// SsTRect のメンバ全体の補間
-template <typename T>
-void	SsInterpolate(SsInterpolationType::_enum ipType, const SsCurve& curve, float time, const SsTRect<T>& startValue, const SsTRect<T>& endValue, SsTRect<T> * out)
-{
-	out->x = SsInterpolate(ipType, time, startValue.x, endValue.x, &curve);
-	out->y = SsInterpolate(ipType, time, startValue.y, endValue.y, &curve);
-	out->w = SsInterpolate(ipType, time, startValue.w, endValue.w, &curve);
-	out->h = SsInterpolate(ipType, time, startValue.h, endValue.h, &curve);
-}
-*/
 
 typedef SsTRect<int>	SsIRect;
-
 
 
 ///カラー値を定義するテンプレートクラスです。
@@ -439,7 +420,7 @@ namespace SsAttributeKind
 		uvsy,		///< [UVSY]UVアニメ.スケール.Y
 		boundr,		///< [BNDR]当たり判定用の半径
 		user,		///< [USER]ユーザーデータ
-
+		instance,	///< [IPRM]インスタンスパーツパラメータ
 		num,
 	};
 };
@@ -530,8 +511,42 @@ public:
 		usePoint(false),
 		useRect(false),
 		useString(false){}
+};
 
+class SsInstanceAttr
+{
+public:
+    bool   		infinity;
+    bool   		reverse;
+    bool   		pingpong;
+	bool		independent;
+    int			loopNum;
+    SsString	startLabel;
+    int			startOffset;
+    SsString	endLabel;
+    int			endOffset;
+    float       speed;
+
+
+    //テンポラリ <-エディタ用計算値の可能性もあるので後で整理
+    int         curKeyframe; //この値があるキーフレーム値 (計算値）
+    float		liveFrame;	//再生時間の累積
+
+	SsInstanceAttr():
+    	infinity( false ),
+    	reverse( false ),
+    	pingpong( false ),
+    	independent( false ),
+		loopNum( 1 ),
+     	startLabel("_start"),
+     	startOffset(0),
+     	endLabel("_end"),
+     	endOffset(0),
+		curKeyframe( 0 ),
+		speed(1.0f)
+    {}
 
 };
+
 
 #endif
