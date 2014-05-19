@@ -136,7 +136,10 @@ public:
 
 public:
 	SsPartAnime(){}
-	virtual ~SsPartAnime(){}
+	virtual ~SsPartAnime(){
+		for ( SsAttributeList::iterator itr = attributes.begin() ; 
+			itr != attributes.end() ; itr ++ ) delete (*itr);	
+	}
 
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
