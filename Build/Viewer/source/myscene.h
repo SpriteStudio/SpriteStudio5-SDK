@@ -43,12 +43,13 @@ public:
 	SampleScene() : m_isAnimeAutoPlay (false) {}
 	virtual ~SampleScene()
 	{
-		AnimePackSelecterRelease();
+		destroy();
 	}
 
 	virtual void	draw();
 	virtual void	update(double delta);
 	virtual void	init();
+	virtual void	destroy();
 
 	void	ProjectFileLoad();
 

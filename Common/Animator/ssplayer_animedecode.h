@@ -51,9 +51,8 @@ private:
 	SsPartState*					partState;			///パーツの現在の状態が格納されています。
 	std::list<SsPartState*>			sortList;			///ソート状態
 
-	float	nowPlatTime;
-	float	frameDelta;
-
+	float			nowPlatTime;
+	float			frameDelta;
 	int				curAnimeEndFrame;
 	int				curAnimeFPS;
 	SsAnimation*	curAnimation;

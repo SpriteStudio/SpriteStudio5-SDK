@@ -3,7 +3,7 @@
 
 #include "../loader/ssloader.h"
 #include "../Helper/ssHelper.h"
-
+#include "ssplayer_animedecode.h"
 
 
 class SsAnimeDecoder;
@@ -55,7 +55,15 @@ struct SsPartState
 	SsAnimeDecoder*	refAnime;
 	
 
-	SsPartState(){init();refAnime = 0;}
+	SsPartState() : refAnime(0) {init();}
+
+	virtual ~SsPartState(){
+		if ( refAnime )	
+		{
+			delete refAnime;
+			refAnime = 0;
+		}
+	}
 
 	void	init()
 	{

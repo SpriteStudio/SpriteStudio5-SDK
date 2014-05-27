@@ -26,6 +26,17 @@ struct SampleScene::AnimePackSelecterType
 	SampleScene*	myclass;
 };
 
+void	SampleScene::destroy()
+{
+	delete m_player;
+//	delete m_cellmap;	/// プレイヤー側で削除する
+
+	m_player = 0;
+//	m_cellmap = 0; 
+	AnimePackSelecterRelease();
+
+}
+
 
 void	SampleScene::draw()
 {
