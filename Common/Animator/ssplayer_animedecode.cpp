@@ -27,10 +27,13 @@ SsAnimeDecoder::SsAnimeDecoder() :
 	{
 	}
 
-void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellMapList* cellmap )
+
+
+void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellMapList* cellmap , SsProject* sspj )
 {
 	//セルマップリストを取得
 	curCellMapManager = cellmap;
+	curAnimation = anime;
 
 	//partStateをパーツ分作成する
 	partAnimeDic.clear();
@@ -71,11 +74,27 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 		partState[i].inheritRates = p->inheritRates;
 		partState[i].index = i;
 
-		sortList.push_back( &partState[i] );
 
 		//インスタンスパーツの場合の初期設定
+		if ( p->type == SsPartType::instance )
+		{
+			if (sspj)
+			{
+				//参照アニメーションを取得
+				SsAnimePack* refpack = sspj->findAnimationPack( p->refAnimePack );
+				SsAnimation* refanime = refpack->findAnimation( p->refAnime );
 
-
+				SsCellMapList* __cellmap = new SsCellMapList();
+				__cellmap->set( sspj , refpack );
+				SsAnimeDecoder* animedecoder = new SsAnimeDecoder();
+				animedecoder->setAnimation( &refpack->Model , refanime , __cellmap , sspj );
+				partState[i].refAnime = animedecoder;
+				//親子関係を付ける
+				animedecoder->partState[0].parent = &partState[i];
+			}
+		}
+				
+		sortList.push_back( &partState[i] );
 
 	}
 
@@ -668,6 +687,164 @@ void	SsAnimeDecoder::updateVertices(SsPart* part , SsPartAnime* anime , SsPartSt
 
 }
 
+
+
+void	SsAnimeDecoder::updateInstance( int nowTime , SsPart* part , SsPartAnime* partanime , SsPartState* state )
+{
+	if ( state->refAnime == 0 ) return ;
+	//state->refAnime->setPlayFrame( nowTime );
+	//state->refAnime->update();
+
+    //ラベル未実装だが正規の方法で計算しとく
+
+//	SsAnimation* anime = state->refAnime;
+
+	const SsInstanceAttr& instanceValue = state->instanceValue;
+
+#if 1	//なんとかラベルをゲットできる仕組みを・・・
+    //プレイヤー等では再生開始時にいったん計算してしまって値にしてしまった方がいい。
+    //エディター側のロジックなのでそのまま検索する
+    //インスタンスアニメ内のスタート位置
+    int	startframe = CalcAnimeLabel2Frame( instanceValue.startLabel , instanceValue.startOffset);
+    int	endframe = CalcAnimeLabel2Frame( instanceValue.endLabel , instanceValue.endOffset);
+#else
+    int	startframe = 0;
+    int	endframe = curAnimeEndFrame;
+#endif
+
+    //タイムライン上の時間 （絶対時間）
+	int time = nowTime;
+
+	//独立動作の場合
+	if ( instanceValue.independent )
+	{
+		//float delta = animeState->frame - parentBackTime;
+		float delta = this->frameDelta;
+
+		state->instanceValue.liveFrame+= ( delta * instanceValue.speed );
+		//parentBackTime = animeState->frame;
+		time = (int)instanceValue.liveFrame;
+
+	}
+
+    //このインスタンスが配置されたキーフレーム（絶対時間）
+    int	selfTopKeyframe = instanceValue.curKeyframe;
+
+
+    int	reftime = (time*instanceValue.speed) - selfTopKeyframe; //開始から現在の経過時間
+    if ( reftime < 0 ) return ; //そもそも生存時間に存在していない
+
+    int inst_scale = (endframe - startframe) + 1; //インスタンスの尺
+
+
+	//尺が０もしくはマイナス（あり得ない
+	if ( inst_scale <= 0 ) return ;
+
+	int	nowloop =  (reftime / inst_scale);	//現在までのループ数
+
+    int checkloopnum = instanceValue.loopNum;
+
+	//pingpongの場合では２倍にする
+    if ( instanceValue.pingpong ) checkloopnum = checkloopnum * 2;
+
+	//無限ループで無い時にループ数をチェック
+    if ( !instanceValue.infinity )   //無限フラグが有効な場合はチェックせず
+	{
+        if ( nowloop >= checkloopnum )
+		{
+			reftime = inst_scale-1;
+			nowloop = checkloopnum-1;
+		}
+	}
+
+	int temp_frame = reftime % inst_scale;  //ループを加味しないインスタンスアニメ内のフレーム
+
+    //参照位置を決める
+    //現在の再生フレームの計算
+    int _time = 0;
+	bool	reverse = instanceValue.reverse;
+	if ( instanceValue.pingpong && (nowloop % 2 == 1) )
+	{
+       reverse=~reverse;//反転
+	}
+
+	if (reverse)
+	{
+		//リバースの時
+		_time = endframe - temp_frame;
+	}else{
+		//通常時
+		_time = temp_frame + startframe;
+    }
+
+/*	//エディタではないから仮のサイズ値は要らない？
+	//再生
+    state->size.x = part->anime->settings.canvasSize.x;
+    state->size.y = part->anime->settings.canvasSize.y;
+*/
+
+	state->refAnime->setPlayFrame( _time );
+	state->refAnime->update();
+
+  
+	//頂点の作成
+    //update_vertices();
+
+}
+
+int		SsAnimeDecoder::findAnimetionLabel(const SsString& str)
+{
+	for ( std::vector<SsLabel*>::iterator itr = curAnimation->labels.begin() ; 
+		itr != curAnimation->labels.end() ; itr ++ )
+	{
+		if ( str == (*itr)->name )
+		{
+			return (*itr)->time;
+		}
+	}
+
+	return 0;
+}
+
+int		SsAnimeDecoder::CalcAnimeLabel2Frame(const SsString& str, int offset )
+{
+
+	int maxframe = curAnimeEndFrame;
+    int ret2 = offset;
+
+    if (  str == "_start" )
+	{
+    	return offset;
+	}else if ( str == "_end" )
+	{
+        return maxframe + offset;
+	}else if ( str == "none" )
+	{
+        return offset;
+	}else{
+		int ret = findAnimetionLabel(str);
+
+        if ( ret != -1 )
+        {
+			int ret2 = ret + offset;
+            if ( ret2 < 0 ) ret2 = 0;
+            if ( ret2 > maxframe ) ret2 = maxframe;
+
+        	return ret2;
+		}
+		//警告など出すべき？
+	}
+
+    if ( ret2 < 0 ) ret2 = 0;
+    if ( ret2 > maxframe ) ret2 = maxframe;
+
+	return ret2;
+
+
+
+}
+
+
 static SsPartStateLess _ssPartStateLess;
 
 ///SS5の場合  SsPartのarrayIndexは、親子順　（子は親より先にいない）と
@@ -683,6 +860,13 @@ void	SsAnimeDecoder::update()
 		SsPartAnime* anime = e->second;
 		updateState( time , part , anime , &partState[cnt] );
 		updateMatrix( part , anime , &partState[cnt]);
+
+		if ( part->type == SsPartType::instance )
+		{
+			updateInstance( time , part , anime , &partState[cnt] );
+			updateVertices( part , anime , &partState[cnt] );
+		}
+
 		cnt++;
 	}
 
@@ -701,7 +885,13 @@ void	SsAnimeDecoder::draw()
 	foreach( std::list<SsPartState*> , sortList , e )
 	{
 		SsPartState* state = (*e);
-		SsCurrentRenderer::getRender()->renderPart(state);
+
+		if ( state->refAnime )
+		{
+			state->refAnime->draw();
+		}else{
+			SsCurrentRenderer::getRender()->renderPart(state);
+		}
 	}
 }
 

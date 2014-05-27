@@ -52,13 +52,20 @@ private:
 	std::list<SsPartState*>			sortList;			///ソート状態
 
 	float	nowPlatTime;
-	int		curAnimeEndFrame;
-	int		curAnimeFPS;
+	float	frameDelta;
+
+	int				curAnimeEndFrame;
+	int				curAnimeFPS;
+	SsAnimation*	curAnimation;
 
 private:
 	void	updateState( int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
+	void	updateInstance( int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
 	void	updateMatrix(SsPart* part , SsPartAnime* anime , SsPartState* state);
 	void	updateVertices(SsPart* part , SsPartAnime* anime , SsPartState* state);
+
+    int		CalcAnimeLabel2Frame(const SsString& str, int offset );
+	int		findAnimetionLabel(const SsString& str);
 
 
 public:
@@ -75,7 +82,7 @@ public:
 	virtual void	update();
 	virtual void	draw();
 
-	void	setAnimation( SsModel*	model , SsAnimation* anime , SsCellMapList* cellmap );
+	void	setAnimation( SsModel*	model , SsAnimation* anime , SsCellMapList* cellmap , SsProject* sspj=0 );
 
 	void	setPlayFrame( float time ) { nowPlatTime = time; }
 	int		getAnimeEndFrame() { return curAnimeEndFrame; }

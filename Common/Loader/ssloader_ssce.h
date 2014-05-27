@@ -47,7 +47,7 @@ texPackSettings;	///< パック時の参照情報<BR>
 class SsCellMap
 {
 public:
-
+	SsString					fname;				///< セルマップのファイルネーム
 	SsString					name;				///< このセルマップの名称です。
 	SsString					imagePath;			///< 参照画像ファイルパス。プロジェクトの画像基準相対
 	SsPoint2					pixelSize;			///< 画像のピクセルWHサイズ

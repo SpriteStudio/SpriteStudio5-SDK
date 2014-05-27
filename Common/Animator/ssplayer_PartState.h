@@ -6,7 +6,7 @@
 
 
 
-
+class SsAnimeDecoder;
 ///パーツの状態を保持するクラスです。
 struct SsPartState
 {
@@ -47,9 +47,15 @@ struct SsPartState
 	bool			is_color_blend;			/// カラーブレンドが使用される (描画コストが高いシェーダが使われるためフラグ化)
 	bool			is_vertex_transform;	/// 頂点変形が使用される (描画コストが高いシェーダが使われるためフラグ化)
 
-	SsBlendType::_enum	alphaBlendType;
+	SsInstanceAttr	instanceValue;
 
-	SsPartState(){init();}
+
+	SsBlendType::_enum	alphaBlendType;
+		
+	SsAnimeDecoder*	refAnime;
+	
+
+	SsPartState(){init();refAnime = 0;}
 
 	void	init()
 	{
@@ -81,6 +87,7 @@ struct SsPartState
 		is_color_blend = false;
 		is_vertex_transform = false;
 		inheritRates = 0; 
+		
 	}
 
 	bool	inherits_(SsAttributeKind::_enum kind) const {return inheritRates[(int)kind] != 0.f;}

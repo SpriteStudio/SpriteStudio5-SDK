@@ -46,7 +46,12 @@ public:
 	int						show;			//!< [編集用データ] パーツの表示・非常時
 	int						locked;			//!< [編集用データ] パーツのロック状態
 
-	float			inheritRates[(int)SsAttributeKind::num];	///< 親の値の継承率。SS4との互換性のため残されているが0 or 1
+	float					inheritRates[(int)SsAttributeKind::num];	///< 親の値の継承率。SS4との互換性のため残されているが0 or 1
+
+	//参照アニメーション名
+	//ツールはともかくランタイムでは勿体ない使い方なので何らか考えること
+	SsString        refAnimePack;   ///< 参照アニメ名
+	SsString        refAnime;       ///< 参照アニメ名			
 
 public:
 	SsPart() : 
@@ -79,6 +84,8 @@ public:
 		SSAR_DECLARE_ENUM( alphaBlendType );
 		SSAR_DECLARE( show );
 		SSAR_DECLARE( locked );
+		SSAR_DECLARE( refAnimePack );
+		SSAR_DECLARE( refAnime );
 
 		//継承率後に改良を実施
 		if ( ar->getType() == EnumSsArchiver::in )
@@ -147,6 +154,24 @@ public:
 };
 
 
+/// ラベル。ループ先などに指定する
+class SsLabel
+{
+public:
+	SsString	name;	///< 名前 [変数名変更禁止]
+	int			time;	///< 設置された時間(フレーム) [変数名変更禁止]
+
+	SSSERIALIZE_BLOCK
+	{
+		SSAR_DECLARE( name );
+		SSAR_DECLARE( time );
+	}
+
+private:
+
+};
+
+
 class SsAnimation
 {
 public:
@@ -155,12 +180,17 @@ public:
 	SsAnimationSettings			settings;		/// 設定情報 
 	std::vector<SsPartAnime*>	partAnimes;		///	パーツ毎のアニメーションキーフレームが格納されるリスト
 
+	std::vector<SsLabel*>	labels;
+	///ラベル
+	//SsLabelList				labels;		///< ラベルリスト
 public:
 	SsAnimation(){}
 	virtual ~SsAnimation()
 	{
 		for ( std::vector<SsPartAnime*>::iterator itr = partAnimes.begin() ; 
 			itr != partAnimes.end() ; itr ++ ) delete (*itr);	
+		for ( std::vector<SsLabel*>::iterator itr = labels.begin() ; 
+			itr != labels.end() ; itr ++ ) delete (*itr);	
 	}
 
 	///シリアライズのための宣言です。
@@ -169,6 +199,7 @@ public:
 		SSAR_DECLARE( name );
 		SSAR_STRUCT_DECLARE( settings );
 		SSAR_DECLARE_LISTEX( partAnimes , "partAnime" );
+		SSAR_DECLARE_LISTEX( labels , "labels" );
 	}
 };
 
@@ -203,6 +234,9 @@ public:
 		SSAR_DECLARE_LISTEX( animeList , "anime" );
 	}
 
+	//アニメーション名からアニメーションを取得する
+	SsAnimation*	findAnimation(SsString& name);
+
 };
 
 /*
@@ -219,6 +253,7 @@ public:
 	static SsAnimePack*	Load(const std::string& filename );
 
 };
+
 
 
 

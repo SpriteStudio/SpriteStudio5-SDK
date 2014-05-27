@@ -64,6 +64,8 @@ ADD_LIBRARY(ssHelper
 ../../Common/Helper/sshTask.h
 ../../Common/Helper/XPFileOpenDlg.h
 ../../Common/Helper/XPFileOpenDlg.cpp
+../../Common/Helper/DebugPrint.h
+../../Common/Helper/DebugPrint.cpp
 ../../Common/Helper/MacOS/OSXFileOpen.h
 ../../Common/Helper/MacOS/OSXFileOpen.mm)
 

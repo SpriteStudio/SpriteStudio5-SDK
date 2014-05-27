@@ -10,7 +10,7 @@
 #include "IsshTexture.h"
 
 #include "XPFileOpenDlg.h"
-
+#include "DebugPrint.h"
 
 
 #endif

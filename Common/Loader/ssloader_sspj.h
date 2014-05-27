@@ -55,6 +55,8 @@ class SsCellMap;
 
 
 typedef std::vector<SsAnimePack*> SsAnimePackList;
+typedef std::vector<SsAnimePack*>::iterator SsAnimePackListItr;
+
 typedef std::vector<SsCellMap*> SsSsCellMapList;
 typedef std::vector<SsCellMap*>::iterator SsSsCellMapListItr;
 
@@ -95,6 +97,11 @@ public:
 	///セルマップデータのコンテナを取得する
 	SsSsCellMapList&	getCellMapList(){ return cellmapList;}
 	
+	//アニメパック名とアニメ名からアニメーションを取得する
+	SsAnimation*		findAnimation( SsString& animePackName , SsString& AnimeName );
+
+	SsAnimePack*		findAnimationPack( SsString& animePackName );
+
 
 	SsCellMap* findCellMap( SsString& str );
 	SsCellMap* getCellMap( int index );

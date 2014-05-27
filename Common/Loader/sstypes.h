@@ -463,6 +463,9 @@ struct SsVertexAnime
 	SsPoint2&	getOffsets(int index){ return offsets[index];}
 };
 
+
+
+
 class ISSTexture;
 class SsCell;
 

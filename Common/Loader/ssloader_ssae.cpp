@@ -19,3 +19,17 @@ SsAnimePack*	ssloader_ssae::Load(const std::string& filename )
 	return anime;
 }
 
+
+SsAnimation*	SsAnimePack::findAnimation(SsString& name)
+{
+
+	for ( std::vector<SsAnimation*>::iterator itr = animeList.begin()
+		; itr != animeList.end() ; ++itr )
+	{
+		if ( (*itr)->name == name )
+		{
+			return (*itr);
+		}
+	}
+	return 0;
+}

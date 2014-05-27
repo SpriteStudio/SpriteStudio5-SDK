@@ -6,6 +6,7 @@
 //パラメータ等をウインドウへ表示するために使用します。
 #include <AntTweakBar.h>
 
+
 extern double _time;
 extern unsigned char cubeColor;
 
@@ -152,9 +153,10 @@ void	SampleScene::ChangeAnimation( int packIndex , int animeIndex )
 	//パーツ構造　アニメーション　セルマップからアニメ再生情報を作成する
 	if ( m_cellmap->size() == 0 )
 	{
+		DEBUG_PRINTF( "error : cellmap array size == 0" );
 		abort();
 	}
-	m_player->setAnimation( model , anime , m_cellmap );
+	m_player->setAnimation( model , anime , m_cellmap , m_proj );
 
 }
 

@@ -3,9 +3,12 @@
 #include <cstdlib>
 
 #include "../loader/ssloader.h"
+
 #include "ssplayer_animedecode.h"
 #include "ssplayer_matrix.h"
 #include "ssplayer_render.h"
+
+#include "../Helper/DebugPrint.h"
 
 
 void	SsCellMapList::clear()
@@ -29,7 +32,14 @@ void	SsCellMapList::set(SsProject* proj , SsAnimePack* animepack )
 	for ( size_t i = 0 ; i < animepack->cellmapNames.size() ; i++ )
 	{
 		SsCellMap* cell = proj->findCellMap( animepack->cellmapNames[i] );
-		add( cell );
+		if ( cell==0 )
+		{
+			//THROW_ERROR_MESSAGE( "Not found cellmap"  ); 
+			DEBUG_PRINTF( " Not found cellmap = %s" , animepack->cellmapNames[i].c_str() );
+			SsCellMap* cell = proj->findCellMap( animepack->cellmapNames[i] );
+		}else{
+			add( cell );
+		}
 	}
 
 }

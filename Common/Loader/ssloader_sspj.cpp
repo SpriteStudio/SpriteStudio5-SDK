@@ -2,6 +2,7 @@
 #include "ssloader_ssae.h"
 #include "ssloader_ssce.h"
 #include "ssstring_uty.h"
+#include "../Helper/DebugPrint.h"
 
 
 
@@ -31,6 +32,35 @@ SsProject::~SsProject()
 }
 
 
+SsAnimePack*		SsProject::findAnimationPack( SsString& animePackName )
+{
+	for ( SsAnimePackList::iterator itr = animeList.begin()
+		; itr != animeList.end() ; ++itr )
+	{
+		if ( (*itr)->name == animePackName )
+		{
+			return (*itr);
+		}
+	}
+
+	return 0;
+}
+
+
+
+SsAnimation*	SsProject::findAnimation( SsString& animePackName , SsString& AnimeName )
+{
+	SsAnimePack* p = findAnimationPack( animePackName );
+	if ( p )
+	{
+		return p->findAnimation(AnimeName);
+	}
+
+	return 0;
+}
+
+
+
 SsProject*	ssloader_sspj::Load(const std::string& filename )
 {
 
@@ -56,6 +86,9 @@ SsProject*	ssloader_sspj::Load(const std::string& filename )
 				proj->animeList.push_back( anime );
 			}else{
 				//エラー
+				DEBUG_PRINTF( "Animation load error : %s" , ssaepath.c_str() );
+				delete proj;
+				return 0;
 			}
 		}
 
@@ -69,6 +102,9 @@ SsProject*	ssloader_sspj::Load(const std::string& filename )
 				proj->cellmapList.push_back( cell );
 			}else{
 				//エラー
+				DEBUG_PRINTF( "Cellmap load error : %s" , sscepath.c_str() );
+				delete proj;
+				return 0;
 			}
 		}
 
@@ -83,8 +119,10 @@ SsCellMap* SsProject::findCellMap( SsString& str )
 	for ( SsSsCellMapListItr itr = cellmapList.begin() ; 
 		itr != cellmapList.end() ; itr ++) 
 	{
-		SsString _name = (*itr)->name;
-		_name+=".ssce";
+//		SsString _name = (*itr)->name;
+		//_name+=".ssce";
+		//sspjの参照名とXML無いのnameタグが一致していないケースがあったのでファイル名で取得
+		SsString _name = (*itr)->fname;
 
 		if ( _name == str )
 		{

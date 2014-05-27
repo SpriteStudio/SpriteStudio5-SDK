@@ -15,6 +15,8 @@ SsCellMap*	ssloader_ssce::Load(const std::string& filename )
 	{
 		SsXmlIArchiver ar( xml.GetDocument() , "SpriteStudioCellMap" );
 		cellmap->__Serialize( &ar );
+		cellmap->fname = path2file( filename );
+
 	}else{
 		delete cellmap;
 		cellmap = 0;
