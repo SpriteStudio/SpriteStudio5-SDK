@@ -18,7 +18,7 @@ public:
     }
 };
 
-
+class Bind_SsAnimeDecoder;
 class Bind_SsCellValue;
 
 class Bind_SsPartState : public myPyBinder<SsPartState>
@@ -64,6 +64,10 @@ public:
 
 	BIND_RETURN_PROPEX( SsColorAnime , colorValue );
 	BIND_RETURN_PROPEX( SsVertexAnime , vertexValue );
+
+
+	bool	isInstance() { return this->bind_inst->refAnime != 0; }
+	Bind_SsAnimeDecoder*	getInstanceDecoder();
 
 
 	Bind_SsCellValue*	cellValue();

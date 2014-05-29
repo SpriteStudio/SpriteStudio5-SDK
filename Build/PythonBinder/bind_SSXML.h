@@ -61,9 +61,17 @@ public:
 	Bind_Cellmap*	getCellMapFromName( const char* name );
 
 
-	Bind_SsAnimePack const& AnimePackAt( int at )
+	Bind_SsAnimePack const& AnimePackAt( int at ) { return m_animepacklist[at]; }
+	Bind_SsAnimePack const& AnimePackFromName( const char* name )
 	{
-		return m_animepacklist[at];
+		for ( size_t i = 0 ; i < m_animepacklist.size() ; ++i )
+		{
+			if ( m_animepacklist[i].m_animepack->name == name )
+			{
+				return m_animepacklist[i];
+			}
+		}
+		return m_animepacklist[0];
 	}
 
 //	SsProjectSetting&	setting(){ return m_project->settings; }

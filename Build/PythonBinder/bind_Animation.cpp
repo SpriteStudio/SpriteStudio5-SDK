@@ -1,5 +1,9 @@
 //
+#include "package_SpriteStudio.h"
+#include "bind_AnimePack.h"
+#include "ssplayer_animedecode.h"
 #include "bind_Animation.h"
+
 
 Bind_SsCellValue*	Bind_SsPartState::cellValue()
 {
@@ -11,3 +15,12 @@ Bind_SsCellValue*	Bind_SsPartState::cellValue()
 }
 
 
+				
+Bind_SsAnimeDecoder*	Bind_SsPartState::getInstanceDecoder()
+{
+	Bind_SsAnimeDecoder* ad = new Bind_SsAnimeDecoder();
+	ad->m_decoder = this->bind_inst->refAnime;
+
+	return ad;
+	
+}

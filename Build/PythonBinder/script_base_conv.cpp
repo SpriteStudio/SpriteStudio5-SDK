@@ -75,6 +75,10 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 		.add_property("alphaBlendType", &Bind_SsPartState::alphaBlendType)
 		.add_property("colorValue", &Bind_SsPartState::colorValue)
 		.add_property("vertexValue", &Bind_SsPartState::vertexValue)
+		.add_property("vertexValue", &Bind_SsPartState::vertexValue)
+		
+		.add_property("isInstance", &Bind_SsPartState::isInstance)
+		.def("getInstanceDecoder" , &Bind_SsPartState::getInstanceDecoder , return_value_policy<manage_new_object>() )
 		.def("getCellValue" , &Bind_SsPartState::cellValue , return_value_policy<manage_new_object>() )
 		;
 
@@ -256,6 +260,8 @@ BOOST_PYTHON_MODULE(SpriteStudio)
 		.def("getAnimePackNum" , &Bind_SsProject::getAnimePackNum )
 		.def("getCellMapNum" , &Bind_SsProject::getCellMapNum )
 		.def("AnimePackAt" , &Bind_SsProject::AnimePackAt , return_value_policy<copy_const_reference>())
+		.def("AnimePackFromName" , &Bind_SsProject::AnimePackFromName , return_value_policy<copy_const_reference>())
+
 		.def("getCellMapAt" , &Bind_SsProject::getCellMapAt , return_value_policy<manage_new_object>() )
 		.def("getCellMapFromName" , &Bind_SsProject::getCellMapFromName , return_value_policy<manage_new_object>() )
 //		.add_property("setting", &Bind_SsProject::settings)
@@ -305,8 +311,8 @@ int main(int argc, char* argv[])
 	const char	*s = txt.c_str();
 
 
-	Py_Main(  argc , argv );
-/*
+	//Py_Main(  argc , argv );
+
 	try{
 		handle<>( PyRun_String( s, Py_file_input, main_namespace.get(), main_namespace.get()) );
 	}catch(error_already_set const &)
@@ -314,11 +320,10 @@ int main(int argc, char* argv[])
 		// âΩÇÁÇ©ÇÃï˚ñ@Ç≈ó·äOÇèàóùÇ∑ÇÈ
 		PyErr_Print();		
 	}
-*/
 
     Py_Finalize();
     
 	delete texfactory;
-	fgetc(stdin);
+//	fgetc(stdin);
     return 0;
 }

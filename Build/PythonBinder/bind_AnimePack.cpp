@@ -54,7 +54,7 @@ Bind_SsAnimeDecoder*	Bind_SsAnimePack::getAnimeDecoderByName( const char* animen
 				//インスタンスの寿命管理を考えること
 				SsAnimeDecoder* player = new SsAnimeDecoder();
 				ad->m_decoder = player;
-				player->setAnimation( model , anime , m_cellmap );
+				player->setAnimation( model , anime , m_cellmap , this->m_proj );
 
 				return ad;
 			}
@@ -71,7 +71,20 @@ Bind_SsAnimeDecoder*	Bind_SsAnimePack::getAnimeDecoderByIndex( int index )
 		if ( (size_t)index < this->m_animepack->animeList.size() )
 		{
 			SsAnimation* anime = this->m_animepack->animeList[index];
-			return new Bind_SsAnimeDecoder();
+			Bind_SsAnimeDecoder* ad = new Bind_SsAnimeDecoder();
+
+
+			SsModel* model = &m_animepack->Model;
+			if ( m_cellmap ) delete m_cellmap;
+			m_cellmap = new SsCellMapList();
+			m_cellmap->set( m_proj , m_animepack );
+
+			//インスタンスの寿命管理を考えること
+			SsAnimeDecoder* player = new SsAnimeDecoder();
+			ad->m_decoder = player;
+			player->setAnimation( model , anime , m_cellmap , this->m_proj );
+
+			return ad;
 		}
 	}
 

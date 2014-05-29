@@ -168,10 +168,10 @@ bool	StringToIRect( const std::string& str , SsIRect& rect )
 		rect.h = 0;
 		return false;
 	}else{
-		rect.x = (float)atof( str_list[0].c_str() );
-		rect.y = (float)atof( str_list[1].c_str() );
-		rect.w = (float)atof( str_list[2].c_str() );
-		rect.h = (float)atof( str_list[3].c_str() );
+		rect.x = (int)atof( str_list[0].c_str() );
+		rect.y = (int)atof( str_list[1].c_str() );
+		rect.w = (int)atof( str_list[2].c_str() );
+		rect.h = (int)atof( str_list[3].c_str() );
 	}
 
 	return true;

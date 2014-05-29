@@ -5,33 +5,95 @@ import os
 from struct import *
 from sstype import *
 
-from psd_tools import PSDImage
 
-#from PIL import Image, ImageSequence
-#im = Image.open("car.psd")
-#layers = [frame.copy() for frame in ImageSequence.Iterator(im)]
 
-def psd_test() : 
-	psd = PSDImage.load('car.psd')
-	print (psd.header)
-	print (psd.layers)
+def test_printState(n,state) :
+	print "state.vertices"
+	print state.vertices
+	print "state.colors"
+	print state.colors
+	print "state.uvs"
+	print state.uvs
+	print "state.matrix"
+	print state.matrix
+	print "[%s] state.position = (%s,%s,%s)" % ( n , state.position.x , state.position.y , state.position.z )
+	print "[%s] state.rotation = (%s,%s,%s)" % ( n , state.rotation.x , state.rotation.y , state.rotation.z )
+	print "[%s] state.scale = (%s,%s)" % ( n , state.scale.x , state.scale.y )
+	print "[%s] state.alpha = (%s)" % ( n , state.alpha )
+	print "[%s] state.prio = (%s)" % ( n , state.prio )
+	print "[%s] state.hFlip = (%s)" % ( n , state.hFlip )
+	print "[%s] state.vFlip = (%s)" % ( n , state.vFlip )
+	print "[%s] state.hide = (%s)" % ( n , state.hide )
+	print "[%s] state.pivotOffset = (%s,%s)" % ( n , state.pivotOffset.x , state.pivotOffset.y)
+	print "[%s] state.anchor = (%s,%s)" % ( n , state.anchor.x , state.anchor.y)
+	print "[%s] state.size = (%s,%s)" % ( n , state.size.x , state.size.y)
+	print "[%s] state.imageFlipH = (%s)" % ( n , state.imageFlipH )
+	print "[%s] state.imageFlipV = (%s)" % ( n , state.imageFlipV )
+	print "[%s] state.uvTranslate = (%s,%s)" % ( n , state.uvTranslate.x , state.uvTranslate.y)
+	print "[%s] state.uvRotation = (%s)" % ( n , state.uvRotation )
+	print "[%s] state.uvScale = (%s,%s)" % ( n , state.uvScale.x , state.uvScale.y)
+	print "[%s] state.boundingRadius = (%s)" % ( n , state.boundingRadius )
+	print "[%s] state.noCells = (%s)" % ( n , state.noCells )
+	print "[%s] state.is_color_blend = (%s)" % ( n , state.is_color_blend )
+	print "[%s] state.is_vertex_transform = (%s)" % ( n , state.is_vertex_transform )
+	print "[%s] state.alphaBlendType = (%s)" % ( n , state.alphaBlendType )
 
-	layer0 = psd.layers[0]
-	#print (layer0.bbox)
-	#print (layer_image)
+	#カラーブレンド値を取得
+	if ( state.is_color_blend ) : #カラーブレンドを使用するフラグが立っている場合表示する
+		color = state.colorValue.color
+		print "[%s] state.colorValue.target = (%s)" % ( n , state.colorValue.target )
+		print "[%s] state.colorValue.blendType = (%s)" % ( n , state.colorValue.blendType )
+		print "[%s] state.colorValue.colors = (%s,%s,%s,%s)" % ( n , color.rgba.a ,color.rgba.r , color.rgba.g , color.rgba.b)
+		color = state.colorValue.colors(0)
+		print "[%s] state.colorValue.colors[0] = (%s,%s,%s,%s)" % ( n , color.rgba.a ,color.rgba.r , color.rgba.g , color.rgba.b)
+		color = state.colorValue.colors(1)
+		print "[%s] state.colorValue.colors[1] = (%s,%s,%s,%s)" % ( n , color.rgba.a ,color.rgba.r , color.rgba.g , color.rgba.b)
+		color = state.colorValue.colors(2)
+		print "[%s] state.colorValue.colors[2] = (%s,%s,%s,%s)" % ( n , color.rgba.a ,color.rgba.r , color.rgba.g , color.rgba.b)
+		color = state.colorValue.colors(3)
+		print "[%s] state.colorValue.colors[3] = (%s,%s,%s,%s)" % ( n , color.rgba.a ,color.rgba.r , color.rgba.g , color.rgba.b)
 
-	layer0 = psd.layers[0]
-	print layer0
-	layer_image = layer0.as_PIL()
-	layer_image.save('layer0.png')
+	if ( state.is_vertex_transform ) :
+		vertex_anime = state.vertexValue
+		print "vertex_transform"
+		for loop in range(4) :							
+			v = vertex_anime.offsets(loop)
+			print "[%s] vertex = (%s,%s)" % ( loop , v.x ,v.y )
 
-	layer1 = psd.layers[1]
-	layer_image = layer1.as_PIL()
-	layer_image.save('layer1.png')
+	#セル情報の取得
+	#計算済みセルマップの取得 ただしuv移動などの適用前のデータになる。
+	#適用後がほしい場合はpartStateのuvsを参照する
+	#使用するテクスチャ、uv計算前の情報などが取得できる
+	cellvalue = state.getCellValue()
+	print "cellvalue.wrapMode = %s " % cellvalue.wrapMode
+	print "cellvalue.filterMode = %s " % cellvalue.filterMode
+	cell = cellvalue.getCell() #Bind_Cell取得
+	if ( cell.isNull() == False):
+		print "cell.name = <%s>" % cell.name
+		print "cell.pos = (%s,%s)" % ( cell.pos.x , cell.pos.y )
+		print "cell.size = (%s,%s)" % ( cell.size.x , cell.size.y )
+		print "cell.pivot = (%s,%s)" % ( cell.pivot.x , cell.pivot.y )
+		print "cell.rotated = %s" % cell.rotated
 
-	layer2 = psd.layers[2]
-	layer_image = layer2.as_PIL()
-	layer_image.save('layer2.png')
+		texture = cellvalue.getTexture()
+		print "texture.name %s" % texture.filename
+		print "texture.width %s" % texture.width
+		print "texture.height %s" % texture.height
+		for loop in range(4) :							
+			uvs = cellvalue.getUvs(loop)
+			print "uvs[%s] = (%s,%s)" % ( loop , uvs.x ,uvs.y )
+
+	#インスタンスパーツか否か？
+	if ( state.isInstance ) :
+		#update等は親で終わっているはずなのでそのまま出力
+		print "[%s] state = instance?" % n
+		inst_decoder = state.getInstanceDecoder()
+		#inst_decoder.debug()
+		loopnum = inst_decoder.getPartNum()
+		for l in range(loopnum):
+			istate = inst_decoder.getPartState(l)
+			print "[%s] instance state.index = %s" % ( l , istate.index )
+			test_printState( l , istate)
 
 
 #===============================================================================
@@ -41,18 +103,24 @@ def test_update() :
 	print "== test_update =="
 	ssxml = SpriteStudio.SSXML()
 
-	if ssxml.Load("../TestData/RoboProject.sspj") == True : #大仏のデータを読んでみるよ
+#	if ssxml.Load("../TestData/RoboProject.sspj") == True : #大仏のデータを読んでみるよ
+	if ssxml.Load("../TestData/instance/stageanim3.sspj") == True : #大仏のデータを読んでみるよ
 		proj = ssxml.GetPrj() 
 
 		#プロジェクトからアニメパックを取得
-		animepack = proj.AnimePackAt(5)
-		anime_decoder = animepack.getAnimeDecoderByName("robo_x")
+		#animepack = proj.AnimePackAt(5)
+		animepack = proj.AnimePackFromName("stageeffect2")
+
+		#anime_decoder = animepack.getAnimeDecoderByName("robo_x")
+		anime_decoder = animepack.getAnimeDecoderByName("BG")
+
 		if anime_decoder != 0 :
 			print "setting fps = %s" % anime_decoder.getAnimeFPS()
 			print "setting framelength = %s" % anime_decoder.getFrameLength()
 
 			#フレーム数計算する
 			for i in range(anime_decoder.getFrameLength()):
+#			for i in range(2):
 				#計算するフレームを設定する 
 				anime_decoder.setFrame(i)
 				anime_decoder.update()			
@@ -60,6 +128,9 @@ def test_update() :
 				for n in range(loopnum):
 					state = anime_decoder.getPartState(n)
 					print "[%s] state.index = %s" % ( n , state.index )
+					#表示してみる
+					test_printState( n , state)
+
 #					print "次元数 %s" % state.vertices.ndim #次元数
 #					print "サイズ %s" % state.vertices.size #サイズ
 #					print "各次元要素 %s" % state.vertices.shape #各次元要素
@@ -68,80 +139,6 @@ def test_update() :
 #					print "配列全体のバイト %s" % state.vertices.nbytes #配列全体のバイト
 #					print "配列のタイプ %s" % state.vertices.dtype #配列のタイプ
 					#計算済みデータの出力テスト
-					print "state.vertices"
-					print state.vertices
-					print "state.colors"
-					print state.colors
-					print "state.uvs"
-					print state.uvs
-					print "state.matrix"
-					print state.matrix
-					print "[%s] state.position = (%s,%s,%s)" % ( n , state.position.x , state.position.y , state.position.z )
-					print "[%s] state.rotation = (%s,%s,%s)" % ( n , state.rotation.x , state.rotation.y , state.rotation.z )
-					print "[%s] state.scale = (%s,%s)" % ( n , state.scale.x , state.scale.y )
-					print "[%s] state.alpha = (%s)" % ( n , state.alpha )
-					print "[%s] state.prio = (%s)" % ( n , state.prio )
-					print "[%s] state.hFlip = (%s)" % ( n , state.hFlip )
-					print "[%s] state.vFlip = (%s)" % ( n , state.vFlip )
-					print "[%s] state.hide = (%s)" % ( n , state.hide )
-					print "[%s] state.pivotOffset = (%s,%s)" % ( n , state.pivotOffset.x , state.pivotOffset.y)
-					print "[%s] state.anchor = (%s,%s)" % ( n , state.anchor.x , state.anchor.y)
-					print "[%s] state.size = (%s,%s)" % ( n , state.size.x , state.size.y)
-					print "[%s] state.imageFlipH = (%s)" % ( n , state.imageFlipH )
-					print "[%s] state.imageFlipV = (%s)" % ( n , state.imageFlipV )
-					print "[%s] state.uvTranslate = (%s,%s)" % ( n , state.uvTranslate.x , state.uvTranslate.y)
-					print "[%s] state.uvRotation = (%s)" % ( n , state.uvRotation )
-					print "[%s] state.uvScale = (%s,%s)" % ( n , state.uvScale.x , state.uvScale.y)
-					print "[%s] state.boundingRadius = (%s)" % ( n , state.boundingRadius )
-					print "[%s] state.noCells = (%s)" % ( n , state.noCells )
-					print "[%s] state.is_color_blend = (%s)" % ( n , state.is_color_blend )
-					print "[%s] state.is_vertex_transform = (%s)" % ( n , state.is_vertex_transform )
-					print "[%s] state.alphaBlendType = (%s)" % ( n , state.alphaBlendType )
-
-					#カラーブレンド値を取得
-					if ( state.is_color_blend ) : #カラーブレンドを使用するフラグが立っている場合表示する
-						color = state.colorValue.color
-						print "[%s] state.colorValue.target = (%s)" % ( n , state.colorValue.target )
-						print "[%s] state.colorValue.blendType = (%s)" % ( n , state.colorValue.blendType )
-						print "[%s] state.colorValue.colors = (%s,%s,%s,%s)" % ( n , color.rgba.a ,color.rgba.r , color.rgba.g , color.rgba.b)
-						color = state.colorValue.colors(0)
-						print "[%s] state.colorValue.colors[0] = (%s,%s,%s,%s)" % ( n , color.rgba.a ,color.rgba.r , color.rgba.g , color.rgba.b)
-						color = state.colorValue.colors(1)
-						print "[%s] state.colorValue.colors[1] = (%s,%s,%s,%s)" % ( n , color.rgba.a ,color.rgba.r , color.rgba.g , color.rgba.b)
-						color = state.colorValue.colors(2)
-						print "[%s] state.colorValue.colors[2] = (%s,%s,%s,%s)" % ( n , color.rgba.a ,color.rgba.r , color.rgba.g , color.rgba.b)
-						color = state.colorValue.colors(3)
-						print "[%s] state.colorValue.colors[3] = (%s,%s,%s,%s)" % ( n , color.rgba.a ,color.rgba.r , color.rgba.g , color.rgba.b)
-
-					if ( state.is_vertex_transform ) :
-						vertex_anime = state.vertexValue
-						print "vertex_transform"
-						for loop in range(4) :							
-							v = vertex_anime.offsets(loop)
-							print "[%s] vertex = (%s,%s)" % ( loop , v.x ,v.y )
-
-					#セル情報の取得
-					#計算済みセルマップの取得 ただしuv移動などの適用前のデータになる。
-					#適用後がほしい場合はpartStateのuvsを参照する
-					#使用するテクスチャ、uv計算前の情報などが取得できる
-					cellvalue = state.getCellValue()
-					print "cellvalue.wrapMode = %s " % cellvalue.wrapMode
-					print "cellvalue.filterMode = %s " % cellvalue.filterMode
-					cell = cellvalue.getCell() #Bind_Cell取得
-					if ( cell.isNull() == False):
-						print "cell.name = <%s>" % cell.name
-						print "cell.pos = (%s,%s)" % ( cell.pos.x , cell.pos.y )
-						print "cell.size = (%s,%s)" % ( cell.size.x , cell.size.y )
-						print "cell.pivot = (%s,%s)" % ( cell.pivot.x , cell.pivot.y )
-						print "cell.rotated = %s" % cell.rotated
-
-						texture = cellvalue.getTexture()
-						print "texture.name %s" % texture.filename
-						print "texture.width %s" % texture.width
-						print "texture.height %s" % texture.height
-						for loop in range(4) :							
-							uvs = cellvalue.getUvs(loop)
-							print "uvs[%s] = (%s,%s)" % ( loop , uvs.x ,uvs.y )
 
 #===============================================================================
 #タグ変換テスト
@@ -363,8 +360,7 @@ def test_ssxml() :
 #------------------------------------------
 def main() : 
 
-	psd_test()
-	test_ssxml()
+#	test_ssxml()
 	test_update()
 	
 

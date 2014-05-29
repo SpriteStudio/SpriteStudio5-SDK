@@ -42,6 +42,7 @@ ADD_LIBRARY(ssAnimater
 ../../Common/Animator/ssplayer_cellmap.h
 ../../Common/Animator/ssplayer_cellmap.cpp
 ../../Common/Animator/ssplayer_PartState.h
+../../Common/Animator/ssplayer_PartState.cpp
 ../../Common/Animator/ssplayer_render.cpp
 ../../Common/Animator/ssplayer_render.h
 ../../Common/Animator/ssplayer_matrix.cpp

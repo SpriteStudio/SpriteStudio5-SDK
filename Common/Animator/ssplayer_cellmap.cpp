@@ -77,8 +77,8 @@ void calcUvs( SsCellValue* cellv )
 	}
 
 	SsVector2 wh;
-	wh.x = cellv->texture->getWidth();
-	wh.y = cellv->texture->getHeight();
+	wh.x = (float)cellv->texture->getWidth();
+	wh.y = (float)cellv->texture->getHeight();
 
 //	SsVector2 wh = map->pixelSize;
 	// 右上に向かって＋になる
