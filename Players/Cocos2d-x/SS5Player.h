@@ -13,7 +13,7 @@
   resman->addData("sample.ssbp");
 
   auto player = ss::Player::create();
-  player->setData("sample");
+  player->setData("sample");			// ssbpファイル名（拡張子不要）
   player->play("anime1");
   player->setPosition(200, 200);
   this->addChild(player);
@@ -48,7 +48,7 @@ struct ProjectData;
 class ResourceManager : public cocos2d::Ref
 {
 public:
-	static const std::string s_nullImageBaseDir;
+	static const std::string s_null;
 
 	/**
 	 * デフォルトインスタンスを取得します.
@@ -65,7 +65,7 @@ public:
 	 * @param  imageBaseDir  画像ファイルの読み込み元ルートパス. 省略時はssbpのある場所をルートとします.
 	 * @return dataKey
 	 */
-	std::string addData(const std::string& ssbpFilepath, const std::string& imageBaseDir = s_nullImageBaseDir);
+	std::string addData(const std::string& ssbpFilepath, const std::string& imageBaseDir = s_null);
 
 	/**
 	 * ssbpファイルを読み込み管理対象とします.
@@ -75,7 +75,7 @@ public:
 	 * @param  imageBaseDir  画像ファイルの読み込み元ルートパス. 省略時はssbpのある場所をルートとします.
 	 * @return dataKey
 	 */
-	std::string addData(const std::string& dataKey, const std::string& ssbpFilepath, const std::string& imageBaseDir = s_nullImageBaseDir);
+	std::string addDataWithKey(const std::string& dataKey, const std::string& ssbpFilepath, const std::string& imageBaseDir = s_null);
 
 	/**
 	 * 指定されたssbpデータを管理対象とします.
@@ -85,7 +85,7 @@ public:
 	 * @param  imageBaseDir  画像ファイルの読み込み元ルートパス. 省略時はssbpのある場所をルートとします.
 	 * @return dataKey
 	 */
-	std::string addData(const std::string& dataKey, const ProjectData* data, const std::string& imageBaseDir = s_nullImageBaseDir);
+	std::string addData(const std::string& dataKey, const ProjectData* data, const std::string& imageBaseDir = s_null);
 	
 	/**
 	 * 指定データを解放します.

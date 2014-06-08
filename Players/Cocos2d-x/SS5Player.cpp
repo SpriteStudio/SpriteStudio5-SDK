@@ -351,7 +351,7 @@ struct ResourceSet : public cocos2d::Ref
  */
 
 static ResourceManager* defaultInstance = nullptr;
-const std::string ResourceManager::s_nullImageBaseDir;
+const std::string ResourceManager::s_null;
 
 ResourceManager* ResourceManager::getInstance()
 {
@@ -395,7 +395,7 @@ std::string ResourceManager::addData(const std::string& dataKey, const ProjectDa
 	
 	// imageBaseDirの指定がないときコンバート時に指定されたパスを使用する
 	std::string baseDir = imageBaseDir;
-	if (imageBaseDir == s_nullImageBaseDir && data->imageBaseDir)
+	if (imageBaseDir == s_null && data->imageBaseDir)
 	{
 		ToPointer ptr(data);
 		const char* dir = static_cast<const char*>(ptr(data->imageBaseDir));
@@ -418,7 +418,7 @@ std::string ResourceManager::addData(const std::string& dataKey, const ProjectDa
 	return dataKey;
 }
 
-std::string ResourceManager::addData(const std::string& dataKey, const std::string& ssbpFilepath, const std::string& imageBaseDir)
+std::string ResourceManager::addDataWithKey(const std::string& dataKey, const std::string& ssbpFilepath, const std::string& imageBaseDir)
 {
 	std::string fullpath = cocos2d::FileUtils::getInstance()->fullPathForFilename(ssbpFilepath);
 
@@ -435,7 +435,7 @@ std::string ResourceManager::addData(const std::string& dataKey, const std::stri
 	CCASSERT(data->version == DATA_VERSION, "Version number of data does not match");
 	
 	std::string baseDir = imageBaseDir;
-	if (imageBaseDir == s_nullImageBaseDir)
+	if (imageBaseDir == s_null)
 	{
 		// imageBaseDirの指定がないとき
 		if (data->imageBaseDir)
@@ -481,7 +481,7 @@ std::string ResourceManager::addData(const std::string& ssbpFilepath, const std:
         dataKey = filename.substr(0, pos);
     }
 	
-	return addData(dataKey, ssbpFilepath, imageBaseDir);
+	return addDataWithKey(dataKey, ssbpFilepath, imageBaseDir);
 }
 
 void ResourceManager::removeData(const std::string& dataKey)
