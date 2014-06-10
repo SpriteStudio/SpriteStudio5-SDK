@@ -97,6 +97,7 @@ public:
 	{
 		if (this != &x) {
 		  this->release();
+		  name.~SsString();
 		  new (this) SsValue(x);
 		}
 		return *this;

@@ -13,6 +13,21 @@
 
 void	SsCellMapList::clear()
 {
+	if (CellMapDic.size() > 0)
+	{
+		CellMapDicItr itr;
+		for (CellMapDicItr itr = CellMapDic.begin(); itr != CellMapDic.end();)
+		{
+			if (itr->second != NULL)
+			{
+				delete itr->second;
+				itr->second = NULL;
+				continue;
+			}
+			itr++;
+		}
+	}
+
 	CellMapDic.clear();
 	CellMapList.clear();
 }
