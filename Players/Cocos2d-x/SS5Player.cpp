@@ -811,6 +811,8 @@ void Player::play(AnimeRef* animeRef, int loop, int startFrameNo)
 		_isPlaying = true;
 		_isPausing = false;
 		_prevDrawFrameNo = -1;
+		
+		setFrame(_playingFrame);
 	}
 }
 
