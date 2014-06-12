@@ -58,7 +58,10 @@ public:
 
 public:
 	SsAttribute(){}
-	virtual ~SsAttribute(){}
+	virtual ~SsAttribute(){
+		for ( AttributeKeyList::iterator itr = key.begin() ; 
+			itr != key.end() ; itr ++ ) delete (*itr);
+	}
 
 
 	SSSERIALIZE_BLOCK
