@@ -1,0 +1,5 @@
+<map id="jpeg" name="jpeg">
+<area shape="rect" id="node2" href="$structhuffman.html" title="huffman" alt="" coords="5,96,72,123"/>
+<area shape="rect" id="node3" href="$structstbi.html" title="stbi" alt="" coords="96,96,139,123"/>
+<area shape="rect" id="node4" href="$structstbi__io__callbacks.html" title="stbi_io_callbacks" alt="" coords="56,5,179,32"/>
+</map>

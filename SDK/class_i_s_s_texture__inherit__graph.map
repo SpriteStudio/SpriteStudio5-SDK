@@ -1,0 +1,5 @@
+<map id="ISSTexture" name="ISSTexture">
+<area shape="rect" id="node2" href="$class_s_s_texture_b_m_p.html" title="SSTextureBMP" alt="" coords="5,80,117,107"/>
+<area shape="rect" id="node3" href="$class_s_s_texture_d_x9.html" title="SSTextureDX9" alt="" coords="141,80,248,107"/>
+<area shape="rect" id="node4" href="$class_s_s_texture_g_l.html" title="SSTextureGL" alt="" coords="273,80,372,107"/>
+</map>

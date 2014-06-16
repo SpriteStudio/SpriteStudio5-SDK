@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classbabel_1_1method__base.html" title="babel::method_base" alt="" coords="5,45,144,72"/>
+<area shape="rect" id="node2" href="$classbabel_1_1create__engine.html" title="babel::create_engine\l\&lt; engine_type \&gt;" alt="" coords="195,5,338,46"/>
+<area shape="rect" id="node4" href="$classbabel_1_1ignite__translate.html" title="babel::ignite_translate\l\&lt; engine_type \&gt;" alt="" coords="192,70,341,111"/>
+<area shape="rect" id="node3" href="$classbabel_1_1create__binary__engine.html" title="babel::create_binary\l_engine\&lt; engine_type \&gt;" alt="" coords="395,5,557,46"/>
+<area shape="rect" id="node5" href="$classbabel_1_1ignite__binary__translate.html" title="babel::ignite_binary\l_translate\&lt; engine_type \&gt;" alt="" coords="389,70,563,111"/>
+</map>

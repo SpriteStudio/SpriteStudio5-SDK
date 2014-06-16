@@ -1,0 +1,5 @@
+<map id="SsCellValue" name="SsCellValue">
+<area shape="rect" id="node2" href="$struct_ss_point2.html" title="２次元座標を表現するためのクラスです。 " alt="" coords="5,5,80,32"/>
+<area shape="rect" id="node4" href="$class_ss_cell.html" title="パーツに使用される画素の矩形範囲を示した構造です。 " alt="" coords="61,125,120,152"/>
+<area shape="rect" id="node3" href="$class_i_s_s_texture.html" title="ISSTexture" alt="" coords="145,125,231,152"/>
+</map>

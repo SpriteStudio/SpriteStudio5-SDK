@@ -1,0 +1,5 @@
+<map id="Bind_Cell" name="Bind_Cell">
+<area shape="rect" id="node2" href="$classmy_py_binder.html" title="myPyBinder\&lt; SsCell \&gt;" alt="" coords="5,216,160,243"/>
+<area shape="rect" id="node3" href="$class_ss_cell.html" title="パーツに使用される画素の矩形範囲を示した構造です。 " alt="" coords="53,125,112,152"/>
+<area shape="rect" id="node4" href="$struct_ss_point2.html" title="２次元座標を表現するためのクラスです。 " alt="" coords="45,5,120,32"/>
+</map>

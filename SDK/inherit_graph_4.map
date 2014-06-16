@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classbabel_1_1bbl__demi.html" title="babel::bbl_demi\&lt; to\l_string \&gt;" alt="" coords="5,70,141,111"/>
+<area shape="rect" id="node2" href="$classbabel_1_1auto__translate.html" title="babel::auto_translate\l\&lt; to_string \&gt;" alt="" coords="202,5,345,46"/>
+<area shape="rect" id="node3" href="$classbabel_1_1manual__translate.html" title="babel::manual_translate\l\&lt; from_string, to_string \&gt;" alt="" coords="189,70,357,111"/>
+<area shape="rect" id="node4" href="$classbabel_1_1translate__to__string.html" title="babel::translate_to\l_string\&lt; to_string \&gt;" alt="" coords="206,135,341,177"/>
+</map>

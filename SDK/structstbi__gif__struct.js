@@ -1,0 +1,25 @@
+var structstbi__gif__struct =
+[
+    [ "bgindex", "structstbi__gif__struct.html#a0d3690bdbbf0b772d5369c0a29b77cc1", null ],
+    [ "codes", "structstbi__gif__struct.html#a4644d2fe2c84e410ab235ea415e9a740", null ],
+    [ "color_table", "structstbi__gif__struct.html#aa10fee29a36ac4b9cae98300f839d091", null ],
+    [ "cur_x", "structstbi__gif__struct.html#adbc7ae7e9ff2e2abdf66eb0e1a4b3ffb", null ],
+    [ "cur_y", "structstbi__gif__struct.html#ac61865216c4b578c235f5b8170c2036c", null ],
+    [ "eflags", "structstbi__gif__struct.html#aad9790350cb2d775722dc5d55fdfde42", null ],
+    [ "flags", "structstbi__gif__struct.html#a3d22eaa3fe69a1d35ff914add9bb6df5", null ],
+    [ "h", "structstbi__gif__struct.html#a6ce6b990464cdbbe9a408fe26581b296", null ],
+    [ "lflags", "structstbi__gif__struct.html#a01e6981357bbd283177f70f87050a49d", null ],
+    [ "line_size", "structstbi__gif__struct.html#a5b7d7625c253025ff5ee4169afbf06b7", null ],
+    [ "lpal", "structstbi__gif__struct.html#af2bf4a7890065ce54b8b59c6fd008e5f", null ],
+    [ "max_x", "structstbi__gif__struct.html#a02391438194b161d16bdf95878be6a66", null ],
+    [ "max_y", "structstbi__gif__struct.html#aff3410e0fff097d4719e54096f6da69b", null ],
+    [ "out", "structstbi__gif__struct.html#a1c2d18ea92a86a416e7458cdaa9f4cc3", null ],
+    [ "pal", "structstbi__gif__struct.html#a3d96c452c7935b3a1ca49cc1ce410686", null ],
+    [ "parse", "structstbi__gif__struct.html#a7a57ec19955875d52af26851ef332db8", null ],
+    [ "ratio", "structstbi__gif__struct.html#ac082648ce87130679bcde2dd4651c530", null ],
+    [ "start_x", "structstbi__gif__struct.html#ad3899ad3323686e963a7322e9a80bb05", null ],
+    [ "start_y", "structstbi__gif__struct.html#a7f4974b80d6e6f4f56b5fd02a9c1c121", null ],
+    [ "step", "structstbi__gif__struct.html#a61556e0a3ff8f19fa80401de5da1f079", null ],
+    [ "transparent", "structstbi__gif__struct.html#ab46e0fb6ad50c3caeac8800ef07b78a8", null ],
+    [ "w", "structstbi__gif__struct.html#a28e5c2fb704a64d23a7e8f9013ecda34", null ]
+];

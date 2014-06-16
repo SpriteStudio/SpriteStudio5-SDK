@@ -1,0 +1,9 @@
+<map id="Bind_SsAnimePack" name="Bind_SsAnimePack">
+<area shape="rect" id="node2" href="$class_ss_project.html" title="SsProject" alt="" coords="26,200,104,227"/>
+<area shape="rect" id="node3" href="$class_ss_project_setting.html" title="SsProjectSetting" alt="" coords="5,109,125,136"/>
+<area shape="rect" id="node4" href="$class_ss_cell_map_list.html" title="SsCellMapList" alt="" coords="129,200,236,227"/>
+<area shape="rect" id="node5" href="$class_ss_anime_pack.html" title="パーツを組み合わせた構造とその構造を使用するアニメーションを格納するデータです。 パーツの組み合わせ構造をSsModel、Modelを使用するアニメデータをSsAnimationで定義しています。 ..." alt="" coords="261,200,365,227"/>
+<area shape="rect" id="node6" href="$class_ss_animation_settings.html" title="アニメーション再生設定情報です。 " alt="" coords="195,109,339,136"/>
+<area shape="rect" id="node7" href="$struct_ss_point2.html" title="２次元座標を表現するためのクラスです。 " alt="" coords="229,5,304,32"/>
+<area shape="rect" id="node8" href="$class_ss_model.html" title="SsModel" alt="" coords="363,109,436,136"/>
+</map>
