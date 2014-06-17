@@ -1,5 +1,4 @@
-OPTPiX SpriteStudio 5 SDK
-=================
+### OPTPiX SpriteStudio 5 SDK
 
-こちらをご覧ください
+ドキュメントはこちらです。  
 https://github.com/SpriteStudio/SpriteStudio5-SDK/wiki
