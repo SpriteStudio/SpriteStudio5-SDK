@@ -183,9 +183,7 @@ public:
 	SsAnimationSettings			settings;		/// 設定情報 
 	std::vector<SsPartAnime*>	partAnimes;		///	パーツ毎のアニメーションキーフレームが格納されるリスト
 
-	std::vector<SsLabel*>	labels;
-	///ラベル
-	//SsLabelList				labels;		///< ラベルリスト
+	std::vector<SsLabel*>	labels;				/// アニメーションが持つラベルのリストです。
 public:
 	SsAnimation(){}
 	virtual ~SsAnimation()
