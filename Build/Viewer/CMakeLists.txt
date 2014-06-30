@@ -1,13 +1,13 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(sssdk)
 
+IF (WIN32)
 #SET(BOOST_ROOT "C:/boost-1_55_0")
 SET(BOOST_ROOT "C:/Boost/include/boost-1_55/")
 SET(BOOST_PYTHON_LIB "C:/Boost/lib" )
 SET(PYTHON_IHNCLUDE "C:/Python27/include")
-
 SET(PYTHON_LIB "C:/Python27/libs")
-
+ENDIF(WIN32)
 
 link_directories(${SEARCH_LIB} ${BOOST_PYTHON_LIB} ${PYTHON_LIB}  )
 
@@ -83,6 +83,7 @@ ADD_EXECUTABLE(viewer_sample_gl
 ./source/myscene.h
 )
 
+IF (WIN32)
 ADD_EXECUTABLE(viewer_sample_dx9
 ../../Common/Helper/DirectX/d3dsimple.cpp
 ../../Common/Helper/DirectX/d3dsimple.h
@@ -94,7 +95,7 @@ ADD_EXECUTABLE(viewer_sample_dx9
 ./source/myscene.cpp
 ./source/myscene.h
 )
-
+ENDIF (WIN32)
 
 ADD_EXECUTABLE(scriptbase_converter
 ../PythonBinder/script_base_conv.cpp
@@ -145,8 +146,6 @@ IF (WIN32)
     SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_RELEASE "/SUBSYSTEM:windows")
     SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_MINSIZEREL "/SUBSYSTEM:windows")
     SET_TARGET_PROPERTIES (viewer_sample_dx9 PROPERTIES LINK_FLAGS_RELWITHDEBINFO "/SUBSYSTEM:windows")
-
-
 ENDIF (WIN32)
 
 IF(WIN32)

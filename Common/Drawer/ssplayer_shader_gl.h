@@ -61,23 +61,10 @@ public:
 	virtual void	Use( void );
 
 	inline	void 	Enable( void ) { Use(); }
-	inline	void 	Disable( void ) { glUseProgramObjectARB( 0 ); }
+    void 	Disable( void );
+	GLint GetUniformLocation( const char *name );
 
-	inline	GLint GetUniformLocation( const char *name )
-	{
-		GLint ul = glGetUniformLocationARB( h, name );
-		if ( ul == -1 ) {
-		}
-		return ul;
-	}
-
-	inline	GLint GetAttribLocation( const char *name )
-	{
-		GLint al = glGetAttribLocationARB( h, name );
-		if ( al == -1 ) {
-		}
-		return al;
-	}
+	GLint GetAttribLocation( const char *name );
 };
 
 extern 	SSOpenGLProgramObject*			glpgObject;    //カレントシェーダーオブジェクチE

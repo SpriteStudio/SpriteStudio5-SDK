@@ -102,6 +102,11 @@ SSOpenGLShader::SSOpenGLShader( const std::string& filename, const GLenum shader
 	Compile();
 }
 
+
+
+
+
+
 SSOpenGLShader::~SSOpenGLShader()
 {
 	glDeleteObjectARB( h );
@@ -193,6 +198,27 @@ void SSOpenGLProgramObject::Attach( const SSOpenGLShader *s )
 		//SsLogInfo( _D("SSOpenGLProgramObject: Attach error cannnot attach shader") );
 	}
 }
+
+
+
+void 	SSOpenGLProgramObject::Disable( void ) { glUseProgramObjectARB( 0 ); }
+GLint   SSOpenGLProgramObject::GetUniformLocation( const char *name )
+{
+    GLint ul = glGetUniformLocationARB( h, name );
+    if ( ul == -1 ) {
+    }
+    return ul;
+}
+GLint SSOpenGLProgramObject::GetAttribLocation( const char *name )
+{
+    GLint al = glGetAttribLocationARB( h, name );
+    if ( al == -1 ) {
+    }
+    return al;
+}
+
+
+
 
 int
 SSOpenGLProgramObject::Link( void )
