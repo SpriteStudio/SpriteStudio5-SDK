@@ -441,6 +441,7 @@ namespace SsKeyValueType
 		_vertexAnime,
 		_colorAnime,
 		_userData,
+		_instance,
 	};
 };
 
@@ -519,16 +520,16 @@ public:
 class SsInstanceAttr
 {
 public:
-    bool   		infinity;
-    bool   		reverse;
-    bool   		pingpong;
-	bool		independent;
-    int			loopNum;
-    SsString	startLabel;
-    int			startOffset;
-    SsString	endLabel;
-    int			endOffset;
-    float       speed;
+    bool   		infinity;		///無限ループフラグ
+    bool   		reverse;		///逆再生フラグ
+    bool   		pingpong;		///往復再生フラグ
+	bool		independent;	///独立動作フラグ
+    int			loopNum;		///ループ回数　無限ループフラグ=trueの時には無効
+    SsString	startLabel;		///再生開始位置 ラベル名称
+    int			startOffset;	///再生開始位置 ラベル名称からのオフセット
+    SsString	endLabel;		///再生終了位置 ラベル名称
+    int			endOffset;		///再生終了位置 ラベル名称からのオフセット
+    float       speed;			///再生スピード
 
 
     //テンポラリ <-エディタ用計算値の可能性もあるので後で整理
