@@ -540,7 +540,7 @@ private:
 	int					_colorBlendFuncNo;
 
 public:
-	kmMat4				_mat;
+	cocos2d::Mat4				_mat;
 	State				_state;
 	bool				_isStateChanged;
 	CustomSprite*		_parent;
@@ -553,7 +553,7 @@ public:
 
 	void initState()
 	{
-		kmMat4Identity(&_mat);
+		_mat = cocos2d::Mat4::IDENTITY;
 		_state.init();
 		_isStateChanged = true;
 	}
@@ -589,7 +589,7 @@ public:
 
 public:
 	// override
-    virtual const kmMat4& getNodeToParentTransform() const;
+    virtual const cocos2d::Mat4& getNodeToParentTransform() const;
 };
 
 
@@ -956,7 +956,7 @@ void Player::allocParts(int numParts, bool useCustomShaderProgram)
 		// パーツ数だけCustomSpriteを作成する
 		// create CustomSprite objects.
 		float globalZOrder = getGlobalZOrder();
-		for (int i = getChildrenCount(); i < numParts; i++)
+		for (auto i = getChildrenCount(); i < numParts; i++)
 		{
 			CustomSprite* sprite =  CustomSprite::create();
 			sprite->changeShaderProgram(useCustomShaderProgram);
@@ -973,7 +973,7 @@ void Player::allocParts(int numParts, bool useCustomShaderProgram)
 	else
 	{
 		// 多い分は解放する
-		for (int i = getChildrenCount() - 1; i >= numParts; i--)
+		for (auto i = getChildrenCount() - 1; i >= numParts; i--)
 		{
 			CustomSprite* sprite = static_cast<CustomSprite*>(getChildren().at(i));
 			removeChild(sprite, true);
@@ -1300,7 +1300,7 @@ void Player::setFrame(int frameNo)
 	}
 	
 	// 行列の更新
-	kmMat4 mat, t;
+	cocos2d::Mat4 mat, t;
 	for (int partIndex = 0; partIndex < packData->numParts; partIndex++)
 	{
 		const PartData* partData = &parts[partIndex];
@@ -1315,17 +1315,17 @@ void Player::setFrame(int frameNo)
 			}
 			else
 			{
-				kmMat4Identity(&mat);
+				mat = cocos2d::Mat4::IDENTITY;
 			}
 			
-			kmMat4Translation(&t, sprite->_state.x ,sprite->_state.y, 0.0f);
-			kmMat4Multiply(&mat, &mat, &t);
+            cocos2d::Mat4::createTranslation(sprite->_state.x ,sprite->_state.y, 0.0f, &t);
+			mat = mat * t;
 			
-			kmMat4RotationZ(&t, CC_DEGREES_TO_RADIANS(-sprite->_state.rotation));
-			kmMat4Multiply(&mat, &mat, &t);
+            cocos2d::Mat4::createRotationZ(CC_DEGREES_TO_RADIANS(-sprite->_state.rotation), &t);
+            mat = mat * t;
 			
-			kmMat4Scaling(&t, sprite->_state.scaleX, sprite->_state.scaleY, 1.0f);
-			kmMat4Multiply(&mat, &mat, &t);
+            cocos2d::Mat4::createScale(sprite->_state.scaleX, sprite->_state.scaleY, 1.0f, &t);
+			mat = mat * t;
 			
 			sprite->_mat = mat;
 			sprite->_isStateChanged = false;
@@ -1494,7 +1494,7 @@ CustomSprite* CustomSprite::create()
 	if (pSprite && pSprite->init())
 	{
 		pSprite->initState();
-		pSprite->_defaultShaderProgram = pSprite->getShaderProgram();
+		pSprite->_defaultShaderProgram = pSprite->getGLProgram();
 		pSprite->autorelease();
 		return pSprite;
 	}
@@ -1515,12 +1515,12 @@ void CustomSprite::changeShaderProgram(bool useCustomShaderProgram)
 				shaderProgram = _defaultShaderProgram;
 				useCustomShaderProgram = false;
 			}
-			this->setShaderProgram(shaderProgram);
+			this->setGLProgram(shaderProgram);
 			_useCustomShaderProgram = useCustomShaderProgram;
 		}
 		else
 		{
-			this->setShaderProgram(_defaultShaderProgram);
+			this->setGLProgram(_defaultShaderProgram);
 			_useCustomShaderProgram = false;
 		}
 	}
@@ -1547,7 +1547,7 @@ void CustomSprite::setOpacity(GLubyte opacity)
 	_opacity = static_cast<float>(opacity) / 255.0f;
 }
 
-const kmMat4& CustomSprite::getNodeToParentTransform() const
+const cocos2d::Mat4& CustomSprite::getNodeToParentTransform() const
 {
     if (_transformDirty)
     {
@@ -1557,8 +1557,8 @@ const kmMat4& CustomSprite::getNodeToParentTransform() const
 		// 更に親の行列に掛け合わせる
 		if (_parent != nullptr)
 		{
-			kmMat4 mat = _parent->_mat;
-			kmMat4Multiply(&mat, &mat, &_transform);
+			cocos2d::Mat4 mat = _parent->_mat;
+			mat = mat * _transform;
 			_transform = mat;
 		}
 	}
