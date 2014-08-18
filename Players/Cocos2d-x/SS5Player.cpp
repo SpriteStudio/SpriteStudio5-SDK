@@ -1129,17 +1129,6 @@ void Player::setFrame(int frameNo)
 		int opacity    = flags & PART_FLAG_OPACITY ? reader.readU16() : init->opacity;
 		
 		bool isVisibled = !(flags & PART_FLAG_INVISIBLE);
-		
-		if (partIndex == 0)
-		{
-			// rootパーツは常に座標(0,0)
-			x = 0;
-			y = 0;
-			rotation = 0;
-			// flipはrootパーツに反映する
-			scaleX = isFlippedX() ? -1.0f : 1.0f;
-			scaleY = isFlippedY() ? -1.0f : 1.0f;
-		}
 
 		state.x = x;
 		state.y = y;
@@ -1186,8 +1175,31 @@ void Player::setFrame(int frameNo)
 	//			}
 				// 加算ブレンド
 				if (partData->alphaBlendType == BLEND_ADD) {
+					blendFunc.src = GL_SRC_ALPHA;
 					blendFunc.dst = GL_ONE;
 				}
+				// 乗算ブレンド
+				if (partData->alphaBlendType == BLEND_MUL) {
+					blendFunc.src = GL_ZERO;
+					blendFunc.dst = GL_SRC_COLOR;
+				}
+				// 減算ブレンド
+				if (partData->alphaBlendType == BLEND_SUB) {
+					blendFunc.src = GL_ZERO;
+					blendFunc.dst = GL_ONE_MINUS_SRC_COLOR;
+				}
+/*
+				//除外
+				if (partData->alphaBlendType == BLEND_) {
+					blendFunc.src = GL_ONE_MINUS_DST_COLOR;
+					blendFunc.dst = GL_ONE_MINUS_SRC_COLOR;
+				}
+				//スクリーン
+				if (partData->alphaBlendType == BLEND_) {
+					blendFunc.src = GL_ONE_MINUS_DST_COLOR;
+					blendFunc.dst = GL_ONE;
+				}
+*/
 				sprite->setBlendFunc(blendFunc);
 			}
 
