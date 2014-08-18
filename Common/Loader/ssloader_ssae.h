@@ -60,10 +60,12 @@ public:
 			//memset( inheritRates , 0 , sizeof( float) * SsAttributeKind::num );
 			for (int i = 0; i < (int)SsAttributeKind::num ; ++i)
 				inheritRates[i] = 1.f;
+/*
 			// 反転・非表示フラグは継承しない from 旧SS
 			inheritRates[(int)SsAttributeKind::fliph] = 0.f;
 			inheritRates[(int)SsAttributeKind::flipv] = 0.f;
 			inheritRates[(int)SsAttributeKind::hide] = 0.f;
+*/
 			// イメージ反転も継承しない 2013.04.03 水 15:08
 			inheritRates[(int)SsAttributeKind::imgfliph] = 0.f;
 			inheritRates[(int)SsAttributeKind::imgflipv] = 0.f;

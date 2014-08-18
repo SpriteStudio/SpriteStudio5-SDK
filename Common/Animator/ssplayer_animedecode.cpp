@@ -505,18 +505,25 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 	{
 		// α
 		if (state->inherits_(SsAttributeKind::alpha))
+		{
 			state->alpha *= state->parent->alpha;
+		}
+
 		// フリップの継承。継承ONだと親に対しての反転になる…ヤヤコシス
 		if (state->inherits_(SsAttributeKind::fliph))
 		{
 			state->hFlip = state->parent->hFlip ^ state->hFlip;
 		}
-
 		if (state->inherits_(SsAttributeKind::flipv))
+		{
 			state->vFlip = state->parent->vFlip ^ state->vFlip;
+		}
+
 		// 非表示は継承ONだと親のをただ引き継ぐ
 		if (state->inherits_(SsAttributeKind::hide))
+		{
 			state->hide = state->parent->hide;
+		}
 	}
 
 	// 非表示キーがないか、先頭の非表示キーより手前の場合は常に非表示にする。(継承関係なし)
