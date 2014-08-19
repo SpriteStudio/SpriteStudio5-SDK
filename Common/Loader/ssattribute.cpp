@@ -82,7 +82,7 @@ void	GetSsColorValue( const SsKeyframe* key , SsColorAnime& v )
 		ConvertStringToSsColor( lt["rgba"].get<SsString>() , v.colors[0].rgba);
 		v.colors[0].rate = lt["rate"].get<float>();
 
-		ConvertStringToSsColor( rt["rgba"].get<SsString>() , v.colors[2].rgba);
+		ConvertStringToSsColor( rt["rgba"].get<SsString>() , v.colors[1].rgba);
 		v.colors[1].rate = rt["rate"].get<float>();
 
 		ConvertStringToSsColor( lb["rgba"].get<SsString>() , v.colors[2].rgba);

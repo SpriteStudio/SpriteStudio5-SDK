@@ -98,11 +98,12 @@ public:
 				XMLElement* ec = e->FirstChildElement();
 				while(ec)
 				{
-					const char* tag = ec->GetText();
+					//継承設定の取得
+					const char* tag = ec->Value();
 					SsAttributeKind::_enum enumattr;
 
 					__StringToEnum_( tag , enumattr );
-					inheritRates[(int)enumattr] = (float)atof( ec->Value() );
+					inheritRates[(int)enumattr] = (float)atof( ec->GetText() );
 					ec = ec->NextSiblingElement();
 				}
 			}
