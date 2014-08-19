@@ -28,9 +28,6 @@
 #include "SsPlayerConverter.h"
 
 
-
-
-
 static const int DATA_VERSION_1			= 1;
 
 static const int DATA_ID				= 0x42505353;
@@ -399,6 +396,30 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				{
 					const SsPartState* state = *it;
 					
+					//セルに設定された原点補正を取得
+					SsVector2 pivot;
+					pivot.x = 0;
+					pivot.y = 0;
+
+					SsCell * cell = state->cellValue.cell;
+					float cpx = 0;
+					float cpy = 0;
+					if (cell)
+					{
+						// セルに設定された原点オフセットを適用する
+						// ※セルの原点は中央が0,0で＋が右上方向になっている
+						cpx = cell->pivot.x;
+						if (state->hFlip) cpx = -cpx;	// 水平フリップによって原点を入れ替える
+						// 上が＋で入っているのでここで反転する。
+						cpy = -cell->pivot.y;
+						if (state->vFlip) cpy = -cpy;	// 垂直フリップによって原点を入れ替える
+					}
+
+					// 次に原点オフセットアニメの値を足す
+					pivot.x = cpx + state->pivotOffset.x;
+					pivot.y = cpy + -state->pivotOffset.y;
+
+
 					int cellIndex = -1;
 					if (state->cellValue.cell) cellIndex = (*cellList)[state->cellValue.cell];
 					
@@ -412,10 +433,10 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					int p_flags = 0;
 					const PartInitialData& init = initialDataList.at(state->index);
 					if (cellIndex != init.cellIndex)                 p_flags |= PART_FLAG_CELL_INDEX;
-					if ((int)state->position.x != init.posX)         p_flags |= PART_FLAG_POSITION_X;
-					if ((int)state->position.y != init.posY)         p_flags |= PART_FLAG_POSITION_Y;
-					if (state->pivotOffset.x + 0.5f != init.anchorX) p_flags |= PART_FLAG_ANCHOR_X;
-					if (state->pivotOffset.y + 0.5f != init.anchorY) p_flags |= PART_FLAG_ANCHOR_Y;
+					if ((int)( state->position.x ) != init.posX)     p_flags |= PART_FLAG_POSITION_X;
+					if ((int)( state->position.y ) != init.posY)     p_flags |= PART_FLAG_POSITION_Y;
+					if (pivot.x + 0.5f != init.anchorX) p_flags |= PART_FLAG_ANCHOR_X;
+					if (pivot.y + 0.5f != init.anchorY) p_flags |= PART_FLAG_ANCHOR_Y;
 					if (state->rotation.z != init.rotation)          p_flags |= PART_FLAG_ROTATION;
 					if (state->scale.x != init.scaleX)               p_flags |= PART_FLAG_SCALE_X;
 					if (state->scale.y != init.scaleY)               p_flags |= PART_FLAG_SCALE_Y;
@@ -476,8 +497,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (p_flags & PART_FLAG_POSITION_X) frameData->add(Lump::s16Data((int)state->position.x));
 					if (p_flags & PART_FLAG_POSITION_Y) frameData->add(Lump::s16Data((int)state->position.y));
 
-					if (p_flags & PART_FLAG_ANCHOR_X) frameData->add(Lump::floatData(state->pivotOffset.x + 0.5f));
-					if (p_flags & PART_FLAG_ANCHOR_Y) frameData->add(Lump::floatData(state->pivotOffset.y + 0.5f));
+					if (p_flags & PART_FLAG_ANCHOR_X) frameData->add(Lump::floatData(pivot.x + 0.5f));
+					if (p_flags & PART_FLAG_ANCHOR_Y) frameData->add(Lump::floatData(pivot.y + 0.5f));
 					if (p_flags & PART_FLAG_ROTATION) frameData->add(Lump::floatData(state->rotation.z));	// degree
 					if (p_flags & PART_FLAG_SCALE_X) frameData->add(Lump::floatData(state->scale.x));
 					if (p_flags & PART_FLAG_SCALE_Y) frameData->add(Lump::floatData(state->scale.y));
