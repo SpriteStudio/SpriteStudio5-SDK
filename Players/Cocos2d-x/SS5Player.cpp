@@ -1139,6 +1139,7 @@ void Player::setFrame(int frameNo)
 		//CustomSprite* sprite = static_cast<CustomSprite*>(getChildren().at(partIndex));
 		CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
 
+		//表示設定
 		sprite->setVisible(isVisibled);
 		sprite->setState(state);
 		sprite->setLocalZOrder(index);
@@ -1247,15 +1248,17 @@ void Player::setFrame(int frameNo)
 		
 		
 		// カラーブレンドの反映
-		cocos2d::V3F_C4B_T2F_Quad& cquad = sprite->isCustomShaderProgramEnabled() ? sprite->getAttributeRef() : tempQuad;
-		cocos2d::Color4B color4 = { 0xff, 0xff, 0xff, 0 };
-		cquad.tl.colors =
-		cquad.tr.colors =
-		cquad.bl.colors =
-		cquad.br.colors = color4;
-
 		if (flags & PART_FLAG_COLOR_BLEND)
 		{
+			//頂点情報の取得
+//			cocos2d::V3F_C4B_T2F_Quad& cquad = sprite->isCustomShaderProgramEnabled() ? sprite->getAttributeRef() : tempQuad;
+			cocos2d::V3F_C4B_T2F_Quad& cquad = sprite->getAttributeRef();
+			cocos2d::Color4B color4 = { 0xff, 0xff, 0xff, 0 };
+			cquad.tl.colors =
+				cquad.tr.colors =
+				cquad.bl.colors =
+				cquad.br.colors = color4;
+
 			int typeAndFlags = reader.readU16();
 			int funcNo = typeAndFlags & 0xff;
 			int cb_flags = (typeAndFlags >> 8) & 0xff;
