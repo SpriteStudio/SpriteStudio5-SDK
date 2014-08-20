@@ -232,6 +232,13 @@ public:
 	const std::string& getPlayAnimeName() const;
 	
 	/**
+	* アニメーションの総フレームを取得します.
+	*
+	* @return 総フレーム
+	*/
+	int getMaxFrame() const;
+
+	/**
 	 * 再生フレームNoを取得します.
 	 * Get frame no of playing.
 	 *

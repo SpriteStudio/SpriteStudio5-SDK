@@ -671,6 +671,11 @@ void Player::setResourceManager(ResourceManager* resman)
 	_resman = resman;
 }
 
+int Player::getMaxFrame() const
+{
+	return(_currentAnimeRef->animationData->numFrames);
+}
+
 int Player::getFrameNo() const
 {
 	return static_cast<int>(_playingFrame);
@@ -1159,21 +1164,22 @@ void Player::setFrame(int frameNo)
 				// 標準状態でMIXブレンド相当になります
 				// BlendFuncの値を変更することでブレンド方法を切り替えます
 				cocos2d::BlendFunc blendFunc = sprite->getBlendFunc();
-				if (!cellRef->texture->hasPremultipliedAlpha())
+
+//				if (!cellRef->texture->hasPremultipliedAlpha())
+//				{
+//					blendFunc.src = GL_SRC_ALPHA;
+//					blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+//				}
+				// カスタムシェーダを使用する場合
+//				if (useCustomShaderProgram) {
+//					blendFunc.src = GL_SRC_ALPHA;
+//				}
+				// 通常ブレンド
+				if (partData->alphaBlendType == BLEND_MIX)
 				{
 					blendFunc.src = GL_SRC_ALPHA;
 					blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
 				}
-				else
-				{
-					blendFunc.src = CC_BLEND_SRC;
-					blendFunc.dst = CC_BLEND_DST;
-				}
-
-				// カスタムシェーダを使用する場合
-	//			if (useCustomShaderProgram) {
-	//				blendFunc.src = GL_SRC_ALPHA;
-	//			}
 				// 加算ブレンド
 				if (partData->alphaBlendType == BLEND_ADD) {
 					blendFunc.src = GL_SRC_ALPHA;
@@ -1247,17 +1253,18 @@ void Player::setFrame(int frameNo)
 		}
 		
 		
+		//頂点情報の取得
+		//			cocos2d::V3F_C4B_T2F_Quad& cquad = sprite->isCustomShaderProgramEnabled() ? sprite->getAttributeRef() : tempQuad;
+		cocos2d::V3F_C4B_T2F_Quad& cquad = sprite->getAttributeRef();
+		cocos2d::Color4B color4 = { 0xff, 0xff, 0xff, (BYTE)opacity };
+		cquad.tl.colors =
+		cquad.tr.colors =
+		cquad.bl.colors =
+		cquad.br.colors = color4;
+
 		// カラーブレンドの反映
 		if (flags & PART_FLAG_COLOR_BLEND)
 		{
-			//頂点情報の取得
-//			cocos2d::V3F_C4B_T2F_Quad& cquad = sprite->isCustomShaderProgramEnabled() ? sprite->getAttributeRef() : tempQuad;
-			cocos2d::V3F_C4B_T2F_Quad& cquad = sprite->getAttributeRef();
-			cocos2d::Color4B color4 = { 0xff, 0xff, 0xff, 0 };
-			cquad.tl.colors =
-				cquad.tr.colors =
-				cquad.bl.colors =
-				cquad.br.colors = color4;
 
 			int typeAndFlags = reader.readU16();
 			int funcNo = typeAndFlags & 0xff;
