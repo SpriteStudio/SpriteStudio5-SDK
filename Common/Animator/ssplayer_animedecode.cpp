@@ -523,14 +523,10 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 			state->vFlip = state->parent->vFlip ^ state->vFlip;
 		}
 
-		// 非表示は継承ONだと親が非表示の時は非表示
+		// 引き継ぐ場合は親の値をそのまま引き継ぐ
 		if (state->inherits_(SsAttributeKind::hide))
 		{
-//			state->hide = state->parent->hide;
-			if ( state->parent->hide == true )
-			{
-				state->hide = true;
-			}
+			state->hide = state->parent->hide;
 		}
 	}
 
