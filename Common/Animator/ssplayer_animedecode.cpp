@@ -424,7 +424,11 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 						{
 							state->hide = true;
 						}
-						hidekey_find = true;
+						else
+						{
+							//非表示キーがあり、かつ最初のキーフレームを取得した
+							hidekey_find = true;
+						}
 					}
 					break;
 				case SsAttributeKind::color:	///< カラーブレンド
@@ -519,10 +523,14 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 			state->vFlip = state->parent->vFlip ^ state->vFlip;
 		}
 
-		// 非表示は継承ONだと親のをただ引き継ぐ
+		// 非表示は継承ONだと親が非表示の時は非表示
 		if (state->inherits_(SsAttributeKind::hide))
 		{
-			state->hide = state->parent->hide;
+//			state->hide = state->parent->hide;
+			if ( state->parent->hide == true )
+			{
+				state->hide = true;
+			}
 		}
 	}
 
@@ -531,6 +539,7 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 	{
 		state->hide = true;
 	}
+
 
 	// 頂点の設定
 	if ( part->type == SsPartType::normal )
