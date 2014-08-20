@@ -449,7 +449,22 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 						switch (state->colorValue.target)
 						{
 							case SsColorBlendTarget::whole:
-								cb_flags = VERTEX_FLAG_ONE;
+								if ( 
+									  ( state->colorValue.color.rgba.a == 0 )
+								   && ( state->colorValue.color.rgba.r == 0 )	
+								   && ( state->colorValue.color.rgba.g == 0 )
+								   && ( state->colorValue.color.rgba.b == 0 )	
+								   )
+								{
+									//右のキーが単色、左のキーが4頂点などの場合に単色の色出力ができないため
+									//フラグがあるのに単色の色が設定されていない場合は4頂点カラーとして出力
+									cb_flags = VERTEX_FLAG_LT|VERTEX_FLAG_RT|VERTEX_FLAG_LB|VERTEX_FLAG_RB;
+								}
+								else
+								{
+									cb_flags = VERTEX_FLAG_ONE;
+								}
+
 								break;
 							case SsColorBlendTarget::vertex:
 								cb_flags = VERTEX_FLAG_LT|VERTEX_FLAG_RT|VERTEX_FLAG_LB|VERTEX_FLAG_RB;

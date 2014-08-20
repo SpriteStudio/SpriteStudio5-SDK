@@ -175,20 +175,57 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 	int range = rightkey->time - leftkey->time;
 	float now = (float)(time - leftkey->time) / range;
 
+	//初期化しておく
+	v.color.rgba.a = 0;	
+	v.color.rgba.r = 0;	
+	v.color.rgba.g = 0;	
+	v.color.rgba.b = 0;	
 	if ( leftv.target == SsColorBlendTarget::vertex )
 	{
-		for ( int i = 0 ; i < 4 ; i++ )
+		if ( rightv.target == SsColorBlendTarget::vertex )
 		{
-			v.colors[i].rgba.a = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.a , rightv.colors[i].rgba.a  , &curve );	
-			v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.r , rightv.colors[i].rgba.r  , &curve );	
-			v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.g , rightv.colors[i].rgba.g  , &curve );	
-			v.colors[i].rgba.b = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.b , rightv.colors[i].rgba.b  , &curve );	
+			//両方とも４頂点カラー
+			for ( int i = 0 ; i < 4 ; i++ )
+			{
+				v.colors[i].rgba.a = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.a , rightv.colors[i].rgba.a  , &curve );	
+				v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.r , rightv.colors[i].rgba.r  , &curve );	
+				v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.g , rightv.colors[i].rgba.g  , &curve );	
+				v.colors[i].rgba.b = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.b , rightv.colors[i].rgba.b  , &curve );	
+			}
 		}
-	}else{
-		v.color.rgba.a = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.a , rightv.color.rgba.a  , &curve );	
-		v.color.rgba.r = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.r , rightv.color.rgba.r  , &curve );	
-		v.color.rgba.g = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.g , rightv.color.rgba.g  , &curve );	
-		v.color.rgba.b = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.b , rightv.color.rgba.b  , &curve );	
+		else
+		{
+			//左は４頂点、右は単色
+			for ( int i = 0 ; i < 4 ; i++ )
+			{
+				v.colors[i].rgba.a = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.a , rightv.color.rgba.a  , &curve );	
+				v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.r , rightv.color.rgba.r  , &curve );	
+				v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.g , rightv.color.rgba.g  , &curve );	
+				v.colors[i].rgba.b = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.b , rightv.color.rgba.b  , &curve );	
+			}
+		}
+	}
+	else
+	{
+		if ( rightv.target == SsColorBlendTarget::vertex )
+		{
+			//左は単色、右は４頂点カラー
+			for ( int i = 0 ; i < 4 ; i++ )
+			{
+				v.colors[i].rgba.a = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.a , rightv.colors[i].rgba.a  , &curve );	
+				v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.r , rightv.colors[i].rgba.r  , &curve );	
+				v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.g , rightv.colors[i].rgba.g  , &curve );	
+				v.colors[i].rgba.b = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.b , rightv.colors[i].rgba.b  , &curve );	
+			}
+		}
+		else
+		{
+			//両方とも単色
+			v.color.rgba.a = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.a , rightv.color.rgba.a  , &curve );	
+			v.color.rgba.r = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.r , rightv.color.rgba.r  , &curve );	
+			v.color.rgba.g = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.g , rightv.color.rgba.g  , &curve );	
+			v.color.rgba.b = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.b , rightv.color.rgba.b  , &curve );	
+		}
 	}
 
 }
