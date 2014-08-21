@@ -52,6 +52,13 @@ enum {
 	PART_FLAG_COLOR_BLEND		= 1 << 13,
 	PART_FLAG_VERTEX_TRANSFORM	= 1 << 14,
 
+	PART_FLAG_U_MOVE			= 1 << 15,
+	PART_FLAG_V_MOVE			= 1 << 16,
+	PART_FLAG_UV_ROTATION		= 1 << 17,
+	PART_FLAG_U_SCALE			= 1 << 18,
+	PART_FLAG_V_SCALE			= 1 << 19,
+
+
 	NUM_PART_FLAGS
 };
 
@@ -172,6 +179,12 @@ struct PartInitialData
 	float	scaleX;
 	float	scaleY;
 	int		opacity;
+	float	uv_move_X;
+	float	uv_move_Y;
+	float	uv_rotation;
+	float	uv_scale_X;
+	float	uv_scale_Y;
+
 };
 
 
@@ -318,8 +331,12 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 
 				int flags = 0;
 				if (state->hide)  flags |= PART_FLAG_INVISIBLE;
-				if (state->hFlip) flags |= PART_FLAG_FLIP_H;
-				if (state->vFlip) flags |= PART_FLAG_FLIP_V;
+				//イメージ反転を適用する
+				bool hFlip = state->hFlip ^ state->imageFlipH;
+				bool vFlip = state->vFlip ^ state->imageFlipV;
+				if (hFlip) flags |= PART_FLAG_FLIP_H;
+				if (vFlip) flags |= PART_FLAG_FLIP_V;
+
 				init.flags = flags;
 
 				// cellIndex
@@ -339,16 +356,35 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				init.anchorX = state->pivotOffset.x + 0.5f;
 				init.anchorY = state->pivotOffset.y + 0.5f;
 				init.rotation = state->rotation.z;
-				init.scaleX = state->scale.x;
-				init.scaleY = state->scale.y;
+
+				float size_scale_x = state->scale.x;
+				float size_scale_y = state->scale.y;
+/*
+				//サイズ設定を適用する
+				SsCell * cell = state->cellValue.cell;
+				if (cell)
+				{
+					//セルのサイズとサイズパラメータからスケールを取得
+					size_scale_x *= ( state->size.x / cell->size.x );
+					size_scale_y *= ( state->size.y / cell->size.y );
+				}
+*/
+				init.scaleX = size_scale_x;
+				init.scaleY = size_scale_y;
 				init.opacity = (int)(state->alpha * 255);
+				init.uv_move_X = state->uvTranslate.x;
+				init.uv_move_Y = state->uvTranslate.y;
+				init.uv_rotation = state->uvRotation;
+				init.uv_scale_X = state->uvScale.x;
+				init.uv_scale_Y = state->uvScale.y;
 
 				initialDataList.push_back(init);
 				
 				Lump* initialData = Lump::set("ss::AnimationInitialData");
 				initialDataArray->add(initialData);
 				initialData->add(Lump::s16Data(init.index));
-				initialData->add(Lump::s16Data(init.flags));
+				initialData->add(Lump::s16Data(0)); //ダミーデータ
+				initialData->add(Lump::s32Data(init.flags));
 				initialData->add(Lump::s16Data(init.cellIndex));
 				initialData->add(Lump::s16Data(init.posX));
 				initialData->add(Lump::s16Data(init.posY));
@@ -358,6 +394,11 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				initialData->add(Lump::floatData(init.rotation));
 				initialData->add(Lump::floatData(init.scaleX));
 				initialData->add(Lump::floatData(init.scaleY));
+				initialData->add(Lump::floatData(init.uv_move_X));
+				initialData->add(Lump::floatData(init.uv_move_Y));
+				initialData->add(Lump::floatData(init.uv_rotation));
+				initialData->add(Lump::floatData(init.uv_scale_X));
+				initialData->add(Lump::floatData(init.uv_scale_Y));
 			}
 
 
@@ -425,9 +466,12 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					
 					// フラグのみパラメータ
 					int s_flags = 0;
-					if (state->hide)  s_flags |= PART_FLAG_INVISIBLE;
-					if (state->hFlip) s_flags |= PART_FLAG_FLIP_H;
-					if (state->vFlip) s_flags |= PART_FLAG_FLIP_V;
+					if (state->hide)	s_flags |= PART_FLAG_INVISIBLE;
+					//イメージ反転を適用する
+					bool hFlip = state->hFlip ^ state->imageFlipH;
+					bool vFlip = state->vFlip ^ state->imageFlipV;
+					if (hFlip)			s_flags |= PART_FLAG_FLIP_H;
+					if (vFlip)			s_flags |= PART_FLAG_FLIP_V;
 					
 					// 以下、規定値のときは出力を省略する
 					int p_flags = 0;
@@ -435,13 +479,33 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (cellIndex != init.cellIndex)                 p_flags |= PART_FLAG_CELL_INDEX;
 					if ((int)( state->position.x ) != init.posX)     p_flags |= PART_FLAG_POSITION_X;
 					if ((int)( state->position.y ) != init.posY)     p_flags |= PART_FLAG_POSITION_Y;
-					if (pivot.x + 0.5f != init.anchorX) p_flags |= PART_FLAG_ANCHOR_X;
-					if (pivot.y + 0.5f != init.anchorY) p_flags |= PART_FLAG_ANCHOR_Y;
+					if (pivot.x + 0.5f != init.anchorX)              p_flags |= PART_FLAG_ANCHOR_X;
+					if (pivot.y + 0.5f != init.anchorY)              p_flags |= PART_FLAG_ANCHOR_Y;
 					if (state->rotation.z != init.rotation)          p_flags |= PART_FLAG_ROTATION;
-					if (state->scale.x != init.scaleX)               p_flags |= PART_FLAG_SCALE_X;
-					if (state->scale.y != init.scaleY)               p_flags |= PART_FLAG_SCALE_Y;
-					if ((int)state->alpha * 255 != init.opacity)     p_flags |= PART_FLAG_OPACITY;
-					
+
+					float size_scale_x = state->scale.x;
+					float size_scale_y = state->scale.y;
+/*
+					//サイズ設定を適用する
+					SsCell * cell = state->cellValue.cell;
+					if (cell)
+					{
+						//セルのサイズとサイズパラメータからスケールを取得
+						size_scale_x *= ( state->size.x / cell->size.x );
+						size_scale_y *= ( state->size.y / cell->size.y );
+					}
+*/
+					if (size_scale_x != init.scaleX)               p_flags |= PART_FLAG_SCALE_X;
+					if (size_scale_y != init.scaleY)               p_flags |= PART_FLAG_SCALE_Y;
+					if ((int)state->alpha * 255 != init.opacity)   p_flags |= PART_FLAG_OPACITY;
+					if (state->uvTranslate.x != init.uv_move_X )   p_flags |= PART_FLAG_U_MOVE;
+					if (state->uvTranslate.y != init.uv_move_Y)    p_flags |= PART_FLAG_V_MOVE;
+					if (state->uvRotation != init.uv_rotation)     p_flags |= PART_FLAG_UV_ROTATION;
+					if (state->uvScale.x != init.uv_scale_X)       p_flags |= PART_FLAG_U_SCALE;
+					if (state->uvScale.y != init.uv_scale_Y)       p_flags |= PART_FLAG_V_SCALE;
+
+
+
 					// カラーブレンド値を格納する必要があるかチェック
 					int cb_flags = 0;
 					if (state->is_color_blend)
@@ -506,7 +570,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					// パーツの座標値、回転、スケールなどを出力する
 					outPartsCount++;
 					frameData->add(Lump::s16Data(state->index));
-					frameData->add(Lump::s16Data(s_flags | p_flags));
+//					frameData->add(Lump::s16Data(0));				//32bitアライメント用ダミーデータ
+					frameData->add(Lump::s32Data(s_flags | p_flags));
 
 					if (p_flags & PART_FLAG_CELL_INDEX) frameData->add(Lump::s16Data(cellIndex));
 					if (p_flags & PART_FLAG_POSITION_X) frameData->add(Lump::s16Data((int)state->position.x));
@@ -515,10 +580,17 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (p_flags & PART_FLAG_ANCHOR_X) frameData->add(Lump::floatData(pivot.x + 0.5f));
 					if (p_flags & PART_FLAG_ANCHOR_Y) frameData->add(Lump::floatData(pivot.y + 0.5f));
 					if (p_flags & PART_FLAG_ROTATION) frameData->add(Lump::floatData(state->rotation.z));	// degree
-					if (p_flags & PART_FLAG_SCALE_X) frameData->add(Lump::floatData(state->scale.x));
-					if (p_flags & PART_FLAG_SCALE_Y) frameData->add(Lump::floatData(state->scale.y));
+					if (p_flags & PART_FLAG_SCALE_X) frameData->add(Lump::floatData(size_scale_x));
+					if (p_flags & PART_FLAG_SCALE_Y) frameData->add(Lump::floatData(size_scale_y));
 					if (p_flags & PART_FLAG_OPACITY) frameData->add(Lump::s16Data((int)(state->alpha * 255)));
-					
+
+					if (p_flags & PART_FLAG_U_MOVE) frameData->add(Lump::floatData(state->uvTranslate.x));
+					if (p_flags & PART_FLAG_V_MOVE) frameData->add(Lump::floatData(state->uvTranslate.y));
+					if (p_flags & PART_FLAG_UV_ROTATION) frameData->add(Lump::floatData(state->uvRotation));
+					if (p_flags & PART_FLAG_U_SCALE) frameData->add(Lump::floatData(state->uvScale.x));
+					if (p_flags & PART_FLAG_V_SCALE) frameData->add(Lump::floatData(state->uvScale.y));
+
+
 					// 頂点変形データ
 					if (p_flags & PART_FLAG_VERTEX_TRANSFORM)
 					{

@@ -358,6 +358,7 @@ protected:
 	void updateFrame(float dt);
 	void setFrame(int frameNo);
 	void checkUserData(int frameNo);
+	void get_uv_rotation(float *u, float *v, float cu, float cv, float deg);
 
 protected:
 	ResourceManager*	_resman;

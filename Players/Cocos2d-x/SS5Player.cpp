@@ -673,7 +673,15 @@ void Player::setResourceManager(ResourceManager* resman)
 
 int Player::getMaxFrame() const
 {
-	return(_currentAnimeRef->animationData->numFrames);
+	if (_currentAnimeRef )
+	{
+		return(_currentAnimeRef->animationData->numFrames);
+	}
+	else
+	{
+		return(0);
+	}
+
 }
 
 int Player::getFrameNo() const
@@ -1066,6 +1074,12 @@ enum {
 	PART_FLAG_COLOR_BLEND		= 1 << 13,
 	PART_FLAG_VERTEX_TRANSFORM	= 1 << 14,
 
+	PART_FLAG_U_MOVE			= 1 << 15,
+	PART_FLAG_V_MOVE			= 1 << 16,
+	PART_FLAG_UV_ROTATION		= 1 << 17,
+	PART_FLAG_U_SCALE			= 1 << 18,
+	PART_FLAG_V_SCALE			= 1 << 19,
+
 	NUM_PART_FLAGS
 };
 
@@ -1118,11 +1132,12 @@ void Player::setFrame(int frameNo)
 	for (int index = 0; index < packData->numParts; index++)
 	{
 		int partIndex = reader.readS16();
+//		reader.readS16();						//アライメント合わせのダミーデータを読み込む
 		const PartData* partData = &parts[partIndex];
 		const AnimationInitialData* init = &initialDataList[partIndex];
 
 		// optional parameters
-		int flags      = reader.readU16();
+		int flags      = reader.readU32();
 		int cellIndex  = flags & PART_FLAG_CELL_INDEX ? reader.readS16() : init->cellIndex;
 		int x          = flags & PART_FLAG_POSITION_X ? reader.readS16() : init->positionX;
 		int y          = flags & PART_FLAG_POSITION_Y ? reader.readS16() : init->positionY;
@@ -1132,7 +1147,13 @@ void Player::setFrame(int frameNo)
 		float scaleX   = flags & PART_FLAG_SCALE_X ? reader.readFloat() : init->scaleX;
 		float scaleY   = flags & PART_FLAG_SCALE_Y ? reader.readFloat() : init->scaleY;
 		int opacity    = flags & PART_FLAG_OPACITY ? reader.readU16() : init->opacity;
-		
+
+		float uv_move_X   = flags & PART_FLAG_U_MOVE ? reader.readFloat() : init->uv_move_X;
+		float uv_move_Y   = flags & PART_FLAG_V_MOVE ? reader.readFloat() : init->uv_move_Y;
+		float uv_rotation = flags & PART_FLAG_UV_ROTATION ? reader.readFloat() : init->uv_rotation;
+		float uv_scale_X  = flags & PART_FLAG_U_SCALE ? reader.readFloat() : init->uv_scale_X;
+		float uv_scale_Y  = flags & PART_FLAG_V_SCALE ? reader.readFloat() : init->uv_scale_Y;
+
 		bool isVisibled = !(flags & PART_FLAG_INVISIBLE);
 
 		state.x = x;
@@ -1304,6 +1325,81 @@ void Player::setFrame(int frameNo)
 				}
 			}
 		}
+		//uvスクロール
+		if ( flags & PART_FLAG_U_MOVE )
+		{
+			cquad.tl.texCoords.u += uv_move_X;
+			cquad.tr.texCoords.u += uv_move_X;
+			cquad.bl.texCoords.u += uv_move_X;
+			cquad.br.texCoords.u += uv_move_X;
+		}
+		if (flags & PART_FLAG_V_MOVE)
+		{
+			cquad.tl.texCoords.v += uv_move_Y;
+			cquad.tr.texCoords.v += uv_move_Y;
+			cquad.bl.texCoords.v += uv_move_Y;
+			cquad.br.texCoords.v += uv_move_Y;
+		}
+
+
+		float u_wide = 0;
+		float v_height = 0;
+		float u_center = 0;
+		float v_center = 0;
+		float u_code = 1;
+		float v_code = 1;
+
+		if (flags & PART_FLAG_FLIP_H)
+		{
+			//左右反転を行う場合はテクスチャUVを逆にする
+			u_wide = (cquad.tl.texCoords.u - cquad.tr.texCoords.u) / 2.0f;
+			u_center = cquad.tr.texCoords.u + u_wide;
+			u_code = -1;
+		}
+		else
+		{
+			u_wide = (cquad.tr.texCoords.u - cquad.tl.texCoords.u) / 2.0f;
+			u_center = cquad.tl.texCoords.u + u_wide;
+		}
+		if (flags & PART_FLAG_FLIP_V)
+		{
+			//左右反転を行う場合はテクスチャUVを逆にする
+			v_height = (cquad.tl.texCoords.v - cquad.bl.texCoords.v) / 2.0f;
+			v_center = cquad.bl.texCoords.v + v_height;
+			v_code = 1;
+		}
+		else
+		{
+			v_height = (cquad.bl.texCoords.v - cquad.tl.texCoords.v) / 2.0f;
+			v_center = cquad.tl.texCoords.v + v_height;
+		}
+		//UV回転
+		if (flags & PART_FLAG_UV_ROTATION)
+		{
+			//頂点位置を回転させる
+			get_uv_rotation(&cquad.tl.texCoords.u, &cquad.tl.texCoords.v, u_center, v_center, uv_rotation);
+			get_uv_rotation(&cquad.tr.texCoords.u, &cquad.tr.texCoords.v, u_center, v_center, uv_rotation);
+			get_uv_rotation(&cquad.bl.texCoords.u, &cquad.bl.texCoords.v, u_center, v_center, uv_rotation);
+			get_uv_rotation(&cquad.br.texCoords.u, &cquad.br.texCoords.v, u_center, v_center, uv_rotation);
+		}
+
+		//UVスケール
+		if ( flags & PART_FLAG_U_SCALE )
+		{
+			cquad.tl.texCoords.u = u_center - (u_wide * uv_scale_X * u_code);
+			cquad.tr.texCoords.u = u_center + (u_wide * uv_scale_X * u_code);
+			cquad.bl.texCoords.u = u_center - (u_wide * uv_scale_X * u_code);
+			cquad.br.texCoords.u = u_center + (u_wide * uv_scale_X * u_code);
+		}
+		if (flags & PART_FLAG_V_SCALE )
+		{
+			cquad.tl.texCoords.v = v_center - (v_height * uv_scale_Y * v_code);
+			cquad.tr.texCoords.v = v_center - (v_height * uv_scale_Y * v_code);
+			cquad.bl.texCoords.v = v_center + (v_height * uv_scale_Y * v_code);
+			cquad.br.texCoords.v = v_center + (v_height * uv_scale_Y * v_code);
+		}
+
+
 
 	}
 
@@ -1445,8 +1541,22 @@ void Player::checkUserData(int frameNo)
 	}
 }
 
+#define __PI__	(3.14159265358979323846f)
+#define RadianToDegree(Radian) ((double)Radian * (180.0f / __PI__))
+#define DegreeToRadian(Degree) ((double)Degree * (__PI__ / 180.0f))
 
+void Player::get_uv_rotation(float *u, float *v, float cu, float cv, float deg)
+{
+	float dx = *u - cu; // 中心からの距離(X)
+	float dy = *v - cv; // 中心からの距離(Y)
 
+	float tmpX = ( dx * cosf(DegreeToRadian(deg)) ) - ( dy * sinf(DegreeToRadian(deg)) ); // 回転
+	float tmpY = ( dx * sinf(DegreeToRadian(deg)) ) + ( dy * cosf(DegreeToRadian(deg)) );
+
+	*u = (cu + tmpX); // 元の座標にオフセットする
+	*v = (cv + tmpY);
+
+}
 
 
 /**
