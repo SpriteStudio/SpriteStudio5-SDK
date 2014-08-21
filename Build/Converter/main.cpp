@@ -52,11 +52,14 @@ enum {
 	PART_FLAG_COLOR_BLEND		= 1 << 13,
 	PART_FLAG_VERTEX_TRANSFORM	= 1 << 14,
 
-	PART_FLAG_U_MOVE			= 1 << 15,
-	PART_FLAG_V_MOVE			= 1 << 16,
-	PART_FLAG_UV_ROTATION		= 1 << 17,
-	PART_FLAG_U_SCALE			= 1 << 18,
-	PART_FLAG_V_SCALE			= 1 << 19,
+	PART_FLAG_SIZE_X			= 1 << 15,
+	PART_FLAG_SIZE_Y			= 1 << 16,
+
+	PART_FLAG_U_MOVE			= 1 << 17,
+	PART_FLAG_V_MOVE			= 1 << 18,
+	PART_FLAG_UV_ROTATION		= 1 << 19,
+	PART_FLAG_U_SCALE			= 1 << 20,
+	PART_FLAG_V_SCALE			= 1 << 21,
 
 
 	NUM_PART_FLAGS
@@ -179,6 +182,8 @@ struct PartInitialData
 	float	scaleX;
 	float	scaleY;
 	int		opacity;
+	float	size_X;
+	float	size_Y;
 	float	uv_move_X;
 	float	uv_move_Y;
 	float	uv_rotation;
@@ -359,19 +364,21 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 
 				float size_scale_x = state->scale.x;
 				float size_scale_y = state->scale.y;
-/*
-				//サイズ設定を適用する
-				SsCell * cell = state->cellValue.cell;
-				if (cell)
-				{
-					//セルのサイズとサイズパラメータからスケールを取得
-					size_scale_x *= ( state->size.x / cell->size.x );
-					size_scale_y *= ( state->size.y / cell->size.y );
-				}
-*/
+
 				init.scaleX = size_scale_x;
 				init.scaleY = size_scale_y;
 				init.opacity = (int)(state->alpha * 255);
+				//サイズはエディターでは初期値が1が設定されているが、
+				//本来であればキーがないときはセルのサイズが初期値になる
+				init.size_X = state->size.x;
+				init.size_Y = state->size.y;
+				SsCell * cell = state->cellValue.cell;
+				if ( cell )
+				{
+					//セルデータがある場合はセルのサイズを初期値にする
+					init.size_X = cell->size.x;
+					init.size_Y = cell->size.y;
+				}
 				init.uv_move_X = state->uvTranslate.x;
 				init.uv_move_Y = state->uvTranslate.y;
 				init.uv_rotation = state->uvRotation;
@@ -394,6 +401,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				initialData->add(Lump::floatData(init.rotation));
 				initialData->add(Lump::floatData(init.scaleX));
 				initialData->add(Lump::floatData(init.scaleY));
+				initialData->add(Lump::floatData(init.size_X));
+				initialData->add(Lump::floatData(init.size_Y));
 				initialData->add(Lump::floatData(init.uv_move_X));
 				initialData->add(Lump::floatData(init.uv_move_Y));
 				initialData->add(Lump::floatData(init.uv_rotation));
@@ -485,19 +494,11 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 
 					float size_scale_x = state->scale.x;
 					float size_scale_y = state->scale.y;
-/*
-					//サイズ設定を適用する
-					SsCell * cell = state->cellValue.cell;
-					if (cell)
-					{
-						//セルのサイズとサイズパラメータからスケールを取得
-						size_scale_x *= ( state->size.x / cell->size.x );
-						size_scale_y *= ( state->size.y / cell->size.y );
-					}
-*/
 					if (size_scale_x != init.scaleX)               p_flags |= PART_FLAG_SCALE_X;
 					if (size_scale_y != init.scaleY)               p_flags |= PART_FLAG_SCALE_Y;
 					if ((int)state->alpha * 255 != init.opacity)   p_flags |= PART_FLAG_OPACITY;
+					if (state->size.x != init.size_X)              p_flags |= PART_FLAG_SIZE_X;
+					if (state->size.y != init.size_X)              p_flags |= PART_FLAG_SIZE_Y;
 					if (state->uvTranslate.x != init.uv_move_X )   p_flags |= PART_FLAG_U_MOVE;
 					if (state->uvTranslate.y != init.uv_move_Y)    p_flags |= PART_FLAG_V_MOVE;
 					if (state->uvRotation != init.uv_rotation)     p_flags |= PART_FLAG_UV_ROTATION;
@@ -584,6 +585,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (p_flags & PART_FLAG_SCALE_Y) frameData->add(Lump::floatData(size_scale_y));
 					if (p_flags & PART_FLAG_OPACITY) frameData->add(Lump::s16Data((int)(state->alpha * 255)));
 
+					if (p_flags & PART_FLAG_SIZE_X) frameData->add(Lump::floatData(state->size.x));
+					if (p_flags & PART_FLAG_SIZE_Y) frameData->add(Lump::floatData(state->size.y));
+
 					if (p_flags & PART_FLAG_U_MOVE) frameData->add(Lump::floatData(state->uvTranslate.x));
 					if (p_flags & PART_FLAG_V_MOVE) frameData->add(Lump::floatData(state->uvTranslate.y));
 					if (p_flags & PART_FLAG_UV_ROTATION) frameData->add(Lump::floatData(state->uvRotation));
@@ -617,6 +621,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 
 						if (cb_flags & VERTEX_FLAG_ONE)
 						{
+							frameData->add(Lump::floatData(state->colorValue.color.rate));
 							frameData->add(Lump::colorData(state->colorValue.color.rgba.toARGB()));
 						}
 						else
@@ -625,6 +630,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 							{
 								if (cb_flags & (1 << vtxNo))
 								{
+									frameData->add(Lump::floatData(state->colorValue.colors[vtxNo].rate));
 									frameData->add(Lump::colorData(state->colorValue.colors[vtxNo].rgba.toARGB()));
 								}
 							}

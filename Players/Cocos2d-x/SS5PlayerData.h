@@ -71,6 +71,8 @@ struct AnimationInitialData
 	float		rotation;
 	float		scaleX;
 	float		scaleY;
+	float		size_X;
+	float		size_Y;
 	float		uv_move_X;
 	float		uv_move_Y;
 	float		uv_rotation;

@@ -187,6 +187,7 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 			//両方とも４頂点カラー
 			for ( int i = 0 ; i < 4 ; i++ )
 			{
+				v.colors[i].rate = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rate , rightv.colors[i].rate  , &curve );	
 				v.colors[i].rgba.a = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.a , rightv.colors[i].rgba.a  , &curve );	
 				v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.r , rightv.colors[i].rgba.r  , &curve );	
 				v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.g , rightv.colors[i].rgba.g  , &curve );	
@@ -198,6 +199,7 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 			//左は４頂点、右は単色
 			for ( int i = 0 ; i < 4 ; i++ )
 			{
+				v.colors[i].rate = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rate , rightv.color.rate  , &curve );	
 				v.colors[i].rgba.a = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.a , rightv.color.rgba.a  , &curve );	
 				v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.r , rightv.color.rgba.r  , &curve );	
 				v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.g , rightv.color.rgba.g  , &curve );	
@@ -212,6 +214,7 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 			//左は単色、右は４頂点カラー
 			for ( int i = 0 ; i < 4 ; i++ )
 			{
+				v.colors[i].rate = SsInterpolate( leftkey->ipType , now , leftv.color.rate , rightv.colors[i].rate  , &curve );	
 				v.colors[i].rgba.a = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.a , rightv.colors[i].rgba.a  , &curve );	
 				v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.r , rightv.colors[i].rgba.r  , &curve );	
 				v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.g , rightv.colors[i].rgba.g  , &curve );	
@@ -221,6 +224,7 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 		else
 		{
 			//両方とも単色
+			v.color.rate = SsInterpolate( leftkey->ipType , now , leftv.color.rate , rightv.color.rate  , &curve );	
 			v.color.rgba.a = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.a , rightv.color.rgba.a  , &curve );	
 			v.color.rgba.r = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.r , rightv.color.rgba.r  , &curve );	
 			v.color.rgba.g = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.g , rightv.color.rgba.g  , &curve );	
