@@ -1065,7 +1065,7 @@ void Player::setGlobalZOrder(float globalZOrder)
 //ラベル名が全角でついていると取得に失敗します。
 int Player::getLabelToFrame(char* findLabelName)
 {
-	int rc = 0;
+	int rc = -1;
 
 	ToPointer ptr(_currentRs->data);
 

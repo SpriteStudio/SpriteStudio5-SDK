@@ -15,6 +15,7 @@ enum SsPlayerConverterResultCode
     SSPC_NOT_SUPPORT_OUTPUT_ENCODING,   // 対応していない出力ファイルのエンコーディング形式が指定されました
     SSPC_IMPOSSIBLE_PLURAL_SSF_FILES,   // ssfファイルが複数指定されています。一つのみ指定可能です
     SSPC_SSAX_PARSE_FAILED,             // ssaxファイルの解析に失敗しました
+    SSPC_SSPJ_PARSE_FAILED,             // sspjファイルの解析に失敗しました
     
     END_OF_SSPC
 };

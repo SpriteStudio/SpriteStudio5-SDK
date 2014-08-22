@@ -82,7 +82,7 @@ enum {
 
 
 
-
+bool convert_error_exit = false;	//データにエラーがありコンバートを中止した
 
 
 
@@ -194,8 +194,32 @@ struct PartInitialData
 
 
 
+//全全角が使われてるかのチェック
+bool isZenkaku( const SsString* str )
+{
+	bool rc = false;
+	int i = 0;
+	int size = str->length();
+	const char *c = str->c_str();
 
-
+	while ( true )
+	{
+		if ( ( c[i] == '\0' ) || ( size == i ) )
+		{
+			//終了
+			break;
+		}
+		if ( ( c[i] < 0x20 ) || ( c[i] > 0x7e ) )
+		{
+			//半角以外
+			rc = true;
+			//終了
+			break;
+		}
+		i++;
+	}
+	return( rc );
+}
 
 
 static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
@@ -237,6 +261,13 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 		cellMapData->add(Lump::s16Data((int)mapIndex));
 		cellMapData->add(Lump::s16Data(0));	// reserved
 
+		//全角チェック
+		if ( isZenkaku( &cellMap->name ) == true )
+		{
+			std::cerr << "エラー：全角が使用されている: " << cellMap->name << "\n";
+			convert_error_exit = true;	//エラーが発生コンバート失敗
+		}
+
 		
 		for (size_t cellIndex = 0; cellIndex < cellMap->cells.size(); cellIndex++)
 		{
@@ -270,6 +301,12 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 		Lump* animeDataArray = Lump::set("ss::AnimationData[]", true);
 
 		animePackData->add(Lump::stringData(animePack->name));
+		//全角チェック
+		if ( isZenkaku( &animePack->name ) == true )
+		{
+			std::cerr << "エラー：全角が使用されている: " << animePack->name << "\n";
+			convert_error_exit = true;	//エラーが発生コンバート失敗
+		}
 		animePackData->add(partDataArray);
 		animePackData->add(animeDataArray);
 		animePackData->add(Lump::s16Data((int)model.partList.size()));
@@ -285,6 +322,12 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			partDataArray->add(partData);
 
 			partData->add(Lump::stringData(part->name));
+			//全角チェック
+			if ( isZenkaku( &part->name ) == true )
+			{
+				std::cerr << "エラー：全角が使用されている: " << part->name << "\n";
+				convert_error_exit = true;	//エラーが発生コンバート失敗
+			}
 			partData->add(Lump::s16Data(part->arrayIndex));
 			partData->add(Lump::s16Data(part->parentIndex));
 			partData->add(Lump::s16Data(part->type));
@@ -731,6 +774,13 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 
 				SsString str;
 				str = anime->labels[label_idx]->name;
+				//全角チェック
+				if ( isZenkaku( &str ) == true )
+				{
+					std::cerr << "エラー：全角が使用されている: " << str << "\n";
+					convert_error_exit = true;	//エラーが発生コンバート失敗
+				}
+
 				labelData->add(Lump::s16Data((int)str.length()));				//文字列のサイズ
 				labelData->add(Lump::stringData(str));							//文字列
 				labelData->add(Lump::s16Data(anime->labels[label_idx]->time));	//設定されたフレーム
@@ -767,21 +817,30 @@ void convertProject(const std::string& outPath, LumpExporter::StringEncoding enc
 	SsProject* proj = ssloader_sspj::Load(sspjPath);
 	Lump* lump = parseParts(proj, imageBaseDir);
 
-	std::fstream out;
-	out.open(outPath.c_str(), std::ios_base::binary | std::ios_base::out);
-	LumpExporter::saveBinary(out, encoding, lump, creatorComment);
+	if ( convert_error_exit == true )
+	{
+		//データにエラーがありコンバートを中止した
+		//ファイルの出力を行なわない
+	}
+	else
+	{
 
-/////////////
-#if 0
-	out.close();
-	std::string hOutPath = outPath + ".h";
-	out.open(hOutPath.c_str(), std::ios_base::binary | std::ios_base::out);
-	LumpExporter::saveCSource(out, encoding, lump, "animeData", creatorComment);
-#endif
-/////////////
+		std::fstream out;
+		out.open(outPath.c_str(), std::ios_base::binary | std::ios_base::out);
+		LumpExporter::saveBinary(out, encoding, lump, creatorComment);
 
-//	delete lump;
-	delete proj;
+	/////////////
+	#if 0
+		out.close();
+		std::string hOutPath = outPath + ".h";
+		out.open(hOutPath.c_str(), std::ios_base::binary | std::ios_base::out);
+		LumpExporter::saveCSource(out, encoding, lump, "animeData", creatorComment);
+	#endif
+	/////////////
+
+	//	delete lump;
+		delete proj;
+	}
 }
 
 
@@ -1022,8 +1081,15 @@ int convertMain(int argc, const char * argv[])
 		convertProject(outPath, encoding, sspjPath, options.imageBaseDir, creatorComment);
 	}
 
-
-    return SSPC_SUCCESS;
+	if ( convert_error_exit == true )
+	{
+		//データにエラーがありコンバートを中止した
+	    return SSPC_SSPJ_PARSE_FAILED;
+	}
+	else
+	{
+	    return SSPC_SUCCESS;
+	}
 }
 
 
