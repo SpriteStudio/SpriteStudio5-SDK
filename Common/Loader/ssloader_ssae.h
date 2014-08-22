@@ -199,8 +199,8 @@ public:
 	{
 		SSAR_DECLARE( name );
 		SSAR_STRUCT_DECLARE( settings );
+		SSAR_DECLARE_LISTEX( labels , "value" );
 		SSAR_DECLARE_LISTEX( partAnimes , "partAnime" );
-		SSAR_DECLARE_LISTEX( labels , "labels" );
 	}
 };
 
