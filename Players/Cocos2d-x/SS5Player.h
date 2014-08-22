@@ -34,7 +34,6 @@ class ResourceSet;
 class AnimeRef;
 struct ProjectData;
 
-
 /**
  * ResourceManager
  */
@@ -135,7 +134,18 @@ struct UserData
 };
 
 
+/**
+* LabelData
+*/
+struct LabelData
+{
+	std::string	str;			// String (zero terminated)
+	int			strSize;		// String size (byte count)
+	int			frameNo;		// Frame no
+};
 
+
+#define PART_VISIBLE_MAX (512)
 /**
  * Player
  */
@@ -214,6 +224,8 @@ public:
 
 	/**
 	 * 再生を停止します.
+	 * ゲーム側でアニメーションの表示フレームを制御する場合はstop()を呼び出した後
+	 * ゲーム側の更新処理でsetFrameNo()を呼び出し指定のフレームを表示してください。
 	 */
 	void stop();
 
@@ -302,6 +314,15 @@ public:
 	 */
 	bool isFrameSkipEnabled() const;
 
+	/**
+	* ラベル名からフレーム位置を取得します.
+	*/
+	int getLabelToFrame(char* findLabelName);
+
+	/**
+	* パーツの表示、非表示を設定します.
+	*/
+	void setPartVisible( int partNo, bool flg );
 
 	typedef std::function<void(Player*, const UserData*)> UserDataCallback;
 	typedef std::function<void(Player*)> PlayEndCallback;
@@ -374,6 +395,8 @@ protected:
 	bool				_isPlaying;
 	bool				_isPausing;
 	int					_prevDrawFrameNo;
+	bool				_partVisible[PART_VISIBLE_MAX];
+
 	
 	UserDataCallback	_userDataCallback;
 	UserData			_userData;

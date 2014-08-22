@@ -720,14 +720,38 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					delete userData;
 				}
 			}
-			
+
+			// ラベルデータ
+			Lump* LabelDataIndexArray = Lump::set("ss::ss_u16*[]", true);
+			bool hasLabelData = false;
+			int label_idx = 0;
+			for (label_idx = 0; label_idx < (int)anime->labels.size(); label_idx++)
+			{
+				Lump* labelData = Lump::set("ss::ss_u16[]", true);
+
+				SsString str;
+				str = anime->labels[label_idx]->name;
+				labelData->add(Lump::s16Data((int)str.length()));				//文字列のサイズ
+				labelData->add(Lump::stringData(str));							//文字列
+				labelData->add(Lump::s16Data(anime->labels[label_idx]->time));	//設定されたフレーム
+				hasLabelData = true;
+
+				LabelDataIndexArray->add(labelData);
+
+			}
+			if ( hasLabelData == false )
+			{
+				LabelDataIndexArray->add(Lump::s32Data(0));
+			}
 			
 			animeData->add(Lump::stringData(anime->name));
 			animeData->add(initialDataArray);
 			animeData->add(frameDataIndexArray);
 			animeData->add(hasUserData ? userDataIndexArray : Lump::s32Data(0));
+			animeData->add(hasLabelData ? LabelDataIndexArray : Lump::s32Data(0));
 			animeData->add(Lump::s16Data(decoder.getAnimeEndFrame()));
 			animeData->add(Lump::s16Data(anime->settings.fps));
+			animeData->add(Lump::s16Data(label_idx));				//ラベルデータ数
 		}
 		
 	}

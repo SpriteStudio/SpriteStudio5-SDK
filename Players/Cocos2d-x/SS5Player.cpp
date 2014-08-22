@@ -619,6 +619,12 @@ Player::Player(void)
 	, _userDataCallback(nullptr)
 	, _playEndCallback(nullptr)
 {
+	int i;
+	for (i = 0; i < PART_VISIBLE_MAX; i++)
+	{
+		_partVisible[i] = true;
+	}
+
 }
 
 Player::~Player()
@@ -1054,6 +1060,57 @@ void Player::setGlobalZOrder(float globalZOrder)
 	}
 }
 
+//ラベル名からラベルの設定されているフレームを取得
+//ラベルが存在しない場合は戻り値が-1となります。
+//ラベル名が全角でついていると取得に失敗します。
+int Player::getLabelToFrame(char* findLabelName)
+{
+	int rc = 0;
+
+	ToPointer ptr(_currentRs->data);
+
+	const AnimePackData* packData = _currentAnimeRef->animePackData;
+	const AnimationData* animeData = _currentAnimeRef->animationData;
+	const PartData* parts = static_cast<const PartData*>(ptr(packData->parts));
+
+	if (!animeData->labelData) return -1;
+	const ss_offset* labelDataIndex = static_cast<const ss_offset*>(ptr(animeData->labelData));
+
+
+	int idx = 0;
+	for (idx = 0; idx < animeData->labelNum; idx++ )
+	{
+		if (!labelDataIndex[idx]) return -1;
+		const ss_u16* labelDataArray = static_cast<const ss_u16*>(ptr(labelDataIndex[idx]));
+
+		DataArrayReader reader(labelDataArray);
+
+		LabelData ldata;
+		int size = reader.readU16();
+		ss_offset offset = reader.readOffset();
+		const char* str = static_cast<const char*>(ptr(offset));
+		int labelFrame = reader.readU16();
+		ldata.str = str;
+		ldata.strSize = size;
+		ldata.frameNo = labelFrame;
+
+		if (ldata.str.compare(findLabelName) == 0 )
+		{
+			//同じ名前のラベルが見つかった
+			return (ldata.frameNo);
+		}
+	}
+
+	return (rc);
+}
+
+//特定パーツの表示、非表示を設定します
+//パーツ番号はスプライトスタジオのフレームコントロールに配置されたパーツが
+//一番上を0として順に番号が割り振られます。
+void Player::setPartVisible(int partNo, bool flg)
+{
+	_partVisible[partNo] = flg;
+}
 
 
 enum {
@@ -1159,6 +1216,12 @@ void Player::setFrame(int frameNo)
 		float uv_scale_Y  = flags & PART_FLAG_V_SCALE ? reader.readFloat() : init->uv_scale_Y;
 
 		bool isVisibled = !(flags & PART_FLAG_INVISIBLE);
+
+		if (_partVisible[index] == false)
+		{
+			//ユーザーが任意に非表示としたパーツは非表示に設定
+			isVisibled = false;
+		}
 
 		state.x = x;
 		state.y = y;

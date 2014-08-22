@@ -52,8 +52,10 @@ struct AnimationData
 	ss_offset	defaultData;	// const AnimationInitialData*
 	ss_offset	frameData;		// const ss_s16*
 	ss_offset	userData;		// const ss_s16*
+	ss_offset	labelData;		// const ss_s16*
 	ss_s16		numFrames;
 	ss_s16		fps;
+	ss_s16		labelNum;
 };
 
 
@@ -113,7 +115,6 @@ struct ProjectData
 	ss_s16		numCells;
 	ss_s16		numAnimePacks;
 };
-
 
 };	// namespace ss
 
