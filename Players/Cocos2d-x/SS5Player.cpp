@@ -578,7 +578,7 @@ public:
 	
 
 	// override
-//	virtual void draw(void);
+	virtual void draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t flags);
 	virtual void setOpacity(GLubyte opacity);
 	
 	// original functions
@@ -669,6 +669,19 @@ void Player::setResourceManager(ResourceManager* resman)
 	
 	CC_SAFE_RETAIN(resman);
 	_resman = resman;
+}
+
+int Player::getMaxFrame() const
+{
+	if (_currentAnimeRef )
+	{
+		return(_currentAnimeRef->animationData->numFrames);
+	}
+	else
+	{
+		return(0);
+	}
+
 }
 
 int Player::getFrameNo() const
@@ -1061,6 +1074,15 @@ enum {
 	PART_FLAG_COLOR_BLEND		= 1 << 13,
 	PART_FLAG_VERTEX_TRANSFORM	= 1 << 14,
 
+	PART_FLAG_SIZE_X			= 1 << 15,
+	PART_FLAG_SIZE_Y			= 1 << 16,
+
+	PART_FLAG_U_MOVE			= 1 << 17,
+	PART_FLAG_V_MOVE			= 1 << 18,
+	PART_FLAG_UV_ROTATION		= 1 << 19,
+	PART_FLAG_U_SCALE			= 1 << 20,
+	PART_FLAG_V_SCALE			= 1 << 21,
+
 	NUM_PART_FLAGS
 };
 
@@ -1113,11 +1135,12 @@ void Player::setFrame(int frameNo)
 	for (int index = 0; index < packData->numParts; index++)
 	{
 		int partIndex = reader.readS16();
+//		reader.readS16();						//アライメント合わせのダミーデータを読み込む
 		const PartData* partData = &parts[partIndex];
 		const AnimationInitialData* init = &initialDataList[partIndex];
 
 		// optional parameters
-		int flags      = reader.readU16();
+		int flags      = reader.readU32();
 		int cellIndex  = flags & PART_FLAG_CELL_INDEX ? reader.readS16() : init->cellIndex;
 		int x          = flags & PART_FLAG_POSITION_X ? reader.readS16() : init->positionX;
 		int y          = flags & PART_FLAG_POSITION_Y ? reader.readS16() : init->positionY;
@@ -1127,19 +1150,15 @@ void Player::setFrame(int frameNo)
 		float scaleX   = flags & PART_FLAG_SCALE_X ? reader.readFloat() : init->scaleX;
 		float scaleY   = flags & PART_FLAG_SCALE_Y ? reader.readFloat() : init->scaleY;
 		int opacity    = flags & PART_FLAG_OPACITY ? reader.readU16() : init->opacity;
-		
+		float size_x   = flags & PART_FLAG_SIZE_X ? reader.readFloat() : init->size_X;
+		float size_y   = flags & PART_FLAG_SIZE_Y ? reader.readFloat() : init->size_X;
+		float uv_move_X   = flags & PART_FLAG_U_MOVE ? reader.readFloat() : init->uv_move_X;
+		float uv_move_Y   = flags & PART_FLAG_V_MOVE ? reader.readFloat() : init->uv_move_Y;
+		float uv_rotation = flags & PART_FLAG_UV_ROTATION ? reader.readFloat() : init->uv_rotation;
+		float uv_scale_X  = flags & PART_FLAG_U_SCALE ? reader.readFloat() : init->uv_scale_X;
+		float uv_scale_Y  = flags & PART_FLAG_V_SCALE ? reader.readFloat() : init->uv_scale_Y;
+
 		bool isVisibled = !(flags & PART_FLAG_INVISIBLE);
-		
-		if (partIndex == 0)
-		{
-			// rootパーツは常に座標(0,0)
-			x = 0;
-			y = 0;
-			rotation = 0;
-			// flipはrootパーツに反映する
-			scaleX = isFlippedX() ? -1.0f : 1.0f;
-			scaleY = isFlippedY() ? -1.0f : 1.0f;
-		}
 
 		state.x = x;
 		state.y = y;
@@ -1150,14 +1169,13 @@ void Player::setFrame(int frameNo)
 		//CustomSprite* sprite = static_cast<CustomSprite*>(getChildren().at(partIndex));
 		CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
 
+		//表示設定
 		sprite->setVisible(isVisibled);
 		sprite->setState(state);
 		sprite->setLocalZOrder(index);
 		
 		sprite->setPosition(cocos2d::Point(x, y));
 		sprite->setRotation(rotation);
-		sprite->setScale(scaleX, scaleY);
-
 
 		CellRef* cellRef = cellIndex >= 0 ? _currentRs->cellCache->getReference(cellIndex) : nullptr;
 		bool setBlendEnabled = true;
@@ -1169,25 +1187,69 @@ void Player::setFrame(int frameNo)
 				// 標準状態でMIXブレンド相当になります
 				// BlendFuncの値を変更することでブレンド方法を切り替えます
 				cocos2d::BlendFunc blendFunc = sprite->getBlendFunc();
-				if (!cellRef->texture->hasPremultipliedAlpha())
+
+				if (flags & PART_FLAG_COLOR_BLEND)
 				{
+					//カラーブレンドを行うときはカスタムシェーダーを使用する
+					sprite->changeShaderProgram(true);
+
+					if (!cellRef->texture->hasPremultipliedAlpha())
+					{
+						blendFunc.src = GL_SRC_ALPHA;
+						blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+					}
+					else
+					{
+						blendFunc.src = CC_BLEND_SRC;
+						blendFunc.dst = CC_BLEND_DST;
+					}
+
+					// カスタムシェーダを使用する場合
 					blendFunc.src = GL_SRC_ALPHA;
-					blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+					
+					// 加算ブレンド
+					if (partData->alphaBlendType == BLEND_ADD) {
+						blendFunc.dst = GL_ONE;
+					}
 				}
 				else
 				{
-					blendFunc.src = CC_BLEND_SRC;
-					blendFunc.dst = CC_BLEND_DST;
+					sprite->changeShaderProgram(false);
+					// 通常ブレンド
+					if (partData->alphaBlendType == BLEND_MIX)
+					{
+						blendFunc.src = GL_SRC_ALPHA;
+						blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+					}
+					// 加算ブレンド
+					if (partData->alphaBlendType == BLEND_ADD) {
+						blendFunc.src = GL_SRC_ALPHA;
+						blendFunc.dst = GL_ONE;
+					}
+					// 乗算ブレンド
+					if (partData->alphaBlendType == BLEND_MUL) {
+						blendFunc.src = GL_ZERO;
+						blendFunc.dst = GL_SRC_COLOR;
+					}
+					// 減算ブレンド
+					if (partData->alphaBlendType == BLEND_SUB) {
+						blendFunc.src = GL_ZERO;
+						blendFunc.dst = GL_ONE_MINUS_SRC_COLOR;
+					}
+					/*
+					//除外
+					if (partData->alphaBlendType == BLEND_) {
+					blendFunc.src = GL_ONE_MINUS_DST_COLOR;
+					blendFunc.dst = GL_ONE_MINUS_SRC_COLOR;
+					}
+					//スクリーン
+					if (partData->alphaBlendType == BLEND_) {
+					blendFunc.src = GL_ONE_MINUS_DST_COLOR;
+					blendFunc.dst = GL_ONE;
+					}
+					*/
 				}
 
-				// カスタムシェーダを使用する場合
-	//			if (useCustomShaderProgram) {
-	//				blendFunc.src = GL_SRC_ALPHA;
-	//			}
-				// 加算ブレンド
-				if (partData->alphaBlendType == BLEND_ADD) {
-					blendFunc.dst = GL_ONE;
-				}
 				sprite->setBlendFunc(blendFunc);
 			}
 
@@ -1205,83 +1267,209 @@ void Player::setFrame(int frameNo)
 		sprite->setFlippedY(flags & PART_FLAG_FLIP_V);
 		sprite->setOpacity(opacity);
 
+		//頂点データの取得
+		cocos2d::V3F_C4B_T2F_Quad& quad = sprite->getAttributeRef();
+
+		//サイズ設定
+		if (flags & PART_FLAG_SIZE_X)
+		{
+			float w = 0;
+			float center = 0;
+			w = (quad.tr.vertices.x - quad.tl.vertices.x) / 2.0f;
+			if (w!= 0.0f)
+			{
+				center = quad.tl.vertices.x + w;
+				float scale = (size_x / 2.0f) / w;
+
+				quad.bl.vertices.x = center - (w * scale);
+				quad.br.vertices.x = center + (w * scale);
+				quad.tl.vertices.x = center - (w * scale);
+				quad.tr.vertices.x = center + (w * scale);
+			}
+		}
+		if (flags & PART_FLAG_SIZE_Y)
+		{
+			float h = 0;
+			float center = 0;
+			h = (quad.bl.vertices.y - quad.tl.vertices.y) / 2.0f;
+			if (h != 0.0f)
+			{
+				center = quad.tl.vertices.y + h;
+				float scale = (size_y / 2.0f) / h;
+
+				quad.bl.vertices.y = center - (h * scale);
+				quad.br.vertices.y = center - (h * scale);
+				quad.tl.vertices.y = center + (h * scale);
+				quad.tr.vertices.y = center + (h * scale);
+			}
+		}
+		sprite->setScale(scaleX, scaleY);	//スケール設定
+
 
 		// 頂点変形のオフセット値を反映
 		if (flags & PART_FLAG_VERTEX_TRANSFORM)
 		{
-			cocos2d::V3F_C4B_T2F_Quad& vquad = sprite->getAttributeRef();
 			int vt_flags = reader.readU16();
 			if (vt_flags & VERTEX_FLAG_LT)
 			{
-				vquad.tl.vertices.x += reader.readS16();
-				vquad.tl.vertices.y += reader.readS16();
+				quad.tl.vertices.x += reader.readS16();
+				quad.tl.vertices.y += reader.readS16();
 			}
 			if (vt_flags & VERTEX_FLAG_RT)
 			{
-				vquad.tr.vertices.x += reader.readS16();
-				vquad.tr.vertices.y += reader.readS16();
+				quad.tr.vertices.x += reader.readS16();
+				quad.tr.vertices.y += reader.readS16();
 			}
 			if (vt_flags & VERTEX_FLAG_LB)
 			{
-				vquad.bl.vertices.x += reader.readS16();
-				vquad.bl.vertices.y += reader.readS16();
+				quad.bl.vertices.x += reader.readS16();
+				quad.bl.vertices.y += reader.readS16();
 			}
 			if (vt_flags & VERTEX_FLAG_RB)
 			{
-				vquad.br.vertices.x += reader.readS16();
-				vquad.br.vertices.y += reader.readS16();
+				quad.br.vertices.x += reader.readS16();
+				quad.br.vertices.y += reader.readS16();
 			}
 		}
 		
 		
-		// カラーブレンドの反映
-		cocos2d::V3F_C4B_T2F_Quad& cquad = sprite->isCustomShaderProgramEnabled() ? sprite->getAttributeRef() : tempQuad;
-		cocos2d::Color4B color4 = { 0xff, 0xff, 0xff, 0 };
-		cquad.tl.colors =
-		cquad.tr.colors =
-		cquad.bl.colors =
-		cquad.br.colors = color4;
+		//頂点情報の取得
+		cocos2d::Color4B color4 = { 0xff, 0xff, 0xff, (BYTE)opacity };
+		quad.tl.colors =
+		quad.tr.colors =
+		quad.bl.colors =
+		quad.br.colors = color4;
 
+
+		// カラーブレンドの反映
 		if (flags & PART_FLAG_COLOR_BLEND)
 		{
+
 			int typeAndFlags = reader.readU16();
 			int funcNo = typeAndFlags & 0xff;
 			int cb_flags = (typeAndFlags >> 8) & 0xff;
-			
+			float blend_rate = 1.0f;
+
 			sprite->setColorBlendFunc(funcNo);
 			
 			if (cb_flags & VERTEX_FLAG_ONE)
 			{
+				blend_rate = reader.readFloat();
 				reader.readColor(color4);
-				cquad.tl.colors =
-				cquad.tr.colors =
-				cquad.bl.colors =
-				cquad.br.colors = color4;
+
+				color4.a = (int)( blend_rate * 255 );	//レートをアルファ値として設定
+				quad.tl.colors =
+				quad.tr.colors =
+				quad.bl.colors =
+				quad.br.colors = color4;
 			}
 			else
 			{
 				if (cb_flags & VERTEX_FLAG_LT)
 				{
+					blend_rate = reader.readFloat();
 					reader.readColor(color4);
-					cquad.tl.colors = color4;
+					color4.a = (int)(blend_rate * 255);	//レートをアルファ値として設定
+					quad.tl.colors = color4;
 				}
 				if (cb_flags & VERTEX_FLAG_RT)
 				{
+					blend_rate = reader.readFloat();
 					reader.readColor(color4);
-					cquad.tr.colors = color4;
+					color4.a = (int)(blend_rate * 255);	//レートをアルファ値として設定
+					quad.tr.colors = color4;
 				}
 				if (cb_flags & VERTEX_FLAG_LB)
 				{
+					blend_rate = reader.readFloat();
 					reader.readColor(color4);
-					cquad.bl.colors = color4;
+					color4.a = (int)(blend_rate * 255);	//レートをアルファ値として設定
+					quad.bl.colors = color4;
 				}
 				if (cb_flags & VERTEX_FLAG_RB)
 				{
+					blend_rate = reader.readFloat();
 					reader.readColor(color4);
-					cquad.br.colors = color4;
+					color4.a = (int)(blend_rate * 255);	//レートをアルファ値として設定
+					quad.br.colors = color4;
 				}
 			}
 		}
+		//uvスクロール
+		if ( flags & PART_FLAG_U_MOVE )
+		{
+			quad.tl.texCoords.u += uv_move_X;
+			quad.tr.texCoords.u += uv_move_X;
+			quad.bl.texCoords.u += uv_move_X;
+			quad.br.texCoords.u += uv_move_X;
+		}
+		if (flags & PART_FLAG_V_MOVE)
+		{
+			quad.tl.texCoords.v += uv_move_Y;
+			quad.tr.texCoords.v += uv_move_Y;
+			quad.bl.texCoords.v += uv_move_Y;
+			quad.br.texCoords.v += uv_move_Y;
+		}
+
+
+		float u_wide = 0;
+		float v_height = 0;
+		float u_center = 0;
+		float v_center = 0;
+		float u_code = 1;
+		float v_code = 1;
+
+		if (flags & PART_FLAG_FLIP_H)
+		{
+			//左右反転を行う場合はテクスチャUVを逆にする
+			u_wide = (quad.tl.texCoords.u - quad.tr.texCoords.u) / 2.0f;
+			u_center = quad.tr.texCoords.u + u_wide;
+			u_code = -1;
+		}
+		else
+		{
+			u_wide = (quad.tr.texCoords.u - quad.tl.texCoords.u) / 2.0f;
+			u_center = quad.tl.texCoords.u + u_wide;
+		}
+		if (flags & PART_FLAG_FLIP_V)
+		{
+			//左右反転を行う場合はテクスチャUVを逆にする
+			v_height = (quad.tl.texCoords.v - quad.bl.texCoords.v) / 2.0f;
+			v_center = quad.bl.texCoords.v + v_height;
+			v_code = 1;
+		}
+		else
+		{
+			v_height = (quad.bl.texCoords.v - quad.tl.texCoords.v) / 2.0f;
+			v_center = quad.tl.texCoords.v + v_height;
+		}
+		//UV回転
+		if (flags & PART_FLAG_UV_ROTATION)
+		{
+			//頂点位置を回転させる
+			get_uv_rotation(&quad.tl.texCoords.u, &quad.tl.texCoords.v, u_center, v_center, uv_rotation);
+			get_uv_rotation(&quad.tr.texCoords.u, &quad.tr.texCoords.v, u_center, v_center, uv_rotation);
+			get_uv_rotation(&quad.bl.texCoords.u, &quad.bl.texCoords.v, u_center, v_center, uv_rotation);
+			get_uv_rotation(&quad.br.texCoords.u, &quad.br.texCoords.v, u_center, v_center, uv_rotation);
+		}
+
+		//UVスケール
+		if ( flags & PART_FLAG_U_SCALE )
+		{
+			quad.tl.texCoords.u = u_center - (u_wide * uv_scale_X * u_code);
+			quad.tr.texCoords.u = u_center + (u_wide * uv_scale_X * u_code);
+			quad.bl.texCoords.u = u_center - (u_wide * uv_scale_X * u_code);
+			quad.br.texCoords.u = u_center + (u_wide * uv_scale_X * u_code);
+		}
+		if (flags & PART_FLAG_V_SCALE )
+		{
+			quad.tl.texCoords.v = v_center - (v_height * uv_scale_Y * v_code);
+			quad.tr.texCoords.v = v_center - (v_height * uv_scale_Y * v_code);
+			quad.bl.texCoords.v = v_center + (v_height * uv_scale_Y * v_code);
+			quad.br.texCoords.v = v_center + (v_height * uv_scale_Y * v_code);
+		}
+
+
 
 	}
 
@@ -1423,8 +1611,22 @@ void Player::checkUserData(int frameNo)
 	}
 }
 
+#define __PI__	(3.14159265358979323846f)
+#define RadianToDegree(Radian) ((double)Radian * (180.0f / __PI__))
+#define DegreeToRadian(Degree) ((double)Degree * (__PI__ / 180.0f))
 
+void Player::get_uv_rotation(float *u, float *v, float cu, float cv, float deg)
+{
+	float dx = *u - cu; // 中心からの距離(X)
+	float dy = *v - cv; // 中心からの距離(Y)
 
+	float tmpX = ( dx * cosf(DegreeToRadian(deg)) ) - ( dy * sinf(DegreeToRadian(deg)) ); // 回転
+	float tmpY = ( dx * sinf(DegreeToRadian(deg)) ) + ( dy * cosf(DegreeToRadian(deg)) );
+
+	*u = (cu + tmpX); // 元の座標にオフセットする
+	*v = (cv + tmpY);
+
+}
 
 
 /**
@@ -1567,8 +1769,8 @@ const cocos2d::Mat4& CustomSprite::getNodeToParentTransform() const
 
 
 
-#if 0
-void CustomSprite::draw(void)
+#if 1
+void CustomSprite::draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform, uint32_t flags)
 {
 	// TODO
 	using namespace cocos2d;
@@ -1579,20 +1781,25 @@ void CustomSprite::draw(void)
 	
 	if (!_useCustomShaderProgram)
 	{
-		cocos2d::Sprite::draw();
+		cocos2d::Sprite::draw(renderer, transform, flags);
 		return;
 	}
 	
+	//cocos v3系からspriteのdraw内でレンダーに描画コマンドを積む方式に変わったため、
+	//自前のシェーダーをcocos側に渡してパラメータを設定することが難しい。
+	//カラーブレンドスプライトは表示タイミングで、現在レンダーにたまっている描画コマンドを処理して
+	//描画してしまい直接描画することで描画順を保つことにした
+	renderer->render();	
 
-    CCASSERT(!m_pobBatchNode, "If CCSprite is being rendered by CCSpriteBatchNode, CCSprite#draw SHOULD NOT be called");
+//    CCASSERT(!m_pobBatchNode, "If CCSprite is being rendered by CCSpriteBatchNode, CCSprite#draw SHOULD NOT be called");
 
     CC_NODE_DRAW_SETUP();
 
-    ccGLBlendFunc( m_sBlendFunc.src, m_sBlendFunc.dst );
+	ccGLBlendFunc(_blendFunc.src, _blendFunc.dst);
 
-    if (m_pobTexture != nullptr)
+	if (_texture != nullptr)
     {
-        ccGLBindTexture2D( m_pobTexture->getName() );
+		ccGLBindTexture2D(_texture->getName());
     }
     else
     {
@@ -1609,8 +1816,9 @@ void CustomSprite::draw(void)
 
     ccGLEnableVertexAttribs( kCCVertexAttribFlag_PosColorTex );
 
-#define kQuadSize sizeof(m_sQuad.bl)
-    long offset = (long)&m_sQuad;
+
+#define kQuadSize sizeof(_quad.bl)
+	long offset = (long)&_quad;
 
     // vertex
     int diff = offsetof( ccV3F_C4B_T2F, vertices);
@@ -1624,8 +1832,9 @@ void CustomSprite::draw(void)
     diff = offsetof( ccV3F_C4B_T2F, colors);
     glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (void*)(offset + diff));
 
-
+	//コマンドにしてみる。
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+//	cocos2d::Sprite::draw(renderer, transform, flags);
 
     CHECK_GL_ERROR_DEBUG();
 
@@ -1653,6 +1862,7 @@ void CustomSprite::draw(void)
     CC_INCREMENT_GL_DRAWS(1);
 
     CC_PROFILER_STOP_CATEGORY(kCCProfilerCategorySprite, "CCSprite - draw");
+
 }
 #endif
 

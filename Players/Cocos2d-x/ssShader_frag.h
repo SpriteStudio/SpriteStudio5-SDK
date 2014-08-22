@@ -15,11 +15,11 @@ void main()                                                  \n\
                                                              \n\
 	float rate = v_fragmentColor.a;                          \n\
 	vec4 blend = v_fragmentColor * rate;                     \n\
-    int selecter = u_selector;                                                         \n\
-    vec4 _blend = (selecter == 3) ? -blend : blend;                 \n\
+    int selecter = u_selector;                               \n\
+    vec4 _blend = (selecter == 3) ? -blend : blend;          \n\
     vec4 _color = (selecter <= 1) ? pixel * (1.0 -rate) : pixel;       \n\
-    _color+=(selecter==1) ? (pixel * blend) : _blend;                  \n\
-	pixel.rgb = _color.rgb ;                                     \n\
+    _color+=(selecter==1) ? (pixel * blend) : _blend;        \n\
+	pixel.rgb = _color.rgb ;                                 \n\
 	pixel *= u_alpha;                                        \n\
 	gl_FragColor = pixel;                                    \n\
 }                                                            \n\

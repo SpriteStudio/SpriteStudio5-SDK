@@ -60,7 +60,8 @@ struct AnimationData
 struct AnimationInitialData
 {
 	ss_s16		index;
-	ss_u16		flags;
+	ss_s16		dummy;
+	ss_u32		flags;
 	ss_s16		cellIndex;
 	ss_s16		positionX;
 	ss_s16		positionY;
@@ -70,6 +71,13 @@ struct AnimationInitialData
 	float		rotation;
 	float		scaleX;
 	float		scaleY;
+	float		size_X;
+	float		size_Y;
+	float		uv_move_X;
+	float		uv_move_Y;
+	float		uv_rotation;
+	float		uv_scale_X;
+	float		uv_scale_Y;
 };
 
 

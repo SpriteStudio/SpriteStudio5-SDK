@@ -175,20 +175,61 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 	int range = rightkey->time - leftkey->time;
 	float now = (float)(time - leftkey->time) / range;
 
+	//初期化しておく
+	v.color.rgba.a = 0;	
+	v.color.rgba.r = 0;	
+	v.color.rgba.g = 0;	
+	v.color.rgba.b = 0;	
 	if ( leftv.target == SsColorBlendTarget::vertex )
 	{
-		for ( int i = 0 ; i < 4 ; i++ )
+		if ( rightv.target == SsColorBlendTarget::vertex )
 		{
-			v.colors[i].rgba.a = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.a , rightv.colors[i].rgba.a  , &curve );	
-			v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.r , rightv.colors[i].rgba.r  , &curve );	
-			v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.g , rightv.colors[i].rgba.g  , &curve );	
-			v.colors[i].rgba.b = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.b , rightv.colors[i].rgba.b  , &curve );	
+			//両方とも４頂点カラー
+			for ( int i = 0 ; i < 4 ; i++ )
+			{
+				v.colors[i].rate = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rate , rightv.colors[i].rate  , &curve );	
+				v.colors[i].rgba.a = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.a , rightv.colors[i].rgba.a  , &curve );	
+				v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.r , rightv.colors[i].rgba.r  , &curve );	
+				v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.g , rightv.colors[i].rgba.g  , &curve );	
+				v.colors[i].rgba.b = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.b , rightv.colors[i].rgba.b  , &curve );	
+			}
 		}
-	}else{
-		v.color.rgba.a = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.a , rightv.color.rgba.a  , &curve );	
-		v.color.rgba.r = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.r , rightv.color.rgba.r  , &curve );	
-		v.color.rgba.g = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.g , rightv.color.rgba.g  , &curve );	
-		v.color.rgba.b = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.b , rightv.color.rgba.b  , &curve );	
+		else
+		{
+			//左は４頂点、右は単色
+			for ( int i = 0 ; i < 4 ; i++ )
+			{
+				v.colors[i].rate = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rate , rightv.color.rate  , &curve );	
+				v.colors[i].rgba.a = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.a , rightv.color.rgba.a  , &curve );	
+				v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.r , rightv.color.rgba.r  , &curve );	
+				v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.g , rightv.color.rgba.g  , &curve );	
+				v.colors[i].rgba.b = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.b , rightv.color.rgba.b  , &curve );	
+			}
+		}
+	}
+	else
+	{
+		if ( rightv.target == SsColorBlendTarget::vertex )
+		{
+			//左は単色、右は４頂点カラー
+			for ( int i = 0 ; i < 4 ; i++ )
+			{
+				v.colors[i].rate = SsInterpolate( leftkey->ipType , now , leftv.color.rate , rightv.colors[i].rate  , &curve );	
+				v.colors[i].rgba.a = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.a , rightv.colors[i].rgba.a  , &curve );	
+				v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.r , rightv.colors[i].rgba.r  , &curve );	
+				v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.g , rightv.colors[i].rgba.g  , &curve );	
+				v.colors[i].rgba.b = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.b , rightv.colors[i].rgba.b  , &curve );	
+			}
+		}
+		else
+		{
+			//両方とも単色
+			v.color.rate = SsInterpolate( leftkey->ipType , now , leftv.color.rate , rightv.color.rate  , &curve );	
+			v.color.rgba.a = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.a , rightv.color.rgba.a  , &curve );	
+			v.color.rgba.r = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.r , rightv.color.rgba.r  , &curve );	
+			v.color.rgba.g = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.g , rightv.color.rgba.g  , &curve );	
+			v.color.rgba.b = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.b , rightv.color.rgba.b  , &curve );	
+		}
 	}
 
 }
@@ -424,7 +465,11 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 						{
 							state->hide = true;
 						}
-						hidekey_find = true;
+						else
+						{
+							//非表示キーがあり、かつ最初のキーフレームを取得した
+							hidekey_find = true;
+						}
 					}
 					break;
 				case SsAttributeKind::color:	///< カラーブレンド
@@ -505,18 +550,25 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 	{
 		// α
 		if (state->inherits_(SsAttributeKind::alpha))
+		{
 			state->alpha *= state->parent->alpha;
+		}
+
 		// フリップの継承。継承ONだと親に対しての反転になる…ヤヤコシス
 		if (state->inherits_(SsAttributeKind::fliph))
 		{
 			state->hFlip = state->parent->hFlip ^ state->hFlip;
 		}
-
 		if (state->inherits_(SsAttributeKind::flipv))
+		{
 			state->vFlip = state->parent->vFlip ^ state->vFlip;
-		// 非表示は継承ONだと親のをただ引き継ぐ
+		}
+
+		// 引き継ぐ場合は親の値をそのまま引き継ぐ
 		if (state->inherits_(SsAttributeKind::hide))
+		{
 			state->hide = state->parent->hide;
+		}
 	}
 
 	// 非表示キーがないか、先頭の非表示キーより手前の場合は常に非表示にする。(継承関係なし)
@@ -524,6 +576,7 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 	{
 		state->hide = true;
 	}
+
 
 	// 頂点の設定
 	if ( part->type == SsPartType::normal )
