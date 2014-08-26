@@ -1151,6 +1151,17 @@ enum {
 	VERTEX_FLAG_ONE		= 1 << 4	// color blend only
 };
 
+/// Animation Part Type
+enum _enum
+{
+	PARTTYPE_INVALID = -1,
+	PARTTYPE_NULL,			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
+	PARTTYPE_NORMAL,		// 通常パーツ。領域を持つ。画像は無くてもいい。
+	PARTTYPE_TEXT,			// テキスト(予約　未実装）
+	PARTTYPE_INSTANCE,		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
+	PARTTYPE_NUM
+};
+
 
 void Player::setFrame(int frameNo)
 {
@@ -1531,6 +1542,12 @@ void Player::setFrame(int frameNo)
 			quad.br.texCoords.v = v_center + (v_height * uv_scale_Y * v_code);
 		}
 
+
+		//インスタンスパーツの場合
+		if (partData->type == PARTTYPE_INSTANCE)
+		{
+			//描画
+		}
 
 
 	}
