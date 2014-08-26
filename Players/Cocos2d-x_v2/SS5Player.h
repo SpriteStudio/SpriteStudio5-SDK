@@ -206,7 +206,9 @@ public:
 	/**
 	 * アニメーションの再生を開始します.
 	 * アニメーション名から再生するデータを選択します.
-	 * ※同名のアニメーションが複数存在する場合はどのアニメーションが選択されるかは不定です.
+	 * "ssae名/アニメーション名" という指定が可能です.
+	 * sample.ssaeのanime_1を指定する場合、sample/anime_1となります.
+	 * ※アニメーション名のみで指定した場合、同名のアニメーションが複数存在時にどのアニメーションが選択されるかは不定です.
 	 *
 	 * @param  animeName     再生するアニメーション名
 	 * @param  loop          再生ループ数の指定. 省略時は0
@@ -399,7 +401,6 @@ protected:
 	bool				_isPausing;
 	int					_prevDrawFrameNo;
 	bool				_partVisible[PART_VISIBLE_MAX];
-
 	
 	UserDataCallback	_userDataCallback;
 	UserData			_userData;

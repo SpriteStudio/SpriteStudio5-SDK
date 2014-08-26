@@ -562,6 +562,7 @@ struct State
 	float	rotation;
 	float	scaleX;
 	float	scaleY;
+	cocos2d::CCAffineTransform	trans;
 
 	void init()
 	{
@@ -570,6 +571,7 @@ struct State
 		rotation = 0.0f;
 		scaleX = 1.0f;
 		scaleY = 1.0f;
+		trans = cocos2d::CCAffineTransformMakeIdentity();
 	}
 
 	State() { init(); }
@@ -592,9 +594,11 @@ private:
 	bool				_useCustomShaderProgram;
 	float				_opacity;
 	int					_colorBlendFuncNo;
+	bool				_flipX;
+	bool				_flipY;
 
 public:
-	kmMat4				_mat;
+//	kmMat4				_mat;
 	State				_state;
 	bool				_isStateChanged;
 	CustomSprite*		_parent;
@@ -607,7 +611,7 @@ public:
 
 	void initState()
 	{
-		kmMat4Identity(&_mat);
+//		kmMat4Identity(&_mat);
 		_state.init();
 		_isStateChanged = true;
 	}
@@ -641,9 +645,14 @@ public:
 	void setColorBlendFunc(int colorBlendFuncNo);
 	cocos2d::ccV3F_C4B_T2F_Quad& getAttributeRef();
 
+	void CustomSprite::setFlippedX(bool flip);
+	void CustomSprite::setFlippedY(bool flip);
+	bool CustomSprite::isFlippedX();
+	bool CustomSprite::isFlippedY();
+
 public:
 	// override
-    virtual const kmMat4& getNodeToParentTransform() const;
+//    virtual const kmMat4& getNodeToParentTransform() const;
 };
 
 
@@ -1260,13 +1269,13 @@ enum {
 void Player::setFrame(int frameNo)
 {
 	if (!_currentAnimeRef) return;
-/*
+
 	bool forceUpdate = false;
 	{
 		// フリップに変化があったときは必ず描画を更新する
 		CustomSprite* root = static_cast<CustomSprite*>(_parts.at(0));
-		float scaleX = isFlippedX() ? -1.0f : 1.0f;
-		float scaleY = isFlippedY() ? -1.0f : 1.0f;
+		float scaleX = root->isFlippedX() ? -1.0f : 1.0f;
+		float scaleY = root->isFlippedY() ? -1.0f : 1.0f;
 		root->setStateValue(root->_state.x, scaleX);
 		root->setStateValue(root->_state.y, scaleY);
 		forceUpdate = root->_isStateChanged;
@@ -1274,7 +1283,7 @@ void Player::setFrame(int frameNo)
 	
 	// 前回の描画フレームと同じときはスキップ
 	if (!forceUpdate && frameNo == _prevDrawFrameNo) return;
-*/
+
 	_prevDrawFrameNo = frameNo;
 
 
@@ -1335,17 +1344,14 @@ void Player::setFrame(int frameNo)
 		state.scaleX = scaleX;
 		state.scaleY = scaleY;
 
-		if (flags & PART_FLAG_FLIP_H)
-		{
-			state.scaleX *= -1;			//スケールを-にしてさせて反転を行う
-		}
-		if (flags & PART_FLAG_FLIP_V)
-		{
-			state.scaleY *= -1;			//スケールを-にしてさせて反転を行う
-		}
-
 		//CustomSprite* sprite = static_cast<CustomSprite*>(getChildren().at(partIndex));
 		CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
+
+		//反転
+		//cocos2dx ver2系には反転がないので、直接UVを入れ替えて反転を実現する
+		//スケールを-にして反転を行うと原点も移動してしまう
+		sprite->setFlippedX(flags & PART_FLAG_FLIP_H);
+		sprite->setFlippedY(flags & PART_FLAG_FLIP_V);
 
 		//表示設定
 		sprite->setVisible(isVisibled);
@@ -1485,7 +1491,6 @@ void Player::setFrame(int frameNo)
 //		sprite->setScale(scaleX, scaleY);	//スケール設定
 		sprite->setScaleX(scaleX);
 		sprite->setScaleY(scaleY);
-
 
 		// 頂点変形のオフセット値を反映
 		if (flags & PART_FLAG_VERTEX_TRANSFORM)
@@ -1634,23 +1639,21 @@ void Player::setFrame(int frameNo)
 			get_uv_rotation(&quad.br.texCoords.u, &quad.br.texCoords.v, u_center, v_center, uv_rotation);
 		}
 
-		//UVスケール
-		if ( flags & PART_FLAG_U_SCALE )
+		//UVスケール || 反転
+		if ((flags & PART_FLAG_U_SCALE) || (flags & PART_FLAG_FLIP_H))
 		{
 			quad.tl.texCoords.u = u_center - (u_wide * uv_scale_X * u_code);
 			quad.tr.texCoords.u = u_center + (u_wide * uv_scale_X * u_code);
 			quad.bl.texCoords.u = u_center - (u_wide * uv_scale_X * u_code);
 			quad.br.texCoords.u = u_center + (u_wide * uv_scale_X * u_code);
 		}
-		if (flags & PART_FLAG_V_SCALE )
+		if ((flags & PART_FLAG_V_SCALE) || (flags & PART_FLAG_FLIP_V))
 		{
 			quad.tl.texCoords.v = v_center - (v_height * uv_scale_Y * v_code);
 			quad.tr.texCoords.v = v_center - (v_height * uv_scale_Y * v_code);
 			quad.bl.texCoords.v = v_center + (v_height * uv_scale_Y * v_code);
 			quad.br.texCoords.v = v_center + (v_height * uv_scale_Y * v_code);
 		}
-
-
 
 	}
 
@@ -1667,27 +1670,38 @@ void Player::setFrame(int frameNo)
 			sprite->_isStateChanged = true;
 		}
 	}
-/*	
+
 	// 行列の更新
-	kmMat4 mat, t;
+//	kmMat4 mat, t;
+	cocos2d::CCAffineTransform trans;
 	for (int partIndex = 0; partIndex < packData->numParts; partIndex++)
 	{
 		const PartData* partData = &parts[partIndex];
 		CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
 		
+
 		if (sprite->_isStateChanged)
 		{
 			if (partIndex > 0)
 			{
 				CustomSprite* parent = static_cast<CustomSprite*>(_parts.at(partData->parentIndex));
-				mat = parent->_mat;
+//				mat = parent->_mat;
+				trans = parent->_state.trans;
+
+				trans = CCAffineTransformTranslate(trans, parent->_state.x, parent->_state.y);
+				trans = CCAffineTransformRotate(trans, CC_DEGREES_TO_RADIANS(-parent->_state.rotation));// Rad?
+				trans = CCAffineTransformScale(trans, parent->_state.scaleX, parent->_state.scaleY);
 			}
 			else
 			{
 //				mat = cocos2d::Mat4::IDENTITY;
-				kmMat4Identity(&mat);
+//				kmMat4Identity(&mat);
+				trans = cocos2d::CCAffineTransformMakeIdentity();
 			}
-			
+			sprite->_state.trans = trans;
+			sprite->setAdditionalTransform(trans);
+
+/*			
 			kmMat4Translation(&t, sprite->_state.x, sprite->_state.y, 0.0f);
 			kmMat4Multiply(&mat, &mat, &t);
 //			cocos2d::Mat4::createTranslation(sprite->_state.x, sprite->_state.y, 0.0f, &t);
@@ -1704,13 +1718,14 @@ void Player::setFrame(int frameNo)
 //			mat = mat * t;
 			
 			sprite->_mat = mat;
+*/
 			sprite->_isStateChanged = false;
 
 			// 行列を再計算させる
-			sprite->setAdditionalTransform(nullptr);
+//			sprite->setAdditionalTransform(nullptr);
 		}
 	}
-*/	
+
 }
 
 void Player::checkUserData(int frameNo)
@@ -1815,7 +1830,6 @@ void Player::get_uv_rotation(float *u, float *v, float cu, float cv, float deg)
 	*v = (cv + tmpY);
 
 }
-
 
 /**
  * CustomSprite
@@ -1936,10 +1950,10 @@ void CustomSprite::setOpacity(GLubyte opacity)
 	cocos2d::CCSprite::setOpacity(opacity);
 	_opacity = static_cast<float>(opacity) / 255.0f;
 }
-
+/*
 const kmMat4& CustomSprite::getNodeToParentTransform() const
 {
-/*
+
     if (_transformDirty)
     {
 		// 自身の行列を更新
@@ -1955,14 +1969,10 @@ const kmMat4& CustomSprite::getNodeToParentTransform() const
 		}
 	}
 	return _transform;
-*/
-	//とりあえず
-	kmMat4 mat;
-	kmMat4Identity(&mat);
 
 	return mat;
 }
-
+*/
 
 
 #if 1
@@ -2049,6 +2059,23 @@ void CustomSprite::draw(void)
 	CC_PROFILER_STOP_CATEGORY(kCCProfilerCategorySprite, "CCSprite - draw");
 }
 #endif
+
+void CustomSprite::setFlippedX(bool flip)
+{
+	_flipX = flip;
+}
+void CustomSprite::setFlippedY(bool flip)
+{
+	_flipY = flip;
+}
+bool CustomSprite::isFlippedX()
+{
+	return (_flipX);
+}
+bool CustomSprite::isFlippedY()
+{
+	return (_flipY);
+}
 
 
 };
