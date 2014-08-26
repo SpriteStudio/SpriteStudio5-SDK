@@ -1192,7 +1192,6 @@ void Player::setFrame(int frameNo)
 	for (int index = 0; index < packData->numParts; index++)
 	{
 		int partIndex = reader.readS16();
-//		reader.readS16();						//アライメント合わせのダミーデータを読み込む
 		const PartData* partData = &parts[partIndex];
 		const AnimationInitialData* init = &initialDataList[partIndex];
 
