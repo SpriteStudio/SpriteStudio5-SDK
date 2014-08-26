@@ -1,6 +1,9 @@
 //
 //  SS5Player.cpp
 //
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 
 #include "SS5Player.h"
 #include "SS5PlayerData.h"
@@ -49,13 +52,16 @@ static std::string Format(const char* format, ...){
 	va_start(args, format);
 	source = args;
 
-	while (1){
+	while (1)
+	{
 		args = source;
 
-		if (_vsnprintf(&tmp[0], tmp.size(), format, args) == -1){
+		if (_vsnprintf(&tmp[0], tmp.size(), format, args) == -1)
+		{
 			tmp.resize(tmp.size() * 2);
 		}
-		else{
+		else
+		{
 			break;
 		}
 	}
@@ -145,7 +151,6 @@ private:
 /**
  * CellRef
  */
-//struct CellRef : public cocos2d::Ref
 struct CellRef
 {
 	const Cell* cell;
@@ -157,7 +162,6 @@ struct CellRef
 /**
  * CellCache
  */
-//class CellCache : public cocos2d::Ref
 class CellCache
 {
 public:
@@ -167,7 +171,6 @@ public:
 		if (obj)
 		{
 			obj->init(data, imageBaseDir);
-//			obj->autorelease();
 		}
 		return obj;
 	}
@@ -209,7 +212,6 @@ protected:
 			ref->cell = cell;
 			ref->texture = _textures.at(cellMap->index);
 			ref->rect = cocos2d::CCRect(cell->x, cell->y, cell->width, cell->height);
-//			_refs.pushBack(ref);
 			_refs.push_back(ref);
 		}
 	}
@@ -236,7 +238,6 @@ protected:
 			path.append(imagePath);
 		}
 		
-//		cocos2d::CCTextureCache* texCache = cocos2d::Director::getInstance()->getTextureCache();
 		cocos2d::CCTextureCache* texCache = cocos2d::CCTextureCache::sharedTextureCache();
 		cocos2d::CCTexture2D* tex = texCache->addImage(path.c_str());
 		if (tex == nullptr)
@@ -245,7 +246,6 @@ protected:
 			CCAssert(tex != nullptr, msg.c_str());
 		}
 		CCLOG("load: %s", path.c_str());
-//		_textures.pushBack(tex);
 		_textures.push_back(tex);
 	}
 
@@ -258,7 +258,6 @@ protected:
 /**
  * AnimeRef
  */
-//struct AnimeRef : public cocos2d::Ref
 struct AnimeRef
 {
 	std::string				packName;
@@ -271,7 +270,6 @@ struct AnimeRef
 /**
  * AnimeCache
  */
-//class AnimeCache : public cocos2d::Ref
 class AnimeCache
 {
 public:
@@ -281,7 +279,6 @@ public:
 		if (obj)
 		{
 			obj->init(data);
-//			obj->autorelease();
 		}
 		return obj;
 	}
@@ -307,10 +304,12 @@ public:
 	
 	void dump()
 	{
-//		for (auto key : _dic.keys())
-//		{
-//			CCLOG("%s", key.c_str());
-//		}
+		std::map<std::string, AnimeRef*>::iterator it = _dic.begin();
+		while (it != _dic.end())
+		{
+			CCLOG("%s", (*it).second);
+			++it;
+		}
 	}
 
 protected:
@@ -341,11 +340,9 @@ protected:
 				// packName + animeNameでの登録
 				std::string key = toPackAnimeKey(packName, animeName);
 				CCLOG("anime key: %s", key.c_str());
-//				_dic.insert(key, ref);
 				_dic.insert(std::map<std::string, AnimeRef*>::value_type(key, ref));
 
 				// animeNameのみでの登録
-//				_dic.insert(animeName, ref);
 				_dic.insert(std::map<std::string, AnimeRef*>::value_type(animeName, ref));
 				
 			}
@@ -357,7 +354,6 @@ protected:
 		return Format("%s/%s", packName.c_str(), animeName.c_str());
 	}
 protected:
-//	cocos2d::Map<std::string, AnimeRef*>	_dic;
 	std::map<std::string, AnimeRef*>	_dic;
 };
 
@@ -368,7 +364,6 @@ protected:
 /**
  * ResourceSet
  */
-//struct ResourceSet : public cocos2d::Ref
 struct ResourceSet
 {
 	const ProjectData* data;
@@ -378,7 +373,11 @@ struct ResourceSet
 
 	virtual ~ResourceSet()
 	{
-		if (isDataAutoRelease) delete data;
+		if (isDataAutoRelease)
+		{
+			delete data;
+			data = NULL;
+		}
 		if (animeCache)
 		{
 			delete animeCache;
@@ -405,7 +404,6 @@ ResourceManager* ResourceManager::getInstance()
 	if (!defaultInstance)
 	{
 		defaultInstance = ResourceManager::create();
-//		defaultInstance->retain();
 	}
 	return defaultInstance;
 }
@@ -416,20 +414,11 @@ ResourceManager::ResourceManager(void)
 
 ResourceManager::~ResourceManager()
 {
-	if (defaultInstance )
-	{
-		delete defaultInstance;
-		defaultInstance = NULL;
-	}
 }
 
 ResourceManager* ResourceManager::create()
 {
 	ResourceManager* obj = new ResourceManager();
-	if (obj)
-	{
-//		obj->autorelease();
-	}
 	return obj;
 }
 
@@ -455,17 +444,14 @@ std::string ResourceManager::addData(const std::string& dataKey, const ProjectDa
 	}
 
 	CellCache* cellCache = CellCache::create(data, baseDir);
-//	cellCache->retain();
 	
 	AnimeCache* animeCache = AnimeCache::create(data);
-//	animeCache->retain();
 	
 	ResourceSet* rs = new ResourceSet();
 	rs->data = data;
 	rs->isDataAutoRelease = false;
 	rs->cellCache = cellCache;
 	rs->animeCache = animeCache;
-//	_dataDic.insert(dataKey, rs);
 	_dataDic.insert(std::map<std::string, ResourceSet*>::value_type(dataKey, rs));
 
 	return dataKey;
@@ -598,7 +584,6 @@ private:
 	bool				_flipY;
 
 public:
-//	kmMat4				_mat;
 	State				_state;
 	bool				_isStateChanged;
 	CustomSprite*		_parent;
@@ -611,7 +596,6 @@ public:
 
 	void initState()
 	{
-//		kmMat4Identity(&_mat);
 		_state.init();
 		_isStateChanged = true;
 	}
@@ -651,8 +635,6 @@ public:
 	bool CustomSprite::isFlippedY();
 
 public:
-	// override
-//    virtual const kmMat4& getNodeToParentTransform() const;
 };
 
 
@@ -696,6 +678,7 @@ Player::~Player()
 	releaseParts();
 	releaseData();
 	releaseResourceManager();
+	releaseAnime();
 }
 
 Player* Player::create(ResourceManager* resman)
@@ -723,7 +706,6 @@ bool Player::init()
 
 void Player::releaseResourceManager()
 {
-//	CC_SAFE_RELEASE_NULL(_resman);
 	if ( _resman )
 	{
 		delete _resman;
@@ -741,7 +723,6 @@ void Player::setResourceManager(ResourceManager* resman)
 		resman = ResourceManager::getInstance();
 	}
 	
-//	CC_SAFE_RETAIN(resman);
 	_resman = resman;
 }
 
@@ -833,7 +814,6 @@ void Player::setData(const std::string& dataKey)
 	if (_currentRs != rs)
 	{
 		releaseData();
-//		rs->retain();
 		_currentRs = rs;
 	}
 }
@@ -841,7 +821,6 @@ void Player::setData(const std::string& dataKey)
 void Player::releaseData()
 {
 	releaseAnime();
-//	CC_SAFE_RELEASE_NULL(_currentRs);
 	if (_currentRs )
 	{
 		delete _currentRs;
@@ -853,7 +832,6 @@ void Player::releaseData()
 void Player::releaseAnime()
 {
 	releaseParts();
-//	CC_SAFE_RELEASE_NULL(_currentAnimeRef);
 	if (_currentAnimeRef)
 	{
 		delete _currentAnimeRef;
@@ -893,14 +871,12 @@ void Player::play(AnimeRef* animeRef, int loop, int startFrameNo)
 {
 	if (_currentAnimeRef != animeRef)
 	{
-//		CC_SAFE_RELEASE_NULL(_currentAnimeRef);
 		if (_currentAnimeRef)
 		{
 			delete _currentAnimeRef;
 			_currentAnimeRef = NULL;
 		}
 
-//		animeRef->retain();
 		_currentAnimeRef = animeRef;
 		
 		allocParts(animeRef->animePackData->numParts, false);
@@ -1057,18 +1033,11 @@ void Player::allocParts(int numParts, bool useCustomShaderProgram)
 	{
 		// パーツ数だけCustomSpriteを作成する
 //		// create CustomSprite objects.
-//		float globalZOrder = getGlobalZOrder();
 		for (int i = getChildrenCount(); i < numParts; i++)
 		{
 			CustomSprite* sprite =  CustomSprite::create();
 			sprite->changeShaderProgram(useCustomShaderProgram);
-
-//			if (globalZOrder != 0.0f)
-//			{
-//				sprite->setGlobalZOrder(globalZOrder);
-//			}
 			
-//			_parts.pushBack(sprite);
 			_parts.push_back(sprite);
 			addChild(sprite);
 		}
@@ -1078,19 +1047,16 @@ void Player::allocParts(int numParts, bool useCustomShaderProgram)
 		// 多い分は解放する
 		for (int i = getChildrenCount() - 1; i >= numParts; i--)
 		{
-//			CustomSprite* sprite = static_cast<CustomSprite*>(getChildren().at(i));
-//			removeChild(sprite, true);
-//			_parts.eraseObject(sprite);
-
 			CCObject* child = m_pChildren->objectAtIndex(i);
 			CustomSprite* sprite = (CustomSprite*)child;
 			removeChild(sprite, true);
-//			_parts.eraseObject(sprite);
+
 			for (std::vector<CustomSprite *>::iterator it = _parts.begin(); it != _parts.end();)
 			{
-				if (*it == sprite){ // 削除条件に合う要素が見つかった
-//					cout << "val " << *it << " is deleted." << endl;
-					it = _parts.erase(it); // erase()の戻り値をitで受ける！
+				if (*it == sprite)
+				{ 
+					// 削除条件に合う要素を削除する
+					it = _parts.erase(it);
 				}
 				else{
 					++it;
@@ -1101,19 +1067,12 @@ void Player::allocParts(int numParts, bool useCustomShaderProgram)
 		// パラメータ初期化
 		for (int i = 0; i < numParts; i++)
 		{
-//			CustomSprite* sprite = static_cast<CustomSprite*>(getChildren().at(i));
-//			sprite->initState();
-
 			CCObject* child = m_pChildren->objectAtIndex(i);
 			CustomSprite* sprite = (CustomSprite*)child;
 			sprite->initState();
 		}
 	}
 
-//	for (auto child : getChildren())
-//	{
-//		child->setVisible(false);
-//	}
 	if (m_pChildren && m_pChildren->count() > 0)
 	{
 		CCObject* child;
@@ -1159,20 +1118,6 @@ void Player::setPartsParentage()
 	}
 }
 
-void Player::setGlobalZOrder(float globalZOrder)
-{
-/*
-	if (_globalZOrder != globalZOrder)
-	{
-		cocos2d::Sprite::setGlobalZOrder(globalZOrder);
-
-		for (auto child : getChildren())
-		{
-			child->setGlobalZOrder(globalZOrder);
-		}
-	}
-*/
-}
 
 //ラベル名からラベルの設定されているフレームを取得
 //ラベルが存在しない場合は戻り値が-1となります。
@@ -1307,7 +1252,6 @@ void Player::setFrame(int frameNo)
 	for (int index = 0; index < packData->numParts; index++)
 	{
 		int partIndex = reader.readS16();
-//		reader.readS16();						//アライメント合わせのダミーデータを読み込む
 		const PartData* partData = &parts[partIndex];
 		const AnimationInitialData* init = &initialDataList[partIndex];
 
@@ -1348,15 +1292,14 @@ void Player::setFrame(int frameNo)
 		CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
 
 		//反転
-		//cocos2dx ver2系には反転がないので、直接UVを入れ替えて反転を実現する
-		//スケールを-にして反転を行うと原点も移動してしまう
+		//cocos2dx ver2.x系には反転がないので、直接UVを入れ替えて反転を実現する
+		//スケールを-にして反転を行うと原点も移動してしまうためUVで行う
 		sprite->setFlippedX(flags & PART_FLAG_FLIP_H);
 		sprite->setFlippedY(flags & PART_FLAG_FLIP_V);
 
 		//表示設定
 		sprite->setVisible(isVisibled);
 		sprite->setState(state);
-//		sprite->setLocalZOrder(index);
 		this->reorderChild(sprite, index);
 
 		sprite->setPosition(cocos2d::CCPoint(x, y));
@@ -1488,7 +1431,7 @@ void Player::setFrame(int frameNo)
 				quad.tr.vertices.y = center + (h * scale);
 			}
 		}
-//		sprite->setScale(scaleX, scaleY);	//スケール設定
+		//スケール設定
 		sprite->setScaleX(scaleX);
 		sprite->setScaleY(scaleY);
 
@@ -1672,7 +1615,6 @@ void Player::setFrame(int frameNo)
 	}
 
 	// 行列の更新
-//	kmMat4 mat, t;
 	cocos2d::CCAffineTransform trans;
 	for (int partIndex = 0; partIndex < packData->numParts; partIndex++)
 	{
@@ -1684,8 +1626,8 @@ void Player::setFrame(int frameNo)
 		{
 			if (partIndex > 0)
 			{
+				//親の行列を取得
 				CustomSprite* parent = static_cast<CustomSprite*>(_parts.at(partData->parentIndex));
-//				mat = parent->_mat;
 				trans = parent->_state.trans;
 
 				trans = CCAffineTransformTranslate(trans, parent->_state.x, parent->_state.y);
@@ -1694,35 +1636,13 @@ void Player::setFrame(int frameNo)
 			}
 			else
 			{
-//				mat = cocos2d::Mat4::IDENTITY;
-//				kmMat4Identity(&mat);
+				//rootは初期値
 				trans = cocos2d::CCAffineTransformMakeIdentity();
 			}
 			sprite->_state.trans = trans;
 			sprite->setAdditionalTransform(trans);
 
-/*			
-			kmMat4Translation(&t, sprite->_state.x, sprite->_state.y, 0.0f);
-			kmMat4Multiply(&mat, &mat, &t);
-//			cocos2d::Mat4::createTranslation(sprite->_state.x, sprite->_state.y, 0.0f, &t);
-//			mat = mat * t;
-			
-			kmMat4RotationZ(&t, CC_DEGREES_TO_RADIANS(-sprite->_state.rotation));
-			kmMat4Multiply(&mat, &mat, &t);
-//			cocos2d::Mat4::createRotationZ(CC_DEGREES_TO_RADIANS(-sprite->_state.rotation), &t);
-//			mat = mat * t;
-			
-			kmMat4Scaling(&t, sprite->_state.scaleX, sprite->_state.scaleY, 1.0f);
-			kmMat4Multiply(&mat, &mat, &t);
-//			cocos2d::Mat4::createScale(sprite->_state.scaleX, sprite->_state.scaleY, 1.0f, &t);
-//			mat = mat * t;
-			
-			sprite->_mat = mat;
-*/
 			sprite->_isStateChanged = false;
-
-			// 行列を再計算させる
-//			sprite->setAdditionalTransform(nullptr);
 		}
 	}
 
@@ -1950,29 +1870,6 @@ void CustomSprite::setOpacity(GLubyte opacity)
 	cocos2d::CCSprite::setOpacity(opacity);
 	_opacity = static_cast<float>(opacity) / 255.0f;
 }
-/*
-const kmMat4& CustomSprite::getNodeToParentTransform() const
-{
-
-    if (_transformDirty)
-    {
-		// 自身の行列を更新
-		Sprite::getNodeToParentTransform();
-		
-		// 更に親の行列に掛け合わせる
-		if (_parent != nullptr)
-		{
-			kmMat4 mat = _parent->_mat;
-//			mat = mat * _transform;
-			kmMat4Multiply(&mat, &mat, &_transform);
-			_transform = mat;
-		}
-	}
-	return _transform;
-
-	return mat;
-}
-*/
 
 
 #if 1

@@ -372,7 +372,6 @@ public:
 	// override
 	virtual bool init();
 	virtual void update(float dt);
-	virtual void setGlobalZOrder(float globalZOrder);
 
 protected:
 	void allocParts(int numParts, bool useCustomShaderProgram);
@@ -389,7 +388,6 @@ protected:
 	ResourceManager*	_resman;
 	ResourceSet*		_currentRs;
 	AnimeRef*			_currentAnimeRef;
-//	std::vector<cocos2d::CCSprite*>	_parts;
 	std::vector<CustomSprite *>	_parts;
 
 	bool				_frameSkipEnabled;
