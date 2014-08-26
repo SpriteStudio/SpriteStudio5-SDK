@@ -531,6 +531,8 @@ public:
     SsString	endLabel;		///再生終了位置 ラベル名称
     int			endOffset;		///再生終了位置 ラベル名称からのオフセット
     float       speed;			///再生スピード
+    int			startFrame;		///ラベル位置とオフセット位置を加えた実際のフレーム数
+    int			endFrame;		///ラベル位置とオフセット位置を加えた実際のフレーム数
 
 
     //テンポラリ <-エディタ用計算値の可能性もあるので後で整理
@@ -548,8 +550,11 @@ public:
      	endLabel("_end"),
      	endOffset(0),
 		curKeyframe( 0 ),
-		speed(1.0f)
-    {}
+		speed(1.0f),
+		startFrame(0),
+		endFrame(0),
+		liveFrame(0.0f)
+   {}
 
 };
 

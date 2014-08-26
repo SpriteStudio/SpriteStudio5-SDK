@@ -531,8 +531,6 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 		}
 	}
 
-
-
 	// カラー値だけアニメが無いと設定されないので初期値を入れておく。
 	// alpha はupdateで初期化されるのでOK
 	// 当たり判定パーツ用のカラー。赤の半透明にする
@@ -764,6 +762,10 @@ void	SsAnimeDecoder::updateInstance( int nowTime , SsPart* part , SsPartAnime* p
     int	startframe = 0;
     int	endframe = curAnimeEndFrame;
 #endif
+
+    state->instanceValue.startFrame = startframe;		///ラベル位置とオフセット位置を加えた実際のフレーム数
+    state->instanceValue.endFrame = endframe;		///ラベル位置とオフセット位置を加えた実際のフレーム数
+
 
     //タイムライン上の時間 （絶対時間）
 	int time = nowTime;

@@ -61,6 +61,11 @@ enum {
 	PART_FLAG_U_SCALE			= 1 << 20,
 	PART_FLAG_V_SCALE			= 1 << 21,
 
+	PART_FLAG_INSTANCE_START	= 1 << 22,
+	PART_FLAG_INSTANCE_END		= 1 << 23,
+	PART_FLAG_INSTANCE_SPEED	= 1 << 24,
+	PART_FLAG_INSTANCE_LOOP		= 1 << 25,
+	PART_FLAG_INSTANCE_LOOP_FLG	= 1 << 26,
 
 	NUM_PART_FLAGS
 };
@@ -71,6 +76,13 @@ enum {
 	VERTEX_FLAG_LB		= 1 << 2,
 	VERTEX_FLAG_RB		= 1 << 3,
 	VERTEX_FLAG_ONE		= 1 << 4	// color blend only
+};
+
+enum {
+	INSTANCE_LOOP_FLAG_INFINITY		= 1 << 0,
+	INSTANCE_LOOP_FLAG_REVERSE		= 1 << 1,
+	INSTANCE_LOOP_FLAG_PINGPONG		= 1 << 2,
+	INSTANCE_LOOP_FLAG_INDEPENDENT	= 1 << 3,
 };
 
 enum {
@@ -189,7 +201,6 @@ struct PartInitialData
 	float	uv_rotation;
 	float	uv_scale_X;
 	float	uv_scale_Y;
-
 };
 
 
@@ -348,7 +359,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			SsAnimation* anime = animePack->animeList[animeIndex];
 			
 			cellMapList->set(proj, animePack);
-			decoder.setAnimation(model, anime, cellMapList);
+			decoder.setAnimation(model, anime, cellMapList, proj);
 			std::list<SsPartState*>& partList = decoder.getPartSortList();
 			
 			// AnimationData
@@ -427,6 +438,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				init.uv_rotation = state->uvRotation;
 				init.uv_scale_X = state->uvScale.x;
 				init.uv_scale_Y = state->uvScale.y;
+
+
+
 
 				initialDataList.push_back(init);
 				
@@ -549,7 +563,6 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (state->uvScale.y != init.uv_scale_Y)       p_flags |= PART_FLAG_V_SCALE;
 
 
-
 					// カラーブレンド値を格納する必要があるかチェック
 					int cb_flags = 0;
 					if (state->is_color_blend)
@@ -602,7 +615,17 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 
 						if (vt_flags) p_flags |= PART_FLAG_VERTEX_TRANSFORM;
 					}
-					
+
+					//インスタンス情報出力チェック
+					if ( state->refAnime )
+					{
+						p_flags |= PART_FLAG_INSTANCE_START;
+						p_flags |= PART_FLAG_INSTANCE_END;
+						p_flags |= PART_FLAG_INSTANCE_SPEED;
+						p_flags |= PART_FLAG_INSTANCE_LOOP;
+						p_flags |= PART_FLAG_INSTANCE_LOOP_FLG;
+					}
+
 					
 
 //					if (!prioChanged && s_flags == init.flags && p_flags == 0)
@@ -678,6 +701,49 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 								}
 							}
 						}
+					}
+
+					//インスタンス情報出力　対応中
+					//アニメの名前を出力する必要があるかも
+
+					if ( p_flags & PART_FLAG_INSTANCE_START )
+					{
+						//ラベル位置にオフセットを加えた結果の開始フレーム
+						frameData->add(Lump::s16Data(state->instanceValue.startFrame));
+					}
+					if ( p_flags & PART_FLAG_INSTANCE_END )
+					{
+						//ラベル位置にオフセットを加えた結果の終了フレーム
+						frameData->add(Lump::s16Data(state->instanceValue.endFrame));
+					}
+					if ( p_flags & PART_FLAG_INSTANCE_SPEED )
+					{
+						frameData->add(Lump::floatData(state->instanceValue.speed));
+					}
+					if ( p_flags & PART_FLAG_INSTANCE_LOOP )
+					{
+						frameData->add(Lump::s16Data(state->instanceValue.loopNum));
+					}
+					if ( p_flags & PART_FLAG_INSTANCE_LOOP_FLG )
+					{
+						int iflags = 0;
+						if ( state->instanceValue.infinity )
+						{
+							iflags = iflags | INSTANCE_LOOP_FLAG_INFINITY;
+						}
+						if ( state->instanceValue.reverse )
+						{
+							iflags = iflags | INSTANCE_LOOP_FLAG_REVERSE;
+						}
+						if ( state->instanceValue.pingpong )
+						{
+							iflags = iflags | INSTANCE_LOOP_FLAG_PINGPONG;
+						}
+						if ( state->instanceValue.independent )
+						{
+							iflags = iflags | INSTANCE_LOOP_FLAG_INDEPENDENT;
+						}
+						frameData->add(Lump::s16Data(iflags));
 					}
 				}
 				

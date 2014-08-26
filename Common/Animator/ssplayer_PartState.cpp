@@ -48,7 +48,7 @@ void	SsPartState::init()
 	is_color_blend = false;
 	is_vertex_transform = false;
 	inheritRates = 0; 
-		
+	
 }
 
 
