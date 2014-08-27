@@ -91,6 +91,7 @@ struct PartData
 	ss_s16		type;
 	ss_s16		boundsType;
 	ss_s16		alphaBlendType;	// BlendType
+	ss_offset	refname;		// const char*
 };
 
 

@@ -63,8 +63,8 @@ private:
 	void	updateMatrix(SsPart* part , SsPartAnime* anime , SsPartState* state);
 	void	updateVertices(SsPart* part , SsPartAnime* anime , SsPartState* state);
 
-    int		CalcAnimeLabel2Frame(const SsString& str, int offset );
-	int		findAnimetionLabel(const SsString& str);
+    int		CalcAnimeLabel2Frame(const SsString& str, int offset, SsAnimation* Animation  );
+	int		findAnimetionLabel(const SsString& str, SsAnimation* Animation);
 
 
 public:
@@ -97,6 +97,7 @@ public:
 	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsCellValue& v );
 	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsColorAnime& v );
 	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsVertexAnime& v );
+	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsInstanceAttr& v );
 
 
 

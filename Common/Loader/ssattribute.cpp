@@ -162,5 +162,31 @@ void	GetSsUserDataAnime( const SsKeyframe* key , SsUserDataAnime& v )
 
 void	GetSsInstparamAnime( const SsKeyframe* key , SsInstanceAttr& v )
 {
+	const SsString& sstartLabel = key->value["startLabel"].get<SsString>();
+	const int& sstartOffset = key->value["startOffset"].get<int>();
+	const SsString& sendLabel = key->value["endLabel"].get<SsString>();
+	const int& sendOffset = key->value["endOffset"].get<int>();
+
+	const float& sspeed = key->value["speed"].get<float>();
+
+	const int& sloopNum = key->value["loopNum"].get<int>();
+	const bool& sinfinity = key->value["infinity"].get<bool>();
+	const bool& sreverse = key->value["reverse"].get<bool>();
+	const bool& spingpong = key->value["pingpong"].get<bool>();
+	const bool& sindependent = key->value["independent"].get<bool>();
+
+
+	v.startLabel = sstartLabel;
+	v.startOffset = sstartOffset;
+	v.endLabel = sendLabel;
+	v.endOffset = sendOffset;
+	v.speed = sspeed;
+
+	v.loopNum = sloopNum;
+	v.infinity = sinfinity;
+	v.reverse = sreverse;
+	v.pingpong = spingpong;
+	v.independent = sindependent;
+	v.curKeyframe = key->time;
 
 }

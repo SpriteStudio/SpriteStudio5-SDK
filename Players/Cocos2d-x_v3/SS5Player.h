@@ -386,6 +386,7 @@ protected:
 protected:
 	ResourceManager*	_resman;
 	ResourceSet*		_currentRs;
+	std::string			_currentdataKey;
 	AnimeRef*			_currentAnimeRef;
 	cocos2d::Vector<cocos2d::Sprite*>	_parts;
 

@@ -18,6 +18,8 @@
   player->setPosition(200, 200);
   this->addChild(player);
 
+
+  SS5Player cocos2d-x ver2.x版は終了処理で resman を delete してください。
 *************************************************************/
 
 
@@ -387,6 +389,7 @@ protected:
 protected:
 	ResourceManager*	_resman;
 	ResourceSet*		_currentRs;
+	std::string			_currentdataKey;
 	AnimeRef*			_currentAnimeRef;
 	std::vector<CustomSprite *>	_parts;
 

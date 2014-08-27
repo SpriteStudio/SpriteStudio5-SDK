@@ -61,11 +61,12 @@ enum {
 	PART_FLAG_U_SCALE			= 1 << 20,
 	PART_FLAG_V_SCALE			= 1 << 21,
 
-	PART_FLAG_INSTANCE_START	= 1 << 22,
-	PART_FLAG_INSTANCE_END		= 1 << 23,
-	PART_FLAG_INSTANCE_SPEED	= 1 << 24,
-	PART_FLAG_INSTANCE_LOOP		= 1 << 25,
-	PART_FLAG_INSTANCE_LOOP_FLG	= 1 << 26,
+	PART_FLAG_INSTANCE_KEYFRAME	= 1 << 22,
+	PART_FLAG_INSTANCE_START	= 1 << 23,
+	PART_FLAG_INSTANCE_END		= 1 << 24,
+	PART_FLAG_INSTANCE_SPEED	= 1 << 25,
+	PART_FLAG_INSTANCE_LOOP		= 1 << 26,
+	PART_FLAG_INSTANCE_LOOP_FLG	= 1 << 27,
 
 	NUM_PART_FLAGS
 };
@@ -344,6 +345,21 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			partData->add(Lump::s16Data(part->type));
 			partData->add(Lump::s16Data(part->boundsType));
 			partData->add(Lump::s16Data(part->alphaBlendType));
+			//インスタンスアニメ名
+			if ( part->refAnime == "" )
+			{
+				const SsString str = "";
+//				partData->add(Lump::s16Data((int)str.length()));				//文字列のサイズ
+				partData->add(Lump::stringData(str));							//文字列
+			}
+			else
+			{
+				const SsString str = part->refAnimePack + "/" + part->refAnime;
+//				partData->add(Lump::s16Data((int)str.length()));				//文字列のサイズ
+				partData->add(Lump::stringData(str));							//文字列
+			}
+
+
 		}
 
 		
@@ -619,6 +635,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					//インスタンス情報出力チェック
 					if ( state->refAnime )
 					{
+						//とりあえず毎フレーム出力するが、更新があったときだけ出力しても済むかも。
+						//その場合は処理をプレイヤーと合わせる必要あり。
+						p_flags |= PART_FLAG_INSTANCE_KEYFRAME;
 						p_flags |= PART_FLAG_INSTANCE_START;
 						p_flags |= PART_FLAG_INSTANCE_END;
 						p_flags |= PART_FLAG_INSTANCE_SPEED;
@@ -702,10 +721,12 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 							}
 						}
 					}
-
-					//インスタンス情報出力　対応中
-					//アニメの名前を出力する必要があるかも
-
+					//インスタンス情報出力
+					if ( p_flags & PART_FLAG_INSTANCE_KEYFRAME )
+					{
+						//ラベル位置にオフセットを加えた結果の開始フレーム
+						frameData->add(Lump::s16Data(state->instanceValue.curKeyframe));
+					}
 					if ( p_flags & PART_FLAG_INSTANCE_START )
 					{
 						//ラベル位置にオフセットを加えた結果の開始フレーム
@@ -847,7 +868,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					convert_error_exit = true;	//エラーが発生コンバート失敗
 				}
 
-				labelData->add(Lump::s16Data((int)str.length()));				//文字列のサイズ
+//				labelData->add(Lump::s16Data((int)str.length()));				//文字列のサイズ
 				labelData->add(Lump::stringData(str));							//文字列
 				labelData->add(Lump::s16Data(anime->labels[label_idx]->time));	//設定されたフレーム
 				hasLabelData = true;

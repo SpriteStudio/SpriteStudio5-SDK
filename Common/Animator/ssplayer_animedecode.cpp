@@ -255,6 +255,14 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 
 }
 
+//インスタンスアニメデータ
+void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsInstanceAttr& v )
+{
+	//補間は行わないので、常に左のキーを出力する
+	GetSsInstparamAnime( leftkey , v );
+}
+
+
 //float , int , bool基本型はこれで値の補間を行う
 template<typename mytype>
 void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , mytype& v )
@@ -526,6 +534,7 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 				case SsAttributeKind::user:		///< Ver.4 互換ユーザーデータ
 					break;
 				case SsAttributeKind::instance:	///インスタンスパラメータ
+					SsGetKeyValue( nowTime , attr , state->instanceValue );
 					break;
 			}
 		}
@@ -747,24 +756,17 @@ void	SsAnimeDecoder::updateInstance( int nowTime , SsPart* part , SsPartAnime* p
 	//state->refAnime->update();
 
     //ラベル未実装だが正規の方法で計算しとく
-
-//	SsAnimation* anime = state->refAnime;
-
+	SsAnimation* anime = state->refAnime->curAnimation;
 	const SsInstanceAttr& instanceValue = state->instanceValue;
 
-#if 1	//なんとかラベルをゲットできる仕組みを・・・
     //プレイヤー等では再生開始時にいったん計算してしまって値にしてしまった方がいい。
     //エディター側のロジックなのでそのまま検索する
     //インスタンスアニメ内のスタート位置
-    int	startframe = CalcAnimeLabel2Frame( instanceValue.startLabel , instanceValue.startOffset);
-    int	endframe = CalcAnimeLabel2Frame( instanceValue.endLabel , instanceValue.endOffset);
-#else
-    int	startframe = 0;
-    int	endframe = curAnimeEndFrame;
-#endif
+    int	startframe = CalcAnimeLabel2Frame( instanceValue.startLabel , instanceValue.startOffset, anime);
+    int	endframe = CalcAnimeLabel2Frame( instanceValue.endLabel , instanceValue.endOffset, anime);
 
-    state->instanceValue.startFrame = startframe;		///ラベル位置とオフセット位置を加えた実際のフレーム数
-    state->instanceValue.endFrame = endframe;		///ラベル位置とオフセット位置を加えた実際のフレーム数
+    state->instanceValue.startFrame = startframe;		//ラベル位置とオフセット位置を加えた実際のフレーム数
+    state->instanceValue.endFrame = endframe;			//ラベル位置とオフセット位置を加えた実際のフレーム数
 
 
     //タイムライン上の時間 （絶対時間）
@@ -847,10 +849,10 @@ void	SsAnimeDecoder::updateInstance( int nowTime , SsPart* part , SsPartAnime* p
 
 }
 
-int		SsAnimeDecoder::findAnimetionLabel(const SsString& str)
+int		SsAnimeDecoder::findAnimetionLabel(const SsString& str, SsAnimation* Animation)
 {
-	for ( std::vector<SsLabel*>::iterator itr = curAnimation->labels.begin() ; 
-		itr != curAnimation->labels.end() ; itr ++ )
+	for ( std::vector<SsLabel*>::iterator itr = Animation->labels.begin() ; 
+		itr != Animation->labels.end() ; itr ++ )
 	{
 		if ( str == (*itr)->name )
 		{
@@ -861,10 +863,11 @@ int		SsAnimeDecoder::findAnimetionLabel(const SsString& str)
 	return 0;
 }
 
-int		SsAnimeDecoder::CalcAnimeLabel2Frame(const SsString& str, int offset )
+int		SsAnimeDecoder::CalcAnimeLabel2Frame(const SsString& str, int offset, SsAnimation* Animation )
 {
 
-	int maxframe = curAnimeEndFrame;
+	//10フレームのアニメだと11が入ってるため計算がずれるため-1する
+	int maxframe = curAnimeEndFrame - 1;
     int ret2 = offset;
 
     if (  str == "_start" )
@@ -877,7 +880,7 @@ int		SsAnimeDecoder::CalcAnimeLabel2Frame(const SsString& str, int offset )
 	{
         return offset;
 	}else{
-		int ret = findAnimetionLabel(str);
+		int ret = findAnimetionLabel(str, Animation);
 
         if ( ret != -1 )
         {

@@ -587,7 +587,9 @@ public:
 	State				_state;
 	bool				_isStateChanged;
 	CustomSprite*		_parent;
-
+	ss::Player*			_ssplayer;
+	float				_liveFrame;
+	
 public:
 	CustomSprite();
 	virtual ~CustomSprite();
@@ -706,11 +708,11 @@ bool Player::init()
 
 void Player::releaseResourceManager()
 {
-	if ( _resman )
-	{
-		delete _resman;
-		_resman = NULL;
-	}
+//	if ( _resman )
+//	{
+//		delete _resman;
+//		_resman = NULL;
+//	}
 }
 
 void Player::setResourceManager(ResourceManager* resman)
@@ -805,6 +807,7 @@ void Player::setPlayEndCallback(const PlayEndCallback& callback)
 void Player::setData(const std::string& dataKey)
 {
 	ResourceSet* rs = _resman->getData(dataKey);
+	_currentdataKey = dataKey;
 	if (rs == nullptr)
 	{
 		std::string msg = Format("Not found data > %s", dataKey.c_str());
@@ -821,11 +824,11 @@ void Player::setData(const std::string& dataKey)
 void Player::releaseData()
 {
 	releaseAnime();
-	if (_currentRs )
-	{
-		delete _currentRs;
-		_currentRs = NULL;
-	}
+//	if (_currentRs )
+//	{
+//		delete _currentRs;
+//		_currentRs = NULL;
+//	}
 }
 
 
@@ -1101,6 +1104,7 @@ void Player::setPartsParentage()
 	const AnimePackData* packData = _currentAnimeRef->animePackData;
 	const PartData* parts = static_cast<const PartData*>(ptr(packData->parts));
 
+	//親子関係を設定
 	for (int partIndex = 0; partIndex < packData->numParts; partIndex++)
 	{
 		const PartData* partData = &parts[partIndex];
@@ -1114,6 +1118,20 @@ void Player::setPartsParentage()
 		else
 		{
 			sprite->_parent = nullptr;
+		}
+
+		//インスタンスパーツの生成
+		sprite->removeAllChildrenWithCleanup(true);	//子供のパーツを削除
+
+		std::string refanimeName = static_cast<const char*>(ptr(partData->refname));
+		if (refanimeName != "")
+		{
+			//インスタンスパーツが設定されている
+			sprite->_ssplayer = ss::Player::create();
+			sprite->_ssplayer->setData(_currentdataKey);
+			sprite->_ssplayer->play(refanimeName);				 // アニメーション名を指定(ssae名/アニメーション名も可能、詳しくは後述)
+			sprite->_ssplayer->stop();
+			sprite->addChild(sprite->_ssplayer);
 		}
 	}
 }
@@ -1145,12 +1163,12 @@ int Player::getLabelToFrame(char* findLabelName)
 		DataArrayReader reader(labelDataArray);
 
 		LabelData ldata;
-		int size = reader.readU16();
+//		int size = reader.readU16();
 		ss_offset offset = reader.readOffset();
 		const char* str = static_cast<const char*>(ptr(offset));
 		int labelFrame = reader.readU16();
 		ldata.str = str;
-		ldata.strSize = size;
+//		ldata.strSize = size;
 		ldata.frameNo = labelFrame;
 
 		if (ldata.str.compare(findLabelName) == 0 )
@@ -1199,6 +1217,13 @@ enum {
 	PART_FLAG_U_SCALE			= 1 << 20,
 	PART_FLAG_V_SCALE			= 1 << 21,
 
+	PART_FLAG_INSTANCE_KEYFRAME = 1 << 22,
+	PART_FLAG_INSTANCE_START    = 1 << 23,
+	PART_FLAG_INSTANCE_END      = 1 << 24,
+	PART_FLAG_INSTANCE_SPEED    = 1 << 25,
+	PART_FLAG_INSTANCE_LOOP     = 1 << 26,
+	PART_FLAG_INSTANCE_LOOP_FLG = 1 << 27,
+
 	NUM_PART_FLAGS
 };
 
@@ -1210,6 +1235,23 @@ enum {
 	VERTEX_FLAG_ONE		= 1 << 4	// color blend only
 };
 
+enum {
+	INSTANCE_LOOP_FLAG_INFINITY =    1 << 0,
+	INSTANCE_LOOP_FLAG_REVERSE =     1 << 1,
+	INSTANCE_LOOP_FLAG_PINGPONG =    1 << 2,
+	INSTANCE_LOOP_FLAG_INDEPENDENT = 1 << 3,
+};
+
+/// Animation Part Type
+enum _enum
+{
+	PARTTYPE_INVALID = -1,
+	PARTTYPE_NULL,			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
+	PARTTYPE_NORMAL,		// 通常パーツ。領域を持つ。画像は無くてもいい。
+	PARTTYPE_TEXT,			// テキスト(予約　未実装）
+	PARTTYPE_INSTANCE,		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
+	PARTTYPE_NUM
+};
 
 void Player::setFrame(int frameNo)
 {
@@ -1288,7 +1330,6 @@ void Player::setFrame(int frameNo)
 		state.scaleX = scaleX;
 		state.scaleY = scaleY;
 
-		//CustomSprite* sprite = static_cast<CustomSprite*>(getChildren().at(partIndex));
 		CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
 
 		//反転
@@ -1390,7 +1431,7 @@ void Player::setFrame(int frameNo)
 			sprite->setTextureRect(cocos2d::CCRect());
 		}
 
-		sprite->setAnchorPoint(cocos2d::CCPoint(anchorX , anchorY));
+		sprite->setAnchorPoint(cocos2d::CCPoint(anchorX , 1.0f - anchorY));	//cocosは下が-なので座標を反転させる
 //		sprite->setFlippedX(flags & PART_FLAG_FLIP_H);
 //		sprite->setFlippedY(flags & PART_FLAG_FLIP_V);
 		sprite->setOpacity(opacity);
@@ -1598,6 +1639,132 @@ void Player::setFrame(int frameNo)
 			quad.br.texCoords.v = v_center + (v_height * uv_scale_Y * v_code);
 		}
 
+
+
+		//インスタンスパーツの場合
+		if (partData->type == PARTTYPE_INSTANCE)
+		{
+			//描画
+			int refKeyframe = 0;
+			int refStartframe = 0;
+			int refEndframe = 0;
+			float refSpeed = 0;
+			int refloopNum = 0;
+			bool infinity = false;
+			bool reverse = false;
+			bool pingpong = false;
+			bool independent = false;
+
+			if (flags & PART_FLAG_INSTANCE_KEYFRAME)
+			{
+				refKeyframe = reader.readS16();
+			}
+			if (flags & PART_FLAG_INSTANCE_START)
+			{
+				refStartframe = reader.readS16();
+			}
+			if (flags & PART_FLAG_INSTANCE_END)
+			{
+				refEndframe = reader.readS16();
+			}
+			if (flags & PART_FLAG_INSTANCE_SPEED)
+			{
+				refSpeed = reader.readFloat();
+			}
+			if (flags & PART_FLAG_INSTANCE_LOOP)
+			{
+				refloopNum = reader.readS16();
+			}
+			if (flags & PART_FLAG_INSTANCE_LOOP_FLG)
+			{
+				int lflags = reader.readS16();
+				if (lflags & INSTANCE_LOOP_FLAG_INFINITY )
+				{
+					//無限ループ
+					infinity = true;
+				}
+				if (lflags & INSTANCE_LOOP_FLAG_REVERSE)
+				{
+					//逆再生
+					reverse = true;
+				}
+				if (lflags & INSTANCE_LOOP_FLAG_PINGPONG)
+				{
+					//往復
+					pingpong = true;
+				}
+				if (lflags & INSTANCE_LOOP_FLAG_INDEPENDENT)
+				{
+					//独立
+					independent = true;
+				}
+			}
+
+			//タイムライン上の時間 （絶対時間）
+			int time = frameNo;
+
+			//独立動作の場合
+			if (independent)
+			{
+				float fdt = cocos2d::CCDirector::sharedDirector()->getAnimationInterval();
+				float delta = fdt / (1.0f / _currentAnimeRef->animationData->fps);
+
+				sprite->_liveFrame += delta;
+				time = (int)sprite->_liveFrame;
+			}
+
+			//このインスタンスが配置されたキーフレーム（絶対時間）
+			int	selfTopKeyframe = refKeyframe;
+
+
+			int	reftime = (time * refSpeed) - selfTopKeyframe; //開始から現在の経過時間
+			if (reftime < 0) continue;							//そもそも生存時間に存在していない
+
+			int inst_scale = (refEndframe - refStartframe) + 1; //インスタンスの尺
+
+
+			//尺が０もしくはマイナス（あり得ない
+			if (inst_scale <= 0) continue;
+			int	nowloop = (reftime / inst_scale);	//現在までのループ数
+
+			int checkloopnum = refloopNum;
+
+			//pingpongの場合では２倍にする
+			if (pingpong) checkloopnum = checkloopnum * 2;
+
+			//無限ループで無い時にループ数をチェック
+			if (!infinity)   //無限フラグが有効な場合はチェックせず
+			{
+				if (nowloop >= checkloopnum)
+				{
+					reftime = inst_scale - 1;
+					nowloop = checkloopnum - 1;
+				}
+			}
+
+			int temp_frame = reftime % inst_scale;  //ループを加味しないインスタンスアニメ内のフレーム
+
+			//参照位置を決める
+			//現在の再生フレームの計算
+			int _time = 0;
+			if (pingpong && (nowloop % 2 == 1))
+			{
+				reverse = ~reverse;//反転
+			}
+
+			if (reverse)
+			{
+				//リバースの時
+				_time = refEndframe - temp_frame;
+			}
+			else{
+				//通常時
+				_time = temp_frame + refStartframe;
+			}
+			//インスタンス用SSPlayerに再生フレームを設定する
+			sprite->_ssplayer->setFrameNo(_time);
+		}
+
 	}
 
 
@@ -1766,6 +1933,7 @@ CustomSprite::CustomSprite()
 	, _useCustomShaderProgram(false)
 	, _opacity(1.0f)
 	, _colorBlendFuncNo(0)
+	, _liveFrame(0.0f)
 {}
 
 CustomSprite::~CustomSprite()
