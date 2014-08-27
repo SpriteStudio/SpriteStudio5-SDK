@@ -755,7 +755,6 @@ void	SsAnimeDecoder::updateInstance( int nowTime , SsPart* part , SsPartAnime* p
 	//state->refAnime->setPlayFrame( nowTime );
 	//state->refAnime->update();
 
-    //ラベル未実装だが正規の方法で計算しとく
 	SsAnimation* anime = state->refAnime->curAnimation;
 	const SsInstanceAttr& instanceValue = state->instanceValue;
 
@@ -867,7 +866,7 @@ int		SsAnimeDecoder::CalcAnimeLabel2Frame(const SsString& str, int offset, SsAni
 {
 
 	//10フレームのアニメだと11が入ってるため計算がずれるため-1する
-	int maxframe = curAnimeEndFrame - 1;
+	int maxframe = Animation->settings.frameCount - 1;
     int ret2 = offset;
 
     if (  str == "_start" )

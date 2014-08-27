@@ -1656,6 +1656,10 @@ void Player::setFrame(int frameNo)
 
 			int inst_scale = (refEndframe - refStartframe) + 1; //インスタンスの尺
 
+			if (reftime>=11)
+			{
+			printf("");
+			}
 
 			//尺が０もしくはマイナス（あり得ない
 			if (inst_scale <= 0) continue;
@@ -1683,7 +1687,14 @@ void Player::setFrame(int frameNo)
 			int _time = 0;
 			if (pingpong && (nowloop % 2 == 1))
 			{
-				reverse = ~reverse;//反転
+				if (reverse)
+				{
+					reverse = false;//反転
+				}
+				else
+				{
+					reverse = true;//反転
+				}
 			}
 
 			if (reverse)
