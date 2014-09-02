@@ -1201,6 +1201,8 @@ enum _enum
 	PARTTYPE_NUM
 };
 
+//固定少数の定数 100=1ドット
+#define DOT (100.0f)
 
 void Player::setFrame(int frameNo)
 {
@@ -1247,8 +1249,8 @@ void Player::setFrame(int frameNo)
 		// optional parameters
 		int flags      = reader.readU32();
 		int cellIndex  = flags & PART_FLAG_CELL_INDEX ? reader.readS16() : init->cellIndex;
-		int x          = flags & PART_FLAG_POSITION_X ? reader.readS16() : init->positionX;
-		int y          = flags & PART_FLAG_POSITION_Y ? reader.readS16() : init->positionY;
+		float x          = flags & PART_FLAG_POSITION_X ? reader.readS16() : init->positionX;
+		float y = flags & PART_FLAG_POSITION_Y ? reader.readS16() : init->positionY;
 		float anchorX  = flags & PART_FLAG_ANCHOR_X ? reader.readFloat() : init->anchorX;
 		float anchorY  = flags & PART_FLAG_ANCHOR_Y ? reader.readFloat() : init->anchorY;
 		float rotation = flags & PART_FLAG_ROTATION ? -reader.readFloat() : -init->rotation;
@@ -1270,6 +1272,10 @@ void Player::setFrame(int frameNo)
 			//ユーザーが任意に非表示としたパーツは非表示に設定
 			isVisibled = false;
 		}
+
+		//固定少数を少数へ戻す
+		x = x / DOT;
+		y = y / DOT;
 
 		state.x = x;
 		state.y = y;

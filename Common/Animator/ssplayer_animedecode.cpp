@@ -192,6 +192,40 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 				v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.r , rightv.colors[i].rgba.r  , &curve );	
 				v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.g , rightv.colors[i].rgba.g  , &curve );	
 				v.colors[i].rgba.b = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.b , rightv.colors[i].rgba.b  , &curve );	
+
+				//上下限のチェック
+				if ( v.colors[i].rgba.a < 0 )
+				{
+					v.colors[i].rgba.a = 0;
+				}
+				if ( v.colors[i].rgba.r < 0 )
+				{
+					v.colors[i].rgba.r = 0;
+				}
+				if ( v.colors[i].rgba.g < 0 )
+				{
+					v.colors[i].rgba.g = 0;
+				}
+				if ( v.colors[i].rgba.b < 0 )
+				{
+					v.colors[i].rgba.b = 0;
+				}
+				if ( v.colors[i].rgba.a > 255 )
+				{
+					v.colors[i].rgba.a = 255;
+				}
+				if ( v.colors[i].rgba.r > 255 )
+				{
+					v.colors[i].rgba.r = 255;
+				}
+				if ( v.colors[i].rgba.g > 255 )
+				{
+					v.colors[i].rgba.g = 255;
+				}
+				if ( v.colors[i].rgba.b > 255 )
+				{
+					v.colors[i].rgba.b = 255;
+				}
 			}
 		}
 		else
@@ -204,6 +238,40 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 				v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.r , rightv.color.rgba.r  , &curve );	
 				v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.g , rightv.color.rgba.g  , &curve );	
 				v.colors[i].rgba.b = SsInterpolate( leftkey->ipType , now , leftv.colors[i].rgba.b , rightv.color.rgba.b  , &curve );	
+
+				//上下限のチェック
+				if ( v.colors[i].rgba.a < 0 )
+				{
+					v.colors[i].rgba.a = 0;
+				}
+				if ( v.colors[i].rgba.r < 0 )
+				{
+					v.colors[i].rgba.r = 0;
+				}
+				if ( v.colors[i].rgba.g < 0 )
+				{
+					v.colors[i].rgba.g = 0;
+				}
+				if ( v.colors[i].rgba.b < 0 )
+				{
+					v.colors[i].rgba.b = 0;
+				}
+				if ( v.colors[i].rgba.a > 255 )
+				{
+					v.colors[i].rgba.a = 255;
+				}
+				if ( v.colors[i].rgba.r > 255 )
+				{
+					v.colors[i].rgba.r = 255;
+				}
+				if ( v.colors[i].rgba.g > 255 )
+				{
+					v.colors[i].rgba.g = 255;
+				}
+				if ( v.colors[i].rgba.b > 255 )
+				{
+					v.colors[i].rgba.b = 255;
+				}
 			}
 		}
 	}
@@ -219,6 +287,40 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 				v.colors[i].rgba.r = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.r , rightv.colors[i].rgba.r  , &curve );	
 				v.colors[i].rgba.g = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.g , rightv.colors[i].rgba.g  , &curve );	
 				v.colors[i].rgba.b = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.b , rightv.colors[i].rgba.b  , &curve );	
+
+				//上下限のチェック
+				if ( v.colors[i].rgba.a < 0 )
+				{
+					v.colors[i].rgba.a = 0;
+				}
+				if ( v.colors[i].rgba.r < 0 )
+				{
+					v.colors[i].rgba.r = 0;
+				}
+				if ( v.colors[i].rgba.g < 0 )
+				{
+					v.colors[i].rgba.g = 0;
+				}
+				if ( v.colors[i].rgba.b < 0 )
+				{
+					v.colors[i].rgba.b = 0;
+				}
+				if ( v.colors[i].rgba.a > 255 )
+				{
+					v.colors[i].rgba.a = 255;
+				}
+				if ( v.colors[i].rgba.r > 255 )
+				{
+					v.colors[i].rgba.r = 255;
+				}
+				if ( v.colors[i].rgba.g > 255 )
+				{
+					v.colors[i].rgba.g = 255;
+				}
+				if ( v.colors[i].rgba.b > 255 )
+				{
+					v.colors[i].rgba.b = 255;
+				}
 			}
 		}
 		else
@@ -229,6 +331,50 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 			v.color.rgba.r = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.r , rightv.color.rgba.r  , &curve );	
 			v.color.rgba.g = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.g , rightv.color.rgba.g  , &curve );	
 			v.color.rgba.b = SsInterpolate( leftkey->ipType , now , leftv.color.rgba.b , rightv.color.rgba.b  , &curve );	
+
+			//上下限のチェック
+			if ( v.color.rgba.a < 0 )
+			{
+				v.color.rgba.a = 0;
+			}
+			if ( v.color.rgba.r < 0 )
+			{
+				v.color.rgba.r = 0;
+			}
+			if ( v.color.rgba.g < 0 )
+			{
+				v.color.rgba.g = 0;
+			}
+			if ( v.color.rgba.b < 0 )
+			{
+				v.color.rgba.b = 0;
+			}
+			if ( v.color.rgba.a > 255 )
+			{
+				v.color.rgba.a = 255;
+			}
+			if ( v.color.rgba.r > 255 )
+			{
+				v.color.rgba.r = 255;
+			}
+			if ( v.color.rgba.g > 255 )
+			{
+				v.color.rgba.g = 255;
+			}
+			if ( v.color.rgba.b > 255 )
+			{
+				v.color.rgba.b = 255;
+			}
+
+			//各頂点にも色を設定しておく
+			for ( int i = 0 ; i < 4 ; i++ )
+			{
+				v.colors[i].rate = v.color.rate;	
+				v.colors[i].rgba.a = v.color.rgba.a;	
+				v.colors[i].rgba.r = v.color.rgba.r;	
+				v.colors[i].rgba.g = v.color.rgba.g;	
+				v.colors[i].rgba.b = v.color.rgba.b;	
+			}
 		}
 	}
 

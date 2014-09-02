@@ -93,6 +93,8 @@ enum {
 	USER_DATA_FLAG_STRING	= 1 << 3
 };
 
+//座標を固定少数で出力　100＝1ドット
+#define DOT ( 100.0f )
 
 
 bool convert_error_exit = false;	//データにエラーがありコンバートを中止した
@@ -232,7 +234,6 @@ bool isZenkaku( const SsString* str )
 	}
 	return( rc );
 }
-
 
 static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 {
@@ -426,8 +427,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 //				key = findFirstKey(partAnime, SsAttributeKind::posy);
 //				init.posY = key != NULL ? (int)key->value._float : 0;
 
-				init.posX = (int)state->position.x;
-				init.posY = (int)state->position.y;
+				init.posX = (int)(state->position.x * DOT);
+				init.posY = (int)(state->position.y * DOT);
 				init.anchorX = state->pivotOffset.x + 0.5f;
 				init.anchorY = state->pivotOffset.y + 0.5f;
 				init.rotation = state->rotation.z;
@@ -488,6 +489,11 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			Lump* frameDataIndexArray = Lump::set("ss::ss_u16*[]", true);
 			for (int frame = 0; frame < decoder.getAnimeEndFrame(); frame++)
 			{
+
+				if ( frame == 10 )
+				{
+					printf("");
+				}
 				// パラメータを計算し更新する
 				decoder.setPlayFrame(static_cast<float>(frame));
 				decoder.update();
@@ -559,8 +565,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					int p_flags = 0;
 					const PartInitialData& init = initialDataList.at(state->index);
 					if (cellIndex != init.cellIndex)                 p_flags |= PART_FLAG_CELL_INDEX;
-					if ((int)( state->position.x ) != init.posX)     p_flags |= PART_FLAG_POSITION_X;
-					if ((int)( state->position.y ) != init.posY)     p_flags |= PART_FLAG_POSITION_Y;
+					if ((int)( state->position.x * DOT ) != init.posX)     p_flags |= PART_FLAG_POSITION_X;
+					if ((int)( state->position.y * DOT ) != init.posY)     p_flags |= PART_FLAG_POSITION_Y;
 					if (pivot.x + 0.5f != init.anchorX)              p_flags |= PART_FLAG_ANCHOR_X;
 					if (pivot.y + 0.5f != init.anchorY)              p_flags |= PART_FLAG_ANCHOR_Y;
 					if (state->rotation.z != init.rotation)          p_flags |= PART_FLAG_ROTATION;
@@ -660,8 +666,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					frameData->add(Lump::s32Data(s_flags | p_flags));
 
 					if (p_flags & PART_FLAG_CELL_INDEX) frameData->add(Lump::s16Data(cellIndex));
-					if (p_flags & PART_FLAG_POSITION_X) frameData->add(Lump::s16Data((int)state->position.x));
-					if (p_flags & PART_FLAG_POSITION_Y) frameData->add(Lump::s16Data((int)state->position.y));
+					if (p_flags & PART_FLAG_POSITION_X) frameData->add(Lump::s16Data((int)(state->position.x * DOT)));
+					if (p_flags & PART_FLAG_POSITION_Y) frameData->add(Lump::s16Data((int)(state->position.y * DOT)));
 
 					if (p_flags & PART_FLAG_ANCHOR_X) frameData->add(Lump::floatData(pivot.x + 0.5f));
 					if (p_flags & PART_FLAG_ANCHOR_Y) frameData->add(Lump::floatData(pivot.y + 0.5f));

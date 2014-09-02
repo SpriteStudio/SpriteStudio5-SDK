@@ -60,8 +60,12 @@ public:
 			//memset( inheritRates , 0 , sizeof( float) * SsAttributeKind::num );
 			for (int i = 0; i < (int)SsAttributeKind::num ; ++i)
 				inheritRates[i] = 1.f;
-/*
+
+			//継承率の初期値
+			//継承のタグがない場合に、この値が適用される
 			// 反転・非表示フラグは継承しない from 旧SS
+			//SS5　では初期値は１
+/*
 			inheritRates[(int)SsAttributeKind::fliph] = 0.f;
 			inheritRates[(int)SsAttributeKind::flipv] = 0.f;
 			inheritRates[(int)SsAttributeKind::hide] = 0.f;
