@@ -1012,6 +1012,11 @@ void Player::updateFrame(float dt)
 		
 		_playingFrame = static_cast<float>(currentFrameNo) + nextFrameDecimal;
 	}
+	else
+	{
+		//アニメを手動で更新する場合
+		checkUserData(getFrameNo());
+	}
 
 	setFrame(getFrameNo());
 	
@@ -1183,7 +1188,7 @@ int Player::getLabelToFrame(char* findLabelName)
 
 //特定パーツの表示、非表示を設定します
 //パーツ番号はスプライトスタジオのフレームコントロールに配置されたパーツが
-//一番上を0として順に番号が割り振られます。
+//プライオリティでソートされた後、上に配置された順にソートされて決定されます。
 void Player::setPartVisible(int partNo, bool flg)
 {
 	_partVisible[partNo] = flg;
@@ -1387,7 +1392,7 @@ void Player::setFrame(int frameNo)
 					// 通常ブレンド
 					if (partData->alphaBlendType == BLEND_MIX)
 					{
-						blendFunc.src = GL_SRC_ALPHA;
+						blendFunc.src = GL_ONE;
 						blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
 					}
 					// 加算ブレンド
@@ -1566,14 +1571,12 @@ void Player::setFrame(int frameNo)
 			}
 		}
 		//uvスクロール
-		if ( flags & PART_FLAG_U_MOVE )
 		{
 			quad.tl.texCoords.u += uv_move_X;
 			quad.tr.texCoords.u += uv_move_X;
 			quad.bl.texCoords.u += uv_move_X;
 			quad.br.texCoords.u += uv_move_X;
 		}
-		if (flags & PART_FLAG_V_MOVE)
 		{
 			quad.tl.texCoords.v += uv_move_Y;
 			quad.tr.texCoords.v += uv_move_Y;
