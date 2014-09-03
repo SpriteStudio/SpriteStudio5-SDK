@@ -1344,8 +1344,8 @@ void Player::setFrame(int frameNo)
 					}
 					// 乗算ブレンド
 					if (partData->alphaBlendType == BLEND_MUL) {
-						blendFunc.src = GL_ZERO;
-						blendFunc.dst = GL_SRC_COLOR;
+						blendFunc.src = GL_DST_COLOR;
+						blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
 					}
 					// 減算ブレンド
 					if (partData->alphaBlendType == BLEND_SUB) {

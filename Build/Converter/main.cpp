@@ -489,11 +489,6 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			Lump* frameDataIndexArray = Lump::set("ss::ss_u16*[]", true);
 			for (int frame = 0; frame < decoder.getAnimeEndFrame(); frame++)
 			{
-
-				if ( frame == 10 )
-				{
-					printf("");
-				}
 				// パラメータを計算し更新する
 				decoder.setPlayFrame(static_cast<float>(frame));
 				decoder.update();

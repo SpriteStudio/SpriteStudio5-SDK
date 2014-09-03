@@ -1409,8 +1409,8 @@ void Player::setFrame(int frameNo)
 					}
 					// 乗算ブレンド
 					if (partData->alphaBlendType == BLEND_MUL) {
-						blendFunc.src = GL_ZERO;
-						blendFunc.dst = GL_SRC_COLOR;
+						blendFunc.src = GL_DST_COLOR;
+						blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
 					}
 					// 減算ブレンド
 					if (partData->alphaBlendType == BLEND_SUB) {
@@ -1599,29 +1599,20 @@ void Player::setFrame(int frameNo)
 		float u_code = 1;
 		float v_code = 1;
 
+		//cocos2v の場合はここで反転を行う
+		u_wide = (quad.tr.texCoords.u - quad.tl.texCoords.u) / 2.0f;
+		u_center = quad.tl.texCoords.u + u_wide;
 		if (flags & PART_FLAG_FLIP_H)
 		{
-			//左右反転を行う場合はテクスチャUVを逆にする
-			u_wide = (quad.tl.texCoords.u - quad.tr.texCoords.u) / 2.0f;
-			u_center = quad.tr.texCoords.u + u_wide;
+			//左右反転を行う場合は符号を逆にする
 			u_code = -1;
 		}
-		else
-		{
-			u_wide = (quad.tr.texCoords.u - quad.tl.texCoords.u) / 2.0f;
-			u_center = quad.tl.texCoords.u + u_wide;
-		}
+		v_height = (quad.bl.texCoords.v - quad.tl.texCoords.v) / 2.0f;
+		v_center = quad.tl.texCoords.v + v_height;
 		if (flags & PART_FLAG_FLIP_V)
 		{
-			//左右反転を行う場合はテクスチャUVを逆にする
-			v_height = (quad.tl.texCoords.v - quad.bl.texCoords.v) / 2.0f;
-			v_center = quad.bl.texCoords.v + v_height;
-			v_code = 1;
-		}
-		else
-		{
-			v_height = (quad.bl.texCoords.v - quad.tl.texCoords.v) / 2.0f;
-			v_center = quad.tl.texCoords.v + v_height;
+			//上下反転を行う場合はテクスチャUVを逆にする
+			v_code = -1;
 		}
 		//UV回転
 		if (flags & PART_FLAG_UV_ROTATION)
