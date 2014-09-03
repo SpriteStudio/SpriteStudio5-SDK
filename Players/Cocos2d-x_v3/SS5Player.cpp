@@ -505,7 +505,9 @@ struct State
 {
 	float	x;
 	float	y;
-	float	rotation;
+	float	rotationX;
+	float	rotationY;
+	float	rotationZ;
 	float	scaleX;
 	float	scaleY;
 
@@ -513,7 +515,9 @@ struct State
 	{
 		x = 0;
 		y = 0;
-		rotation = 0.0f;
+		rotationX = 0.0f;
+		rotationY = 0.0f;
+		rotationZ = 0.0f;
 		scaleX = 1.0f;
 		scaleY = 1.0f;
 	}
@@ -573,7 +577,9 @@ public:
 	{
 		setStateValue(_state.x, state.x);
 		setStateValue(_state.y, state.y);
-		setStateValue(_state.rotation, state.rotation);
+		setStateValue(_state.rotationX, state.rotationX);
+		setStateValue(_state.rotationY, state.rotationY);
+		setStateValue(_state.rotationZ, state.rotationZ);
 		setStateValue(_state.scaleX, state.scaleX);
 		setStateValue(_state.scaleY, state.scaleY);
 	}
@@ -1149,28 +1155,30 @@ enum {
 	PART_FLAG_POSITION_Y		= 1 << 6,
 	PART_FLAG_ANCHOR_X			= 1 << 7,
 	PART_FLAG_ANCHOR_Y			= 1 << 8,
-	PART_FLAG_ROTATION			= 1 << 9,
-	PART_FLAG_SCALE_X			= 1 << 10,
-	PART_FLAG_SCALE_Y			= 1 << 11,
-	PART_FLAG_OPACITY			= 1 << 12,
-	PART_FLAG_COLOR_BLEND		= 1 << 13,
-	PART_FLAG_VERTEX_TRANSFORM	= 1 << 14,
+	PART_FLAG_ROTATIONX			= 1 << 9,
+	PART_FLAG_ROTATIONY			= 1 << 10,
+	PART_FLAG_ROTATIONZ			= 1 << 11,
+	PART_FLAG_SCALE_X			= 1 << 12,
+	PART_FLAG_SCALE_Y			= 1 << 13,
+	PART_FLAG_OPACITY			= 1 << 14,
+	PART_FLAG_COLOR_BLEND		= 1 << 15,
+	PART_FLAG_VERTEX_TRANSFORM	= 1 << 16,
 
-	PART_FLAG_SIZE_X			= 1 << 15,
-	PART_FLAG_SIZE_Y			= 1 << 16,
+	PART_FLAG_SIZE_X			= 1 << 17,
+	PART_FLAG_SIZE_Y			= 1 << 18,
 
-	PART_FLAG_U_MOVE			= 1 << 17,
-	PART_FLAG_V_MOVE			= 1 << 18,
-	PART_FLAG_UV_ROTATION		= 1 << 19,
-	PART_FLAG_U_SCALE			= 1 << 20,
-	PART_FLAG_V_SCALE			= 1 << 21,
+	PART_FLAG_U_MOVE			= 1 << 19,
+	PART_FLAG_V_MOVE			= 1 << 20,
+	PART_FLAG_UV_ROTATION		= 1 << 21,
+	PART_FLAG_U_SCALE			= 1 << 22,
+	PART_FLAG_V_SCALE			= 1 << 23,
 
-	PART_FLAG_INSTANCE_KEYFRAME = 1 << 22,
-	PART_FLAG_INSTANCE_START    = 1 << 23,
-	PART_FLAG_INSTANCE_END      = 1 << 24,
-	PART_FLAG_INSTANCE_SPEED    = 1 << 25,
-	PART_FLAG_INSTANCE_LOOP     = 1 << 26,
-	PART_FLAG_INSTANCE_LOOP_FLG = 1 << 27,
+	PART_FLAG_INSTANCE_KEYFRAME	= 1 << 24,
+	PART_FLAG_INSTANCE_START	= 1 << 25,
+	PART_FLAG_INSTANCE_END		= 1 << 26,
+	PART_FLAG_INSTANCE_SPEED	= 1 << 27,
+	PART_FLAG_INSTANCE_LOOP		= 1 << 28,
+	PART_FLAG_INSTANCE_LOOP_FLG	= 1 << 29,
 
 	NUM_PART_FLAGS
 };
@@ -1253,8 +1261,10 @@ void Player::setFrame(int frameNo)
 		float y = flags & PART_FLAG_POSITION_Y ? reader.readS16() : init->positionY;
 		float anchorX  = flags & PART_FLAG_ANCHOR_X ? reader.readFloat() : init->anchorX;
 		float anchorY  = flags & PART_FLAG_ANCHOR_Y ? reader.readFloat() : init->anchorY;
-		float rotation = flags & PART_FLAG_ROTATION ? -reader.readFloat() : -init->rotation;
-		float scaleX   = flags & PART_FLAG_SCALE_X ? reader.readFloat() : init->scaleX;
+		float rotationX = flags & PART_FLAG_ROTATIONX ? -reader.readFloat() : -init->rotationX;
+		float rotationY = flags & PART_FLAG_ROTATIONY ? -reader.readFloat() : -init->rotationY;
+		float rotationZ = flags & PART_FLAG_ROTATIONZ ? -reader.readFloat() : -init->rotationZ;
+		float scaleX = flags & PART_FLAG_SCALE_X ? reader.readFloat() : init->scaleX;
 		float scaleY   = flags & PART_FLAG_SCALE_Y ? reader.readFloat() : init->scaleY;
 		int opacity    = flags & PART_FLAG_OPACITY ? reader.readU16() : init->opacity;
 		float size_x   = flags & PART_FLAG_SIZE_X ? reader.readFloat() : init->size_X;
@@ -1279,7 +1289,9 @@ void Player::setFrame(int frameNo)
 
 		state.x = x;
 		state.y = y;
-		state.rotation = rotation;
+		state.rotationX = rotationX;
+		state.rotationY = rotationY;
+		state.rotationZ = rotationZ;
 		state.scaleX = scaleX;
 		state.scaleY = scaleY;
 
@@ -1291,7 +1303,7 @@ void Player::setFrame(int frameNo)
 		sprite->setLocalZOrder(index);
 		
 		sprite->setPosition(cocos2d::Point(x, y));
-		sprite->setRotation(rotation);
+		sprite->setRotation(rotationZ);
 
 		CellRef* cellRef = cellIndex >= 0 ? _currentRs->cellCache->getReference(cellIndex) : nullptr;
 		bool setBlendEnabled = true;
@@ -1550,7 +1562,7 @@ void Player::setFrame(int frameNo)
 			//左右反転を行う場合はテクスチャUVを逆にする
 			v_height = (quad.tl.texCoords.v - quad.bl.texCoords.v) / 2.0f;
 			v_center = quad.bl.texCoords.v + v_height;
-			v_code = 1;
+			v_code = -1;
 		}
 		else
 		{
@@ -1757,10 +1769,16 @@ void Player::setFrame(int frameNo)
 			
             cocos2d::Mat4::createTranslation(sprite->_state.x ,sprite->_state.y, 0.0f, &t);
 			mat = mat * t;
-			
-            cocos2d::Mat4::createRotationZ(CC_DEGREES_TO_RADIANS(-sprite->_state.rotation), &t);
-            mat = mat * t;
-			
+
+			cocos2d::Mat4::createRotationX(CC_DEGREES_TO_RADIANS(sprite->_state.rotationX), &t);
+			mat = mat * t;
+
+			cocos2d::Mat4::createRotationY(CC_DEGREES_TO_RADIANS(sprite->_state.rotationY), &t);
+			mat = mat * t;
+
+			cocos2d::Mat4::createRotationZ(CC_DEGREES_TO_RADIANS(-sprite->_state.rotationZ), &t);
+			mat = mat * t;
+
             cocos2d::Mat4::createScale(sprite->_state.scaleX, sprite->_state.scaleY, 1.0f, &t);
 			mat = mat * t;
 			

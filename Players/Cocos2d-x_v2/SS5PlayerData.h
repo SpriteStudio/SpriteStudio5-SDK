@@ -70,7 +70,9 @@ struct AnimationInitialData
 	ss_u16		opacity;
 	float		anchorX;
 	float		anchorY;
-	float		rotation;
+	float		rotationX;
+	float		rotationY;
+	float		rotationZ;
 	float		scaleX;
 	float		scaleY;
 	float		size_X;

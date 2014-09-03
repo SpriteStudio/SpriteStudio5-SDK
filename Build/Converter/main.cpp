@@ -45,28 +45,30 @@ enum {
 	PART_FLAG_POSITION_Y		= 1 << 6,
 	PART_FLAG_ANCHOR_X			= 1 << 7,
 	PART_FLAG_ANCHOR_Y			= 1 << 8,
-	PART_FLAG_ROTATION			= 1 << 9,
-	PART_FLAG_SCALE_X			= 1 << 10,
-	PART_FLAG_SCALE_Y			= 1 << 11,
-	PART_FLAG_OPACITY			= 1 << 12,
-	PART_FLAG_COLOR_BLEND		= 1 << 13,
-	PART_FLAG_VERTEX_TRANSFORM	= 1 << 14,
+	PART_FLAG_ROTATIONX			= 1 << 9,
+	PART_FLAG_ROTATIONY			= 1 << 10,
+	PART_FLAG_ROTATIONZ			= 1 << 11,
+	PART_FLAG_SCALE_X			= 1 << 12,
+	PART_FLAG_SCALE_Y			= 1 << 13,
+	PART_FLAG_OPACITY			= 1 << 14,
+	PART_FLAG_COLOR_BLEND		= 1 << 15,
+	PART_FLAG_VERTEX_TRANSFORM	= 1 << 16,
 
-	PART_FLAG_SIZE_X			= 1 << 15,
-	PART_FLAG_SIZE_Y			= 1 << 16,
+	PART_FLAG_SIZE_X			= 1 << 17,
+	PART_FLAG_SIZE_Y			= 1 << 18,
 
-	PART_FLAG_U_MOVE			= 1 << 17,
-	PART_FLAG_V_MOVE			= 1 << 18,
-	PART_FLAG_UV_ROTATION		= 1 << 19,
-	PART_FLAG_U_SCALE			= 1 << 20,
-	PART_FLAG_V_SCALE			= 1 << 21,
+	PART_FLAG_U_MOVE			= 1 << 19,
+	PART_FLAG_V_MOVE			= 1 << 20,
+	PART_FLAG_UV_ROTATION		= 1 << 21,
+	PART_FLAG_U_SCALE			= 1 << 22,
+	PART_FLAG_V_SCALE			= 1 << 23,
 
-	PART_FLAG_INSTANCE_KEYFRAME	= 1 << 22,
-	PART_FLAG_INSTANCE_START	= 1 << 23,
-	PART_FLAG_INSTANCE_END		= 1 << 24,
-	PART_FLAG_INSTANCE_SPEED	= 1 << 25,
-	PART_FLAG_INSTANCE_LOOP		= 1 << 26,
-	PART_FLAG_INSTANCE_LOOP_FLG	= 1 << 27,
+	PART_FLAG_INSTANCE_KEYFRAME	= 1 << 24,
+	PART_FLAG_INSTANCE_START	= 1 << 25,
+	PART_FLAG_INSTANCE_END		= 1 << 26,
+	PART_FLAG_INSTANCE_SPEED	= 1 << 27,
+	PART_FLAG_INSTANCE_LOOP		= 1 << 28,
+	PART_FLAG_INSTANCE_LOOP_FLG	= 1 << 29,
 
 	NUM_PART_FLAGS
 };
@@ -193,7 +195,9 @@ struct PartInitialData
 	int		posY;
 	float	anchorX;
 	float	anchorY;
-	float	rotation;
+	float	rotationZ;
+	float	rotationX;
+	float	rotationY;
 	float	scaleX;
 	float	scaleY;
 	int		opacity;
@@ -431,7 +435,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				init.posY = (int)(state->position.y * DOT);
 				init.anchorX = state->pivotOffset.x + 0.5f;
 				init.anchorY = state->pivotOffset.y + 0.5f;
-				init.rotation = state->rotation.z;
+				init.rotationX = state->rotation.x;
+				init.rotationY = state->rotation.y;
+				init.rotationZ = state->rotation.z;
 
 				float size_scale_x = state->scale.x;
 				float size_scale_y = state->scale.y;
@@ -472,7 +478,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				initialData->add(Lump::s16Data(init.opacity));
 				initialData->add(Lump::floatData(init.anchorX));
 				initialData->add(Lump::floatData(init.anchorY));
-				initialData->add(Lump::floatData(init.rotation));
+				initialData->add(Lump::floatData(init.rotationX));
+				initialData->add(Lump::floatData(init.rotationY));
+				initialData->add(Lump::floatData(init.rotationZ));
 				initialData->add(Lump::floatData(init.scaleX));
 				initialData->add(Lump::floatData(init.scaleY));
 				initialData->add(Lump::floatData(init.size_X));
@@ -564,7 +572,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if ((int)( state->position.y * DOT ) != init.posY)     p_flags |= PART_FLAG_POSITION_Y;
 					if (pivot.x + 0.5f != init.anchorX)              p_flags |= PART_FLAG_ANCHOR_X;
 					if (pivot.y + 0.5f != init.anchorY)              p_flags |= PART_FLAG_ANCHOR_Y;
-					if (state->rotation.z != init.rotation)          p_flags |= PART_FLAG_ROTATION;
+					if (state->rotation.x != init.rotationX)          p_flags |= PART_FLAG_ROTATIONX;
+					if (state->rotation.y != init.rotationY)          p_flags |= PART_FLAG_ROTATIONY;
+					if (state->rotation.z != init.rotationZ)          p_flags |= PART_FLAG_ROTATIONZ;
 
 					float size_scale_x = state->scale.x;
 					float size_scale_y = state->scale.y;
@@ -666,7 +676,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 
 					if (p_flags & PART_FLAG_ANCHOR_X) frameData->add(Lump::floatData(pivot.x + 0.5f));
 					if (p_flags & PART_FLAG_ANCHOR_Y) frameData->add(Lump::floatData(pivot.y + 0.5f));
-					if (p_flags & PART_FLAG_ROTATION) frameData->add(Lump::floatData(state->rotation.z));	// degree
+					if (p_flags & PART_FLAG_ROTATIONX) frameData->add(Lump::floatData(state->rotation.x));	// degree
+					if (p_flags & PART_FLAG_ROTATIONY) frameData->add(Lump::floatData(state->rotation.y));	// degree
+					if (p_flags & PART_FLAG_ROTATIONZ) frameData->add(Lump::floatData(state->rotation.z));	// degree
 					if (p_flags & PART_FLAG_SCALE_X) frameData->add(Lump::floatData(size_scale_x));
 					if (p_flags & PART_FLAG_SCALE_Y) frameData->add(Lump::floatData(size_scale_y));
 					if (p_flags & PART_FLAG_OPACITY) frameData->add(Lump::s16Data((int)(state->alpha * 255)));
