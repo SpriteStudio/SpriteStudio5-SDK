@@ -219,6 +219,7 @@ public:
 class SsAnimePack
 {
 public:
+	SsString					version;
 	SsAnimationSettings			settings;		//!< 設定情報 
 	SsString					name;			//!< アニメーションパック名称
 	SsModel						Model;			//!< パーツ情報の格納先
@@ -235,6 +236,7 @@ public:
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
+		SSAR_DECLARE_ATTRIBUTE(version);
 		SSAR_STRUCT_DECLARE( settings );
 		SSAR_DECLARE( name );
 		SSAR_STRUCT_DECLARE( Model );

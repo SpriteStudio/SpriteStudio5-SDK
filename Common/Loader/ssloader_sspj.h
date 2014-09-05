@@ -68,6 +68,8 @@ typedef std::vector<SsCellMap*>::iterator SsSsCellMapListItr;
 class SsProject
 {
 public:
+
+	SsString				version;
 	SsProjectSetting		settings;			//!< プロジェクト設定
 	std::vector<SsString>	cellmapNames;		//!< セルマップファイルのリスト
 	std::vector<SsString>	animepackNames;		//!< アニメファイルのリスト
@@ -110,6 +112,7 @@ public:
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
+		SSAR_DECLARE_ATTRIBUTE(version);
 		SSAR_STRUCT_DECLARE( settings );
 		SSAR_DECLARE( cellmapNames );
 		SSAR_DECLARE( animepackNames );

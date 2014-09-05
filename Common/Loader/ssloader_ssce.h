@@ -47,6 +47,7 @@ texPackSettings;	///< パック時の参照情報<BR>
 class SsCellMap
 {
 public:
+	SsString					version;
 	SsString					fname;				///< セルマップのファイルネーム
 	SsString					name;				///< このセルマップの名称です。
 	SsString					imagePath;			///< 参照画像ファイルパス。プロジェクトの画像基準相対
@@ -68,6 +69,7 @@ public:
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
+		SSAR_DECLARE_ATTRIBUTE(version);
 		SSAR_DECLARE( name );
 		SSAR_DECLARE( imagePath );
 		SSAR_DECLARE( pixelSize );
