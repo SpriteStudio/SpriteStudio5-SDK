@@ -1,10 +1,6 @@
 // 
 //  SS5Player.cpp
 //
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
-
 #include "SS5Player.h"
 #include "SS5PlayerData.h"
 #include <string>
