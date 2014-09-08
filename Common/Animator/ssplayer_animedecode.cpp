@@ -178,7 +178,7 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 
 	SsCurve curve;
 	curve = leftkey->curve;
-	if (SsInterpolationType::linear == SsInterpolationType::bezier)
+	if (leftkey->ipType == SsInterpolationType::bezier)
 	{
 		// ベジェのみキーの開始・終了時間が必要
 		curve.startKeyTime = leftkey->time;
