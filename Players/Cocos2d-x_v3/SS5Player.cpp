@@ -1677,11 +1677,6 @@ void Player::setFrame(int frameNo)
 
 			int inst_scale = (refEndframe - refStartframe) + 1; //インスタンスの尺
 
-			if (reftime>=11)
-			{
-			printf("");
-			}
-
 			//尺が０もしくはマイナス（あり得ない
 			if (inst_scale <= 0) continue;
 			int	nowloop = (reftime / inst_scale);	//現在までのループ数
