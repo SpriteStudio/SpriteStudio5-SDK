@@ -96,7 +96,7 @@ enum {
 };
 
 //座標を固定少数で出力　100＝1ドット
-#define DOT ( 100.0f )
+#define DOT ( 10.0f )
 
 
 bool convert_error_exit = false;	//データにエラーがありコンバートを中止した
@@ -536,6 +536,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					SsCell * cell = state->cellValue.cell;
 					float cpx = 0;
 					float cpy = 0;
+
 					if (cell)
 					{
 						// セルに設定された原点オフセットを適用する

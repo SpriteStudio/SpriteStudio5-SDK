@@ -1207,7 +1207,7 @@ enum _enum
 };
 
 //固定少数の定数 100=1ドット
-#define DOT (100.0f)
+#define DOT (10.0f)
 
 void Player::setFrame(int frameNo)
 {
