@@ -1102,7 +1102,6 @@ int Player::getLabelToFrame(char* findLabelName)
 
 	const AnimePackData* packData = _currentAnimeRef->animePackData;
 	const AnimationData* animeData = _currentAnimeRef->animationData;
-	const PartData* parts = static_cast<const PartData*>(ptr(packData->parts));
 
 	if (!animeData->labelData) return -1;
 	const ss_offset* labelDataIndex = static_cast<const ss_offset*>(ptr(animeData->labelData));
@@ -1117,12 +1116,10 @@ int Player::getLabelToFrame(char* findLabelName)
 		DataArrayReader reader(labelDataArray);
 
 		LabelData ldata;
-//		int size = reader.readU16();
 		ss_offset offset = reader.readOffset();
 		const char* str = static_cast<const char*>(ptr(offset));
 		int labelFrame = reader.readU16();
 		ldata.str = str;
-//		ldata.strSize = size;
 		ldata.frameNo = labelFrame;
 
 		if (ldata.str.compare(findLabelName) == 0 )
@@ -1462,7 +1459,7 @@ void Player::setFrame(int frameNo)
 		
 		
 		//頂点情報の取得
-		cocos2d::Color4B color4 = { 0xff, 0xff, 0xff, (BYTE)opacity };
+		GLubyte alhpa = (GLubyte)opacity;		cocos2d::Color4B color4 = { 0xff, 0xff, 0xff, alhpa };
 		quad.tl.colors =
 		quad.tr.colors =
 		quad.bl.colors =
