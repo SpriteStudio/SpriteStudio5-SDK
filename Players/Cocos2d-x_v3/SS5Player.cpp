@@ -1462,7 +1462,7 @@ void Player::setFrame(int frameNo)
 		
 		
 		//頂点情報の取得
-		cocos2d::Color4B color4 = { 0xff, 0xff, 0xff, (BYTE)opacity };
+		cocos2d::Color4B color4 = { 0xff, 0xff, 0xff, (GLubyte)opacity };
 		quad.tl.colors =
 		quad.tr.colors =
 		quad.bl.colors =
