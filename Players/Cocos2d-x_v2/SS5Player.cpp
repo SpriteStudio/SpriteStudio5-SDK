@@ -52,7 +52,16 @@ static std::string Format(const char* format, ...){
 	{
 		args = source;
 
+#if(CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+        //iOS
+		if (vsnprintf(&tmp[0], tmp.size(), format, args) == -1)
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+        //Android
+        if (_vsnprintf(&tmp[0], tmp.size(), format, args) == -1)
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+		//Windows
 		if (_vsnprintf(&tmp[0], tmp.size(), format, args) == -1)
+#endif
 		{
 			tmp.resize(tmp.size() * 2);
 		}
@@ -185,7 +194,7 @@ public:
 protected:
 	void init(const ProjectData* data, const std::string& imageBaseDir)
 	{
-		CCAssert(data != nullptr, "Invalid data");
+		CCAssert(data != NULL, "Invalid data");
 		
 		_textures.clear();
 		_refs.clear();
@@ -236,10 +245,10 @@ protected:
 		
 		cocos2d::CCTextureCache* texCache = cocos2d::CCTextureCache::sharedTextureCache();
 		cocos2d::CCTexture2D* tex = texCache->addImage(path.c_str());
-		if (tex == nullptr)
+		if (tex == NULL)
 		{
 			std::string msg = "Can't load image > " + path;
-			CCAssert(tex != nullptr, msg.c_str());
+			CCAssert(tex != NULL, msg.c_str());
 		}
 		CCLOG("load: %s", path.c_str());
 		_textures.push_back(tex);
@@ -311,7 +320,7 @@ public:
 protected:
 	void init(const ProjectData* data)
 	{
-		CCAssert(data != nullptr, "Invalid data");
+		CCAssert(data != NULL, "Invalid data");
 		
 		ToPointer ptr(data);
 		const AnimePackData* animePacks = static_cast<const AnimePackData*>(ptr(data->animePacks));
@@ -392,7 +401,7 @@ struct ResourceSet
  * ResourceManager
  */
 
-static ResourceManager* defaultInstance = nullptr;
+static ResourceManager* defaultInstance = NULL;
 const std::string ResourceManager::s_null;
 
 ResourceManager* ResourceManager::getInstance()
@@ -426,7 +435,7 @@ ResourceSet* ResourceManager::getData(const std::string& dataKey)
 
 std::string ResourceManager::addData(const std::string& dataKey, const ProjectData* data, const std::string& imageBaseDir)
 {
-	CCAssert(data != nullptr, "Invalid data");
+	CCAssert(data != NULL, "Invalid data");
 	CCAssert(data->dataId == DATA_ID, "Not data id matched");
 	CCAssert(data->version == DATA_VERSION, "Version number of data does not match");
 	
@@ -460,10 +469,10 @@ std::string ResourceManager::addDataWithKey(const std::string& dataKey, const st
 
 	unsigned long nSize = 0;
 	void* loadData = fileUtils->getFileData(fullpath.c_str(), "rb", &nSize);
-	if (loadData == nullptr)
+	if (loadData == NULL)
 	{
 		std::string msg = "Can't load project data > " + fullpath;
-		CCAssert(loadData != nullptr, msg.c_str());
+		CCAssert(loadData != NULL, msg.c_str());
 	}
 	
 	const ProjectData* data = static_cast<const ProjectData*>(loadData);
@@ -496,7 +505,7 @@ std::string ResourceManager::addDataWithKey(const std::string& dataKey, const st
 	
 	// リソースが破棄されるとき一緒にロードしたデータも破棄する
 	ResourceSet* rs = getData(dataKey);
-	CCAssert(rs != nullptr, "");
+	CCAssert(rs != NULL, "");
 	rs->isDataAutoRelease = true;
 	
 	return dataKey;
@@ -633,10 +642,10 @@ public:
 	void setColorBlendFunc(int colorBlendFuncNo);
 	cocos2d::ccV3F_C4B_T2F_Quad& getAttributeRef();
 
-	void CustomSprite::setFlippedX(bool flip);
-	void CustomSprite::setFlippedY(bool flip);
-	bool CustomSprite::isFlippedX();
-	bool CustomSprite::isFlippedY();
+	void setFlippedX(bool flip);
+	void setFlippedY(bool flip);
+	bool isFlippedX();
+	bool isFlippedY();
 
 public:
 };
@@ -652,9 +661,9 @@ public:
 static const std::string s_nullString;
 
 Player::Player(void)
-	: _resman(nullptr)
-	, _currentRs(nullptr)
-	, _currentAnimeRef(nullptr)
+	: _resman(NULL)
+	, _currentRs(NULL)
+	, _currentAnimeRef(NULL)
 
 	, _frameSkipEnabled(true)
 	, _playingFrame(0.0f)
@@ -664,9 +673,9 @@ Player::Player(void)
 	, _isPlaying(false)
 	, _isPausing(false)
 	, _prevDrawFrameNo(-1)
-
-	, _userDataCallback(nullptr)
-	, _playEndCallback(nullptr)
+	, _delegate(0)
+	, _playEndTarget(NULL)
+	, _playEndSelector(NULL)
 {
 	int i;
 	for (i = 0; i < PART_VISIBLE_MAX; i++)
@@ -696,7 +705,7 @@ Player* Player::create(ResourceManager* resman)
 		return obj;
 	}
 	CC_SAFE_DELETE(obj);
-	return nullptr;
+	return NULL;
 }
 
 bool Player::init()
@@ -794,7 +803,7 @@ bool Player::isFrameSkipEnabled() const
 {
 	return _frameSkipEnabled;
 }
-
+/*
 void Player::setUserDataCallback(const UserDataCallback& callback)
 {
 	_userDataCallback = callback;
@@ -804,16 +813,16 @@ void Player::setPlayEndCallback(const PlayEndCallback& callback)
 {
 	_playEndCallback = callback;
 }
-
+*/
 
 void Player::setData(const std::string& dataKey)
 {
 	ResourceSet* rs = _resman->getData(dataKey);
 	_currentdataKey = dataKey;
-	if (rs == nullptr)
+	if (rs == NULL)
 	{
 		std::string msg = Format("Not found data > %s", dataKey.c_str());
-		CCAssert(rs != nullptr, msg.c_str());
+		CCAssert(rs != NULL, msg.c_str());
 	}
 	
 	if (_currentRs != rs)
@@ -846,13 +855,13 @@ void Player::releaseAnime()
 
 void Player::play(const std::string& packName, const std::string& animeName, int loop, int startFrameNo)
 {
-	CCAssert(_currentRs != nullptr, "Not select data");
+	CCAssert(_currentRs != NULL, "Not select data");
 	
 	AnimeRef* animeRef = _currentRs->animeCache->getReference(packName, animeName);
-	if (animeRef == nullptr)
+	if (animeRef == NULL)
 	{
 		std::string msg = Format("Not found animation > pack=%s, anime=%s", packName.c_str(), animeName.c_str());
-		CCAssert(animeRef != nullptr, msg.c_str());
+		CCAssert(animeRef != NULL, msg.c_str());
 	}
 
 	play(animeRef, loop, startFrameNo);
@@ -860,13 +869,13 @@ void Player::play(const std::string& packName, const std::string& animeName, int
 
 void Player::play(const std::string& animeName, int loop, int startFrameNo)
 {
-	CCAssert(_currentRs != nullptr, "Not select data");
+	CCAssert(_currentRs != NULL, "Not select data");
 
 	AnimeRef* animeRef = _currentRs->animeCache->getReference(animeName);
-	if (animeRef == nullptr)
+	if (animeRef == NULL)
 	{
 		std::string msg = Format("Not found animation > anime=%s", animeName.c_str());
-		CCAssert(animeRef != nullptr, msg.c_str());
+		CCAssert(animeRef != NULL, msg.c_str());
 	}
 
 	play(animeRef, loop, startFrameNo);
@@ -916,14 +925,18 @@ void Player::stop()
 
 const std::string& Player::getPlayPackName() const
 {
-	return _currentAnimeRef != nullptr ? _currentAnimeRef->packName : s_nullString;
+	return _currentAnimeRef != NULL ? _currentAnimeRef->packName : s_nullString;
 }
 
 const std::string& Player::getPlayAnimeName() const
 {
-	return _currentAnimeRef != nullptr ? _currentAnimeRef->animeName : s_nullString;
+	return _currentAnimeRef != NULL ? _currentAnimeRef->animeName : s_nullString;
 }
 
+void Player::setDelegate(SSPlayerDelegate* delegate)
+{
+	_delegate = delegate;
+}
 
 void Player::update(float dt)
 {
@@ -1027,10 +1040,10 @@ void Player::updateFrame(float dt)
 		stop();
 	
 		// 再生終了コールバックの呼び出し
-		if (_playEndCallback)
-		{
-			_playEndCallback(this);
-		}
+        if (_playEndTarget)
+        {
+            (_playEndTarget->*_playEndSelector)(this);
+        }
 	}
 }
 
@@ -1124,7 +1137,7 @@ void Player::setPartsParentage()
 		}
 		else
 		{
-			sprite->_parent = nullptr;
+			sprite->_parent = NULL;
 		}
 
 		//インスタンスパーツの生成
@@ -1152,8 +1165,6 @@ int Player::getLabelToFrame(char* findLabelName)
 	int rc = -1;
 
 	ToPointer ptr(_currentRs->data);
-
-	const AnimePackData* packData = _currentAnimeRef->animePackData;
 	const AnimationData* animeData = _currentAnimeRef->animationData;
 
 	if (!animeData->labelData) return -1;
@@ -1363,7 +1374,7 @@ void Player::setFrame(int frameNo)
 		sprite->setPosition(cocos2d::CCPoint(x, y));
 		sprite->setRotation(rotationZ);
 
-		CellRef* cellRef = cellIndex >= 0 ? _currentRs->cellCache->getReference(cellIndex) : nullptr;
+		CellRef* cellRef = cellIndex >= 0 ? _currentRs->cellCache->getReference(cellIndex) : NULL;
 		bool setBlendEnabled = true;
 		if (cellRef)
 		{
@@ -1444,7 +1455,7 @@ void Player::setFrame(int frameNo)
 		}
 		else
 		{
-			sprite->setTexture(nullptr);
+			sprite->setTexture(NULL);
 			sprite->setTextureRect(cocos2d::CCRect());
 		}
 
@@ -1831,7 +1842,8 @@ void Player::setFrame(int frameNo)
 
 void Player::checkUserData(int frameNo)
 {
-	if (!_userDataCallback) return;
+
+    if (!_delegate) return;
 	
 	ToPointer ptr(_currentRs->data);
 
@@ -1911,9 +1923,19 @@ void Player::checkUserData(int frameNo)
 		_userData.partName = static_cast<const char*>(ptr(parts[partIndex].name));
 		_userData.frameNo = frameNo;
 		
-		_userDataCallback(this, &_userData);
+		_delegate->onUserData(this, &_userData);
 	}
+
 }
+    
+void Player::setPlayEndCallback(CCObject* target, SEL_PlayEndHandler selector)
+{
+    CC_SAFE_RELEASE(_playEndTarget);
+    CC_SAFE_RETAIN(target);
+    _playEndTarget = target;
+    _playEndSelector = selector;
+}
+    
 
 #define __PI__	(3.14159265358979323846f)
 #define RadianToDegree(Radian) ((double)Radian * (180.0f / __PI__))
@@ -1932,6 +1954,17 @@ void Player::get_uv_rotation(float *u, float *v, float cu, float cv, float deg)
 
 }
 
+
+/**
+* SSPlayerDelegate
+*/
+
+SSPlayerDelegate::~SSPlayerDelegate()
+{}
+
+void SSPlayerDelegate::onUserData(Player* player, const UserData* data)
+{}
+
 /**
  * CustomSprite
  */
@@ -1943,7 +1976,7 @@ static const GLchar * ssPositionTextureColor_frag =
 #include "ssShader_frag.h"
 
 CustomSprite::CustomSprite()
-	: _defaultShaderProgram(nullptr)
+	: _defaultShaderProgram(NULL)
 	, _useCustomShaderProgram(false)
 	, _opacity(1.0f)
 	, _colorBlendFuncNo(0)
@@ -1957,7 +1990,7 @@ cocos2d::CCGLProgram* CustomSprite::getCustomShaderProgram()
 {
 	using namespace cocos2d;
 
-	static CCGLProgram* p = nullptr;
+	static CCGLProgram* p = NULL;
 	static bool constructFailed = false;
 	if (!p && !constructFailed)
 	{
@@ -1972,7 +2005,7 @@ cocos2d::CCGLProgram* CustomSprite::getCustomShaderProgram()
 		if (!p->link())
 		{
 			constructFailed = true;
-			return nullptr;
+			return NULL;
 		}
 		
 		p->updateUniforms();
@@ -1983,9 +2016,9 @@ cocos2d::CCGLProgram* CustomSprite::getCustomShaderProgram()
 		 || ssAlphaLocation == GL_INVALID_VALUE)
 		{
 			delete p;
-			p = nullptr;
+			p = NULL;
 			constructFailed = true;
-			return nullptr;
+			return NULL;
 		}
 
 		glUniform1i(ssSelectorLocation, 0);
@@ -2005,7 +2038,7 @@ CustomSprite* CustomSprite::create()
 		return pSprite;
 	}
 	CC_SAFE_DELETE(pSprite);
-	return nullptr;
+	return NULL;
 }
 
 void CustomSprite::changeShaderProgram(bool useCustomShaderProgram)
@@ -2015,7 +2048,7 @@ void CustomSprite::changeShaderProgram(bool useCustomShaderProgram)
 		if (useCustomShaderProgram)
 		{
 			cocos2d::CCGLProgram *shaderProgram = getCustomShaderProgram();
-			if (shaderProgram == nullptr)
+			if (shaderProgram == NULL)
 			{
 				// Not use custom shader.
 				shaderProgram = _defaultShaderProgram;

@@ -9,13 +9,14 @@
  
   #include "SS5Player.h"
  
-  auto resman = ss::ResourceManager::getInstance();
+  ss::ResourceManager* resman = ss::ResourceManager::getInstance();
   resman->addData("sample.ssbp");
 
-  auto player = ss::Player::create();
+  ss::Player* player = ss::Player::create();
   player->setData("sample");			// ssbpファイル名（拡張子不要）
-  player->play("anime1");
-  player->setPosition(200, 200);
+  player->play("anime1");				//
+  CCPoint pos(200,200);
+  ssplayer->setPosition(pos);
   this->addChild(player);
 
 
@@ -31,6 +32,7 @@
 
 namespace ss
 {
+class SSPlayerDelegate;
 class CustomSprite;
 class ResourceSet;
 class AnimeRef;
@@ -156,6 +158,7 @@ struct LabelData
 class Player : public cocos2d::CCSprite
 {
 public:
+	typedef void (cocos2d::CCObject::*SEL_PlayEndHandler)(Player*);
 
 	/**
 	 * Playerインスタンスを構築します.
@@ -163,14 +166,14 @@ public:
 	 * @param  resman  使用するResourceManagerインスタンス. 省略時はデフォルトインスタンスが使用されます.
 	 * @return Playerインスタンス
 	 */
-	static Player* create(ResourceManager* resman = nullptr);
+	static Player* create(ResourceManager* resman = NULL);
 
 	/**
 	 * 使用するResourceManagerインスタンスを設定します.
 	 *
 	 * @param  resman  使用するResourceManagerインスタンス. 省略時はデフォルトインスタンスが使用されます.
 	 */
-	void setResourceManager(ResourceManager* resman = nullptr);
+	void setResourceManager(ResourceManager* resman = NULL);
 
 	/**
 	 * 使用中のResourceManagerインスタンスを解放します.
@@ -330,40 +333,31 @@ public:
 	*/
 	void setPartVisible( int partNo, bool flg );
 
-	typedef std::function<void(Player*, const UserData*)> UserDataCallback;
-	typedef std::function<void(Player*)> PlayEndCallback;
-
-	/** 
-	 * ユーザーデータを受け取るコールバックを設定します.
+	/** ユーザーデータなどの通知を受け取る、デリゲートを設定します.
+	 *  Set delegate. receive a notification, such as user data.
 	 *
-	 * @param  callback  ユーザーデータ受け取りコールバック
+	 *  @code
+	 *  player->setDelegate((SSPlayerDelegate *)this);
+	 *  --
 	 *
-     * @code
-	 * player->setUserDataCallback(CC_CALLBACK_2(MyScene::userDataCallback, this));
-	 * --
-	 * void MyScene::userDataCallback(ss::Player* player, const ss::UserData* data)
-	 * {
-	 *   ...
-	 * }
-     * @endcode
+	 *  void MyScene::onUserData(ss::Player* player, const ss::UserData* data)	 *  {	 *    ...
+	 *  }	 *  @endcode
 	 */
-	void setUserDataCallback(const UserDataCallback& callback);
-
-	/**
-	 * 再生終了時に呼び出されるコールバックを設定します.
+	void setDelegate(SSPlayerDelegate* delegate);
+    
+	/** 再生終了の通知を受けるコールバックを設定します.
 	 *
-	 * @param  callback  ユーザーデータ受け取りコールバック
-	 *
-     * @code
-	 * player->setPlayEndCallback(CC_CALLBACK_1(MyScene::playEndCallback, this));
-	 * --
-	 * void MyScene::playEndCallback(ss::Player* player)
-	 * {
-	 *   ...
-	 * }
-     * @endcode
+     *  @code
+	 *  player->setPlayEndCallback(this, ssplayer_playend_selector(MyScene::playEndCallback));
+	 *  --
+	 *  void MyScene::playEndCallback(ss::Player* player)
+	 *  {
+	 *    ...
+	 *  }
+     *  @endcode
 	 */
-	void setPlayEndCallback(const PlayEndCallback& callback);
+	void setPlayEndCallback(cocos2d::CCObject* target, SEL_PlayEndHandler selector);
+    
 
 
 
@@ -403,11 +397,29 @@ protected:
 	int					_prevDrawFrameNo;
 	bool				_partVisible[PART_VISIBLE_MAX];
 	
-	UserDataCallback	_userDataCallback;
+	SSPlayerDelegate*	_delegate;
 	UserData			_userData;
-	PlayEndCallback		_playEndCallback;
+    CCObject*			_playEndTarget;
+	SEL_PlayEndHandler	_playEndSelector;
 };
 
+#define ssplayer_playend_selector(_SELECTOR) (ss::Player::SEL_PlayEndHandler)(&_SELECTOR)
+
+/**
+ * SSPlayerDelegate
+ */
+
+class SSPlayerDelegate
+{
+public:
+    SSPlayerDelegate(void) {}
+    virtual ~SSPlayerDelegate();
+    
+    /** ユーザーデータの受信
+     *  Receive a user data.
+     */
+	virtual void onUserData(ss::Player* player, const ss::UserData* data);
+};
 
 
 };	// namespace ss
