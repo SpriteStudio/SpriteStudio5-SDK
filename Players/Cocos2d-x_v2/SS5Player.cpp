@@ -57,7 +57,7 @@ static std::string Format(const char* format, ...){
 		if (vsnprintf(&tmp[0], tmp.size(), format, args) == -1)
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
         //Android
-        if (_vsnprintf(&tmp[0], tmp.size(), format, args) == -1)
+        if (vsnprintf(&tmp[0], tmp.size(), format, args) == -1)
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 		//Windows
 		if (_vsnprintf(&tmp[0], tmp.size(), format, args) == -1)
