@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(sssdk)
 
-#SET(BOOST_ROOT "C:/boost-1_55_0")
-SET(BOOST_ROOT "C:/Boost/include/boost-1_55/")
+#SET(BOOST_ROOT "C:/boost-1_56_0")
+SET(BOOST_ROOT "C:/Boost/include/boost-1_56/")
 SET(BOOST_PYTHON_LIB "C:/Boost/lib" )
 SET(PYTHON_IHNCLUDE "C:/Python27/include")
 
