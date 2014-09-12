@@ -2014,6 +2014,7 @@ CustomSprite::CustomSprite()
 	, _opacity(1.0f)
 	, _colorBlendFuncNo(0)
 	, _liveFrame(0.0f)
+	, _hasPremultipliedAlpha(0)
 {}
 
 CustomSprite::~CustomSprite()
