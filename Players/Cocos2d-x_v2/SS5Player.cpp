@@ -581,6 +581,7 @@ class CustomSprite : public cocos2d::CCSprite
 private:
 	static unsigned int ssSelectorLocation;
 	static unsigned int	ssAlphaLocation;
+	static unsigned int	sshasPremultipliedAlpha;
 
 	static cocos2d::CCGLProgram* getCustomShaderProgram();
 
@@ -588,6 +589,7 @@ private:
 	cocos2d::CCGLProgram*	_defaultShaderProgram;
 	bool				_useCustomShaderProgram;
 	float				_opacity;
+	int					_hasPremultipliedAlpha;
 	int					_colorBlendFuncNo;
 	bool				_flipX;
 	bool				_flipY;
@@ -646,6 +648,7 @@ public:
 	void setFlippedY(bool flip);
 	bool isFlippedX();
 	bool isFlippedY();
+	void sethasPremultipliedAlpha(int PremultipliedAlpha);
 
 public:
 };
@@ -1415,8 +1418,24 @@ void Player::setFrame(int frameNo)
 					// 通常ブレンド
 					if (partData->alphaBlendType == BLEND_MIX)
 					{
-						blendFunc.src = GL_ONE;
-						blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+						if (opacity < 255)
+						{
+							if (!cellRef->texture->hasPremultipliedAlpha())
+							{
+								blendFunc.src = GL_SRC_ALPHA;
+								blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+							}
+							else
+							{
+								blendFunc.src = GL_ONE;
+								blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+							}
+						}
+						else
+						{
+							blendFunc.src = GL_ONE;
+							blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+						}
 					}
 					// 加算ブレンド
 					if (partData->alphaBlendType == BLEND_ADD) {
@@ -1430,7 +1449,7 @@ void Player::setFrame(int frameNo)
 					}
 					// 減算ブレンド
 					if (partData->alphaBlendType == BLEND_SUB) {
-						blendFunc.src = GL_ZERO;
+						blendFunc.src = GL_ONE_MINUS_SRC_ALPHA;
 						blendFunc.dst = GL_ONE_MINUS_SRC_COLOR;
 					}
 					/*
@@ -1532,8 +1551,21 @@ void Player::setFrame(int frameNo)
 		
 		
 		//頂点情報の取得
-		GLubyte alhpa = (GLubyte)opacity;
-		cocos2d::ccColor4B color4 = { 0xff, 0xff, 0xff, alhpa };
+		GLubyte alpha = (GLubyte)opacity;
+		cocos2d::ccColor4B color4 = { 0xff, 0xff, 0xff, alpha };
+
+		sprite->sethasPremultipliedAlpha(0);	//
+		if (cellRef)
+		{
+			if (cellRef->texture->hasPremultipliedAlpha())
+			{
+				//テクスチャのカラー値にアルファがかかっている場合は、アルファ値をカラー値に反映させる
+				color4.r = color4.r * alpha / 255;
+				color4.g = color4.g * alpha / 255;
+				color4.b = color4.b * alpha / 255;
+				sprite->sethasPremultipliedAlpha(1);
+			}
+		}
 		quad.tl.colors =
 		quad.tr.colors =
 		quad.bl.colors =
@@ -1971,6 +2003,7 @@ void SSPlayerDelegate::onUserData(Player* player, const UserData* data)
 
 unsigned int CustomSprite::ssSelectorLocation = 0;
 unsigned int CustomSprite::ssAlphaLocation = 0;
+unsigned int CustomSprite::sshasPremultipliedAlpha = 0;
 
 static const GLchar * ssPositionTextureColor_frag =
 #include "ssShader_frag.h"
@@ -2012,6 +2045,7 @@ cocos2d::CCGLProgram* CustomSprite::getCustomShaderProgram()
 		
 		ssSelectorLocation = glGetUniformLocation(p->getProgram(), "u_selector");
 		ssAlphaLocation = glGetUniformLocation(p->getProgram(), "u_alpha");
+		sshasPremultipliedAlpha = glGetUniformLocation(p->getProgram(), "u_hasPremultipliedAlpha");
 		if (ssSelectorLocation == GL_INVALID_VALUE
 		 || ssAlphaLocation == GL_INVALID_VALUE)
 		{
@@ -2023,6 +2057,7 @@ cocos2d::CCGLProgram* CustomSprite::getCustomShaderProgram()
 
 		glUniform1i(ssSelectorLocation, 0);
 		glUniform1f(ssAlphaLocation, 1.0f);
+		glUniform1i(sshasPremultipliedAlpha, 0);
 	}
 	return p;
 }
@@ -2063,6 +2098,11 @@ void CustomSprite::changeShaderProgram(bool useCustomShaderProgram)
 			_useCustomShaderProgram = false;
 		}
 	}
+}
+
+void CustomSprite::sethasPremultipliedAlpha(int PremultipliedAlpha)
+{
+	_hasPremultipliedAlpha = PremultipliedAlpha;
 }
 
 bool CustomSprite::isCustomShaderProgramEnabled() const
@@ -2117,7 +2157,7 @@ void CustomSprite::draw(void)
 
 	glUniform1i(ssSelectorLocation, _colorBlendFuncNo);
 	glUniform1f(ssAlphaLocation, _opacity);
-
+	glUniform1i(sshasPremultipliedAlpha, _hasPremultipliedAlpha);
 
 	//
 	// Attributes
