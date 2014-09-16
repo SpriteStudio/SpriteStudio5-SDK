@@ -963,7 +963,7 @@ APP_NAME " converter version " APP_VERSION "\n"
 "option:\n"
 "  -h      Display usage.\n"
 "  -v      Verbose mode.\n"
-"  -e arg  Encoding of output file (UTF8/SJIS) default:UTF8\n"
+//"  -e arg  Encoding of output file (UTF8/SJIS) default:UTF8\n"
 "  -p arg  Specify image file load base path.\n"
 "\n";
 
@@ -1023,6 +1023,8 @@ bool parseOption(Options& options, const std::string& opt, ArgumentPointer& args
 	{
 		options.isVerbose = true;
 	}
+/*
+	//UTF8固定にする
 	else if (opt == "-e")
 	{
 		if (!args.hasNext()) return false;
@@ -1041,6 +1043,7 @@ bool parseOption(Options& options, const std::string& opt, ArgumentPointer& args
 			return false;
 		}
 	}
+*/
 	else if (opt == "-p")
 	{
 		if (!args.hasNext()) return false;
