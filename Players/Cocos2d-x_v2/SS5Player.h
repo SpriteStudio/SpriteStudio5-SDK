@@ -19,8 +19,10 @@
   ssplayer->setPosition(pos);
   this->addChild(player);
 
-
   SS5Player cocos2d-x ver2.x版は終了処理で resman を delete してください。
+
+  ver2.X系のSS5PlayerはX回転、Y回転に非対応です。
+
 *************************************************************/
 
 
@@ -340,8 +342,11 @@ public:
 	 *  player->setDelegate((SSPlayerDelegate *)this);
 	 *  --
 	 *
-	 *  void MyScene::onUserData(ss::Player* player, const ss::UserData* data)	 *  {	 *    ...
-	 *  }	 *  @endcode
+	 *  void MyScene::onUserData(ss::Player* player, const ss::UserData* data)
+	 *  {
+	 *    ...
+	 *  }
+	 *  @endcode
 	 */
 	void setDelegate(SSPlayerDelegate* delegate);
     
@@ -379,6 +384,7 @@ protected:
 	void setFrame(int frameNo);
 	void checkUserData(int frameNo);
 	void get_uv_rotation(float *u, float *v, float cu, float cv, float deg);
+	void set_InstanceAlpha(int alpha);
 
 protected:
 	ResourceManager*	_resman;
@@ -396,7 +402,8 @@ protected:
 	bool				_isPausing;
 	int					_prevDrawFrameNo;
 	bool				_partVisible[PART_VISIBLE_MAX];
-	
+	int					_InstanceAlpha;
+
 	SSPlayerDelegate*	_delegate;
 	UserData			_userData;
     CCObject*			_playEndTarget;

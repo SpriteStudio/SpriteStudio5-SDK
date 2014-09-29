@@ -18,6 +18,12 @@
   player->setPosition(200, 200);
   this->addChild(player);
 
+  X回転、Y回転を使用する場合、アプリケーションの初期化で平行投影を設定しないとSS5と描画結果が異なります。
+  Z回転とXまたはY回転を同時に行うとSS5と描画結果が異なります。
+  //平行投影の設定
+  director->setProjection(kCCDirectorProjection2D);
+
+
 *************************************************************/
 
 
@@ -382,6 +388,8 @@ protected:
 	void setFrame(int frameNo);
 	void checkUserData(int frameNo);
 	void get_uv_rotation(float *u, float *v, float cu, float cv, float deg);
+	void set_InstanceAlpha(int alpha);
+	void set_InstanceRotation(float rotX, float rotY, float rotZ);
 
 protected:
 	ResourceManager*	_resman;
@@ -399,6 +407,10 @@ protected:
 	bool				_isPausing;
 	int					_prevDrawFrameNo;
 	bool				_partVisible[PART_VISIBLE_MAX];
+	int					_InstanceAlpha;
+	float				_InstanceRotX;
+	float				_InstanceRotY;
+	float				_InstanceRotZ;
 
 	
 	UserDataCallback	_userDataCallback;

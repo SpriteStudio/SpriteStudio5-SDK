@@ -508,6 +508,9 @@ struct State
 	float	rotationX;
 	float	rotationY;
 	float	rotationZ;
+	float	instancerotationX;
+	float	instancerotationY;
+	float	instancerotationZ;
 	float	scaleX;
 	float	scaleY;
 
@@ -518,6 +521,9 @@ struct State
 		rotationX = 0.0f;
 		rotationY = 0.0f;
 		rotationZ = 0.0f;
+		instancerotationX = 0.0f;
+		instancerotationY = 0.0f;
+		instancerotationZ = 0.0f;
 		scaleX = 1.0f;
 		scaleY = 1.0f;
 	}
@@ -582,6 +588,9 @@ public:
 		setStateValue(_state.rotationX, state.rotationX);
 		setStateValue(_state.rotationY, state.rotationY);
 		setStateValue(_state.rotationZ, state.rotationZ);
+		setStateValue(_state.instancerotationX, state.instancerotationX);
+		setStateValue(_state.instancerotationY, state.instancerotationY);
+		setStateValue(_state.instancerotationZ, state.instancerotationZ);
 		setStateValue(_state.scaleX, state.scaleX);
 		setStateValue(_state.scaleY, state.scaleY);
 	}
@@ -626,6 +635,10 @@ Player::Player(void)
 	, _isPlaying(false)
 	, _isPausing(false)
 	, _prevDrawFrameNo(-1)
+	, _InstanceAlpha(255)
+	, _InstanceRotX(0.0f)
+	, _InstanceRotY(0.0f)
+	, _InstanceRotZ(0.0f)
 
 	, _userDataCallback(nullptr)
 	, _playEndCallback(nullptr)
@@ -1287,11 +1300,20 @@ void Player::setFrame(int frameNo)
 		x = x / DOT;
 		y = y / DOT;
 
+		//インスタンスパーツのパラメータを加える
+		//不透明度はすでにコンバータで親の透明度が計算されているため
+		//全パーツにインスタンスの透明度を加える必要がある
+		opacity = (opacity * _InstanceAlpha) / 255;
+
+		//ステータス保存
 		state.x = x;
 		state.y = y;
 		state.rotationX = rotationX;
 		state.rotationY = rotationY;
 		state.rotationZ = rotationZ;
+		state.instancerotationX = _InstanceRotX;
+		state.instancerotationY = _InstanceRotY;
+		state.instancerotationZ = _InstanceRotZ;
 		state.scaleX = scaleX;
 		state.scaleY = scaleY;
 
@@ -1752,6 +1774,10 @@ void Player::setFrame(int frameNo)
 				//通常時
 				_time = temp_frame + refStartframe;
 			}
+			//インスタンスパラメータを設定
+			sprite->_ssplayer->set_InstanceAlpha(opacity);
+			sprite->_ssplayer->set_InstanceRotation(rotationX, rotationY, rotationZ);
+
 			//インスタンス用SSPlayerに再生フレームを設定する
 			sprite->_ssplayer->setFrameNo(_time);
 		}
@@ -1790,6 +1816,15 @@ void Player::setFrame(int frameNo)
 			else
 			{
 				mat = cocos2d::Mat4::IDENTITY;
+				//親がいない場合インスタンスパーツの値を初期値とする
+				cocos2d::Mat4::createRotationX(CC_DEGREES_TO_RADIANS(sprite->_state.instancerotationX), &t);
+				mat = mat * t;
+
+				cocos2d::Mat4::createRotationY(CC_DEGREES_TO_RADIANS(sprite->_state.instancerotationY), &t);
+				mat = mat * t;
+
+//				cocos2d::Mat4::createRotationZ(CC_DEGREES_TO_RADIANS(-sprite->_state.instancerotationZ), &t);
+//				mat = mat * t;
 			}
 			
             cocos2d::Mat4::createTranslation(sprite->_state.x ,sprite->_state.y, 0.0f, &t);
@@ -1920,6 +1955,19 @@ void Player::get_uv_rotation(float *u, float *v, float cu, float cv, float deg)
 
 }
 
+//インスタンスパーツのアルファ値を設定
+void  Player::set_InstanceAlpha(int alpha)
+{
+	_InstanceAlpha = alpha;
+}
+
+//インスタンスパーツの回転値を設定
+void  Player::set_InstanceRotation(float rotX, float rotY, float rotZ)
+{
+	_InstanceRotX = rotX;
+	_InstanceRotY = rotY;
+	_InstanceRotZ = rotZ;
+}
 
 /**
  * CustomSprite

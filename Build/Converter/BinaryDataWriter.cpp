@@ -45,7 +45,10 @@ void BinaryDataWriter::fixReferences()
 	{
 		const Reference& ref = i->second;
 		if (ref.referencePosList.empty()) continue;	// 参照先なし
-		if (ref.dataPos < 0) throw std::logic_error(i->first + "に対応する dataPos が記録されていません");
+		if (ref.dataPos < 0) 
+		{
+			throw std::logic_error(i->first + "に対応する dataPos が記録されていません");
+		}
 
 		// 参照元のポジションを書き換える
 		for (Reference::ReferencePosListType::const_iterator posIt = ref.referencePosList.begin(); posIt != ref.referencePosList.end(); posIt++)

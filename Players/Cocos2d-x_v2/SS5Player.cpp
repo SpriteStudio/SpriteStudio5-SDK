@@ -676,6 +676,7 @@ Player::Player(void)
 	, _isPlaying(false)
 	, _isPausing(false)
 	, _prevDrawFrameNo(-1)
+	, _InstanceAlpha(255)
 	, _delegate(0)
 	, _playEndTarget(NULL)
 	, _playEndSelector(NULL)
@@ -1353,6 +1354,12 @@ void Player::setFrame(int frameNo)
 		x = x / DOT;
 		y = y / DOT;
 
+		//インスタンスパーツのパラメータを加える
+		//不透明度はすでにコンバータで親の透明度が計算されているため
+		//全パーツにインスタンスの透明度を加える必要がある
+		opacity = (opacity * _InstanceAlpha) / 255;
+
+		//ステータス保存
 		state.x = x;
 		state.y = y;
 		state.rotationX = rotationX;
@@ -1818,6 +1825,10 @@ void Player::setFrame(int frameNo)
 				//通常時
 				_time = temp_frame + refStartframe;
 			}
+
+			//インスタンスパラメータを設定
+			sprite->_ssplayer->set_InstanceAlpha(opacity);
+
 			//インスタンス用SSPlayerに再生フレームを設定する
 			sprite->_ssplayer->setFrameNo(_time);
 		}
@@ -1986,6 +1997,11 @@ void Player::get_uv_rotation(float *u, float *v, float cu, float cv, float deg)
 
 }
 
+//インスタンスパーツのアルファ値を設定
+void  Player::set_InstanceAlpha(int alpha)
+{
+	_InstanceAlpha = alpha;
+}
 
 /**
 * SSPlayerDelegate
