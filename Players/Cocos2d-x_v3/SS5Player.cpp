@@ -847,17 +847,16 @@ void Player::play(AnimeRef* animeRef, int loop, int startFrameNo)
 		
 		allocParts(animeRef->animePackData->numParts, false);
 		setPartsParentage();
-
-		_playingFrame = static_cast<float>(startFrameNo);
-		_step = 1.0f;
-		_loop = loop;
-		_loopCount = 0;
-		_isPlaying = true;
-		_isPausing = false;
-		_prevDrawFrameNo = -1;
-		
-		setFrame(_playingFrame);
 	}
+	_playingFrame = static_cast<float>(startFrameNo);
+	_step = 1.0f;
+	_loop = loop;
+	_loopCount = 0;
+	_isPlaying = true;
+	_isPausing = false;
+	_prevDrawFrameNo = -1;
+
+	setFrame(_playingFrame);
 }
 
 void Player::pause()
