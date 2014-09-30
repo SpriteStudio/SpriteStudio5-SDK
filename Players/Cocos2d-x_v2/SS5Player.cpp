@@ -850,11 +850,11 @@ void Player::releaseData()
 void Player::releaseAnime()
 {
 	releaseParts();
-	if (_currentAnimeRef)
-	{
-		delete _currentAnimeRef;
-		_currentAnimeRef = NULL;
-	}
+//	if (_currentAnimeRef)
+//	{
+//		delete _currentAnimeRef;
+//		_currentAnimeRef = NULL;
+//	}
 }
 
 void Player::play(const std::string& packName, const std::string& animeName, int loop, int startFrameNo)
@@ -889,11 +889,11 @@ void Player::play(AnimeRef* animeRef, int loop, int startFrameNo)
 {
 	if (_currentAnimeRef != animeRef)
 	{
-		if (_currentAnimeRef)
-		{
-			delete _currentAnimeRef;
-			_currentAnimeRef = NULL;
-		}
+//		if (_currentAnimeRef)
+//		{
+//			delete _currentAnimeRef;
+//			_currentAnimeRef = NULL;
+//		}
 
 		_currentAnimeRef = animeRef;
 		
