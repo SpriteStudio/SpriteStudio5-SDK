@@ -31,6 +31,7 @@
 #define SS5Player_h
 
 #include "cocos2d.h"
+#include "SS5PlayerData.h"
 
 
 namespace ss
@@ -150,7 +151,82 @@ struct LabelData
 	int			frameNo;		// Frame no
 };
 
+/**
+* ResluteState
+*/
+struct ResluteState
+{
+	float	x;
+	float	y;
+};
 
+enum {
+	PART_FLAG_INVISIBLE = 1 << 0,
+	PART_FLAG_FLIP_H = 1 << 2,
+	PART_FLAG_FLIP_V = 1 << 3,
+
+	// optional parameter flags
+	PART_FLAG_CELL_INDEX = 1 << 4,
+	PART_FLAG_POSITION_X = 1 << 5,
+	PART_FLAG_POSITION_Y = 1 << 6,
+	PART_FLAG_ANCHOR_X = 1 << 7,
+	PART_FLAG_ANCHOR_Y = 1 << 8,
+	PART_FLAG_ROTATIONX = 1 << 9,
+	PART_FLAG_ROTATIONY = 1 << 10,
+	PART_FLAG_ROTATIONZ = 1 << 11,
+	PART_FLAG_SCALE_X = 1 << 12,
+	PART_FLAG_SCALE_Y = 1 << 13,
+	PART_FLAG_OPACITY = 1 << 14,
+	PART_FLAG_COLOR_BLEND = 1 << 15,
+	PART_FLAG_VERTEX_TRANSFORM = 1 << 16,
+
+	PART_FLAG_SIZE_X = 1 << 17,
+	PART_FLAG_SIZE_Y = 1 << 18,
+
+	PART_FLAG_U_MOVE = 1 << 19,
+	PART_FLAG_V_MOVE = 1 << 20,
+	PART_FLAG_UV_ROTATION = 1 << 21,
+	PART_FLAG_U_SCALE = 1 << 22,
+	PART_FLAG_V_SCALE = 1 << 23,
+
+	PART_FLAG_INSTANCE_KEYFRAME = 1 << 24,
+	PART_FLAG_INSTANCE_START = 1 << 25,
+	PART_FLAG_INSTANCE_END = 1 << 26,
+	PART_FLAG_INSTANCE_SPEED = 1 << 27,
+	PART_FLAG_INSTANCE_LOOP = 1 << 28,
+	PART_FLAG_INSTANCE_LOOP_FLG = 1 << 29,
+
+	NUM_PART_FLAGS
+};
+
+enum {
+	VERTEX_FLAG_LT = 1 << 0,
+	VERTEX_FLAG_RT = 1 << 1,
+	VERTEX_FLAG_LB = 1 << 2,
+	VERTEX_FLAG_RB = 1 << 3,
+	VERTEX_FLAG_ONE = 1 << 4	// color blend only
+};
+
+enum {
+	INSTANCE_LOOP_FLAG_INFINITY = 1 << 0,
+	INSTANCE_LOOP_FLAG_REVERSE = 1 << 1,
+	INSTANCE_LOOP_FLAG_PINGPONG = 1 << 2,
+	INSTANCE_LOOP_FLAG_INDEPENDENT = 1 << 3,
+};
+
+/// Animation Part Type
+enum _enum
+{
+	PARTTYPE_INVALID = -1,
+	PARTTYPE_NULL,			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
+	PARTTYPE_NORMAL,		// 通常パーツ。領域を持つ。画像は無くてもいい。
+	PARTTYPE_TEXT,			// テキスト(予約　未実装）
+	PARTTYPE_INSTANCE,		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
+	PARTTYPE_NUM
+};
+
+//固定少数の定数 10=1ドット
+#define DOT (10.0f)
 #define PART_VISIBLE_MAX (512)
 /**
  * Player
@@ -326,6 +402,21 @@ public:
 	* ラベル名からフレーム位置を取得します.
 	*/
 	int getLabelToFrame(char* findLabelName);
+
+	/**
+	* indexからパーツ名を取得します.
+	*/
+	const char* getPartName(int partId) const;
+
+	/**
+	* パーツ名からindexを取得します.
+	*/
+	int indexOfPart(const char* partName) const;
+
+	/**
+	* パーツの名から、パーツ情報を取得します.
+	*/
+	bool getPartState(ResluteState& result, const char* name, int frameNo = -1);
 
 	/**
 	* パーツの表示、非表示を設定します.

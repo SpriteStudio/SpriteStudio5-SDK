@@ -540,12 +540,9 @@ void ResourceManager::removeAllData()
 }
 
 
-
-
-
 /**
- * State
- */
+* State
+*/
 struct State
 {
 	float	x;
@@ -652,8 +649,6 @@ public:
 
 public:
 };
-
-
 
 
 
@@ -1159,6 +1154,247 @@ void Player::setPartsParentage()
 	}
 }
 
+//indexからパーツ名を取得
+const char* Player::getPartName(int partId) const
+{
+	ToPointer ptr(_currentRs->data);
+
+	const AnimePackData* packData = _currentAnimeRef->animePackData;
+	CCAssert(partId >= 0 && partId < packData->numParts, "partId is out of range.");
+
+	const PartData* partData = static_cast<const PartData*>(ptr(packData->parts));
+	const char* name = static_cast<const char*>(ptr(partData[partId].name));
+	return name;
+}
+
+//パーツ名からindexを取得
+int Player::indexOfPart(const char* partName) const
+{
+	const AnimePackData* packData = _currentAnimeRef->animePackData;
+	for (int i = 0; i < packData->numParts; i++)
+	{
+		const char* name = getPartName(i);
+		if (std::strcmp(partName, name) == 0)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+//パーツ名から指定フレームのパーツステータスを取得する
+bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
+{
+	if (_currentAnimeRef)
+	{
+		int target_partindex = indexOfPart(name);
+
+		const AnimePackData* packData = _currentAnimeRef->animePackData;
+		if (target_partindex >= 0 && target_partindex < static_cast<int>(packData->numParts))
+		{
+			//カレントフレームのパーツステータスを取得する
+			if (frameNo = -1)
+			{
+				//フレームの指定が省略された場合は現在のフレームを使用する
+				frameNo = getFrameNo();
+			}
+
+			ToPointer ptr(_currentRs->data);
+
+			const AnimePackData* packData = _currentAnimeRef->animePackData;
+			const PartData* parts = static_cast<const PartData*>(ptr(packData->parts));
+
+			const AnimationData* animeData = _currentAnimeRef->animationData;
+			const ss_offset* frameDataIndex = static_cast<const ss_offset*>(ptr(animeData->frameData));
+
+			const ss_u16* frameDataArray = static_cast<const ss_u16*>(ptr(frameDataIndex[frameNo]));
+			DataArrayReader reader(frameDataArray);
+
+			const AnimationInitialData* initialDataList = static_cast<const AnimationInitialData*>(ptr(animeData->defaultData));
+
+
+			cocos2d::ccV3F_C4B_T2F_Quad tempQuad;
+
+			/*
+			ssbpには描画順がソートされた状態でデータが含まれており、かつ、各パーツのデータは可変長であるため
+			該当のパーツを検索するのにデータを読み進めていく必要がある。
+			パーツ数が増える事で検索のコストが大幅に増えると思われる。
+			毎フレームステータスを取得する場合はあらかじめ検索するパーツの優先度を低くすることで素早く検索する事ができる。
+			*/
+			for (int index = 0; index < packData->numParts; index++)
+			{
+				int partIndex = reader.readS16();
+				const PartData* partData = &parts[partIndex];
+				const AnimationInitialData* init = &initialDataList[partIndex];
+
+				// optional parameters
+				int flags = reader.readU32();
+				int cellIndex = flags & PART_FLAG_CELL_INDEX ? reader.readS16() : init->cellIndex;
+				float x = flags & PART_FLAG_POSITION_X ? reader.readS16() : init->positionX;
+				float y = flags & PART_FLAG_POSITION_Y ? reader.readS16() : init->positionY;
+				float anchorX = flags & PART_FLAG_ANCHOR_X ? reader.readFloat() : init->anchorX;
+				float anchorY = flags & PART_FLAG_ANCHOR_Y ? reader.readFloat() : init->anchorY;
+				float rotationX = flags & PART_FLAG_ROTATIONX ? -reader.readFloat() : -init->rotationX;
+				float rotationY = flags & PART_FLAG_ROTATIONY ? -reader.readFloat() : -init->rotationY;
+				float rotationZ = flags & PART_FLAG_ROTATIONZ ? -reader.readFloat() : -init->rotationZ;
+				float scaleX = flags & PART_FLAG_SCALE_X ? reader.readFloat() : init->scaleX;
+				float scaleY = flags & PART_FLAG_SCALE_Y ? reader.readFloat() : init->scaleY;
+				int opacity = flags & PART_FLAG_OPACITY ? reader.readU16() : init->opacity;
+				float size_x = flags & PART_FLAG_SIZE_X ? reader.readFloat() : init->size_X;
+				float size_y = flags & PART_FLAG_SIZE_Y ? reader.readFloat() : init->size_Y;
+				float uv_move_X = flags & PART_FLAG_U_MOVE ? reader.readFloat() : init->uv_move_X;
+				float uv_move_Y = flags & PART_FLAG_V_MOVE ? reader.readFloat() : init->uv_move_Y;
+				float uv_rotation = flags & PART_FLAG_UV_ROTATION ? reader.readFloat() : init->uv_rotation;
+				float uv_scale_X = flags & PART_FLAG_U_SCALE ? reader.readFloat() : init->uv_scale_X;
+				float uv_scale_Y = flags & PART_FLAG_V_SCALE ? reader.readFloat() : init->uv_scale_Y;
+
+				bool isVisibled = !(flags & PART_FLAG_INVISIBLE);
+
+				//固定少数を少数へ戻す
+				x = x / DOT;
+				y = y / DOT;
+
+				// 頂点変形のオフセット値を反映
+				if (flags & PART_FLAG_VERTEX_TRANSFORM)
+				{
+					int vt_flags = reader.readU16();
+					if (vt_flags & VERTEX_FLAG_LT)
+					{
+						reader.readS16();
+						reader.readS16();
+					}
+					if (vt_flags & VERTEX_FLAG_RT)
+					{
+						reader.readS16();
+						reader.readS16();
+					}
+					if (vt_flags & VERTEX_FLAG_LB)
+					{
+						reader.readS16();
+						reader.readS16();
+					}
+					if (vt_flags & VERTEX_FLAG_RB)
+					{
+						reader.readS16();
+						reader.readS16();
+					}
+				}
+
+				// カラーブレンドの反映
+				cocos2d::ccColor4B color4 = { 0xff, 0xff, 0xff, 0xff };
+				if (flags & PART_FLAG_COLOR_BLEND)
+				{
+
+					int typeAndFlags = reader.readU16();
+					int funcNo = typeAndFlags & 0xff;
+					int cb_flags = (typeAndFlags >> 8) & 0xff;
+					float blend_rate = 1.0f;
+
+					if (cb_flags & VERTEX_FLAG_ONE)
+					{
+						blend_rate = reader.readFloat();
+						reader.readColor(color4);
+					}
+					else
+					{
+						if (cb_flags & VERTEX_FLAG_LT)
+						{
+							blend_rate = reader.readFloat();
+							reader.readColor(color4);
+						}
+						if (cb_flags & VERTEX_FLAG_RT)
+						{
+							blend_rate = reader.readFloat();
+							reader.readColor(color4);
+						}
+						if (cb_flags & VERTEX_FLAG_LB)
+						{
+							blend_rate = reader.readFloat();
+							reader.readColor(color4);
+						}
+						if (cb_flags & VERTEX_FLAG_RB)
+						{
+							blend_rate = reader.readFloat();
+							reader.readColor(color4);
+						}
+					}
+				}
+
+				//インスタンスパーツの場合
+				if (partData->type == PARTTYPE_INSTANCE)
+				{
+					//描画
+					int refKeyframe = 0;
+					int refStartframe = 0;
+					int refEndframe = 0;
+					float refSpeed = 0;
+					int refloopNum = 0;
+					bool infinity = false;
+					bool reverse = false;
+					bool pingpong = false;
+					bool independent = false;
+
+					if (flags & PART_FLAG_INSTANCE_KEYFRAME)
+					{
+						refKeyframe = reader.readS16();
+					}
+					if (flags & PART_FLAG_INSTANCE_START)
+					{
+						refStartframe = reader.readS16();
+					}
+					if (flags & PART_FLAG_INSTANCE_END)
+					{
+						refEndframe = reader.readS16();
+					}
+					if (flags & PART_FLAG_INSTANCE_SPEED)
+					{
+						refSpeed = reader.readFloat();
+					}
+					if (flags & PART_FLAG_INSTANCE_LOOP)
+					{
+						refloopNum = reader.readS16();
+					}
+					if (flags & PART_FLAG_INSTANCE_LOOP_FLG)
+					{
+						int lflags = reader.readS16();
+						if (lflags & INSTANCE_LOOP_FLAG_INFINITY)
+						{
+							//無限ループ
+							infinity = true;
+						}
+						if (lflags & INSTANCE_LOOP_FLAG_REVERSE)
+						{
+							//逆再生
+							reverse = true;
+						}
+						if (lflags & INSTANCE_LOOP_FLAG_PINGPONG)
+						{
+							//往復
+							pingpong = true;
+						}
+						if (lflags & INSTANCE_LOOP_FLAG_INDEPENDENT)
+						{
+							//独立
+							independent = true;
+						}
+					}
+				}
+
+				if (partIndex == target_partindex)
+				{
+					//必要に応じて取得するパラメータを追加してください。
+					result.x = x / DOT;
+					result.y = y / DOT;
+					return true;
+				}
+
+			}
+
+		}
+	}
+	return false;
+}
+
 
 //ラベル名からラベルの設定されているフレームを取得
 //ラベルが存在しない場合は戻り値が-1となります。
@@ -1207,74 +1443,6 @@ void Player::setPartVisible(int partNo, bool flg)
 	_partVisible[partNo] = flg;
 }
 
-
-enum {
-	PART_FLAG_INVISIBLE			= 1 << 0,
-	PART_FLAG_FLIP_H			= 1 << 2,
-	PART_FLAG_FLIP_V			= 1 << 3,
-
-	// optional parameter flags
-	PART_FLAG_CELL_INDEX		= 1 << 4,
-	PART_FLAG_POSITION_X		= 1 << 5,
-	PART_FLAG_POSITION_Y		= 1 << 6,
-	PART_FLAG_ANCHOR_X			= 1 << 7,
-	PART_FLAG_ANCHOR_Y			= 1 << 8,
-	PART_FLAG_ROTATIONX			= 1 << 9,
-	PART_FLAG_ROTATIONY			= 1 << 10,
-	PART_FLAG_ROTATIONZ			= 1 << 11,
-	PART_FLAG_SCALE_X			= 1 << 12,
-	PART_FLAG_SCALE_Y			= 1 << 13,
-	PART_FLAG_OPACITY			= 1 << 14,
-	PART_FLAG_COLOR_BLEND		= 1 << 15,
-	PART_FLAG_VERTEX_TRANSFORM	= 1 << 16,
-
-	PART_FLAG_SIZE_X			= 1 << 17,
-	PART_FLAG_SIZE_Y			= 1 << 18,
-
-	PART_FLAG_U_MOVE			= 1 << 19,
-	PART_FLAG_V_MOVE			= 1 << 20,
-	PART_FLAG_UV_ROTATION		= 1 << 21,
-	PART_FLAG_U_SCALE			= 1 << 22,
-	PART_FLAG_V_SCALE			= 1 << 23,
-
-	PART_FLAG_INSTANCE_KEYFRAME	= 1 << 24,
-	PART_FLAG_INSTANCE_START	= 1 << 25,
-	PART_FLAG_INSTANCE_END		= 1 << 26,
-	PART_FLAG_INSTANCE_SPEED	= 1 << 27,
-	PART_FLAG_INSTANCE_LOOP		= 1 << 28,
-	PART_FLAG_INSTANCE_LOOP_FLG	= 1 << 29,
-
-	NUM_PART_FLAGS
-};
-
-enum {
-	VERTEX_FLAG_LT		= 1 << 0,
-	VERTEX_FLAG_RT		= 1 << 1,
-	VERTEX_FLAG_LB		= 1 << 2,
-	VERTEX_FLAG_RB		= 1 << 3,
-	VERTEX_FLAG_ONE		= 1 << 4	// color blend only
-};
-
-enum {
-	INSTANCE_LOOP_FLAG_INFINITY =    1 << 0,
-	INSTANCE_LOOP_FLAG_REVERSE =     1 << 1,
-	INSTANCE_LOOP_FLAG_PINGPONG =    1 << 2,
-	INSTANCE_LOOP_FLAG_INDEPENDENT = 1 << 3,
-};
-
-/// Animation Part Type
-enum _enum
-{
-	PARTTYPE_INVALID = -1,
-	PARTTYPE_NULL,			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
-	PARTTYPE_NORMAL,		// 通常パーツ。領域を持つ。画像は無くてもいい。
-	PARTTYPE_TEXT,			// テキスト(予約　未実装）
-	PARTTYPE_INSTANCE,		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
-	PARTTYPE_NUM
-};
-
-//固定少数の定数 10=1ドット
-#define DOT (10.0f)
 
 void Player::setFrame(int frameNo)
 {
@@ -1334,7 +1502,7 @@ void Player::setFrame(int frameNo)
 		float scaleY   = flags & PART_FLAG_SCALE_Y ? reader.readFloat() : init->scaleY;
 		int opacity    = flags & PART_FLAG_OPACITY ? reader.readU16() : init->opacity;
 		float size_x   = flags & PART_FLAG_SIZE_X ? reader.readFloat() : init->size_X;
-		float size_y   = flags & PART_FLAG_SIZE_Y ? reader.readFloat() : init->size_X;
+		float size_y   = flags & PART_FLAG_SIZE_Y ? reader.readFloat() : init->size_Y;
 		float uv_move_X   = flags & PART_FLAG_U_MOVE ? reader.readFloat() : init->uv_move_X;
 		float uv_move_Y   = flags & PART_FLAG_V_MOVE ? reader.readFloat() : init->uv_move_Y;
 		float uv_rotation = flags & PART_FLAG_UV_ROTATION ? reader.readFloat() : init->uv_rotation;
