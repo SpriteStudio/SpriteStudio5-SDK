@@ -37,8 +37,11 @@
 namespace ss
 {
 
-class ResourceSet;
+class CellCache;
+class CellRef;
+class AnimeCache;
 class AnimeRef;
+class ResourceSet;
 struct ProjectData;
 
 /**
@@ -98,7 +101,20 @@ public:
 	 */
 	void removeAllData();
 
+	/**
+	* 名前に対応するデータ取得します.
+	*/
 	ResourceSet* getData(const std::string& dataKey);
+
+	/**
+	* 指定したセルのテクスチャを変更します.
+	* @param  dataName       ssbp名（拡張子を除くファイル名）
+	* @param  callName       ssce名（拡張子を除くファイル名）
+	* @param  texture        変更後のテクスチャ
+    *                        テクスチャはポインタを参照するだけなので、使用する側で実体を管理する必要があります。
+	* @return 変更を行ったか
+	*/
+	bool ResourceManager::changeTexture(char* dataName, char* callName, cocos2d::Texture2D* texture);
 
 	/**
 	 * 新たなResourceManagerインスタンスを構築します.

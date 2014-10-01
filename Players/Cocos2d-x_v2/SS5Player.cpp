@@ -191,6 +191,32 @@ public:
 		return ref;
 	}
 
+	//指定した名前のセルの参照テクスチャを変更する
+	bool setCellRefTexture(const ProjectData* data, const char* cellName, cocos2d::CCTexture2D* texture)
+	{
+		bool rc = false;
+
+		ToPointer ptr(data);
+		const Cell* cells = static_cast<const Cell*>(ptr(data->cells));
+
+		//名前からインデックスの取得
+		int cellindex = -1;
+		for (int i = 0; i < data->numCells; i++)
+		{
+			const Cell* cell = &cells[i];
+			const CellMap* cellMap = static_cast<const CellMap*>(ptr(cell->cellMap));
+			const char* name = static_cast<const char*>(ptr(cellMap->name));
+			if (std::strcmp(cellName, name) == 0)
+			{
+				CellRef* ref = getReference(i);
+				ref->texture = texture;
+				rc = true;
+			}
+		}
+
+		return(rc);
+	}
+
 protected:
 	void init(const ProjectData* data, const std::string& imageBaseDir)
 	{
@@ -538,6 +564,18 @@ void ResourceManager::removeAllData()
 {
 	_dataDic.clear();
 }
+
+//データ名、セル名を指定して、セルで使用しているテクスチャを変更する
+bool ResourceManager::changeTexture(char* dataName, char* callName, cocos2d::CCTexture2D* texture)
+{
+	bool rc = false;
+
+	ResourceSet* rs = getData(dataName);
+	rc = rs->cellCache->setCellRefTexture(rs->data, callName, texture);
+
+	return(rc);
+}
+
 
 
 /**
