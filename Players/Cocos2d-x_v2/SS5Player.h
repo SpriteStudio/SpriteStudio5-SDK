@@ -115,7 +115,7 @@ public:
 	*                        テクスチャはポインタを参照するだけなので、使用する側で実体を管理する必要があります。
 	* @return 変更を行ったか
 	*/
-	bool ResourceManager::changeTexture(char* dataName, char* callName, cocos2d::CCTexture2D* texture);
+	bool changeTexture(char* dataName, char* callName, cocos2d::CCTexture2D* texture);
 
 	/**
 	 * 新たなResourceManagerインスタンスを構築します.
