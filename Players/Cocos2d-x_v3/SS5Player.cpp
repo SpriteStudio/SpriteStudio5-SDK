@@ -1171,15 +1171,20 @@ int Player::indexOfPart(const char* partName) const
 	return -1;
 }
 
-//パーツ名から指定フレームのパーツステータスを取得する
+/*
+ パーツ名から指定フレームのパーツステータスを取得します。
+ 必要に応じて　ResluteState　を編集しデータを取得してください。
+
+ パーツの座標を取得する場合、対象のパーツをrootパーツの直下に配置してください。
+ 親パーツが移動した場合、子供パーツも合わせて移動しますが、子供の移動量はデータとして出力されてないため更新されません。
+ 子供の表示位置を取得する場合はスプライトのマトリクスから取得する必要がありますが、
+ 取得するためにマトリクスを更新すると表示されているスプライトに影響があるため、この関数ではマトリクスは更新は行いません。
+ 画面に表示されている座標ではなく「SS5上でアトリビュートに表示されている座標」が取得できる形になります。
+*/
 bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 {
 	if (_currentAnimeRef)
 	{
-		int target_partindex = indexOfPart(name);
-
-		const AnimePackData* packData = _currentAnimeRef->animePackData;
-		if (target_partindex >= 0 && target_partindex < static_cast<int>(packData->numParts))
 		{
 			//カレントフレームのパーツステータスを取得する
 			if (frameNo = -1)
@@ -1369,11 +1374,15 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 					}
 				}
 
-				if (partIndex == target_partindex)
+				//同じパーツ名の場合に取得する情報を設定して処理終了
+				const char* partName = static_cast<const char*>(ptr(partData->name));
+				if (std::strcmp(partName, name) == 0)
 				{
 					//必要に応じて取得するパラメータを追加してください。
-					result.x = x / DOT;
-					result.y = y / DOT;
+					//当たり判定などのフラグを取得する場合は　partData　のメンバを参照してください。
+					result.x = x;
+					result.y = y;
+
 					return true;
 				}
 

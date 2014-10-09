@@ -15,15 +15,6 @@ typedef int				ss_s32;
 typedef int				ss_offset;
 
 
-enum BlendType
-{
-	BLEND_MIX,		///< 0 ブレンド（ミックス）
-	BLEND_MUL,		///< 1 乗算
-	BLEND_ADD,		///< 2 加算
-	BLEND_SUB		///< 3 減算
-};
-
-
 struct CellMap
 {
 	ss_offset	name;			// const char*
@@ -88,12 +79,12 @@ struct AnimationInitialData
 struct PartData
 {
 	ss_offset	name;			// const char*
-	ss_s16		index;
-	ss_s16		parentIndex;
-	ss_s16		type;
-	ss_s16		boundsType;
+	ss_s16		index;			//SS内のパーツインデックス
+	ss_s16		parentIndex;	//親のパーツインデックス
+	ss_s16		type;			//パーツ種別
+	ss_s16		boundsType;		//当たり判定種類
 	ss_s16		alphaBlendType;	// BlendType
-	ss_offset	refname;		// const char*
+	ss_offset	refname;		// const char*　インスタンスとして配置されるアニメーション名
 };
 
 

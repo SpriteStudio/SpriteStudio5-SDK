@@ -178,6 +178,7 @@ struct ResluteState
 	float	y;
 };
 
+//含まれるパーツデータフラグ
 enum {
 	PART_FLAG_INVISIBLE = 1 << 0,
 	PART_FLAG_FLIP_H = 1 << 2,
@@ -217,6 +218,7 @@ enum {
 	NUM_PART_FLAGS
 };
 
+//頂点変形フラグ
 enum {
 	VERTEX_FLAG_LT = 1 << 0,
 	VERTEX_FLAG_RT = 1 << 1,
@@ -225,6 +227,7 @@ enum {
 	VERTEX_FLAG_ONE = 1 << 4	// color blend only
 };
 
+//インスタンスフラグ
 enum {
 	INSTANCE_LOOP_FLAG_INFINITY = 1 << 0,
 	INSTANCE_LOOP_FLAG_REVERSE = 1 << 1,
@@ -233,7 +236,7 @@ enum {
 };
 
 /// Animation Part Type
-enum _enum
+enum
 {
 	PARTTYPE_INVALID = -1,
 	PARTTYPE_NULL,			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
@@ -241,6 +244,28 @@ enum _enum
 	PARTTYPE_TEXT,			// テキスト(予約　未実装）
 	PARTTYPE_INSTANCE,		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
 	PARTTYPE_NUM
+};
+
+//当たり判定の種類
+enum
+{
+	INVALID = -1,
+	NONE,			///< 当たり判定として使わない。
+	QUAD,			///< 自在に変形する四辺形。頂点変形など適用後の４角を結んだ領域。最も重い。
+	AABB,			///< 回転しない全体を囲む矩形で交差判定
+	CIRCLE,			///< 真円の半径で距離により判定する
+	CIRCLE_SMIN,	///< 真円の半径で距離により判定する (スケールはx,yの最小値をとる）
+	CIRCLE_SMAX,	///< 真円の半径で距離により判定する (スケールはx,yの最大値をとる）
+	num
+};
+
+//αブレンド方法
+enum BlendType
+{
+	BLEND_MIX,		///< 0 ブレンド（ミックス）
+	BLEND_MUL,		///< 1 乗算
+	BLEND_ADD,		///< 2 加算
+	BLEND_SUB		///< 3 減算
 };
 
 //固定少数の定数 10=1ドット
