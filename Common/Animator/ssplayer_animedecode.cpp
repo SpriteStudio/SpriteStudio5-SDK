@@ -549,6 +549,7 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 					SsGetKeyValue( nowTime , attr , state->uvScale.y );
 					break;
 				case SsAttributeKind::boundr:	///< 当たり判定用の半径
+					SsGetKeyValue( nowTime , attr , state->boundingRadius );
 					break;
 				case SsAttributeKind::user:		///< Ver.4 互換ユーザーデータ
 					break;

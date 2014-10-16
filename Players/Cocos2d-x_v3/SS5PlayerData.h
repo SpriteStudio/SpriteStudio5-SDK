@@ -73,6 +73,7 @@ struct AnimationInitialData
 	float		uv_rotation;
 	float		uv_scale_X;
 	float		uv_scale_Y;
+	float		boundingRadius;
 };
 
 

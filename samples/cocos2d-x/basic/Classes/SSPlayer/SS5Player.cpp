@@ -1222,25 +1222,26 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 				const AnimationInitialData* init = &initialDataList[partIndex];
 
 				// optional parameters
-				int flags = reader.readU32();
-				int cellIndex = flags & PART_FLAG_CELL_INDEX ? reader.readS16() : init->cellIndex;
-				float x = flags & PART_FLAG_POSITION_X ? reader.readS16() : init->positionX;
-				float y = flags & PART_FLAG_POSITION_Y ? reader.readS16() : init->positionY;
-				float anchorX = flags & PART_FLAG_ANCHOR_X ? reader.readFloat() : init->anchorX;
-				float anchorY = flags & PART_FLAG_ANCHOR_Y ? reader.readFloat() : init->anchorY;
-				float rotationX = flags & PART_FLAG_ROTATIONX ? -reader.readFloat() : -init->rotationX;
-				float rotationY = flags & PART_FLAG_ROTATIONY ? -reader.readFloat() : -init->rotationY;
-				float rotationZ = flags & PART_FLAG_ROTATIONZ ? -reader.readFloat() : -init->rotationZ;
-				float scaleX = flags & PART_FLAG_SCALE_X ? reader.readFloat() : init->scaleX;
-				float scaleY = flags & PART_FLAG_SCALE_Y ? reader.readFloat() : init->scaleY;
-				int opacity = flags & PART_FLAG_OPACITY ? reader.readU16() : init->opacity;
-				float size_x = flags & PART_FLAG_SIZE_X ? reader.readFloat() : init->size_X;
-				float size_y = flags & PART_FLAG_SIZE_Y ? reader.readFloat() : init->size_Y;
-				float uv_move_X = flags & PART_FLAG_U_MOVE ? reader.readFloat() : init->uv_move_X;
-				float uv_move_Y = flags & PART_FLAG_V_MOVE ? reader.readFloat() : init->uv_move_Y;
-				float uv_rotation = flags & PART_FLAG_UV_ROTATION ? reader.readFloat() : init->uv_rotation;
-				float uv_scale_X = flags & PART_FLAG_U_SCALE ? reader.readFloat() : init->uv_scale_X;
-				float uv_scale_Y = flags & PART_FLAG_V_SCALE ? reader.readFloat() : init->uv_scale_Y;
+				int flags = reader.readU32();																			//非表示、反転フラグ
+				int cellIndex = flags & PART_FLAG_CELL_INDEX ? reader.readS16() : init->cellIndex;						//セルの番号
+				float x = flags & PART_FLAG_POSITION_X ? reader.readS16() : init->positionX;							//X座標
+				float y = flags & PART_FLAG_POSITION_Y ? reader.readS16() : init->positionY;							//Y座標
+				float anchorX = flags & PART_FLAG_ANCHOR_X ? reader.readFloat() : init->anchorX;						//原点オフセット
+				float anchorY = flags & PART_FLAG_ANCHOR_Y ? reader.readFloat() : init->anchorY;						//原点オフセット
+				float rotationX = flags & PART_FLAG_ROTATIONX ? -reader.readFloat() : -init->rotationX;					//X回転
+				float rotationY = flags & PART_FLAG_ROTATIONY ? -reader.readFloat() : -init->rotationY;					//Y回転
+				float rotationZ = flags & PART_FLAG_ROTATIONZ ? -reader.readFloat() : -init->rotationZ;					//Z回転
+				float scaleX = flags & PART_FLAG_SCALE_X ? reader.readFloat() : init->scaleX;							//X拡大率
+				float scaleY = flags & PART_FLAG_SCALE_Y ? reader.readFloat() : init->scaleY;							//Y拡大率
+				int opacity = flags & PART_FLAG_OPACITY ? reader.readU16() : init->opacity;								//透明度
+				float size_x = flags & PART_FLAG_SIZE_X ? reader.readFloat() : init->size_X;							//Xサイズ
+				float size_y = flags & PART_FLAG_SIZE_Y ? reader.readFloat() : init->size_Y;							//Yサイズ
+				float uv_move_X = flags & PART_FLAG_U_MOVE ? reader.readFloat() : init->uv_move_X;						//UVX移動
+				float uv_move_Y = flags & PART_FLAG_V_MOVE ? reader.readFloat() : init->uv_move_Y;						//UVY移動
+				float uv_rotation = flags & PART_FLAG_UV_ROTATION ? reader.readFloat() : init->uv_rotation;				//UV回転
+				float uv_scale_X = flags & PART_FLAG_U_SCALE ? reader.readFloat() : init->uv_scale_X;					//UVXスケール
+				float uv_scale_Y = flags & PART_FLAG_V_SCALE ? reader.readFloat() : init->uv_scale_Y;					//UVYスケール
+				float boundingRadius = flags & PART_FLAG_BOUNDINGRADIUS ? reader.readFloat() : init->boundingRadius;	//当たり半径
 
 				bool isVisibled = !(flags & PART_FLAG_INVISIBLE);
 
@@ -1379,7 +1380,7 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 				if (std::strcmp(partName, name) == 0)
 				{
 					//必要に応じて取得するパラメータを追加してください。
-					//当たり判定などのフラグを取得する場合は　partData　のメンバを参照してください。
+					//当たり判定などのパーツに付属するフラグを取得する場合は　partData　のメンバを参照してください。
 					result.x = x;
 					result.y = y;
 
@@ -1505,6 +1506,7 @@ void Player::setFrame(int frameNo)
 		float uv_rotation = flags & PART_FLAG_UV_ROTATION ? reader.readFloat() : init->uv_rotation;
 		float uv_scale_X  = flags & PART_FLAG_U_SCALE ? reader.readFloat() : init->uv_scale_X;
 		float uv_scale_Y  = flags & PART_FLAG_V_SCALE ? reader.readFloat() : init->uv_scale_Y;
+		float boundingRadius = flags & PART_FLAG_BOUNDINGRADIUS ? reader.readFloat() : init->boundingRadius;
 
 		bool isVisibled = !(flags & PART_FLAG_INVISIBLE);
 

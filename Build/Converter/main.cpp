@@ -62,13 +62,14 @@ enum {
 	PART_FLAG_UV_ROTATION		= 1 << 21,
 	PART_FLAG_U_SCALE			= 1 << 22,
 	PART_FLAG_V_SCALE			= 1 << 23,
+	PART_FLAG_BOUNDINGRADIUS	= 1 << 24,
 
-	PART_FLAG_INSTANCE_KEYFRAME	= 1 << 24,
-	PART_FLAG_INSTANCE_START	= 1 << 25,
-	PART_FLAG_INSTANCE_END		= 1 << 26,
-	PART_FLAG_INSTANCE_SPEED	= 1 << 27,
-	PART_FLAG_INSTANCE_LOOP		= 1 << 28,
-	PART_FLAG_INSTANCE_LOOP_FLG	= 1 << 29,
+	PART_FLAG_INSTANCE_KEYFRAME	= 1 << 25,
+	PART_FLAG_INSTANCE_START	= 1 << 26,
+	PART_FLAG_INSTANCE_END		= 1 << 27,
+	PART_FLAG_INSTANCE_SPEED	= 1 << 28,
+	PART_FLAG_INSTANCE_LOOP		= 1 << 29,
+	PART_FLAG_INSTANCE_LOOP_FLG	= 1 << 30,
 
 	NUM_PART_FLAGS
 };
@@ -208,6 +209,7 @@ struct PartInitialData
 	float	uv_rotation;
 	float	uv_scale_X;
 	float	uv_scale_Y;
+	float	boundingRadius;
 };
 
 
@@ -461,7 +463,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				init.uv_rotation = state->uvRotation;
 				init.uv_scale_X = state->uvScale.x;
 				init.uv_scale_Y = state->uvScale.y;
-
+				init.boundingRadius = state->boundingRadius;
 
 
 
@@ -490,6 +492,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				initialData->add(Lump::floatData(init.uv_rotation));
 				initialData->add(Lump::floatData(init.uv_scale_X));
 				initialData->add(Lump::floatData(init.uv_scale_Y));
+				initialData->add(Lump::floatData(init.boundingRadius));
 			}
 
 
@@ -514,7 +517,6 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 //						break;
 //					}
 //				}
-				
 				
 				// パーツごとのデータを出力する
 				Lump* frameData = Lump::set("ss::ss_u16[]", true);
@@ -581,7 +583,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					float size_scale_y = state->scale.y;
 					if (size_scale_x != init.scaleX)               p_flags |= PART_FLAG_SCALE_X;
 					if (size_scale_y != init.scaleY)               p_flags |= PART_FLAG_SCALE_Y;
-					if ((int)state->alpha * 255 != init.opacity)   p_flags |= PART_FLAG_OPACITY;
+					if ((int)( state->alpha * 255 ) != init.opacity)   p_flags |= PART_FLAG_OPACITY;
 					if (state->size.x != init.size_X)              p_flags |= PART_FLAG_SIZE_X;
 					if (state->size.y != init.size_X)              p_flags |= PART_FLAG_SIZE_Y;
 					if (state->uvTranslate.x != init.uv_move_X )   p_flags |= PART_FLAG_U_MOVE;
@@ -589,6 +591,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (state->uvRotation != init.uv_rotation)     p_flags |= PART_FLAG_UV_ROTATION;
 					if (state->uvScale.x != init.uv_scale_X)       p_flags |= PART_FLAG_U_SCALE;
 					if (state->uvScale.y != init.uv_scale_Y)       p_flags |= PART_FLAG_V_SCALE;
+					if (state->boundingRadius != init.boundingRadius)	p_flags |= PART_FLAG_BOUNDINGRADIUS;
 
 
 					// カラーブレンド値を格納する必要があるかチェック
@@ -692,6 +695,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (p_flags & PART_FLAG_UV_ROTATION) frameData->add(Lump::floatData(state->uvRotation));
 					if (p_flags & PART_FLAG_U_SCALE) frameData->add(Lump::floatData(state->uvScale.x));
 					if (p_flags & PART_FLAG_V_SCALE) frameData->add(Lump::floatData(state->uvScale.y));
+
+					if (p_flags & PART_FLAG_BOUNDINGRADIUS) frameData->add(Lump::floatData(state->boundingRadius));
 
 
 					// 頂点変形データ
