@@ -206,7 +206,7 @@ public:
 			const Cell* cell = &cells[i];
 			const CellMap* cellMap = static_cast<const CellMap*>(ptr(cell->cellMap));
 			const char* name = static_cast<const char*>(ptr(cellMap->name));
-			if (std::strcmp(cellName, name) == 0)
+			if (strcmp(cellName, name) == 0)
 			{
 				CellRef* ref = getReference(i);
 				ref->texture = texture;
@@ -1212,7 +1212,7 @@ int Player::indexOfPart(const char* partName) const
 	for (int i = 0; i < packData->numParts; i++)
 	{
 		const char* name = getPartName(i);
-		if (std::strcmp(partName, name) == 0)
+		if (strcmp(partName, name) == 0)
 		{
 			return i;
 		}
@@ -1424,7 +1424,7 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 
 				//同じパーツ名の場合に取得する情報を設定して処理終了
 				const char* partName = static_cast<const char*>(ptr(partData->name));
-				if (std::strcmp(partName, name) == 0)
+				if (strcmp(partName, name) == 0)
 				{
 					//必要に応じて取得するパラメータを追加してください。
 					//当たり判定などのパーツに付属するフラグを取得する場合は　partData　のメンバを参照してください。
