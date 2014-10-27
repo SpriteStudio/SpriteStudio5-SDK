@@ -102,7 +102,19 @@ int count = 0;
 bool pause = false;
 void update(float dt)
 {
+	char str[128];
 
+	//パーツ名から座標の取得を行う
+	//パーツのステータスを更新するため、指定フレームから情報を取る場合は、描画前にupdateを予備出すこと。
+	ss::ResluteState result;
+	ssplayer->getPartState(result, "body");
+
+	//取得座用の表示
+	sprintf(str, "body = x:%f y:%f", result.x, result.y);
+	DrawString(100, 120, str, GetColor(255, 255, 255));
+
+
+	//キー入力操作
 	int animax = ssplayer->getMaxFrame();
 	if (CheckHitKey(KEY_INPUT_ESCAPE))
 	{
@@ -187,7 +199,6 @@ void update(float dt)
 	}
 
 	//アニメーションのフレームを表示
-	char str[128];
 	sprintf(str, "play:%d frame:%d", (int)pause, count );
 	DrawString(100, 100, str, GetColor(255, 255, 255));
 

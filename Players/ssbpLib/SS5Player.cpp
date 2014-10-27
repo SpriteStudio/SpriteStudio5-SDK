@@ -1449,9 +1449,8 @@ int Player::indexOfPart(const char* partName) const
  パーツ名から指定フレームのパーツステータスを取得します。
  必要に応じて　ResluteState　を編集しデータを取得してください。
 
- パーツの座標を取得する場合、対象のパーツをrootパーツの直下に配置してください。
- 親パーツが移動した場合、子供パーツも合わせて移動しますが、子供の移動量はデータとして出力されてないため更新されません。
- 画面に表示されている座標ではなく「SS5上でアトリビュートに表示されている座標」が取得できる形になります。
+ 指定したフレームの状態にすべてのパーツのステータスを更新します。
+ 描画を行う前にupdateを呼び出し、パーツステータスを表示に状態に戻してからdrawしてください。
 */
 bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 {
@@ -1465,193 +1464,27 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 				frameNo = getFrameNo();
 			}
 
+			//パーツステータスの更新
+			setFrame(frameNo);
+
 			ToPointer ptr(_currentRs->data);
 
 			const AnimePackData* packData = _currentAnimeRef->animePackData;
 			const PartData* parts = static_cast<const PartData*>(ptr(packData->parts));
 
-			const AnimationData* animeData = _currentAnimeRef->animationData;
-			const ss_offset* frameDataIndex = static_cast<const ss_offset*>(ptr(animeData->frameData));
-
-			const ss_u16* frameDataArray = static_cast<const ss_u16*>(ptr(frameDataIndex[frameNo]));
-			DataArrayReader reader(frameDataArray);
-
-			const AnimationInitialData* initialDataList = static_cast<const AnimationInitialData*>(ptr(animeData->defaultData));
-
-			/*
-			ssbpには描画順がソートされた状態でデータが含まれており、かつ、各パーツのデータは可変長であるため
-			該当のパーツを検索するのにデータを読み進めていく必要がある。
-			パーツ数が増える事で検索のコストが大幅に増えると思われる。
-			毎フレームステータスを取得する場合はあらかじめ検索するパーツの優先度を低くすることで素早く検索する事ができる。
-			*/
 			for (int index = 0; index < packData->numParts; index++)
 			{
-				int partIndex = reader.readS16();
+				int partIndex = _partIndex[index];
+
 				const PartData* partData = &parts[partIndex];
-				const AnimationInitialData* init = &initialDataList[partIndex];
-
-				// optional parameters
-				int flags = reader.readU32();																			//非表示、反転フラグ
-				int cellIndex = flags & PART_FLAG_CELL_INDEX ? reader.readS16() : init->cellIndex;						//セルの番号
-				float x = flags & PART_FLAG_POSITION_X ? reader.readS16() : init->positionX;							//X座標
-				float y = flags & PART_FLAG_POSITION_Y ? reader.readS16() : init->positionY;							//Y座標
-				float anchorX = flags & PART_FLAG_ANCHOR_X ? reader.readFloat() : init->anchorX;						//原点オフセット
-				float anchorY = flags & PART_FLAG_ANCHOR_Y ? reader.readFloat() : init->anchorY;						//原点オフセット
-				float rotationX = flags & PART_FLAG_ROTATIONX ? -reader.readFloat() : -init->rotationX;					//X回転
-				float rotationY = flags & PART_FLAG_ROTATIONY ? -reader.readFloat() : -init->rotationY;					//Y回転
-				float rotationZ = flags & PART_FLAG_ROTATIONZ ? -reader.readFloat() : -init->rotationZ;					//Z回転
-				float scaleX = flags & PART_FLAG_SCALE_X ? reader.readFloat() : init->scaleX;							//X拡大率
-				float scaleY = flags & PART_FLAG_SCALE_Y ? reader.readFloat() : init->scaleY;							//Y拡大率
-				int opacity = flags & PART_FLAG_OPACITY ? reader.readU16() : init->opacity;								//透明度
-				float size_X = flags & PART_FLAG_SIZE_X ? reader.readFloat() : init->size_X;							//Xサイズ
-				float size_Y = flags & PART_FLAG_SIZE_Y ? reader.readFloat() : init->size_Y;							//Yサイズ
-				float uv_move_X = flags & PART_FLAG_U_MOVE ? reader.readFloat() : init->uv_move_X;						//UVX移動
-				float uv_move_Y = flags & PART_FLAG_V_MOVE ? reader.readFloat() : init->uv_move_Y;						//UVY移動
-				float uv_rotation = flags & PART_FLAG_UV_ROTATION ? reader.readFloat() : init->uv_rotation;				//UV回転
-				float uv_scale_X = flags & PART_FLAG_U_SCALE ? reader.readFloat() : init->uv_scale_X;					//UVXスケール
-				float uv_scale_Y = flags & PART_FLAG_V_SCALE ? reader.readFloat() : init->uv_scale_Y;					//UVYスケール
-				float boundingRadius = flags & PART_FLAG_BOUNDINGRADIUS ? reader.readFloat() : init->boundingRadius;	//当たり半径
-
-				bool isVisibled = !(flags & PART_FLAG_INVISIBLE);
-
-				//固定少数を少数へ戻す
-				x = x / DOT;
-				y = y / DOT;
-
-				// 頂点変形のオフセット値を反映
-				if (flags & PART_FLAG_VERTEX_TRANSFORM)
-				{
-					int vt_flags = reader.readU16();
-					if (vt_flags & VERTEX_FLAG_LT)
-					{
-						reader.readS16();
-						reader.readS16();
-					}
-					if (vt_flags & VERTEX_FLAG_RT)
-					{
-						reader.readS16();
-						reader.readS16();
-					}
-					if (vt_flags & VERTEX_FLAG_LB)
-					{
-						reader.readS16();
-						reader.readS16();
-					}
-					if (vt_flags & VERTEX_FLAG_RB)
-					{
-						reader.readS16();
-						reader.readS16();
-					}
-				}
-
-				// カラーブレンドの反映
-				SSColor4B color4 = { 0xff, 0xff, 0xff, 0xff };
-				if (flags & PART_FLAG_COLOR_BLEND)
-				{
-
-					int typeAndFlags = reader.readU16();
-					int funcNo = typeAndFlags & 0xff;
-					int cb_flags = (typeAndFlags >> 8) & 0xff;
-					float blend_rate = 1.0f;
-
-					if (cb_flags & VERTEX_FLAG_ONE)
-					{
-						blend_rate = reader.readFloat();
-						reader.readColor(color4);
-					}
-					else
-					{
-						if (cb_flags & VERTEX_FLAG_LT)
-						{
-							blend_rate = reader.readFloat();
-							reader.readColor(color4);
-						}
-						if (cb_flags & VERTEX_FLAG_RT)
-						{
-							blend_rate = reader.readFloat();
-							reader.readColor(color4);
-						}
-						if (cb_flags & VERTEX_FLAG_LB)
-						{
-							blend_rate = reader.readFloat();
-							reader.readColor(color4);
-						}
-						if (cb_flags & VERTEX_FLAG_RB)
-						{
-							blend_rate = reader.readFloat();
-							reader.readColor(color4);
-						}
-					}
-				}
-
-				//インスタンスパーツの場合
-				if (partData->type == PARTTYPE_INSTANCE)
-				{
-					//描画
-					int refKeyframe = 0;
-					int refStartframe = 0;
-					int refEndframe = 0;
-					float refSpeed = 0;
-					int refloopNum = 0;
-					bool infinity = false;
-					bool reverse = false;
-					bool pingpong = false;
-					bool independent = false;
-
-					if (flags & PART_FLAG_INSTANCE_KEYFRAME)
-					{
-						refKeyframe = reader.readS16();
-					}
-					if (flags & PART_FLAG_INSTANCE_START)
-					{
-						refStartframe = reader.readS16();
-					}
-					if (flags & PART_FLAG_INSTANCE_END)
-					{
-						refEndframe = reader.readS16();
-					}
-					if (flags & PART_FLAG_INSTANCE_SPEED)
-					{
-						refSpeed = reader.readFloat();
-					}
-					if (flags & PART_FLAG_INSTANCE_LOOP)
-					{
-						refloopNum = reader.readS16();
-					}
-					if (flags & PART_FLAG_INSTANCE_LOOP_FLG)
-					{
-						int lflags = reader.readS16();
-						if (lflags & INSTANCE_LOOP_FLAG_INFINITY)
-						{
-							//無限ループ
-							infinity = true;
-						}
-						if (lflags & INSTANCE_LOOP_FLAG_REVERSE)
-						{
-							//逆再生
-							reverse = true;
-						}
-						if (lflags & INSTANCE_LOOP_FLAG_PINGPONG)
-						{
-							//往復
-							pingpong = true;
-						}
-						if (lflags & INSTANCE_LOOP_FLAG_INDEPENDENT)
-						{
-							//独立
-							independent = true;
-						}
-					}
-				}
-
-				//同じパーツ名の場合に取得する情報を設定して処理終了
 				const char* partName = static_cast<const char*>(ptr(partData->name));
 				if (strcmp(partName, name) == 0)
 				{
 					//必要に応じて取得するパラメータを追加してください。
 					//当たり判定などのパーツに付属するフラグを取得する場合は　partData　のメンバを参照してください。
-					result.x = x;
-					result.y = y;
+					CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
+					result.x = sprite->_state.mat[12];
+					result.y = sprite->_state.mat[13];
 
 					return true;
 				}
