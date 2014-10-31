@@ -91,6 +91,8 @@ void init( void )
 	ssplayer->setRotation(0.0f, 0.0f, 0.0f);
 	//“§–¾“x‚ğİ’è
 	ssplayer->setAlpha(255);
+	//”½“]‚ğİ’è
+	ssplayer->setFlip(false, false);
 
 }
 

@@ -739,9 +739,11 @@ public:
 	* プレイヤー本体の位置を設定します。
 	*/
 	void  setPosition(float x, float y);
+
 	/*
 	* プレイヤー本体の回転角度を設定します。2Dの回転はZに値を設定してください。
 	*/
+
 	void  setRotation(float x, float y, float z);
 	/*
 	* プレイヤー本体のスケールを設定します。
@@ -752,6 +754,11 @@ public:
 	* プレイヤー本体の透明度を設定します。
 	*/
 	void  setAlpha(int a);
+
+	/*
+	* プレイヤー本体の反転を設定します。
+	*/
+	void  setFlip(bool flipX, bool flipY);
 
 	/*
 	* ゲームのフレームレートを設定します。ディフォルトは60FPS。

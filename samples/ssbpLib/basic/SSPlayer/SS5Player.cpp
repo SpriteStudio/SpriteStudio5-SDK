@@ -1336,11 +1336,8 @@ void Player::updateFrame(float dt)
 }
 
 
-
-
 void Player::allocParts(int numParts, bool useCustomShaderProgram)
 {
-
 	_parts.clear();	//すべてのパーツを消す
 	{
 		// パーツ数だけCustomSpriteを作成する
@@ -1608,6 +1605,8 @@ void Player::setFrame(int frameNo)
 		float uv_scale_X  = flags & PART_FLAG_U_SCALE ? reader.readFloat() : init->uv_scale_X;
 		float uv_scale_Y  = flags & PART_FLAG_V_SCALE ? reader.readFloat() : init->uv_scale_Y;
 		float boundingRadius = flags & PART_FLAG_BOUNDINGRADIUS ? reader.readFloat() : init->boundingRadius;
+		bool flipX = (bool)(flags & PART_FLAG_FLIP_H);
+		bool flipY = (bool)(flags & PART_FLAG_FLIP_V);
 
 		bool isVisibled = !(flags & PART_FLAG_INVISIBLE);
 
@@ -1622,6 +1621,25 @@ void Player::setFrame(int frameNo)
 		y = y / DOT;
 
 		_partIndex[index] = partIndex;
+
+		if ( _state.flipX == true )
+		{
+			//プレイヤーのXフリップ
+			flipX = !flipX;	//フラグ反転
+			anchorX = 1.0f - anchorX;
+			x = -x;
+			rotationZ *= -1.0f;
+		}
+		if (_state.flipY == true)
+		{
+			//プレイヤーのYフリップ
+			//未検証
+			flipY = !flipY;	//フラグ反転
+			anchorY = 1.0f - anchorY;
+			y = -y;
+			rotationZ = 180.0f - rotationZ;
+		}
+
 
 		//ステータス保存
 		state.flags = flags;
@@ -1645,8 +1663,8 @@ void Player::setFrame(int frameNo)
 		state.uv_scale_Y = uv_scale_Y;
 		state.boundingRadius = boundingRadius;
 		state.isVisibled = isVisibled;
-		state.flipX = (bool)(flags & PART_FLAG_FLIP_H);
-		state.flipY = (bool)(flags & PART_FLAG_FLIP_V);
+		state.flipX = flipX;
+		state.flipY = flipY;
 		state.instancerotationX = _InstanceRotX;
 		state.instancerotationY = _InstanceRotY;
 		state.instancerotationZ = _InstanceRotZ;
@@ -1655,8 +1673,8 @@ void Player::setFrame(int frameNo)
 
 		//反転
 		//反転はUVにも反映させておくので使いやすい方で反転してください。
-		sprite->setFlippedX(flags & PART_FLAG_FLIP_H);
-		sprite->setFlippedY(flags & PART_FLAG_FLIP_V);
+		sprite->setFlippedX(flipX);
+		sprite->setFlippedY(flipY);
 
 
 		CellRef* cellRef = cellIndex >= 0 ? _currentRs->cellCache->getReference(cellIndex) : NULL;
@@ -2110,7 +2128,6 @@ void Player::setFrame(int frameNo)
 				Matrix4RotationZ(t, RadianToDegree(sprite->_state.instancerotationZ ));
 				MultiplyMatrix(t, mat, mat);
 
-
 				//rootパーツはプレイヤーからステータスを引き継ぐ
 				sprite->_state.rotationX += _state.rotationX + sprite->_state.instancerotationX;
 				sprite->_state.rotationY += _state.rotationY + sprite->_state.instancerotationY;
@@ -2327,6 +2344,12 @@ void  Player::setScale(float x, float y)
 void  Player::setAlpha(int a)
 {
 	_state.opacity = a;
+}
+
+void  Player::setFlip(bool flipX, bool flipY)
+{
+	_state.flipX = flipX;
+	_state.flipY = flipY;
 }
 
 void Player::setGameFPS(float fps)
