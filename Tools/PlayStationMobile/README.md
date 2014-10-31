@@ -11,7 +11,6 @@
   メニュー＞OPTPiX Labs＞スプライトシートを生成を選択します。
   Trim Transparentをチェックします。
   Output FormatをCocos2d-xにします。
-
   TextureSize等を設定し、Exportボタンを押します。
   plistとpngが出力されます。
 
