@@ -2111,10 +2111,9 @@ void Player::setFrame(int frameNo)
 		{
 			if (partIndex > 0)
 			{
+				//親のマトリクスを適用
 				CustomSprite* parent = static_cast<CustomSprite*>(_parts.at(partData->parentIndex));
-//				MatrixCopy( parent->_mat, mat );
 				memcpy(mat, parent->_mat, sizeof(float)* 16);
-
 			}
 			else
 			{
@@ -2139,10 +2138,7 @@ void Player::setFrame(int frameNo)
 				sprite->_state.scaleX *= _state.scaleX;
 				sprite->_state.scaleY *= _state.scaleY;
 				sprite->_state.opacity = (sprite->_state.opacity * _state.opacity * _InstanceAlpha) / 255 / 255;
-
-
 			}
-
 			TranslationMatrix(t, sprite->_state.x, sprite->_state.y, 0.0f);
 			MultiplyMatrix(t, mat, mat);
 
@@ -2182,6 +2178,15 @@ void Player::setFrame(int frameNo)
 				}
 
 			}
+			//原点計算を行う
+			float px = 0;
+			float py = 0;
+			float cx = ((sprite->_state.rect.size.width * sprite->_state.scaleX) * -(sprite->_state.anchorX - 0.5f));
+			float cy = ((sprite->_state.rect.size.height * sprite->_state.scaleY) * -(sprite->_state.anchorY - 0.5f));
+			get_uv_rotation(&cx, &cy, 0, 0, sprite->_state.rotationZ);
+
+			sprite->_state.mat[12] += cx;
+			sprite->_state.mat[13] += cy;
 
 			sprite->_isStateChanged = false;
 		}
@@ -2306,8 +2311,8 @@ void Player::get_uv_rotation(float *u, float *v, float cu, float cv, float deg)
 	float dx = *u - cu; // 中心からの距離(X)
 	float dy = *v - cv; // 中心からの距離(Y)
 
-	float tmpX = ( dx * cosf(DegreeToRadian(deg)) ) - ( dy * sinf(DegreeToRadian(deg)) ); // 回転
-	float tmpY = ( dx * sinf(DegreeToRadian(deg)) ) + ( dy * cosf(DegreeToRadian(deg)) );
+	float tmpX = (dx * cosf(RadianToDegree(deg))) - (dy * sinf(RadianToDegree(deg))); // 回転
+	float tmpY = (dx * sinf(RadianToDegree(deg))) + (dy * cosf(RadianToDegree(deg)));
 
 	*u = (cu + tmpX); // 元の座標にオフセットする
 	*v = (cv + tmpY);

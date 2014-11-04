@@ -8,22 +8,50 @@
 - Quick start
  
   #include "SS5Player.h"
- 
-  ss::ResourceManager* resman = ss::ResourceManager::getInstance();
-  resman->addData("sample.ssbp");
 
-  ss::Player* player = ss::Player::create();
-  player->setData("sample");			// ssbpファイル名（拡張子不要）
-  player->play("anime1");				//
-  SSPoint pos(200,200);
-  ssplayer->setPosition(pos);
-  this->addChild(player);
+  
+  // SS5プレイヤーの宣言
+  ss::Player *ssplayer;
+  ss::ResourceManager *resman;
+
+
+  //リソースマネージャの作成
+  resman = ss::ResourceManager::getInstance();
+  //プレイヤーの作成
+  ssplayer = ss::Player::create();
+
+  //アニメデータをリソースに追加
+  //それぞれのプラットフォームに合わせたパスへ変更してください。
+  resman->addData("character_template_comipo\\character_template1.ssbp");
+  //プレイヤーにリソースを割り当て
+  ssplayer->setData("character_template1");					// ssbpファイル名（拡張子不要）
+  //再生するモーションを設定
+  ssplayer->play("character_template_3head/stance");		// アニメーション名を指定(ssae名/アニメーション名も可能、詳しくは後述)
+
+
+  //表示位置を設定
+  ssplayer->setPosition(1280/2, 720);
+  //スケール設定
+  ssplayer->setScale(0.5f, 0.5f);
+  //回転を設定
+  ssplayer->setRotation(0.0f, 0.0f, 0.0f);
+  //透明度を設定
+  ssplayer->setAlpha(255);
+  //反転を設定
+  ssplayer->setFlip(false, false);
+
 
   //メインループで呼び出してください。
   ssplayer->update(dt);					//プレイヤーの更新
   ssplayer->draw();						//プレイヤーの描画
 
+
   終了処理で resman、player を delete してください。
+  //テクスチャの解放
+  resman->releseTexture("character_template1");
+  //SS5Playerの削除
+  delete (ssplayer);
+  delete (resman);
 
 *************************************************************/
 

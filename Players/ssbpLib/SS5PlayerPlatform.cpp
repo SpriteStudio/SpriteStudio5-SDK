@@ -101,12 +101,8 @@ namespace ss
 		//ステータスから情報を取得し、各プラットフォームに合わせて機能を実装してください。
 		//X回転、Y回転、上下反転、カラーブレンド（一部のみ）
 		//頂点変形、Xサイズ、Yサイズ
-
-
-		float cx = (state.rect.size.width * state.anchorX);		/// 原点オフセット
-		float cy = (state.rect.size.height * state.anchorY);	/// 原点オフセット
-		float x = state.mat[12];								/// 表示座標はマトリクスから取得します。
-		float y = state.mat[13];								/// 表示座標はマトリクスから取得します。
+		float x = state.mat[12];	/// 表示座標はマトリクスから取得します。
+		float y = state.mat[13];	/// 表示座標はマトリクスから取得します。
 		float rotationZ = RadianToDegree(state.rotationZ);		/// 回転値
 		float scaleX = state.scaleX;							/// 拡大率
 		float scaleY = state.scaleY;							/// 拡大率
@@ -171,12 +167,11 @@ namespace ss
 		/**
 		* DXライブラリはXとY同時拡大なので、とりあえずXスケールを使用する
 		* DXライブラリはY反転できないので未対応
-		* Y反転、Y拡大を行う場合は４頂点を指定し、上下の頂点を入れ替えて描画する。
+		* DrawRectRotaGraphはxとyが中心になるように、テクスチャの矩形を表示します。
 		*/
-		DrawRectRotaGraph2(
-			(int)x, (int)y,
+		DrawRectRotaGraph(
+			(int)x, (int)y,	//この座標が画像の中心になります。
 			(int)state.rect.origin.x, (int)state.rect.origin.y, (int)state.rect.size.width, (int)state.rect.size.height,
-			(int)cx, (int)cy,
 			scaleX, rotationZ,
 			state.texture, TRUE, state.flipX
 			);
