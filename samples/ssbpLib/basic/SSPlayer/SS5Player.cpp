@@ -1359,15 +1359,19 @@ void Player::releaseParts()
 	// remove children CCSprite objects.
 	if (_currentRs)
 	{
-		ToPointer ptr(_currentRs->data);
-		const AnimePackData* packData = _currentAnimeRef->animePackData;
-		const PartData* parts = static_cast<const PartData*>(ptr(packData->parts));
-		if (_parts.size() > 0)
+		if (_currentAnimeRef)
 		{
-			for (int partIndex = 0; partIndex < packData->numParts; partIndex++)
+
+			ToPointer ptr(_currentRs->data);
+			const AnimePackData* packData = _currentAnimeRef->animePackData;
+			const PartData* parts = static_cast<const PartData*>(ptr(packData->parts));
+			if (_parts.size() > 0)
 			{
-				CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
-				SS_SAFE_DELETE(sprite->_ssplayer);
+				for (int partIndex = 0; partIndex < packData->numParts; partIndex++)
+				{
+					CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
+					SS_SAFE_DELETE(sprite->_ssplayer);
+				}
 			}
 		}
 	}
@@ -2187,6 +2191,8 @@ void Player::setFrame(int frameNo)
 //プレイヤーの描画
 void Player::draw()
 {
+	if (!_currentAnimeRef) return;
+
 	ToPointer ptr(_currentRs->data);
 	const AnimePackData* packData = _currentAnimeRef->animePackData;
 
