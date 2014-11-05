@@ -1459,7 +1459,7 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 	{
 		{
 			//カレントフレームのパーツステータスを取得する
-			if (frameNo = -1)
+			if (frameNo == -1)
 			{
 				//フレームの指定が省略された場合は現在のフレームを使用する
 				frameNo = getFrameNo();

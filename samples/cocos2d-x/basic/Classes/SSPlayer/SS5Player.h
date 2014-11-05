@@ -541,6 +541,7 @@ protected:
 	bool				_isPausing;
 	int					_prevDrawFrameNo;
 	bool				_partVisible[PART_VISIBLE_MAX];
+	int					_partIndex[PART_VISIBLE_MAX];
 	int					_InstanceAlpha;
 	float				_InstanceRotX;
 	float				_InstanceRotY;
@@ -550,6 +551,7 @@ protected:
 	UserDataCallback	_userDataCallback;
 	UserData			_userData;
 	PlayEndCallback		_playEndCallback;
+
 };
 
 

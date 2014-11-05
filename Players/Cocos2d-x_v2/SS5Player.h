@@ -518,6 +518,7 @@ protected:
 	void checkUserData(int frameNo);
 	void get_uv_rotation(float *u, float *v, float cu, float cv, float deg);
 	void set_InstanceAlpha(int alpha);
+	void set_InstanceRotation(float rotX, float rotY, float rotZ);
 
 protected:
 	ResourceManager*	_resman;
@@ -535,7 +536,11 @@ protected:
 	bool				_isPausing;
 	int					_prevDrawFrameNo;
 	bool				_partVisible[PART_VISIBLE_MAX];
+	int					_partIndex[PART_VISIBLE_MAX];
 	int					_InstanceAlpha;
+	float				_InstanceRotX;
+	float				_InstanceRotY;
+	float				_InstanceRotZ;
 
 	SSPlayerDelegate*	_delegate;
 	UserData			_userData;
