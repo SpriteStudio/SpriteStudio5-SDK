@@ -82,6 +82,7 @@ void calcUvs( SsCellValue* cellv )
 
 //	if ( cell == 0 || map == 0)
 	if ( cell == 0 )
+//	if ( ( cell == 0 ) || ( cellv->texture == 0 ) )	//koizumi change
 	{
 		cellv->uvs[0].x = cellv->uvs[0].y = 0;
 		cellv->uvs[1].x = cellv->uvs[1].y = 0;

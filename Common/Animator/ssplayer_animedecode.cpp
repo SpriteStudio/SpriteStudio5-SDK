@@ -268,7 +268,11 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 	if ( l->tex )
 	{
 		v.texture = l->tex;
-	}else v.texture = 0;
+	}
+	else
+	{
+		v.texture = 0;
+	}
 
 	calcUvs( &v );
 

@@ -921,7 +921,15 @@ void convertProject(const std::string& outPath, LumpExporter::StringEncoding enc
 {
 	SSTextureFactory texFactory(new SSTextureBMP());
 	SsProject* proj = ssloader_sspj::Load(sspjPath);
-	Lump* lump = parseParts(proj, imageBaseDir);
+	Lump* lump;
+	try
+	{
+		lump = parseParts(proj, imageBaseDir);
+	}
+	catch (...)
+	{
+		convert_error_exit = true;	//エラーが発生
+	}
 
 	if ( convert_error_exit == true )
 	{

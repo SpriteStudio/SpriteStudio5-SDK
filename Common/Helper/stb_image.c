@@ -2433,8 +2433,16 @@ static int parse_png_file(png *z, int scan, int req_comp)
             if (c.length != 13) return e("bad IHDR len","Corrupt PNG");
             s->img_x = get32(s); if (s->img_x > (1 << 24)) return e("too large","Very large image (corrupt?)");
             s->img_y = get32(s); if (s->img_y > (1 << 24)) return e("too large","Very large image (corrupt?)");
-            depth = get8(s);  if (depth != 8)        return e("8bit only","PNG not supported: 8-bit only");
-            color = get8(s);  if (color > 6)         return e("bad ctype","Corrupt PNG");
+            depth = get8(s);
+			if (depth != 8)
+			{
+				return e("PNG not supported: 8-bit only","PNG not supported: 8-bit only");
+			}
+            color = get8(s);
+			if (color > 6)
+			{
+				return e("bad ctype","Corrupt PNG");
+			}
             if (color == 3) pal_img_n = 3; else if (color & 1) return e("bad ctype","Corrupt PNG");
             comp  = get8(s);  if (comp) return e("bad comp method","Corrupt PNG");
             filter= get8(s);  if (filter) return e("bad filter method","Corrupt PNG");
