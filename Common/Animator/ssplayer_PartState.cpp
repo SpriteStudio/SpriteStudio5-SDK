@@ -49,6 +49,7 @@ void	SsPartState::init()
 	is_vertex_transform = false;
 	inheritRates = 0; 
 	
+	boundingRadius = 0;
 }
 
 
