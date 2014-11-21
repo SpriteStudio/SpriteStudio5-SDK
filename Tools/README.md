@@ -17,5 +17,6 @@ SpriteStudio 5 で作成したデータを利用するためのルーツが含�
 - PlayStationMobile
   - SpriteStudio 5 SDKから出力したスプライトシート(plist)からP layStationMobile SDKで利用しやすいxmlを作成するコンバータです。
 
-
+- ssbpToXML.zip
+  - ssbpからXMLを作成するWindows用コンバータです。
 
