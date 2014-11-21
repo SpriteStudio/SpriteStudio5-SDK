@@ -169,6 +169,12 @@ namespace ss
 		* DXライブラリはY反転できないので未対応
 		* DrawRectRotaGraphはxとyが中心になるように、テクスチャの矩形を表示します。
 		*/
+		//反転時はスケールが-となるので、反転フラグを使用してスケールを元に戻す
+		if (state.flipX == true )
+		{
+			scaleX = -scaleX;
+		}
+
 		DrawRectRotaGraph(
 			(int)x, (int)y,	//この座標が画像の中心になります。
 			(int)state.rect.origin.x, (int)state.rect.origin.y, (int)state.rect.size.width, (int)state.rect.size.height,

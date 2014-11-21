@@ -1631,21 +1631,13 @@ void Player::setFrame(int frameNo)
 		{
 			//プレイヤーのXフリップ
 			flipX = !flipX;	//フラグ反転
-			anchorX = 1.0f - anchorX;
-			x = -x;
-			rotationZ *= -1.0f;
 		}
 		if (_state.flipY == true)
 		{
 			//プレイヤーのYフリップ
-			//未検証
 			flipY = !flipY;	//フラグ反転
-			anchorY = 1.0f - anchorY;
-			y = -y;
-//			rotationZ = 180.0f - rotationZ;
 		}
-
-
+		
 		//ステータス保存
 		state.flags = flags;
 		state.cellIndex = cellIndex;
@@ -2139,6 +2131,15 @@ void Player::setFrame(int frameNo)
 				sprite->_state.rotationZ += _state.rotationZ + sprite->_state.instancerotationZ;
 				sprite->_state.scaleX *= _state.scaleX;
 				sprite->_state.scaleY *= _state.scaleY;
+				if (_state.flipX == true)
+				{
+					//プレイヤーのXフリップ
+					sprite->_state.scaleX = -sprite->_state.scaleX;	//フラグ反転
+				}
+				if (_state.flipY == true)
+				{
+					sprite->_state.scaleY = -sprite->_state.scaleY;	//フラグ反転
+				}
 				sprite->_state.opacity = (sprite->_state.opacity * _state.opacity * _InstanceAlpha) / 255 / 255;
 			}
 			TranslationMatrix(t, sprite->_state.x, sprite->_state.y, 0.0f);
@@ -2164,6 +2165,10 @@ void Player::setFrame(int frameNo)
 				CustomSprite* parent = static_cast<CustomSprite*>(_parts.at(partData->parentIndex));
 				//子供は親のステータスを引き継ぐ
 				//座標はマトリクスから取得する
+				if ((parent->_state.scaleX * parent->_state.scaleY) < 0)	//スケールのどちらかが-の場合は回転方向を逆にする
+				{
+					sprite->_state.rotationZ = -sprite->_state.rotationZ;
+				}
 				sprite->_state.rotationX += parent->_state.rotationX;
 				sprite->_state.rotationY += parent->_state.rotationY;
 				sprite->_state.rotationZ += parent->_state.rotationZ;
@@ -2211,8 +2216,8 @@ void Player::draw()
 		if (sprite->_ssplayer)
 		{
 			//インスタンスパーツの場合は子供のプレイヤーを再生
-			sprite->_ssplayer->update(0);
-			sprite->_ssplayer->draw();
+//			sprite->_ssplayer->update(0);
+//			sprite->_ssplayer->draw();
 		}
 		else
 		{

@@ -15,8 +15,7 @@
 	
 	※サンプルプログラムの制限
 	未対応アトリビュート
-	　X回転、Y回転、Xスケール（マイナス値の動作は未対応）、Yスケール（マイナス値の動作は未対応）
-	　カラーブレンド、頂点変形、Xサイズ(出力しているがサンプルプログラムが未対応)、Yサイズ(出力しているがサンプルプログラムが未対応)
+	　X回転、Y回転、カラーブレンド、頂点変形、Xサイズ(出力しているがサンプルプログラムが未対応)、Yサイズ(出力しているがサンプルプログラムが未対応)
 	　UXX移動、UVY移動、UV回転、UXXスケール、UVYスケール、ユーザーデータ、インスタンスアニメ
 	サンプルではパーツのブレンド方法には対応していません。
 	データは出力しているので、必要であれば各自対応してください。
@@ -98,8 +97,8 @@ ret = SSPlayer_play( 0, "character_template1", "character_template_3head/stance"
 ret = SSPlayer_setPosition( 0, SCREEN_X / 2, SCREEN_Y / 2 ) 
 //スケール設定
 ret = SSPlayer_setScale( 0, double(1.0), double(1.0) ) 
-//反転設定 Y反転は未対応
-ret = SSPlayer_setFlip( 0, 0, 0 ) 
+//反転設定
+ret = SSPlayer_setFlip( 0, 1, 1 ) 
 //回転設定、X回転、Y回転は未対応
 ret = SSPlayer_setRotation( 0, 0, 0, 0 )
 //透明度設定
@@ -166,31 +165,27 @@ repeat
 							ss_tmpbuf_sizex = ss_h
 							ss_tmpbuf_sizey = ss_h
 						}
-						alCreateImage SS5PLAYER_ROTBUFF, ss_tmpbuf_sizex * 2, ss_tmpbuf_sizey * 2		//回転用のスクリーンを用意
 	
-						if ( ss_flipx != 0 ){
-							//横反転
+						if ( ss_flipx + ss_flipy == 1 ){
+							//横か縦のどちらかのみ反転する場合は角度を逆にする
+							//DLLから取得した時にはすでに角度が逆になっているが、反転時にはスケールが-になるため、逆角度と逆スケールで反転なしの状態なってしまう。
 							ss_rot = -ss_rot
 						}
-						if ( ss_flipy != 0 ){
-							//縦反転
-							ss_rot = -ss_rot 
-						}
+
+						alCreateImage SS5PLAYER_ROTBUFF, ss_tmpbuf_sizex * 2, ss_tmpbuf_sizey * 2		//回転用のスクリーンを用意
 						alTransModeRotateAt ss_rot, ss_tmpbuf_sizex, ss_tmpbuf_sizey					//回転値を設定（0～360度）
 						//回転値を反映させて仮想バッファへコピー
 						alCopyImageToImage ss_texid, SS5PLAYER_ROTBUFF, ss_tmpbuf_sizex - ( ss_w / 2 ), ss_tmpbuf_sizey - ( ss_h / 2 ), ss_w, ss_h, ss_sx, ss_sy	
 						//拡大を反映させてHSPのスクリーンへコピー
 						ss_tmpbuf_zoomx = (double(ss_tmpbuf_sizex * 2) * double( ss_zoomx ))
 						ss_tmpbuf_zoomy = (double(ss_tmpbuf_sizey * 2) * double( ss_zoomy ))
-						if ( ss_flipx != 0 ){
-							//横反転
-							ss_tmpbuf_zoomx = -ss_tmpbuf_zoomx
-						}
-						if ( ss_flipy != 0 ){
-							//横反転
-							ss_tmpbuf_zoomy = -ss_tmpbuf_zoomy
-						}
-						alStretchImageToScreen SS5PLAYER_ROTBUFF, 0, 0, 0, ss_tmpbuf_sizex * 2, ss_tmpbuf_sizey * 2, ss_x - (ss_tmpbuf_zoomx / 2 ), ss_y - ( ss_tmpbuf_zoomy / 2 ), ss_tmpbuf_zoomx, ss_tmpbuf_zoomy	
+	
+						ss_tmp_sx = ss_x - ( ss_tmpbuf_zoomx / double(2) )
+						ss_tmp_sy = ss_y - ( ss_tmpbuf_zoomy / double(2) )
+						ss_tmp_w = ss_tmpbuf_zoomx
+						ss_tmp_h = ss_tmpbuf_zoomy
+//						dialog "ss_flipx=" + ss_flipx+  " ss_flipy="+ss_flipy+"\n"	//確認用
+						alStretchImageToScreen SS5PLAYER_ROTBUFF, 0, 0, 0, ss_tmpbuf_sizex * 2, ss_tmpbuf_sizey * 2, ss_tmp_sx, ss_tmp_sy, ss_tmp_w, ss_tmp_h	
 					}
 				}
 
