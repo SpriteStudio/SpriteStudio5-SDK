@@ -1,0 +1,12 @@
+void main(float4 in a_Position    : POSITION,
+          float2 in a_TexCoord    : TEXCOORD0,
+          float4 in a_VertexColor : COLOR0,
+          float4 out v_Position   : POSITION,
+          float2 out v_TexCoord   : TEXCOORD0,
+          float4 out v_Color      : COLOR0,
+          uniform float4x4 u_ScreenMatrix)
+{
+	v_Position = mul(a_Position, u_ScreenMatrix);
+	v_TexCoord = a_TexCoord;
+	v_Color = a_VertexColor;
+}

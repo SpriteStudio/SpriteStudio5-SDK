@@ -1,0 +1,20 @@
+void main(float2 in v_TexCoord  : TEXCOORD0,
+          float4 in v_Color     : COLOR0,
+          float4 out color      : COLOR,
+          uniform sampler2D s_Texture : TEXUNIT0)
+{
+	float4 tmpColor = tex2D( s_Texture, v_TexCoord );
+	tmpColor.r = tmpColor.r * v_Color.r;
+	tmpColor.g = tmpColor.g * v_Color.g;
+	tmpColor.b = tmpColor.b * v_Color.b;
+	tmpColor.a = tmpColor.a * v_Color.a;
+	
+	if(tmpColor.a == 0.0f)
+	{
+		discard;
+	}
+	else
+	{
+		color = tmpColor * tmpColor.a;
+	}
+}
