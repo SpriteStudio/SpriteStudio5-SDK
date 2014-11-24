@@ -27,6 +27,7 @@ public:
 		SSAR_DECLARE( frameCount );
 		SSAR_DECLARE( canvasSize );
 		SSAR_DECLARE( pivot );
+		SSAR_DECLARE_ENUM(sortMode);
 	}
 };
 

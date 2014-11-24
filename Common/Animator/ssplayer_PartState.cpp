@@ -2,7 +2,7 @@
 #include "ssplayer_animedecode.h"
 #include "ssplayer_PartState.h"
 
-SsPartState::SsPartState() : refAnime(0) {init();}
+SsPartState::SsPartState() : refAnime(0), index(-1), parent(nullptr), noCells(false), alphaBlendType(SsBlendType::invalid) {init();}
 
 SsPartState::~SsPartState(){
 	destroy();
