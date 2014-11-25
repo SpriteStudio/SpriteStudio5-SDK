@@ -2035,6 +2035,19 @@ void Player::setFrame(int frameNo)
 				//rootは初期値
 				trans = cocos2d::CCAffineTransformMakeIdentity();
 
+				//反転フラグがある場合はrootパーツのスケールを逆にする
+				float scale_x = 1.0f;
+				if (isFlipX() == true)
+				{
+					scale_x = -1.0f;
+				}
+				float scale_y = 1.0f;
+				if (isFlipY() == true)
+				{
+					scale_y = -1.0f;
+				}
+				trans = CCAffineTransformScale(trans, scale_x, scale_y);
+
 				IdentityMatrix(mat);
 				//親がいない場合、プレイヤーの値とインスタンスパーツの値を初期値とする
 				Matrix4RotationX(t, CC_DEGREES_TO_RADIANS(sprite->_state.instancerotationX));
@@ -2045,6 +2058,7 @@ void Player::setFrame(int frameNo)
 
 				Matrix4RotationZ(t, CC_DEGREES_TO_RADIANS(sprite->_state.instancerotationZ));
 				MultiplyMatrix(t, mat, mat);
+
 			}
 			sprite->_state.trans = trans;
 			sprite->setAdditionalTransform(trans);

@@ -1968,6 +1968,14 @@ void Player::setFrame(int frameNo)
 
 //				cocos2d::Mat4::createRotationZ(CC_DEGREES_TO_RADIANS(-sprite->_state.instancerotationZ), &t);
 //				mat = mat * t;
+
+				//rootパーツの場合はプレイヤーのフリップをみてスケールを反転する
+				float scaleX = isFlippedX() ? -1.0f : 1.0f;
+				float scaleY = isFlippedY() ? -1.0f : 1.0f;
+
+				cocos2d::Mat4::createScale(scaleX, scaleY, 1.0f, &t);
+				mat = mat * t;
+
 			}
 			
             cocos2d::Mat4::createTranslation(sprite->_state.x ,sprite->_state.y, 0.0f, &t);
