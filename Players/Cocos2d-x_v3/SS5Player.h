@@ -342,12 +342,12 @@ public:
 	/**
 	 * 再生を中断します.
 	 */
-	void pause();
+	void animePause();
 
 	/**
 	 * 再生を再開します.
 	 */
-	void resume();
+	void animeResume();
 
 	/**
 	 * 再生を停止します.
