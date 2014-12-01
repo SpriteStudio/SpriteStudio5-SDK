@@ -969,12 +969,12 @@ void Player::play(AnimeRef* animeRef, int loop, int startFrameNo)
 	setFrame(_playingFrame);
 }
 
-void Player::pause()
+void Player::animePause()
 {
 	_isPausing = true;
 }
 
-void Player::resume()
+void Player::animeResume()
 {
 	_isPausing = false;
 }

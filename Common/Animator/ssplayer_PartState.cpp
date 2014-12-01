@@ -30,7 +30,7 @@ void	SsPartState::init()
 	scale = SsVector2( 1.0f , 1.0f );
 
 	anchor = SsVector2( 0 , 0 );
-	size = SsVector2( 0 , 0 );
+	size = SsVector2( 1 , 1 );
 
 	alpha = 1.0f;
 	prio = 0;
