@@ -165,7 +165,7 @@ void	SampleScene::ChangeAnimation( int packIndex , int animeIndex )
 	if ( m_cellmap->size() == 0 )
 	{
 		DEBUG_PRINTF( "error : cellmap array size == 0" );
-		abort();
+//		abort();	//インスタンスのみのアニメでは使用しているセルが０があり得るためコメント
 	}
 	m_player->setAnimation( model , anime , m_cellmap , m_proj );
 

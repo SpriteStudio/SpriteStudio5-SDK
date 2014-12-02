@@ -23,7 +23,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,6 +35,7 @@
     <Reference Include="System.Core" />
     <Reference Include="Sce.PlayStation.Core" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Sce.PlayStation.HighLevel.UI" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppMain.cs" />

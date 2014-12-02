@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Diagnostics;
 
 using Sce.PlayStation.Core;
 using Sce.PlayStation.Core.Graphics;
@@ -19,6 +20,11 @@ namespace ss
 {
 	public class Player
 	{
+		//デバッグ
+		int time_1;
+		int time_2;
+		int time_3;
+		
 		//描画用
 		private Texture2D[] tex = new Texture2D[32];
 		private GraphicsContext graphics;		
@@ -75,9 +81,19 @@ namespace ss
 		
 		public void Load( string ssbx_name )
 		{
+			//タイマーの作成
+			Stopwatch stopwatch;
+			stopwatch = new Stopwatch();
+			stopwatch.Start();
+			time_1 = (int)stopwatch.ElapsedMilliseconds;// start
+
+			
 			//ssbxの読み込み
 			ssbx_animedata = SSBX.GetSsbx_animedata(ssbx_name);
 
+			time_2 = (int)stopwatch.ElapsedMilliseconds;// start
+			
+			
 			//すでにテクスチャを読み込んでいる場合は解放
 			int idx = 0;
 			for ( idx = 0; idx < 32; idx++ )
@@ -90,6 +106,7 @@ namespace ss
 			}
 			
 			//モーションデータからテクスチャ情報を取得して画像読み込み
+			//プレイヤーごとにテクスチャを保持してしまうので、リソース管理クラスを作成して、そこからテクスチャを参照する形が望ましい。
 			for ( idx = 0; idx < ssbx_animedata.texturedata.Count; idx++ )
 			{
 				string str;
@@ -101,11 +118,32 @@ namespace ss
 				//画像読み込み
 				tex[idx] = new Texture2D(name, false, PixelFormat.Rgba);
 			}
+
+			time_3 = (int)stopwatch.ElapsedMilliseconds;// start
 			
 			//スプライトシートのフレーム番号
 			frame_count = 0;
 			anime_stop = true;
 		}
+		
+		//処理時間の取得
+		public int GetLoadtime( int type )
+		{
+			int rc = 0;
+			switch( type )
+			{
+			case 0:
+				//XMLの読み込み時間を取得
+				rc = time_2 - time_1;
+				break;
+			case 1:
+				//テクスチャの読み込み時間を取得
+				rc = time_3 - time_2;
+				break;
+			}
+			return(rc);
+		}
+		
 		//再生
 		public void Play( string motionname )
 		{
