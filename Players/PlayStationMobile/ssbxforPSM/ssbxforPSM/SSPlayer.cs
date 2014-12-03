@@ -18,15 +18,39 @@ using Sce.PlayStation.Core.Audio;
 
 namespace ss
 {
+	public class ResourceManager
+	{
+		public Dictionary<string, SSBX_ANIMEDATA> animedata;
+		
+		public ResourceManager()
+		{
+		}
+		public void Load( string ssbx_name )
+		{
+		
+			//タイマーの作成
+			Stopwatch stopwatch;
+			stopwatch = new Stopwatch();
+			stopwatch.Start();
+
+			
+			//ssbxの読み込み
+			if ( animedata.ContainsKey(ssbx_name) == false )
+			{	
+				//キーを検索して存在しない場合は読み込みを行う
+				animedata.Add (ssbx_name, SSBX.GetSsbx_animedata(ssbx_name));
+			}
+		}
+		public SSBX_ANIMEDATA GetAnimeData( string ssbx_name )
+		{
+			return ( animedata[ssbx_name] );
+		}
+		
+	}
+		
 	public class Player
 	{
-		//デバッグ
-		int time_1;
-		int time_2;
-		int time_3;
-		
 		//描画用
-		private Texture2D[] tex = new Texture2D[32];
 		private GraphicsContext graphics;		
 		private VertexBuffer vertexBuffer;
 		private Matrix4 screenMatrix;
@@ -53,6 +77,8 @@ namespace ss
 		{
 			graphics = app_graphics;
 			ssbx_animedata = null;
+			frame_count = 0;
+			anime_stop = true;
 			
 			int idx = 0;
 			for ( idx = 0; idx < 32; idx++ )
@@ -77,71 +103,6 @@ namespace ss
 			);
 			//												vertex pos,               texture,       color
 			vertexBuffer = new VertexBuffer(4, indexSize, VertexFormat.Float3, VertexFormat.Float2, VertexFormat.Float4);
-		}
-		
-		public void Load( string ssbx_name )
-		{
-			//タイマーの作成
-			Stopwatch stopwatch;
-			stopwatch = new Stopwatch();
-			stopwatch.Start();
-			time_1 = (int)stopwatch.ElapsedMilliseconds;// start
-
-			
-			//ssbxの読み込み
-			ssbx_animedata = SSBX.GetSsbx_animedata(ssbx_name);
-
-			time_2 = (int)stopwatch.ElapsedMilliseconds;// start
-			
-			
-			//すでにテクスチャを読み込んでいる場合は解放
-			int idx = 0;
-			for ( idx = 0; idx < 32; idx++ )
-			{
-				if ( tex[idx] != null )
-				{
-					tex[idx].Dispose();
-					tex[idx] = null;
-				}
-			}
-			
-			//モーションデータからテクスチャ情報を取得して画像読み込み
-			//プレイヤーごとにテクスチャを保持してしまうので、リソース管理クラスを作成して、そこからテクスチャを参照する形が望ましい。
-			for ( idx = 0; idx < ssbx_animedata.texturedata.Count; idx++ )
-			{
-				string str;
-				str = string.Format("texture{0:D3}", idx);
-				SSBX_TEXTUREDATA ssbx_texturedata = ssbx_animedata.texturedata[str];
-				int id = ssbx_texturedata.id;
-				string name = "/Application/resources/" + ssbx_texturedata.name;
-
-				//画像読み込み
-				tex[idx] = new Texture2D(name, false, PixelFormat.Rgba);
-			}
-
-			time_3 = (int)stopwatch.ElapsedMilliseconds;// start
-			
-			//スプライトシートのフレーム番号
-			frame_count = 0;
-			anime_stop = true;
-		}
-		
-		//処理時間の取得
-		public int GetLoadtime( int type )
-		{
-			int rc = 0;
-			switch( type )
-			{
-			case 0:
-				//XMLの読み込み時間を取得
-				rc = time_2 - time_1;
-				break;
-			case 1:
-				//テクスチャの読み込み時間を取得
-				rc = time_3 - time_2;
-				break;
-			}
-			return(rc);
 		}
 		
 		//再生

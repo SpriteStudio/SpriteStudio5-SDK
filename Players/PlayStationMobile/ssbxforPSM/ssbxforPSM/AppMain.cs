@@ -30,8 +30,9 @@ namespace ss
 		private static Label label1;
 		private static Label label2;
 
-		//xmlから作成したモーションデータ
-		private static Player player;
+		//アニメ再生用のプレイヤー
+		private static ResourceManager resourcemaneger;		//リソースマネージャ
+		private static Player player;						//プレイヤー
 		
 		public static void Main (string[] args)
 		{

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using Sce.PlayStation.Core.Graphics;
 
 namespace ss
 {
@@ -82,11 +83,28 @@ namespace ss
 		public string sspbname;
 		public Dictionary<string, SSBX_TEXTUREDATA> texturedata;
 		public Dictionary<string, SSBX_MOTIONDATA> motiondata;
+		//テクスチャ
+		public Texture2D[] tex = new Texture2D[32];
+		
 		public SSBX_ANIMEDATA(string sspbname, Dictionary<string, SSBX_TEXTUREDATA> texturedata, Dictionary<string, SSBX_MOTIONDATA> motiondata )
 		{
 			this.sspbname = sspbname;
 			this.texturedata = texturedata;
 			this.motiondata = motiondata;
+
+			//モーションデータからテクスチャ情報を取得して画像読み込み
+			int idx;
+			for ( idx = 0; idx < texturedata.Count; idx++ )
+			{
+				string str;
+				str = string.Format("texture{0:D3}", idx);
+				SSBX_TEXTUREDATA ssbx_texturedata = texturedata[str];
+				int id = ssbx_texturedata.id;
+				string name = "/Application/resources/" + ssbx_texturedata.name;
+
+				//画像読み込み
+				tex[idx] = new Texture2D(name, false, PixelFormat.Rgba);
+			}
 		}
 	}
 	
