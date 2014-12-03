@@ -28,7 +28,6 @@ namespace ss
 		private static bool press;
 		
 		private static Label label1;
-		private static Label label2;
 
 		//アニメ再生用のプレイヤー
 		private static ResourceManager resourcemaneger;		//リソースマネージャ
@@ -50,9 +49,13 @@ namespace ss
 			//グラフィックコンテキストの作成
 			graphics = new GraphicsContext( 960, 544, PixelFormat.Rgba, PixelFormat.Depth16, MultiSampleMode.None );		
 			
-			//プレイヤーの作成とssbxの読み込み
+			//リソースマネージャの作成
+			resourcemaneger = new ResourceManager();
+			resourcemaneger.Load("/Application/resources/character_template1.xml");
+				
+			//プレイヤーの作成とssbxの割り当て
 			player = new Player(graphics);
-			player.Load("/Application/resources/character_template1.xml");
+			player.SetAnimedata( resourcemaneger, "character_template1");
 			
 			//プレイヤーの設定
 			player.SetPostion(500, 400);		//位置
@@ -63,6 +66,8 @@ namespace ss
 			//モーションを指定して再生します。
 			player.Play("character_template_3head/stance");
 			
+			
+			//時間計測表示
 			String str;
 			//UIの初期化
             UISystem.Initialize(graphics);
@@ -71,18 +76,11 @@ namespace ss
             UISystem.SetScene(scene,null);
 			//ラベル作成
 			label1=new Label();
-			str = string.Format("xml load:{0}", player.GetLoadtime( 0 ));
+			str = string.Format("xml load: {0} ms", resourcemaneger.GetLoadtime());
             label1.Text=str;
             label1.TextColor=new UIColor(1.0f,1.0f,1.0f,1.0f);
 			label1.SetPosition(0.0f, 0.0f);
             scene.RootWidget.AddChildLast(label1);			
-
-			label2=new Label();
-			str = string.Format("tex load:{0}", player.GetLoadtime( 1 ));
-            label2.Text=str;
-            label2.TextColor=new UIColor(1.0f,1.0f,1.0f,1.0f);
-			label2.SetPosition(0.0f, 20.0f);
-            scene.RootWidget.AddChildLast(label2);			
 	}
 	
 		public static void Update ()

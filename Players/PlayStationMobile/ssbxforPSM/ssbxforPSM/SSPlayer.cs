@@ -18,36 +18,54 @@ using Sce.PlayStation.Core.Audio;
 
 namespace ss
 {
+	//リソースマネージャ
 	public class ResourceManager
 	{
+		int loadtime_start;
+		int loadtime_end;
 		public Dictionary<string, SSBX_ANIMEDATA> animedata;
 		
 		public ResourceManager()
 		{
+			animedata = new Dictionary<string, SSBX_ANIMEDATA>();
 		}
+		//XML読み込み
 		public void Load( string ssbx_name )
 		{
-		
+
+			string addname;
+			int s = ssbx_name.LastIndexOf("/") + 1;
+			int e = ssbx_name.LastIndexOf(".");
+			addname = ssbx_name.Substring(s,e-s);
+			
 			//タイマーの作成
 			Stopwatch stopwatch;
 			stopwatch = new Stopwatch();
 			stopwatch.Start();
-
 			
 			//ssbxの読み込み
-			if ( animedata.ContainsKey(ssbx_name) == false )
+			loadtime_start = (int)stopwatch.ElapsedMilliseconds;	//時間計測
+			if ( animedata.ContainsKey(addname) == false )
 			{	
 				//キーを検索して存在しない場合は読み込みを行う
-				animedata.Add (ssbx_name, SSBX.GetSsbx_animedata(ssbx_name));
+				animedata.Add (addname, SSBX.GetSsbx_animedata(ssbx_name));
 			}
+			loadtime_end = (int)stopwatch.ElapsedMilliseconds;	//時間計測
 		}
+		//ロード時間の計測
+		public int GetLoadtime( )
+		{
+			return ( loadtime_end - loadtime_start );
+		}
+		//アニメデータの取得
 		public SSBX_ANIMEDATA GetAnimeData( string ssbx_name )
 		{
 			return ( animedata[ssbx_name] );
 		}
 		
 	}
-		
+	
+	//SS5プレイヤー　for PSM
 	public class Player
 	{
 		//描画用
@@ -70,8 +88,8 @@ namespace ss
 	
 		
 		//xmlから作成したモーションデータ
-		public SSBX_ANIMEDATA ssbx_animedata;
-		public SSBX_MOTIONDATA ssbx_motiondata;
+		private SSBX_ANIMEDATA ssbx_animedata;
+		private SSBX_MOTIONDATA ssbx_motiondata;
 		
 		public Player(GraphicsContext app_graphics)
 		{
@@ -80,11 +98,6 @@ namespace ss
 			frame_count = 0;
 			anime_stop = true;
 			
-			int idx = 0;
-			for ( idx = 0; idx < 32; idx++ )
-			{
-				tex[idx] = null;
-			}
 			shaderProgram = new ShaderProgram("/Application/shaders/Sprite.cgx");
 		    shaderProgram.SetUniformBinding(0, "u_ScreenMatrix");
 
@@ -105,9 +118,19 @@ namespace ss
 			vertexBuffer = new VertexBuffer(4, indexSize, VertexFormat.Float3, VertexFormat.Float2, VertexFormat.Float4);
 		}
 		
+		//アニメデータの設定
+		public void SetAnimedata( ResourceManager res, string name )
+		{
+			ssbx_animedata = res.GetAnimeData(name);
+		}
+
 		//再生
 		public void Play( string motionname )
 		{
+			if ( ssbx_animedata == null )
+			{
+				return;
+			}
 			ssbx_motiondata = ssbx_animedata.motiondata[motionname];
 			anime_stop = false;
 		}
@@ -248,8 +271,8 @@ namespace ss
 				//NULLパーツ
 				return;
 			}
-			float tex_w = tex[state.tex_id].Width;
-			float tex_h = tex[state.tex_id].Height;
+			float tex_w = ssbx_animedata.tex[state.tex_id].Width;
+			float tex_h = ssbx_animedata.tex[state.tex_id].Height;
 			float u1 = (float)state.rect_x / tex_w;
 			float v1 = (float)state.rect_y / tex_h;
 			float u2 = (float)( state.rect_x + state.rect_w ) / tex_w;
@@ -338,7 +361,7 @@ namespace ss
 			graphics.SetVertexBuffer(0, vertexBuffer);
 			
 			graphics.SetShaderProgram(shaderProgram);
-			graphics.SetTexture(0, tex[state.tex_id]);
+			graphics.SetTexture(0, ssbx_animedata.tex[state.tex_id]);
 			shaderProgram.SetUniformValue(0, ref screenMatrix);
 			
 			//ブレンドファンクション
