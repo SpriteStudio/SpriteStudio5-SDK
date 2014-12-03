@@ -91,20 +91,6 @@ namespace ss
 			this.sspbname = sspbname;
 			this.texturedata = texturedata;
 			this.motiondata = motiondata;
-
-			//モーションデータからテクスチャ情報を取得して画像読み込み
-			int idx;
-			for ( idx = 0; idx < texturedata.Count; idx++ )
-			{
-				string str;
-				str = string.Format("texture{0:D3}", idx);
-				SSBX_TEXTUREDATA ssbx_texturedata = texturedata[str];
-				int id = ssbx_texturedata.id;
-				string name = "/Application/resources/" + ssbx_texturedata.name;
-
-				//画像読み込み
-				tex[idx] = new Texture2D(name, false, PixelFormat.Rgba);
-			}
 		}
 	}
 	

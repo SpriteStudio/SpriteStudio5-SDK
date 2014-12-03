@@ -26,8 +26,10 @@ namespace ss
 		private static int frame_count;
 		private static bool anime_stop;
 		private static bool press;
+		private static int motion_type;
 		
 		private static Label label1;
+		private static Label label2;
 
 		//アニメ再生用のプレイヤー
 		private static ResourceManager resourcemaneger;		//リソースマネージャ
@@ -51,6 +53,7 @@ namespace ss
 			
 			//リソースマネージャの作成
 			resourcemaneger = new ResourceManager();
+			//ssbxの読み込み
 			resourcemaneger.Load("/Application/resources/character_template1.xml");
 				
 			//プレイヤーの作成とssbxの割り当て
@@ -81,14 +84,22 @@ namespace ss
             label1.TextColor=new UIColor(1.0f,1.0f,1.0f,1.0f);
 			label1.SetPosition(0.0f, 0.0f);
             scene.RootWidget.AddChildLast(label1);			
-	}
+
+			label2=new Label();
+			str = string.Format("", resourcemaneger.GetLoadtime());
+            label2.Text=str;
+            label2.TextColor=new UIColor(1.0f,1.0f,1.0f,1.0f);
+			label2.SetPosition(0.0f, 20.0f);
+            scene.RootWidget.AddChildLast(label2);			
+		}
 	
 		public static void Update ()
 		{
-			player.Update();
-			int maxframe = player.GetMaxFrame();
-			
 			//アニメーション更新
+			player.Update();
+			int maxframe = player.GetMaxFrame();	//アニメの総フレームを取得
+			
+			//再生フレームを取得（ポーズ中は設定する）
 			if( anime_stop == false )
 			{
 				frame_count = player.GetFrame(); 
@@ -147,15 +158,16 @@ namespace ss
 					}
 				}
 				press = true;
-	        }			
+	        }
 	        else if((gamePadData.Buttons & GamePadButtons.Circle) != 0)
 	        {
+				//○ボタンでアニメのポーズレジューム
 				if ( press == false )
 				{
 					if ( anime_stop == false )
 					{
 						anime_stop = true;
-						player.Stop();	//アニメ停止
+						player.Pause();		//アニメ停止
 					}
 					else
 					{
@@ -166,10 +178,48 @@ namespace ss
 				}
 				press = true;
 	        }			
+	        else if((gamePadData.Buttons & GamePadButtons.Cross) != 0)
+	        {
+				//×ボタンでアニメモーション変更
+				if ( press == false )
+				{
+					motion_type++;
+					if ( motion_type > 4 )
+					{
+						motion_type = 0;
+					}
+					switch( motion_type )
+					{
+					case 0:
+						player.Play("character_template_3head/stance");
+						break;
+					case 1:
+						player.Play("character_template_3head/attack1");
+						break;
+					case 2:
+						player.Play("character_template_3head/defense");
+						break;
+					case 3:
+						player.Play("character_template_3head/kick2");
+						break;
+					case 4:
+						player.Play("character_template_3head/walk");
+						break;
+					default:
+						break;
+					}
+					frame_count = 0;
+				}
+				press = true;
+	        }			
 			else
 			{
 				press = false;
 			}
+			//再生フレームの表示
+			string str;
+			str = string.Format("frame: {0}/{1}", frame_count, maxframe);
+            label2.Text=str;
 			
 			//タッチ情報の取得
             List<TouchData> touchData=Touch.GetData(0);

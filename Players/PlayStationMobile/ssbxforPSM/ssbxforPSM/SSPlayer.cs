@@ -32,13 +32,13 @@ namespace ss
 		//XML読み込み
 		public void Load( string ssbx_name )
 		{
-
+			//登録用の名前を作成（ファイル名）
 			string addname;
 			int s = ssbx_name.LastIndexOf("/") + 1;
 			int e = ssbx_name.LastIndexOf(".");
 			addname = ssbx_name.Substring(s,e-s);
 			
-			//タイマーの作成
+			//計測用タイマーの作成
 			Stopwatch stopwatch;
 			stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -46,12 +46,47 @@ namespace ss
 			//ssbxの読み込み
 			loadtime_start = (int)stopwatch.ElapsedMilliseconds;	//時間計測
 			if ( animedata.ContainsKey(addname) == false )
-			{	
+			{
 				//キーを検索して存在しない場合は読み込みを行う
 				animedata.Add (addname, SSBX.GetSsbx_animedata(ssbx_name));
+
+				//画像読み込み
+				int idx;
+				for ( idx = 0; idx < animedata[addname].texturedata.Count; idx++ )
+				{
+					string str;
+					str = string.Format("texture{0:D3}", idx);
+					SSBX_TEXTUREDATA ssbx_texturedata = animedata[addname].texturedata[str];
+					int id = ssbx_texturedata.id;
+					string name = "/Application/resources/" + ssbx_texturedata.name;
+	
+					//画像読み込み
+					animedata[addname].tex[idx] = new Texture2D(name, false, PixelFormat.Rgba);
+				}
+
 			}
 			loadtime_end = (int)stopwatch.ElapsedMilliseconds;	//時間計測
 		}
+		//データの削除
+		public void Release( string ssbx_name )
+		{
+			//該当のデータがある場合は削除する
+			if ( animedata.ContainsKey(ssbx_name) == true )
+			{
+				//テクスチャの解放
+				int idx;
+				for ( idx = 0; idx < animedata[ssbx_name].texturedata.Count; idx++ )
+				{
+					if ( animedata[ssbx_name].tex[idx] != null )
+					{
+						animedata[ssbx_name].tex[idx].Dispose();
+						animedata[ssbx_name].tex[idx] = null;
+					}
+				}
+				animedata.Remove(ssbx_name);
+			}
+		}
+
 		//ロード時間の計測
 		public int GetLoadtime( )
 		{
@@ -60,6 +95,10 @@ namespace ss
 		//アニメデータの取得
 		public SSBX_ANIMEDATA GetAnimeData( string ssbx_name )
 		{
+			if ( animedata.ContainsKey(ssbx_name) == false )
+			{
+				return ( null );
+			}
 			return ( animedata[ssbx_name] );
 		}
 		
@@ -133,12 +172,21 @@ namespace ss
 			}
 			ssbx_motiondata = ssbx_animedata.motiondata[motionname];
 			anime_stop = false;
+			frame_count = 0;
 		}
 		//停止
 		public void Stop()
 		{
+			//データの解放
+			ssbx_animedata = null;
+			ssbx_motiondata = null;
+		}
+		//一時停止
+		public void Pause()
+		{
 			anime_stop = true;
 		}
+		//
 		public void Resume( )
 		{
 			anime_stop = false;
@@ -147,7 +195,7 @@ namespace ss
 		public int GetMaxFrame()
 		{
 			int rc = 0;
-			if ( ssbx_animedata != null )
+			if ( ssbx_motiondata != null )
 			{
 				rc = ssbx_motiondata.maxframe;
 			}
@@ -157,7 +205,7 @@ namespace ss
 		public int GetFrame()
 		{
 			int rc = 0;
-			if ( ssbx_animedata != null )
+			if ( ssbx_motiondata != null )
 			{
 				rc = (int)frame_count;
 			}
@@ -188,15 +236,23 @@ namespace ss
 		//再生するフレームを設定
 		public void SetFrame( int frame )
 		{
-			if ( ssbx_animedata != null )
+			if ( ssbx_motiondata != null )
 			{
 				frame_count = frame;
+				if ( frame_count >= ssbx_motiondata.maxframe )
+				{
+					frame_count = ssbx_motiondata.maxframe - 1;
+				}
+				if ( frame_count < 0 )
+				{
+					frame_count = 0;
+				}
 			}
 		}
 		//プレイヤーの更新
 		public void Update()
 		{
-			if ( ssbx_animedata == null )
+			if ( ssbx_motiondata == null )
 			{
 				return;
 			}
