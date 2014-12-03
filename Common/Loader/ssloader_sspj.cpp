@@ -96,9 +96,11 @@ SsProject*	ssloader_sspj::Load(const std::string& filename )
 		for ( size_t i = 0 ;i < proj->getCellMapNum() ; i++ )
 		{
 			SsString sscepath = proj->getCellMapFilePath(i);
+
 			SsCellMap* cell = ssloader_ssce::Load( sscepath );
 			if ( cell )
 			{
+				cell->loadFilepath = proj->getCelMapFileOriginalPath(i);
 				proj->cellmapList.push_back( cell );
 			}else{
 				//エラー
@@ -122,7 +124,9 @@ SsCellMap* SsProject::findCellMap( SsString& str )
 //		SsString _name = (*itr)->name;
 		//_name+=".ssce";
 		//sspjの参照名とXML無いのnameタグが一致していないケースがあったのでファイル名で取得
-		SsString _name = (*itr)->fname;
+///		SsString _name = (*itr)->fname;
+		SsString _name = (*itr)->loadFilepath;
+
 
 		if ( _name == str )
 		{

@@ -58,6 +58,8 @@ public:
 
 	std::vector<SsCell*>		cells;
 
+	SsString					loadFilepath;		///<実際にロードした場所
+
 
 	SsCellMap(){}
 	virtual ~SsCellMap()

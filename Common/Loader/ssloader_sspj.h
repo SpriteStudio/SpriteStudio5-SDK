@@ -149,6 +149,11 @@ public:
 		return str ;
 	}
 
+	SsString	getCelMapFileOriginalPath( size_t index ) { 
+		if ( cellmapNames.size() <= index ) return "";
+		return cellmapNames[index] ;
+	}
+
 };
 
 ///sspjのローダークラスです。
