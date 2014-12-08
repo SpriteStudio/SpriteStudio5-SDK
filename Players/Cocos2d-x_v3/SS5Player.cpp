@@ -1029,6 +1029,10 @@ void Player::updateFrame(float dt)
 			// normal plays.
 			for (int c = nextFrameNo - currentFrameNo; c; c--)
 			{
+				// このフレームのユーザーデータをチェック
+				// check the user data of this frame.
+				checkUserData(currentFrameNo);
+
 				int incFrameNo = currentFrameNo + 1;
 				if (incFrameNo >= numFrames)
 				{
@@ -1046,10 +1050,6 @@ void Player::updateFrame(float dt)
 					incFrameNo = 0;
 				}
 				currentFrameNo = incFrameNo;
-
-				// このフレームのユーザーデータをチェック
-				// check the user data of this frame.
-				checkUserData(currentFrameNo);
 			}
 		}
 		else
@@ -1058,6 +1058,10 @@ void Player::updateFrame(float dt)
 			// reverse play.
 			for (int c = currentFrameNo - nextFrameNo; c; c--)
 			{
+				// このフレームのユーザーデータをチェック
+				// check the user data of this frame.
+				checkUserData(currentFrameNo);
+
 				int decFrameNo = currentFrameNo - 1;
 				if (decFrameNo < 0)
 				{
@@ -1075,14 +1079,11 @@ void Player::updateFrame(float dt)
 					decFrameNo = numFrames - 1;
 				}
 				currentFrameNo = decFrameNo;
-				
-				// このフレームのユーザーデータをチェック
-				// check the user data of this frame.
-				checkUserData(currentFrameNo);
 			}
 		}
 		
 		_playingFrame = static_cast<float>(currentFrameNo) + nextFrameDecimal;
+		checkUserData(getFrameNo());
 	}
 	else
 	{
