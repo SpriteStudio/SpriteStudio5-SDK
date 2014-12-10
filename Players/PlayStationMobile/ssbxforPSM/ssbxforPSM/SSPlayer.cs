@@ -109,11 +109,31 @@ namespace ss
 	{
 		//描画用
 		private GraphicsContext graphics;		
-		private VertexBuffer vertexBuffer;
-		private Matrix4 screenMatrix;
-		private int indexSize = 4;
-		private ushort[] indices;	
-		private ShaderProgram shaderProgram;
+		// スプライト。
+		protected struct Vertex
+		{
+			public Short2 Position; //4byte
+			public Short2 UV;		//4byte
+			public UByte4N Color;	//4byte
+		}
+		protected struct SpritePrim
+		{
+			public Vertex V0;
+			public Vertex V1;
+			public Vertex V2;
+			public Vertex V3;
+		}
+	
+		private SpritePrim[] spritePrimBuffer;
+		private VertexBuffer[] vertexBuffer = new VertexBuffer[2];
+		protected Matrix4 wvp;
+		protected int[] primCount = new int[2]{0,0};
+		protected int index = 0;
+		protected ShaderProgram shaderProgram;
+		const int maxNumOfSprite = 256;
+		private int oldtexid = -1;
+		private int vidx = 0;
+		private int old_blend_func;
 		
 		//プレイヤーのステータス
 		private float frame_count;	//再生フレーム
@@ -138,23 +158,58 @@ namespace ss
 			anime_stop = true;
 			
 			shaderProgram = new ShaderProgram("/Application/shaders/Sprite.cgx");
-		    shaderProgram.SetUniformBinding(0, "u_ScreenMatrix");
+			shaderProgram.SetAttributeBinding(0,"a_Position");
+			shaderProgram.SetAttributeBinding(1,"a_Color");
+			shaderProgram.SetUniformBinding(0,"u_WVP");
 
-			indices = new ushort[indexSize];
-			indices[0] = 0;
-			indices[1] = 1;
-			indices[2] = 2;
-			indices[3] = 3;
+			int width = graphics.GetFrameBuffer().Width;
+			int height = graphics.GetFrameBuffer().Height;		
+			Matrix4 proj = Matrix4.Ortho(
+				0, width,
+				0, height,
+				0, 32768.0f
+				);
 			
-			ImageRect rectScreen = graphics.Screen.Rectangle;
-			screenMatrix = new Matrix4(
-				 2.0f/rectScreen.Width,	0.0f,	    0.0f, 0.0f,
-				 0.0f,   -2.0f/rectScreen.Height,	0.0f, 0.0f,
-				 0.0f,   0.0f, 1.0f, 0.0f,
-				 -1.0f,  1.0f, 0.0f, 1.0f
-			);
-			//												vertex pos,               texture,       color
-			vertexBuffer = new VertexBuffer(4, indexSize, VertexFormat.Float3, VertexFormat.Float2, VertexFormat.Float4);
+			Matrix4 view = Matrix4.LookAt(
+					new Vector3(0, height, 0),
+					new Vector3(0, height, 1),
+					new Vector3(0, -1, 0));
+			wvp = proj * view;
+			
+			int i;
+			// 頂点バッファを2つ作成。
+			for(i = 0; i < vertexBuffer.Length; ++i){
+				vertexBuffer[i] = new VertexBuffer(
+					4*maxNumOfSprite,
+					6*maxNumOfSprite,
+					VertexFormat.Short4,
+					VertexFormat.UByte4N
+					);
+			}
+	
+			// index
+			{
+				int numIndices = 6 * maxNumOfSprite;
+				ushort[] indices = new ushort[numIndices];
+				int wp;
+				for(i = 0, wp = 0; i < maxNumOfSprite; ++i)
+				{
+					int vnum = i*4;
+	
+					indices[wp++] = (ushort)(0+vnum);
+					indices[wp++] = (ushort)(1+vnum);
+					indices[wp++] = (ushort)(2+vnum);
+	
+					indices[wp++] = (ushort)(1+vnum);
+					indices[wp++] = (ushort)(3+vnum);
+					indices[wp++] = (ushort)(2+vnum);
+				}
+				vertexBuffer[0].SetIndices(indices);
+				vertexBuffer[1].SetIndices(indices);
+	
+			}
+	
+			spritePrimBuffer = new SpritePrim[maxNumOfSprite];
 		}
 		
 		//アニメデータの設定
@@ -228,7 +283,7 @@ namespace ss
 		{
 			rot_z = z;
 		}
-		//回転を設定
+		//透明度を設定
 		public void SetAlpha( int a )
 		{
 			alpha = (float)a / 255.0f;
@@ -280,6 +335,10 @@ namespace ss
 			//描画
 			int nowframe = (int)frame_count;
 
+			oldtexid = -1;
+			vidx = 0;
+			old_blend_func = -1;
+			
 			string str;
 			str = string.Format("frame{0:D3}", nowframe);
 			SSBX_FRAMEDATA ssbx_framedata = ssbx_motiondata.framedata[str];
@@ -290,16 +349,6 @@ namespace ss
 				SSBX_PARTDATA ssbx_partdata = ssbx_framedata.framedata[str];
 				PART_STATE state = ssbx_partdata.partdata;
 				
-				
-				//プレイヤーのステータスからマトリクスの変形を行う
-/*
-				float[] mat = new float[16];
-				IdentityMatrix(mat);
-				TranslationMatrixM(mat, state.x, state.y, 0 );
-				TranslationMatrixM(mat, pos_x, pos_y, 0 );
-				RotationXYZMatrixM(mat, 0.0f, 0.0f, rot_z);
-				ScaleMatrixM(mat,scale_x,scale_y,1.0f);
-*/				
 				//最終的な表示座標を取得
 				state.x = pos_x + (state.x * scale_x);
 				state.y = pos_y + (state.y * scale_y);
@@ -318,6 +367,11 @@ namespace ss
 				//スプライトの描画
 				sprite_draw( state );
 			}
+			if ( vidx > 0 )
+			{
+				graphics.SetTexture(0, ssbx_animedata.tex[oldtexid]);
+				blt_render();
+			}
 		}
 		
 		private void sprite_draw( PART_STATE state )
@@ -327,105 +381,118 @@ namespace ss
 				//NULLパーツ
 				return;
 			}
+			
+			if ((oldtexid != state.tex_id) || ( old_blend_func != state.blend_func ) )
+			{
+				if ( vidx > 0 )
+				{
+					graphics.SetTexture(0, ssbx_animedata.tex[oldtexid]);
+					blt_render();
+				}
+				oldtexid = state.tex_id;
+				old_blend_func = state.blend_func;
+			}
+			UByte4N _color = new UByte4N(1.0f,1.0f,1.0f,alpha);
+			
+			spritePrimBuffer[vidx].V0.Color = _color;
+			spritePrimBuffer[vidx].V1.Color = _color;
+			spritePrimBuffer[vidx].V2.Color = _color;
+			spritePrimBuffer[vidx].V3.Color = _color;
+			
 			float tex_w = ssbx_animedata.tex[state.tex_id].Width;
 			float tex_h = ssbx_animedata.tex[state.tex_id].Height;
-			float u1 = (float)state.rect_x / tex_w;
-			float v1 = (float)state.rect_y / tex_h;
-			float u2 = (float)( state.rect_x + state.rect_w ) / tex_w;
-			float v2 = (float)( state.rect_y + state.rect_h ) / tex_h;
+			float u0 = (float)state.rect_x / tex_w;
+			float v0 = (float)state.rect_y / tex_h;
+			float u1 = (float)( state.rect_x + state.rect_w ) / tex_w;
+			float v1 = (float)( state.rect_y + state.rect_h ) / tex_h;
+
+			Short2[] _uv = new Short2[4];
+			_uv[0] = new Short2((short)(u0*32767),(short)(v0*32767));//(0,0)
+			_uv[1] = new Short2((short)(u0*32767),(short)(v1*32767));//(1,0)
+			_uv[2] = new Short2((short)(u1*32767),(short)(v0*32767));//(0,1)
+			_uv[3] = new Short2((short)(u1*32767),(short)(v1*32767));//(1,1)
 			
-			float[] texcoords = {
-			    u1, v1, // 0 top left.
-			    u1, v2, // 1 bottom left.
-			    u2, v1, // 2 top right.
-			    u2, v2, // 3 bottom right.
-			};
-			if ( ( state.flip_x != 0 ) && ( state.flip_y != 0 ) )
-			{
-				texcoords[0] = u2;
-				texcoords[1] = v2;
-				texcoords[2] = u2;
-				texcoords[3] = v1;
-				texcoords[4] = u1;
-				texcoords[5] = v2;
-				texcoords[6] = u1;
-				texcoords[7] = v1;
-			}
-			else if ( state.flip_x != 0 )
-			{
-				texcoords[0] = u2;
-				texcoords[1] = v1;
-				texcoords[2] = u2;
-				texcoords[3] = v2;
-				texcoords[4] = u1;
-				texcoords[5] = v1;
-				texcoords[6] = u1;
-				texcoords[7] = v2;
-			}
-			else if ( state.flip_y != 0 )
-			{
-				texcoords[0] = u1;
-				texcoords[1] = v2;
-				texcoords[2] = u1;
-				texcoords[3] = v1;
-				texcoords[4] = u2;
-				texcoords[5] = v2;
-				texcoords[6] = u2;
-				texcoords[7] = v1;
-			}
-			
-			float[] colors = {
-			    1.0f,   1.0f,   1.0f,   state.alpha * alpha,   // 0 top left.
-			    1.0f,   1.0f,   1.0f,   state.alpha * alpha,   // 1 bottom left.
-			    1.0f,   1.0f,   1.0f,   state.alpha * alpha,   // 2 top right.
-			    1.0f,   1.0f,   1.0f,   state.alpha * alpha,   // 3 bottom right.
-			};
+			spritePrimBuffer[vidx].V0.UV = _uv[0];
+			spritePrimBuffer[vidx].V1.UV = _uv[1];
+			spritePrimBuffer[vidx].V2.UV = _uv[2];
+			spritePrimBuffer[vidx].V3.UV = _uv[3];
 		
-			float w = ( state.rect_w * state.scale_x * scale_x );
-			float h = ( state.rect_h * state.scale_y * scale_y );
-			float x = (float)state.x - ( w / 2.0f );
-			float y = (float)state.y - ( h / 2.0f );
+			short w = (short)( state.rect_w * state.scale_x * scale_x );
+			short h = (short)( state.rect_h * state.scale_y * scale_y );
+			short x = (short)( state.x - ( w / 2 ) );
+			short y = (short)( state.y - ( h / 2 ) );
 			
+			spritePrimBuffer[vidx].V0.Position.X = x;//0.0f;	// x0
+			spritePrimBuffer[vidx].V0.Position.Y = y;//0.0f;	// y0
 			
-			float[] vertices=new float[12];
-			vertices[0]= x;   // x0
-			vertices[1]= y;   // y0
-			vertices[2]= 0.0f;   // z0
-			get_rotation(ref vertices[0], ref vertices[1], (float)state.x, (float)state.y, state.rotz);
+			spritePrimBuffer[vidx].V1.Position.X = x;//0.0f;	// x1
+			spritePrimBuffer[vidx].V1.Position.Y = (short)(y + h);//1.0f;	// y1
+	
+			spritePrimBuffer[vidx].V2.Position.X = (short)(x + w);//1.0f;	// x2
+			spritePrimBuffer[vidx].V2.Position.Y = y;//0.0f;	// y2
 			
-			vertices[3]= x;   // x1
-			vertices[4]= y + h; // y1
-			vertices[5]= 0.0f;   // z1
-			get_rotation(ref vertices[3], ref vertices[4], (float)state.x, (float)state.y, state.rotz);
+			spritePrimBuffer[vidx].V3.Position.X = (short)(x + w);//1.0f;	// x3
+			spritePrimBuffer[vidx].V3.Position.Y = (short)(y + h);//1.0f;	// y3
+
+			if(state.rotz != 0.0f)
+			{
+				float rx = 0;
+				float ry = 0;
+				
+
+				float fw = ( state.rect_w * state.scale_x * scale_x );
+				float fh = ( state.rect_h * state.scale_y * scale_y );
+				float fx = (float)state.x - ( w / 2.0f );
+				float fy = (float)state.y - ( h / 2.0f );
+				
+				rx = fx;
+				ry = fy;
+				get_rotation(ref rx, ref ry, (float)state.x, (float)state.y, state.rotz);
+				spritePrimBuffer[vidx].V0.Position.X = (short)rx;
+				spritePrimBuffer[vidx].V0.Position.Y = (short)ry;
+
+				rx = fx;
+				ry = fy + fh;
+				get_rotation(ref rx, ref ry, (float)state.x, (float)state.y, state.rotz);
+				spritePrimBuffer[vidx].V1.Position.X = (short)rx;
+				spritePrimBuffer[vidx].V1.Position.Y = (short)ry;
+
+				rx = fx + fw;
+				ry = fy;
+				get_rotation(ref rx, ref ry, (float)state.x, (float)state.y, state.rotz);
+				spritePrimBuffer[vidx].V2.Position.X = (short)rx;
+				spritePrimBuffer[vidx].V2.Position.Y = (short)ry;
+
+				rx = fx + fw;
+				ry = fy + fh;
+				get_rotation(ref rx, ref ry, (float)state.x, (float)state.y, state.rotz);
+				spritePrimBuffer[vidx].V3.Position.X = (short)rx;
+				spritePrimBuffer[vidx].V3.Position.Y = (short)ry;
+			}
 			
-			vertices[6]= x + w;  // x2
-			vertices[7]= y;   // y2
-			vertices[8]= 0.0f;   // z2
-			get_rotation(ref vertices[6], ref vertices[7], (float)state.x, (float)state.y, state.rotz);
+			vidx++;
+		}
+		private void get_rotation(ref float x, ref float y, float cx, float cy, float deg)
+		{
+			float dx = x - cx; // 中心からの距離(X)
+			float dy = y - cy; // 中心からの距離(Y)
+			float rad = FMath.Radians(deg);
 			
-			vertices[9]= x + w;  // x3
-			vertices[10]= y + h;    // y3
-			vertices[11]= 0.0f;  // z3	
-			get_rotation(ref vertices[9], ref vertices[10], (float)state.x, (float)state.y, state.rotz);
-			
-			
-			vertexBuffer.SetVertices(0, vertices);
-			vertexBuffer.SetVertices(1, texcoords);
-			vertexBuffer.SetVertices(2, colors);
-			
-			vertexBuffer.SetIndices(indices);
-			graphics.SetVertexBuffer(0, vertexBuffer);
-			
-			graphics.SetShaderProgram(shaderProgram);
-			graphics.SetTexture(0, ssbx_animedata.tex[state.tex_id]);
-			shaderProgram.SetUniformValue(0, ref screenMatrix);
-			
+			float tmpX = (dx * FMath.Cos(rad)) - (dy * FMath.Sin(rad)); // 回転
+			float tmpY = (dx * FMath.Sin(rad)) + (dy * FMath.Cos(rad));
+		
+			x = (cx + tmpX); // 元の座標にオフセットする
+			y = (cy + tmpY);
+		
+		}
+		protected void blt_render()
+		{
 			//ブレンドファンクション
-			switch( state.blend_func )
+			switch( old_blend_func )
 			{
 			case 0:	//通常
 				graphics.Enable( EnableMode.Blend, true );
-				graphics.SetBlendFunc ( BlendFuncMode.Add, BlendFuncFactor.One, BlendFuncFactor.OneMinusSrcAlpha );
+				graphics.SetBlendFunc ( BlendFuncMode.Add, BlendFuncFactor.SrcAlpha, BlendFuncFactor.OneMinusSrcAlpha );
 				break;
 			case 1:	//乗算
 				graphics.Enable( EnableMode.Blend, true );
@@ -440,20 +507,23 @@ namespace ss
 				graphics.SetBlendFunc ( BlendFuncMode.Add, BlendFuncFactor.OneMinusSrcAlpha, BlendFuncFactor.OneMinusSrcColor );
 				break;
 			}
-			graphics.DrawArrays(DrawMode.TriangleStrip, 0, indexSize);
-		}
-		private void get_rotation(ref float x, ref float y, float cx, float cy, float deg)
-		{
-			float dx = x - cx; // 中心からの距離(X)
-			float dy = y - cy; // 中心からの距離(Y)
-			float rad = FMath.Radians(deg);
 			
-			float tmpX = (dx * FMath.Cos(rad)) - (dy * FMath.Sin(rad)); // 回転
-			float tmpY = (dx * FMath.Sin(rad)) + (dy * FMath.Cos(rad));
-		
-			x = (cx + tmpX); // 元の座標にオフセットする
-			y = (cy + tmpY);
-		
+			primCount[index] = vidx;
+			// 必要な分だけ転送。
+			vertexBuffer[index].SetVertices(spritePrimBuffer,0,0,primCount[index]*4);
+			shaderProgram.SetUniformValue(0,ref wvp);
+				
+			graphics.SetShaderProgram(shaderProgram);
+			
+			graphics.SetVertexBuffer(0,vertexBuffer[index]);
+			graphics.DrawArrays(
+				DrawMode.Triangles,
+				0,
+				primCount[index]*6
+				);
+			
+			oldtexid = -1;
+			vidx = 0;
 		}
 	}
 }

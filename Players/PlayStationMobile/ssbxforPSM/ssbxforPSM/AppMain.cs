@@ -4,8 +4,10 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Diagnostics;
 
 using Sce.PlayStation.Core;
 using Sce.PlayStation.Core.Graphics;
@@ -27,9 +29,15 @@ namespace ss
 		private static bool anime_stop;
 		private static bool press;
 		private static int motion_type;
-		
-		private static Label label1;
-		private static Label label2;
+
+		//fps表示
+		static Stopwatch stopwatch;
+		static int frameCounter=0;
+		static int preSecondTicks;
+		static float fps=0;
+		static long managedMemoryUsage;
+
+		private static Label[] label = new Label[4];
 
 		//アニメ再生用のプレイヤー
 		private static ResourceManager resourcemaneger;		//リソースマネージャ
@@ -71,26 +79,24 @@ namespace ss
 			
 			
 			//時間計測表示
-			String str;
+			stopwatch = new Stopwatch();
+			stopwatch.Start();
+
 			//UIの初期化
             UISystem.Initialize(graphics);
 			//シーンの生成
             Scene scene=new Scene();
             UISystem.SetScene(scene,null);
 			//ラベル作成
-			label1=new Label();
-			str = string.Format("xml load: {0} ms", resourcemaneger.GetLoadtime());
-            label1.Text=str;
-            label1.TextColor=new UIColor(1.0f,1.0f,1.0f,1.0f);
-			label1.SetPosition(0.0f, 0.0f);
-            scene.RootWidget.AddChildLast(label1);			
-
-			label2=new Label();
-			str = string.Format("", resourcemaneger.GetLoadtime());
-            label2.Text=str;
-            label2.TextColor=new UIColor(1.0f,1.0f,1.0f,1.0f);
-			label2.SetPosition(0.0f, 20.0f);
-            scene.RootWidget.AddChildLast(label2);			
+			int i = 0;
+			for ( i = 0; i < label.Length; i++ )
+			{
+				label[i]=new Label();
+	            label[i].Text="";
+	            label[i].TextColor=new UIColor(1.0f,1.0f,1.0f,1.0f);
+				label[i].SetPosition(0.0f, 20.0f * i);
+	            scene.RootWidget.AddChildLast(label[i]);			
+			}
 		}
 	
 		public static void Update ()
@@ -217,15 +223,52 @@ namespace ss
 				press = false;
 			}
 			//再生フレームの表示
-			string str;
-			str = string.Format("frame: {0}/{1}", frame_count, maxframe);
-            label2.Text=str;
+			int i;
+			for ( i = 0; i < label.Length; i++ )
+			{
+				string str = "";
+				switch(i)
+				{
+				case 0:
+					str = string.Format("load: {0} ms", resourcemaneger.GetLoadtime());
+					break;
+				case 1:
+					str = string.Format("frame: {0}/{1}", frame_count, maxframe);
+					break;
+				case 2:
+					str = string.Format("fps: {0}", fps);
+					break;
+				case 3:
+					str = string.Format("mem: {0:N0} KB", managedMemoryUsage / 1000);
+					break;
+				}
+	            label[i].Text=str;
+			}
 			
 			//タッチ情報の取得
             List<TouchData> touchData=Touch.GetData(0);
             
             //UIの更新
             UISystem.Update(touchData);			//UIの更新
+
+			frameCounter++;
+			CalculateFPS();
+		}
+		static void CalculateFPS()
+		{
+			//@e Update FPS counter if 1 second has elapsed.
+			//@j 1秒経過したら、fpsカウンタを更新する。
+			int elapsedTicks = (int)stopwatch.ElapsedTicks;
+			if( elapsedTicks - preSecondTicks >= Stopwatch.Frequency)
+			{
+				fps=(float)frameCounter*Stopwatch.Frequency/(elapsedTicks - preSecondTicks);
+				frameCounter=0;
+				preSecondTicks=(int)stopwatch.ElapsedTicks;
+				
+				//@e Usage of managed memory.
+				//@j マネージドメモリの使用量。
+				managedMemoryUsage = System.GC.GetTotalMemory(false);
+			}
 		}
 
 		public static void Render ()

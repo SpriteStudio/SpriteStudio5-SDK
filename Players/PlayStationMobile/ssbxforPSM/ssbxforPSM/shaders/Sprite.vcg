@@ -1,12 +1,20 @@
-void main(float4 in a_Position    : POSITION,
-          float2 in a_TexCoord    : TEXCOORD0,
-          float4 in a_VertexColor : COLOR0,
-          float4 out v_Position   : POSITION,
-          float2 out v_TexCoord   : TEXCOORD0,
-          float4 out v_Color      : COLOR0,
-          uniform float4x4 u_ScreenMatrix)
-{
-	v_Position = mul(a_Position, u_ScreenMatrix);
-	v_TexCoord = a_TexCoord;
-	v_Color = a_VertexColor;
+void main(
+
+	float4 in a_Position 	: POSITION,
+	float4 in a_Color		: COLOR0,
+
+	float4 out v_Position	: POSITION,
+	float4 out v_Color 		: COLOR0,
+	float2 out v_TexCoord	: TEXCOORD0,
+
+	uniform float4x4 u_WVP
+	)	
+{	
+	v_Position	= mul( float4(a_Position.x,a_Position.y,0.0,1.0), u_WVP);
+	v_Color = a_Color;
+	
+	// no Z depth.
+	v_TexCoord = a_Position.zw / 32767.0f;
+
 }
+
