@@ -1199,6 +1199,7 @@ void Player::play(AnimeRef* animeRef, int loop, int startFrameNo)
 	_isPlaying = true;
 	_isPausing = false;
 	_prevDrawFrameNo = -1;
+	_isPlayFirstUserdataChack = true;
 
 	setFrame((int)_playingFrame);
 }
@@ -1256,7 +1257,14 @@ void Player::updateFrame(float dt)
 		int nextFrameNo = static_cast<int>(next);
 		float nextFrameDecimal = next - static_cast<float>(nextFrameNo);
 		int currentFrameNo = static_cast<int>(_playingFrame);
-		
+
+		//playを行って最初のupdateでは現在のフレームのユーザーデータを確認する
+		if (_isPlayFirstUserdataChack == true)
+		{
+			checkUserData(currentFrameNo);
+			_isPlayFirstUserdataChack = false;
+		}
+
 		if (_step >= 0)
 		{
 			// 順再生時.
