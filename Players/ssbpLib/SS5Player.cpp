@@ -2225,6 +2225,7 @@ void Player::draw()
 		{
 			//インスタンスパーツの場合は子供のプレイヤーを再生
 			sprite->_ssplayer->update(0);
+			sprite->_ssplayer->draw();
 		}
 		else
 		{
