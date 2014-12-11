@@ -170,7 +170,7 @@ namespace ss
 		* DrawRectRotaGraphはxとyが中心になるように、テクスチャの矩形を表示します。
 		*/
 		//反転時はスケールが-となるので、反転フラグを使用してスケールを元に戻す
-		if (state.flipX == true )
+		if (scaleX < 0.0f )
 		{
 			scaleX = -scaleX;
 		}

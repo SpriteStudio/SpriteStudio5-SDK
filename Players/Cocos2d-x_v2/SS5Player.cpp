@@ -552,7 +552,16 @@ std::string ResourceManager::addData(const std::string& ssbpFilepath, const std:
     {
         dataKey = filename.substr(0, pos);
     }
-	
+
+	//登録されている名前か判定する
+	std::map<std::string, ResourceSet*>::iterator it = _dataDic.find(dataKey);
+	if (it != _dataDic.end())
+	{
+		//登録されている場合は処理を行わない
+		std::string str = "";
+		return str;
+	}
+
 	return addDataWithKey(dataKey, ssbpFilepath, imageBaseDir);
 }
 

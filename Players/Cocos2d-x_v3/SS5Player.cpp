@@ -508,6 +508,16 @@ std::string ResourceManager::addData(const std::string& ssbpFilepath, const std:
         dataKey = filename.substr(0, pos);
     }
 	
+	//登録されている名前か判定する
+	cocos2d::Map<std::string, ResourceSet*>::iterator it = _dataDic.find(dataKey);
+	if (it != _dataDic.end())
+	{
+		//登録されている場合は処理を行わない
+		std::string str = "";
+		return str;
+	}
+
+
 	return addDataWithKey(dataKey, ssbpFilepath, imageBaseDir);
 }
 
@@ -1365,8 +1375,8 @@ void Player::setFrame(int frameNo)
 		CustomSprite* root = static_cast<CustomSprite*>(_parts.at(0));
 		float scaleX = isFlippedX() ? -1.0f : 1.0f;
 		float scaleY = isFlippedY() ? -1.0f : 1.0f;
-		root->setStateValue(root->_state.x, scaleX);
-		root->setStateValue(root->_state.y, scaleY);
+		root->setStateValue(root->_state.scaleX, scaleX);
+		root->setStateValue(root->_state.scaleY, scaleY);
 		forceUpdate = root->_isStateChanged;
 	}
 	
