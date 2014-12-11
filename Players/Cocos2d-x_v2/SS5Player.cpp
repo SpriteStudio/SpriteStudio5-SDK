@@ -1028,6 +1028,7 @@ void Player::play(AnimeRef* animeRef, int loop, int startFrameNo)
 	_isPlaying = true;
 	_isPausing = false;
 	_prevDrawFrameNo = -1;
+	_isPlayFirstUserdataChack = true;
 
 	setFrame(_playingFrame);
 }
@@ -1090,16 +1091,19 @@ void Player::updateFrame(float dt)
 		float nextFrameDecimal = next - static_cast<float>(nextFrameNo);
 		int currentFrameNo = static_cast<int>(_playingFrame);
 		
+		//playを行って最初のupdateでは現在のフレームのユーザーデータを確認する
+		if (_isPlayFirstUserdataChack == true)
+		{
+			checkUserData(currentFrameNo);
+			_isPlayFirstUserdataChack = false;
+		}
+
 		if (_step >= 0)
 		{
 			// 順再生時.
 			// normal plays.
 			for (int c = nextFrameNo - currentFrameNo; c; c--)
 			{
-				// このフレームのユーザーデータをチェック
-				// check the user data of this frame.
-				checkUserData(currentFrameNo);
-
 				int incFrameNo = currentFrameNo + 1;
 				if (incFrameNo >= numFrames)
 				{
@@ -1117,6 +1121,10 @@ void Player::updateFrame(float dt)
 					incFrameNo = 0;
 				}
 				currentFrameNo = incFrameNo;
+
+				// このフレームのユーザーデータをチェック
+				// check the user data of this frame.
+				checkUserData(currentFrameNo);
 			}
 		}
 		else
@@ -1125,10 +1133,6 @@ void Player::updateFrame(float dt)
 			// reverse play.
 			for (int c = currentFrameNo - nextFrameNo; c; c--)
 			{
-				// このフレームのユーザーデータをチェック
-				// check the user data of this frame.
-				checkUserData(currentFrameNo);
-
 				int decFrameNo = currentFrameNo - 1;
 				if (decFrameNo < 0)
 				{
@@ -1146,13 +1150,14 @@ void Player::updateFrame(float dt)
 					decFrameNo = numFrames - 1;
 				}
 				currentFrameNo = decFrameNo;
+
+				// このフレームのユーザーデータをチェック
+				// check the user data of this frame.
+				checkUserData(currentFrameNo);
 			}
 		}
 		
 		_playingFrame = static_cast<float>(currentFrameNo) + nextFrameDecimal;
-		// このフレームのユーザーデータをチェック
-		// check the user data of this frame.
-		checkUserData(getFrameNo());
 	}
 	else
 	{
@@ -1423,8 +1428,8 @@ void Player::setFrame(int frameNo)
 		CustomSprite* root = static_cast<CustomSprite*>(_parts.at(0));
 		float scaleX = root->isFlippedX() ? -1.0f : 1.0f;
 		float scaleY = root->isFlippedY() ? -1.0f : 1.0f;
-		root->setStateValue(root->_state.x, scaleX);
-		root->setStateValue(root->_state.y, scaleY);
+		root->setStateValue(root->_state.scaleX, scaleX);
+		root->setStateValue(root->_state.scaleY, scaleY);
 		forceUpdate = root->_isStateChanged;
 	}
 	
@@ -2019,7 +2024,7 @@ void Player::setFrame(int frameNo)
 		CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
 		
 
-		if (sprite->_isStateChanged)
+//		if (sprite->_isStateChanged) // v2系プレイヤーはtransを更新する必要があるため毎回計算する
 		{
 			if (partIndex > 0)
 			{

@@ -47,7 +47,7 @@ inline	void	RotationXYZMatrixM(  float* _matrix , const float x , const float y 
 	{
 		float	_m[16];
 		IdentityMatrix( _m );
-		Matrix4RotationY( _m , x );
+		Matrix4RotationY( _m , y );
 
 		MultiplyMatrix( _m , _matrix , _matrix );
 	}
