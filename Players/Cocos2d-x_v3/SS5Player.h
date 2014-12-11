@@ -539,6 +539,7 @@ protected:
 	int					_loopCount;
 	bool				_isPlaying;
 	bool				_isPausing;
+	bool				_isPlayFirstUserdataChack;
 	int					_prevDrawFrameNo;
 	bool				_partVisible[PART_VISIBLE_MAX];
 	int					_partIndex[PART_VISIBLE_MAX];
