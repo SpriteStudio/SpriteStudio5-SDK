@@ -871,7 +871,7 @@ void	SsAnimeDecoder::updateInstance( int nowTime , SsPart* part , SsPartAnime* p
 */
 
 	state->refAnime->setPlayFrame( _time );
-	state->refAnime->update();
+	state->refAnime->update(this->frameDelta);
 
   
 	//頂点の作成
@@ -937,9 +937,11 @@ static SsPartStateLess _ssPartStateLess;
 
 ///SS5の場合  SsPartのarrayIndexは、親子順　（子は親より先にいない）と
 ///なっているためそのまま木構造を作らずUpdateを行う
-void	SsAnimeDecoder::update()
+void	SsAnimeDecoder::update(float frameDelta)
 {
 	int	time = (int)nowPlatTime;
+
+	this->frameDelta = frameDelta;
 
 	int cnt = 0;
 	foreach( std::vector<SsPartAndAnime> , partAnime , e )

@@ -78,7 +78,7 @@ public:
 			delete [] partState;
 	}
 
-	virtual void	update();
+	virtual void	update( float frameDelta = 1.0f );
 	virtual void	draw();
 
 	void	setAnimation( SsModel*	model , SsAnimation* anime , SsCellMapList* cellmap , SsProject* sspj=0 );

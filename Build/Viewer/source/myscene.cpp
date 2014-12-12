@@ -51,7 +51,7 @@ void	SampleScene::draw()
 
 void	SampleScene::update(double delta)
 {
-
+	float frameDelta = 0;
 	if ( m_player )
 	{
 		m_InfoAnimeFps = m_player->getAnimeFPS();
@@ -60,9 +60,10 @@ void	SampleScene::update(double delta)
 	if ( m_isAnimeAutoPlay )
 	{
 		double anime_fps = (double)m_player->getAnimeFPS();
-
 		double frameper_sec = (1.0 / anime_fps) ;
-		m_nowPlayFrameD+= (delta*m_Speed / frameper_sec );
+		frameDelta = (delta*m_Speed / frameper_sec );
+
+		m_nowPlayFrameD+= frameDelta;
 		m_nowPlayFrame = (int)m_nowPlayFrameD;
 
 		if ( m_player->getAnimeEndFrame() < (int)m_nowPlayFrame )
@@ -71,9 +72,13 @@ void	SampleScene::update(double delta)
 			m_nowPlayFrameD = 0;
 		}
 	}
-
+	static float backframe = 0;
+	
 	m_player->setPlayFrame( (float)m_nowPlayFrame );
-	m_player->update();
+	m_player->update(frameDelta);
+
+
+	backframe = m_nowPlayFrame;
 
 }
 
