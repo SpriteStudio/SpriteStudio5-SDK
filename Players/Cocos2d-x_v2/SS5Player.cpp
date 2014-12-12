@@ -1038,6 +1038,7 @@ void Player::play(AnimeRef* animeRef, int loop, int startFrameNo)
 	_isPausing = false;
 	_prevDrawFrameNo = -1;
 	_isPlayFirstUserdataChack = true;
+	_animefps = _currentAnimeRef->animationData->fps;
 
 	setFrame(_playingFrame);
 }
@@ -1472,7 +1473,8 @@ void Player::setFrame(int frameNo)
 	}
 	
 	// 前回の描画フレームと同じときはスキップ
-	if (!forceUpdate && frameNo == _prevDrawFrameNo) return;
+	//インスタンスアニメがあるので毎フレーム更新するためコメントに変更
+	//	if (!forceUpdate && frameNo == _prevDrawFrameNo) return;
 
 	_prevDrawFrameNo = frameNo;
 
@@ -1966,7 +1968,7 @@ void Player::setFrame(int frameNo)
 			if (independent)
 			{
 				float fdt = cocos2d::CCDirector::sharedDirector()->getAnimationInterval();
-				float delta = fdt / (1.0f / _currentAnimeRef->animationData->fps);
+				float delta = fdt / (1.0f / sprite->_ssplayer->_animefps);
 
 				sprite->_liveFrame += delta;
 				time = (int)sprite->_liveFrame;

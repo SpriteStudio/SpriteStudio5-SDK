@@ -570,6 +570,7 @@ protected:
 	float				_InstanceRotX;
 	float				_InstanceRotY;
 	float				_InstanceRotZ;
+	int					_animefps;
 
 	SSPlayerDelegate*	_delegate;
 	UserData			_userData;

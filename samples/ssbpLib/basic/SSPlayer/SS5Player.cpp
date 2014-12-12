@@ -1209,6 +1209,7 @@ void Player::play(AnimeRef* animeRef, int loop, int startFrameNo)
 	_isPausing = false;
 	_prevDrawFrameNo = -1;
 	_isPlayFirstUserdataChack = true;
+	_animefps = _currentAnimeRef->animationData->fps;
 
 	setFrame((int)_playingFrame);
 }
@@ -1611,7 +1612,8 @@ void Player::setFrame(int frameNo)
 	}
 	
 	// 前回の描画フレームと同じときはスキップ
-	if (!forceUpdate && frameNo == _prevDrawFrameNo) return;
+	//インスタンスアニメがあるので毎フレーム更新するためコメントに変更
+	//	if (!forceUpdate && frameNo == _prevDrawFrameNo) return;
 
 	_prevDrawFrameNo = frameNo;
 
@@ -2052,8 +2054,8 @@ void Player::setFrame(int frameNo)
 			//独立動作の場合
 			if (independent)
 			{
-				float fdt = _gamefps;	//ゲームFPSからアニメーション時間を求める
-				float delta = fdt / (1.0f / _currentAnimeRef->animationData->fps);
+				float fdt = 1.0f / _gamefps;	//ゲームFPSからアニメーション時間を求める
+				float delta = fdt / (1.0f / sprite->_ssplayer->_animefps);
 
 				sprite->_liveFrame += delta;
 				time = (int)sprite->_liveFrame;
