@@ -811,7 +811,16 @@ std::string ResourceManager::addData(const std::string& ssbpFilepath, const std:
     {
         dataKey = filename.substr(0, pos);
     }
-	
+
+	//登録されている名前か判定する
+	std::map<std::string, ResourceSet*>::iterator it = _dataDic.find(dataKey);
+	if (it != _dataDic.end())
+	{
+		//登録されている場合は処理を行わない
+		std::string str = "";
+		return str;
+	}
+
 	return addDataWithKey(dataKey, ssbpFilepath, imageBaseDir);
 }
 
@@ -1494,6 +1503,39 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 					CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
 					result.x = sprite->_state.mat[12];
 					result.y = sprite->_state.mat[13];
+
+					//パーツアトリビュート
+//					sprite->_state;												//SpriteStudio上のアトリビュートの値は_stateから取得してください
+					result.flags = sprite->_state.flags;						// このフレームで更新が行われるステータスのフラグ
+					result.cellIndex = sprite->_state.cellIndex;				// パーツに割り当てられたセルの番号
+					result.x = sprite->_state.mat[12];
+					result.y = sprite->_state.mat[13];
+					result.anchorX = sprite->_state.anchorX;					// 原点Xオフセット＋セルに設定された原点オフセットX
+					result.anchorY = sprite->_state.anchorY;					// 原点Yオフセット＋セルに設定された原点オフセットY
+					result.rotationX = sprite->_state.rotationX;				// X回転（親子関係計算済）
+					result.rotationY = sprite->_state.rotationY;				// Y回転（親子関係計算済）
+					result.rotationZ = sprite->_state.rotationZ;				// Z回転（親子関係計算済）
+					result.scaleX = sprite->_state.scaleX;						// Xスケール（親子関係計算済）
+					result.scaleY = sprite->_state.scaleY;						// Yスケール（親子関係計算済）
+					result.opacity = sprite->_state.opacity;					// 不透明度（0～255）（親子関係計算済）
+					result.size_X = sprite->_state.size_X;						// SS5アトリビュート：Xサイズ
+					result.size_Y = sprite->_state.size_Y;						// SS5アトリビュート：Xサイズ
+					result.uv_move_X = sprite->_state.uv_move_X;				// SS5アトリビュート：UV X移動
+					result.uv_move_Y = sprite->_state.uv_move_Y;				// SS5アトリビュート：UV Y移動
+					result.uv_rotation = sprite->_state.uv_rotation;			// SS5アトリビュート：UV 回転
+					result.uv_scale_X = sprite->_state.uv_scale_X;				// SS5アトリビュート：UV Xスケール
+					result.uv_scale_Y = sprite->_state.uv_scale_Y;				// SS5アトリビュート：UV Yスケール
+					result.boundingRadius = sprite->_state.boundingRadius;		// SS5アトリビュート：当たり半径
+					result.colorBlendFunc = sprite->_state.colorBlendFunc;		// SS5アトリビュート：カラーブレンドのブレンド方法
+					result.colorBlendType = sprite->_state.colorBlendType;		// SS5アトリビュート：カラーブレンドの単色か頂点カラーか。
+					result.flipX = sprite->_state.flipX;						// 横反転（親子関係計算済）
+					result.flipY = sprite->_state.flipY;						// 縦反転（親子関係計算済）
+					result.isVisibled = sprite->_state.isVisibled;				// 非表示（親子関係計算済）
+
+					//パーツ設定
+					result.part_type = partData->type;							//パーツ種別
+					result.part_boundsType = partData->boundsType;				//当たり判定種類
+					result.part_alphaBlendType = partData->alphaBlendType;		// BlendType
 
 					return true;
 				}
