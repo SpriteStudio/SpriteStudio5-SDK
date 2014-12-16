@@ -54,8 +54,14 @@
     <Folder Include="resources\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="resources\character_2head.png" />
-    <Content Include="resources\character_3head.png" />
-    <Content Include="resources\character_template1.xml" />
+    <Content Include="resources\character_2head.png">
+      <PSM-Content-Protection>Plain</PSM-Content-Protection>
+    </Content>
+    <Content Include="resources\character_3head.png">
+      <PSM-Content-Protection>Plain</PSM-Content-Protection>
+    </Content>
+    <Content Include="resources\character_template1.xml">
+      <PSM-Content-Protection>Plain</PSM-Content-Protection>
+    </Content>
   </ItemGroup>
 </Project>
