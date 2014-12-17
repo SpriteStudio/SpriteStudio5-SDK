@@ -1,0 +1,35 @@
+SpriteStudio5 Player for UE4 プラグインのビルド方法について説明します。
+
+Blueprintのみのプロジェクトで使用する場合は、ビルドの必要はありません。
+その場合は「使用方法.txt」を参照して下さい。
+
+
+このプラグインは UE4.4/4.5/4.6に対応しています。
+但し、UE4.5/4.6で全機能を使用するためには、エンジンコードを修正する必要があります。
+詳細は SsVersion.h をご確認下さい。
+
+
+１．
+プロジェクトフォルダ（.uprojectファイルが存在するフォルダ）のPluginsフォルダ以下に、
+SpriteStudio5フォルダをコピーします。
+
+２．
+GitHubから取得したエンジンコードから、下記のフォルダ以下を取得します。
+(https://github.com/EpicGames/UnrealEngine)
+  UnrealEngine\Engine\Source\ThredParty\FBX
+  UnrealEngine\Engine\Source\ThredParty\ForsythTriOO
+  UnrealEngine\Engine\Source\ThredParty\HACD
+  UnrealEngine\Engine\Source\ThredParty\nvTriStrip
+  UnrealEngine\Engine\Source\ThredParty\Windows\DX9
+
+３．
+先ほど取得したフォルダ以下の全ファイルを、エンジンのインストールフォルダの同階層にコピーします。
+(デフォルトでは C:\Program Files\Unreal Engine\[VERSION]\Engine\Source\ThirdParty)
+
+４．
+SsVersion.h を開いて、使用するエンジンバージョンに応じて#defineをコメントアウトします。
+デフォルトでは UE4.4 用の設定になっています。
+
+５．
+通常のUE4のビルド手順い沿ってビルドして下さい。
+
