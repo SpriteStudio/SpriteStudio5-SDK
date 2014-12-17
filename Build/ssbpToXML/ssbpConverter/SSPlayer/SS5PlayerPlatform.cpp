@@ -144,6 +144,7 @@ namespace ss
 		partdata[partdata_index].rect.w = (int)state.rect.size.width;						/// セルに対応したテクスチャ内の表示領域（開始座標、幅高さ）
 		partdata[partdata_index].rect.h = (int)state.rect.size.height;						/// セルに対応したテクスチャ内の表示領域（開始座標、幅高さ）
 		partdata[partdata_index].blendfunc = state.blendfunc;					/// パーツに設定されたブレンド方法
+		partdata[partdata_index].quad = state.quad;								/// 頂点情報
 		memcpy( partdata[partdata_index].mat, state.mat, sizeof( state.mat ) );					/// パーツの位置を算出するためのマトリクス（親子関係計算済）
 
 		partdata_index++;

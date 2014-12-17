@@ -36,6 +36,7 @@
     <Reference Include="Sce.PlayStation.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Sce.PlayStation.HighLevel.UI" />
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppMain.cs" />
@@ -63,5 +64,6 @@
     <Content Include="resources\character_template1.xml">
       <PSM-Content-Protection>Plain</PSM-Content-Protection>
     </Content>
+    <Content Include="resources\character_template1.ssbx" />
   </ItemGroup>
 </Project>

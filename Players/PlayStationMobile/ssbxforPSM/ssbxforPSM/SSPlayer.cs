@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 using Sce.PlayStation.Core;
 using Sce.PlayStation.Core.Graphics;
@@ -45,11 +47,14 @@ namespace ss
 			
 			//ssbxの読み込み
 			loadtime_start = (int)stopwatch.ElapsedMilliseconds;	//時間計測
+
 			if ( animedata.ContainsKey(addname) == false )
 			{
 				//キーを検索して存在しない場合は読み込みを行う
-				animedata.Add (addname, SSBX.GetSsbx_animedata(ssbx_name));
-
+//				animedata.Add (addname, SSBX.GetSsbx_animedata(ssbx_name));
+				SSBX_ANIMEDATA loadanime = (SSBX_ANIMEDATA)LoadFromBinaryFile(ssbx_name);
+				animedata.Add (addname, loadanime);
+				
 				//画像読み込み
 				int idx;
 				for ( idx = 0; idx < animedata[addname].texturedata.Count; idx++ )
@@ -67,6 +72,18 @@ namespace ss
 			}
 			loadtime_end = (int)stopwatch.ElapsedMilliseconds;	//時間計測
 		}
+		public static object LoadFromBinaryFile(string path)
+		{
+		    FileStream fs = new FileStream(path,
+		        FileMode.Open,
+		        FileAccess.Read);
+		    BinaryFormatter f = new BinaryFormatter();
+		    //読み込んで逆シリアル化する
+		    object obj = f.Deserialize(fs);
+		    fs.Close();
+		
+		    return obj;
+		}		
 		//データの削除
 		public void Release( string ssbx_name )
 		{

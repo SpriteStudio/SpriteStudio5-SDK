@@ -119,7 +119,7 @@ struct PARTDATA
 	float instancerotationX;		/// インスタンスパーツに設定されたX回転
 	float instancerotationY;		/// インスタンスパーツに設定されたY回転
 	float instancerotationZ;		/// インスタンスパーツに設定されたZ回転
-//	SSV3F_C4B_T2F_Quad quad;		/// 頂点データ、座標、カラー値、UVが含まれる（頂点変形、サイズXY、UV移動XY、UVスケール、UV回転、反転が反映済）
+	ss::SSV3F_C4B_T2F_Quad quad;		/// 頂点データ、座標、カラー値、UVが含まれる（頂点変形、サイズXY、UV移動XY、UVスケール、UV回転、反転が反映済）
 	long texture;					/// セルに対応したテクスチャ番号（ゲーム側で管理している番号を設定する）
 	RECT rect;						/// セルに対応したテクスチャ内の表示領域（開始座標、幅高さ）
 	int blendfunc;					/// パーツに設定されたブレンド方法

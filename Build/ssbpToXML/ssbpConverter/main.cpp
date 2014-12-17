@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 
 	if (ishelp == true)
 	{
-		printf("第一引数：sspjのパス\r\n");
+		printf("第一引数：ssbpのパス\r\n");
 		printf("オプション\r\n");
 		printf("-h：ヘルプ表示\r\n");
 	}

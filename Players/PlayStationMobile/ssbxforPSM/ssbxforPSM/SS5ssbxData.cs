@@ -7,6 +7,7 @@ using Sce.PlayStation.Core.Graphics;
 namespace ss
 {
 	//パーツステータス
+	[Serializable()]
 	public struct PART_STATE
 	{
 		public string name;
@@ -29,6 +30,7 @@ namespace ss
 		public int blend_func;
 	}
 	//パーツデータクラス
+	[Serializable()]
 	public class SSBX_PARTDATA
 	{
 		public PART_STATE partdata;
@@ -39,6 +41,7 @@ namespace ss
 	}
 	
 	//フレームデータクラス
+	[Serializable()]
 	public class SSBX_FRAMEDATA
 	{
 		public Dictionary<string, SSBX_PARTDATA> framedata;
@@ -49,6 +52,7 @@ namespace ss
 	}
 
 	//テクスチャデータクラス
+	[Serializable()]
 	public class SSBX_TEXTUREDATA
 	{
 		public int id;
@@ -62,6 +66,7 @@ namespace ss
 	
 	
 	//モーションデータクラス
+	[Serializable()]
 	public class SSBX_MOTIONDATA
 	{
 		public string motionname;
@@ -78,6 +83,7 @@ namespace ss
 	}
 
 	//アニメデータクラス
+	[Serializable()]
 	public class SSBX_ANIMEDATA
 	{
 		public string sspbname;

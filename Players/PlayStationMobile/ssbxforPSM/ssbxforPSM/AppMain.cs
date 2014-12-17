@@ -62,7 +62,8 @@ namespace ss
 			//リソースマネージャの作成
 			resourcemaneger = new ResourceManager();
 			//ssbxの読み込み
-			resourcemaneger.Load("/Application/resources/character_template1.xml");
+//			resourcemaneger.Load("/Application/resources/character_template1.xml");
+			resourcemaneger.Load("/Application/resources/character_template1.ssbx");
 				
 			//プレイヤーの作成とssbxの割り当て
 			player = new Player(graphics);
