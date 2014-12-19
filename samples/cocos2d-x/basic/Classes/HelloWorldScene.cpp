@@ -150,5 +150,12 @@ void HelloWorld::userDataCallback(ss::Player* player, const ss::UserData* data)
 {
 	//再生したフレームにユーザーデータが設定されている場合呼び出されます。
 	//プレイヤーを判定する場合、ゲーム側で管理しているss::Playerのアドレスと比較して判定してください。
+/*
+	//コールバック内でパーツのステータスを取得したい場合は、この時点ではアニメが更新されていないため、
+	//getPartState　に　data->frameNo　でフレーム数を指定して取得してください。
+	ss::ResluteState result;
+	//再生しているモーションに含まれるパーツ名「collision」のステータスを取得します。
+	ssplayer->getPartState(result, "collision", data->frameNo);
+*/	
 
 }
