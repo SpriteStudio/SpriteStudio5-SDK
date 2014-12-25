@@ -47,11 +47,11 @@ static std::string Format(const char* format, ...){
 
 	va_list args, source;
 	va_start(args, format);
-	source = args;
+	va_copy( source , args );
 
 	while (1)
 	{
-		args = source;
+		va_copy( args , source );
 
 #if(CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
         //iOS
