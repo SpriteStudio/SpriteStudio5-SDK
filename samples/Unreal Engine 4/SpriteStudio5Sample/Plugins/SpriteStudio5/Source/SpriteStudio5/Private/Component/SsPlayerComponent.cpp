@@ -370,7 +370,14 @@ bool USsPlayerComponent::Play(int32 AnimPackIndex, int32 AnimationIndex, int32 S
 {
 	if(Player.IsValid())
 	{
-		return Player->Play(AnimPackIndex, AnimationIndex, StartFrame, PlayRate, LoopCount, bRoundTrip);
+		if(Player->Play(AnimPackIndex, AnimationIndex, StartFrame, PlayRate, LoopCount, bRoundTrip))
+		{
+			if(bAutoUpdate)
+			{
+				UpdatePlayer(0.f);
+			}
+			return true;
+		}
 	}
 	return false;
 }
