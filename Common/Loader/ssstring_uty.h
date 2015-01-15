@@ -22,7 +22,8 @@ void	split_string( const std::string &in_str ,
 						const char key, 
 						std::vector<std::string>& out_array );
 
-bool	is_digit_string( std::string &in_str );
+//bool	is_digit_string( std::string &in_str );
+bool	is_digit_string( std::string &in_str , bool* is_priod = 0 );
 
 /*
  * @brief ファイルのフルパスからフォルダパスのみを取得します。

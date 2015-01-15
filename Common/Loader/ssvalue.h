@@ -173,6 +173,15 @@ template <> inline SsString& SsValue::get<SsString>() {
 	static SsString ret = "";
 	if ( this->type != string_type )
 	{
+		if ( this->type == float_type )
+		{
+			ret = std::to_string( (long double)_float);
+		}else if ( this->type == int_type )
+		{
+			ret = std::to_string( (_Longlong)_int);
+		}
+
+
 		return ret;
 	}
 	return *_str;
@@ -275,9 +284,16 @@ template <> inline bool SsValue::is<SsHash>() const {
 static  SsValue	SsValueSeriarizer__MakeValue( const char* v )
 {
     std::string temp = v;
-	if ( is_digit_string( temp ) )
+	bool is_priod;
+
+	if ( is_digit_string( temp , &is_priod) )
 	{
-		return SsValue( (float)atof( v ));
+		if ( is_priod )
+		{
+			return SsValue( (float)atof( v ));
+		}
+		return SsValue( (int)atoi( v ));
+
 	}else{
 		return  SsValue( v );
 	}

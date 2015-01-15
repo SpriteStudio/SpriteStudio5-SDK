@@ -93,6 +93,7 @@ void	GetSsColorValue( const SsKeyframe* key , SsColorAnime& v )
 
 	}else{
 		SsHash color = key->value["color"].get<SsHash>();
+
 		ConvertStringToSsColor( color["rgba"].get<SsString>() , v.color.rgba);
 		v.color.rate = color["rate"].get<float>();
 	}
