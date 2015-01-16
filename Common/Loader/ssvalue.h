@@ -178,7 +178,11 @@ template <> inline SsString& SsValue::get<SsString>() {
 			ret = std::to_string( (long double)_float);
 		}else if ( this->type == int_type )
 		{
-			ret = std::to_string( (_Longlong)_int);
+#ifdef _WIN32
+            ret = std::to_string( (_Longlong)_int);
+#else
+            ret = std::to_string( (int)(_int) );
+#endif
 		}
 
 
