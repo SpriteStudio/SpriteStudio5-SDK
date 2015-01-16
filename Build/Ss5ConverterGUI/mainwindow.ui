@@ -6,32 +6,32 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>888</width>
-    <height>447</height>
+    <width>736</width>
+    <height>709</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="pushButton_listclear">
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>10</y>
+      <x>450</x>
+      <y>330</y>
       <width>131</width>
-      <height>31</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="text">
-     <string>Open</string>
+     <string>List Clear</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
+      <y>40</y>
       <width>51</width>
       <height>31</height>
      </rect>
@@ -43,24 +43,24 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="pushButton_convert">
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>50</y>
+      <x>590</x>
+      <y>330</y>
       <width>131</width>
       <height>61</height>
      </rect>
     </property>
     <property name="text">
-     <string>Convet</string>
+     <string>Convet Start</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="pushButton_exit">
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>370</y>
+      <x>590</x>
+      <y>640</y>
       <width>131</width>
       <height>61</height>
      </rect>
@@ -73,7 +73,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>120</y>
+      <y>400</y>
       <width>50</width>
       <height>31</height>
      </rect>
@@ -86,7 +86,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>170</y>
+      <y>440</y>
       <width>50</width>
       <height>31</height>
      </rect>
@@ -95,75 +95,56 @@
      <string>Error:</string>
     </property>
    </widget>
-   <widget class="QTextBrowser" name="textBrowser">
+   <widget class="QTextBrowser" name="textBrowser_err">
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>170</y>
+      <y>440</y>
       <width>651</width>
-      <height>261</height>
+      <height>191</height>
      </rect>
     </property>
     <property name="frameShape">
      <enum>QFrame::Box</enum>
     </property>
    </widget>
-   <widget class="QTextBrowser" name="textBrowser_2">
+   <widget class="QTextBrowser" name="textBrowser_status">
     <property name="geometry">
      <rect>
       <x>70</x>
+      <y>400</y>
+      <width>651</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="listWidget">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>40</y>
+      <width>651</width>
+      <height>281</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
       <y>10</y>
-      <width>651</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-   </widget>
-   <widget class="QTextBrowser" name="textBrowser_3">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>120</y>
-      <width>651</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Box</enum>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="checkBox">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>45</y>
-      <width>651</width>
-      <height>21</height>
+      <width>311</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>-p arg  Specify image file load base path.</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="lineEdit">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>70</y>
-      <width>651</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="maxLength">
-     <number>255</number>
-    </property>
-    <property name="frame">
-     <bool>true</bool>
+     <string>sspjファイルをドラッグ＆ドロップするとファイルが追加されます。</string>
     </property>
    </widget>
   </widget>
