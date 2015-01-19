@@ -1280,8 +1280,12 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 				frameNo = getFrameNo();
 			}
 
-			//パーツステータスの更新
-			setFrame(frameNo);
+			if (frameNo != getFrameNo())
+			{
+				//取得する再生フレームのデータが違う場合プレイヤーを更新する
+				//パーツステータスの更新
+				setFrame(frameNo);
+			}
 
 			ToPointer ptr(_currentRs->data);
 
@@ -1339,7 +1343,12 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 				}
 			}
 			//パーツステータスを表示するフレームの内容で更新
-			setFrame(getFrameNo());
+			if (frameNo != getFrameNo())
+			{
+				//取得する再生フレームのデータが違う場合プレイヤーの状態をもとに戻す
+				//パーツステータスの更新
+				setFrame(getFrameNo());
+			}
 		}
 	}
 	return (rc);
