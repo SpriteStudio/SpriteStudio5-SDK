@@ -1473,6 +1473,7 @@ int Player::indexOfPart(const char* partName) const
 */
 bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 {
+	bool rc = false;
 	if (_currentAnimeRef)
 	{
 		{
@@ -1483,8 +1484,12 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 				frameNo = getFrameNo();
 			}
 
-			//パーツステータスの更新
-			setFrame(frameNo);
+			if (frameNo != getFrameNo())
+			{
+				//取得する再生フレームのデータが違う場合プレイヤーを更新する
+				//パーツステータスの更新
+				setFrame(frameNo);
+			}
 
 			ToPointer ptr(_currentRs->data);
 
@@ -1538,13 +1543,20 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 					result.part_boundsType = partData->boundsType;				//当たり判定種類
 					result.part_alphaBlendType = partData->alphaBlendType;		// BlendType
 
-					return true;
+					rc = true;
+					break;
 				}
 			}
-
+			//パーツステータスを表示するフレームの内容で更新
+			if (frameNo != getFrameNo())
+			{
+				//取得する再生フレームのデータが違う場合プレイヤーの状態をもとに戻す
+				//パーツステータスの更新
+				setFrame(getFrameNo());
+			}
 		}
 	}
-	return false;
+	return rc;
 }
 
 
