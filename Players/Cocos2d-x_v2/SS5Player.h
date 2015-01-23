@@ -66,6 +66,7 @@ public:
 	 *
 	 * @param  ssbpFilepath  ssbpファイルのパス
 	 * @param  imageBaseDir  画像ファイルの読み込み元ルートパス. 省略時はssbpのある場所をルートとします.
+	 *                       解像度によって画像ファイルを差し替える時などに使用してください。
 	 * @return dataKey
 	 */
 	std::string addData(const std::string& ssbpFilepath, const std::string& imageBaseDir = s_null);
