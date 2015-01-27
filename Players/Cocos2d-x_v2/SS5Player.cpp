@@ -597,6 +597,7 @@ struct State
 	int cellIndex;					/// パーツに割り当てられたセルの番号
 	float x;						/// SS5アトリビュート：X座標
 	float y;						/// SS5アトリビュート：X座標
+	float z;						/// SS5アトリビュート：Z座標
 	float anchorX;					/// 原点Xオフセット＋セルに設定された原点オフセットX
 	float anchorY;					/// 原点Yオフセット＋セルに設定された原点オフセットY
 	float rotationX;				/// X回転（親子関係計算済）
@@ -629,6 +630,7 @@ struct State
 		cellIndex = 0;
 		x = 0.0f;
 		y = 0.0f;
+		z = 0.0f;
 		anchorX = 0.0f;
 		anchorY = 0.0f;
 		rotationX = 0.0f;
@@ -734,6 +736,7 @@ public:
 		setStateValue(_state.cellIndex, state.cellIndex);
 		setStateValue(_state.x, state.x);
 		setStateValue(_state.y, state.y);
+		setStateValue(_state.z, state.z);
 		setStateValue(_state.anchorX, state.anchorX);
 		setStateValue(_state.anchorY, state.anchorY);
 		setStateValue(_state.rotationX, state.rotationX);
@@ -1374,6 +1377,7 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 					result.cellIndex = sprite->_state.cellIndex;				// パーツに割り当てられたセルの番号
 					result.x = sprite->_mat[12] + pos.x;						//画面上のX座標を取得
 					result.y = sprite->_mat[13] + pos.y;						//画面上のY座標を取得
+					result.z = sprite->_state.z;								// Z座標アトリビュートを取得
 					result.anchorX = sprite->_state.anchorX;					// 原点Xオフセット＋セルに設定された原点オフセットX
 					result.anchorY = sprite->_state.anchorY;					// 原点Yオフセット＋セルに設定された原点オフセットY
 					result.rotationX = sprite->_state.rotationX;				// X回転（親子関係計算済）
@@ -1512,26 +1516,27 @@ void Player::setFrame(int frameNo)
 		const AnimationInitialData* init = &initialDataList[partIndex];
 
 		// optional parameters
-		int flags      = reader.readU32();
-		int cellIndex  = flags & PART_FLAG_CELL_INDEX ? reader.readS16() : init->cellIndex;
-		float x        = flags & PART_FLAG_POSITION_X ? reader.readS16() : init->positionX;
-		float y        = flags & PART_FLAG_POSITION_Y ? reader.readS16() : init->positionY;
-		float anchorX  = flags & PART_FLAG_ANCHOR_X ? reader.readFloat() : init->anchorX;
-		float anchorY  = flags & PART_FLAG_ANCHOR_Y ? reader.readFloat() : init->anchorY;
-		float rotationX = flags & PART_FLAG_ROTATIONX ? -reader.readFloat() : -init->rotationX;	//cocos2dx ver2系では非対応
-		float rotationY = flags & PART_FLAG_ROTATIONY ? -reader.readFloat() : -init->rotationY;	//cocos2dx ver2系では非対応
-		float rotationZ = flags & PART_FLAG_ROTATIONZ ? -reader.readFloat() : -init->rotationZ;
-		float scaleX   = flags & PART_FLAG_SCALE_X ? reader.readFloat() : init->scaleX;
-		float scaleY   = flags & PART_FLAG_SCALE_Y ? reader.readFloat() : init->scaleY;
-		int opacity    = flags & PART_FLAG_OPACITY ? reader.readU16() : init->opacity;
-		float size_X   = flags & PART_FLAG_SIZE_X ? reader.readFloat() : init->size_X;
-		float size_Y   = flags & PART_FLAG_SIZE_Y ? reader.readFloat() : init->size_Y;
-		float uv_move_X   = flags & PART_FLAG_U_MOVE ? reader.readFloat() : init->uv_move_X;
-		float uv_move_Y   = flags & PART_FLAG_V_MOVE ? reader.readFloat() : init->uv_move_Y;
-		float uv_rotation = flags & PART_FLAG_UV_ROTATION ? reader.readFloat() : init->uv_rotation;
-		float uv_scale_X  = flags & PART_FLAG_U_SCALE ? reader.readFloat() : init->uv_scale_X;
-		float uv_scale_Y  = flags & PART_FLAG_V_SCALE ? reader.readFloat() : init->uv_scale_Y;
-		float boundingRadius = flags & PART_FLAG_BOUNDINGRADIUS ? reader.readFloat() : init->boundingRadius;
+		int flags				= reader.readU32();
+		int cellIndex			= flags & PART_FLAG_CELL_INDEX ? reader.readS16() : init->cellIndex;
+		float x					= flags & PART_FLAG_POSITION_X ? reader.readS16() : init->positionX;
+		float y					= flags & PART_FLAG_POSITION_Y ? reader.readS16() : init->positionY;
+		float z					= flags & PART_FLAG_POSITION_Z ? reader.readS16() : init->positionZ;
+		float anchorX			= flags & PART_FLAG_ANCHOR_X ? reader.readFloat() : init->anchorX;
+		float anchorY			= flags & PART_FLAG_ANCHOR_Y ? reader.readFloat() : init->anchorY;
+		float rotationX			= flags & PART_FLAG_ROTATIONX ? -reader.readFloat() : -init->rotationX;	//cocos2dx ver2系では非対応
+		float rotationY			= flags & PART_FLAG_ROTATIONY ? -reader.readFloat() : -init->rotationY;	//cocos2dx ver2系では非対応
+		float rotationZ			= flags & PART_FLAG_ROTATIONZ ? -reader.readFloat() : -init->rotationZ;
+		float scaleX			= flags & PART_FLAG_SCALE_X ? reader.readFloat() : init->scaleX;
+		float scaleY			= flags & PART_FLAG_SCALE_Y ? reader.readFloat() : init->scaleY;
+		int opacity				= flags & PART_FLAG_OPACITY ? reader.readU16() : init->opacity;
+		float size_X			= flags & PART_FLAG_SIZE_X ? reader.readFloat() : init->size_X;
+		float size_Y			= flags & PART_FLAG_SIZE_Y ? reader.readFloat() : init->size_Y;
+		float uv_move_X			= flags & PART_FLAG_U_MOVE ? reader.readFloat() : init->uv_move_X;
+		float uv_move_Y			= flags & PART_FLAG_V_MOVE ? reader.readFloat() : init->uv_move_Y;
+		float uv_rotation		= flags & PART_FLAG_UV_ROTATION ? reader.readFloat() : init->uv_rotation;
+		float uv_scale_X		= flags & PART_FLAG_U_SCALE ? reader.readFloat() : init->uv_scale_X;
+		float uv_scale_Y		= flags & PART_FLAG_V_SCALE ? reader.readFloat() : init->uv_scale_Y;
+		float boundingRadius	= flags & PART_FLAG_BOUNDINGRADIUS ? reader.readFloat() : init->boundingRadius;
 
 		bool flipX = (bool)(flags & PART_FLAG_FLIP_H);
 		bool flipY = (bool)(flags & PART_FLAG_FLIP_V);
@@ -1546,6 +1551,7 @@ void Player::setFrame(int frameNo)
 		//固定少数を少数へ戻す
 		x = x / DOT;
 		y = y / DOT;
+		z = z / DOT;
 
 		_partIndex[index] = partIndex;
 
@@ -1559,6 +1565,7 @@ void Player::setFrame(int frameNo)
 		state.cellIndex = cellIndex;
 		state.x = x;
 		state.y = y;
+		state.z = z;
 		state.anchorX = anchorX;
 		state.anchorY = anchorY;
 		state.rotationX = rotationX;

@@ -76,6 +76,7 @@ struct AnimationInitialData
 	ss_s16		cellIndex;
 	ss_s16		positionX;
 	ss_s16		positionY;
+	ss_s16		positionZ;
 	ss_u16		opacity;
 	float		anchorX;
 	float		anchorY;

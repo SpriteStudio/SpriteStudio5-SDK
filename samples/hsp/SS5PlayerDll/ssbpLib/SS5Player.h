@@ -381,7 +381,8 @@ struct State
 	int flags;						/// このフレームで更新が行われるステータスのフラグ
 	int cellIndex;					/// パーツに割り当てられたセルの番号
 	float x;						/// SS5アトリビュート：X座標
-	float y;						/// SS5アトリビュート：X座標
+	float y;						/// SS5アトリビュート：Y座標
+	float z;						/// SS5アトリビュート：Z座標
 	float anchorX;					/// 原点Xオフセット＋セルに設定された原点オフセットX
 	float anchorY;					/// 原点Yオフセット＋セルに設定された原点オフセットY
 	float rotationX;				/// X回転（親子関係計算済）
@@ -418,6 +419,7 @@ struct State
 		cellIndex = 0;
 		x = 0.0f;
 		y = 0.0f;
+		z = 0.0f;
 		anchorX = 0.0f;
 		anchorY = 0.0f;
 		rotationX = 0.0f;
@@ -471,13 +473,14 @@ struct ResluteState
 */
 enum {
 	PART_FLAG_INVISIBLE = 1 << 0,				/// 非表示
-	PART_FLAG_FLIP_H = 1 << 2,					/// 横反転
-	PART_FLAG_FLIP_V = 1 << 3,					/// 縦反転
+	PART_FLAG_FLIP_H = 1 << 1,					/// 横反転
+	PART_FLAG_FLIP_V = 1 << 2,					/// 縦反転
 
 	// optional parameter flags
-	PART_FLAG_CELL_INDEX = 1 << 4,				/// セル番号
-	PART_FLAG_POSITION_X = 1 << 5,				/// X座標
-	PART_FLAG_POSITION_Y = 1 << 6,				/// Y座標
+	PART_FLAG_CELL_INDEX = 1 << 3,				/// セル番号
+	PART_FLAG_POSITION_X = 1 << 4,				/// X座標
+	PART_FLAG_POSITION_Y = 1 << 5,				/// Y座標
+	PART_FLAG_POSITION_Z = 1 << 6,				/// Z座標
 	PART_FLAG_ANCHOR_X = 1 << 7,				/// 原点オフセットX
 	PART_FLAG_ANCHOR_Y = 1 << 8,				/// 原点オフセットY
 	PART_FLAG_ROTATIONX = 1 << 9,				/// X回転

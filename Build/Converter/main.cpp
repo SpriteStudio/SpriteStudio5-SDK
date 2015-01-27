@@ -36,13 +36,14 @@ static const int CURRENT_DATA_VERSION	= DATA_VERSION_1;
 
 enum {
 	PART_FLAG_INVISIBLE			= 1 << 0,
-	PART_FLAG_FLIP_H			= 1 << 2,
-	PART_FLAG_FLIP_V			= 1 << 3,
+	PART_FLAG_FLIP_H			= 1 << 1,
+	PART_FLAG_FLIP_V			= 1 << 2,
 
 	// optional parameter flags
-	PART_FLAG_CELL_INDEX		= 1 << 4,
-	PART_FLAG_POSITION_X		= 1 << 5,
-	PART_FLAG_POSITION_Y		= 1 << 6,
+	PART_FLAG_CELL_INDEX		= 1 << 3,
+	PART_FLAG_POSITION_X		= 1 << 4,
+	PART_FLAG_POSITION_Y		= 1 << 5,
+	PART_FLAG_POSITION_Z		= 1 << 6,
 	PART_FLAG_ANCHOR_X			= 1 << 7,
 	PART_FLAG_ANCHOR_Y			= 1 << 8,
 	PART_FLAG_ROTATIONX			= 1 << 9,
@@ -194,6 +195,7 @@ struct PartInitialData
 	int		cellIndex;
 	int		posX;
 	int		posY;
+	int		posZ;
 	float	anchorX;
 	float	anchorY;
 	float	rotationZ;
@@ -435,6 +437,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 
 				init.posX = (int)(state->position.x * DOT);
 				init.posY = (int)(state->position.y * DOT);
+				init.posZ = (int)(state->position.z * DOT);
 				init.anchorX = state->pivotOffset.x + 0.5f;
 				init.anchorY = state->pivotOffset.y + 0.5f;
 				init.rotationX = state->rotation.x;
@@ -477,7 +480,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				initialData->add(Lump::s16Data(init.cellIndex));
 				initialData->add(Lump::s16Data(init.posX));
 				initialData->add(Lump::s16Data(init.posY));
+				initialData->add(Lump::s16Data(init.posZ));
 				initialData->add(Lump::s16Data(init.opacity));
+				initialData->add(Lump::s16Data(0)); //ダミーデータ
 				initialData->add(Lump::floatData(init.anchorX));
 				initialData->add(Lump::floatData(init.anchorY));
 				initialData->add(Lump::floatData(init.rotationX));
@@ -570,28 +575,29 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					// 以下、規定値のときは出力を省略する
 					int p_flags = 0;
 					const PartInitialData& init = initialDataList.at(state->index);
-					if (cellIndex != init.cellIndex)                 p_flags |= PART_FLAG_CELL_INDEX;
-					if ((int)( state->position.x * DOT ) != init.posX)     p_flags |= PART_FLAG_POSITION_X;
-					if ((int)( state->position.y * DOT ) != init.posY)     p_flags |= PART_FLAG_POSITION_Y;
-					if (pivot.x + 0.5f != init.anchorX)              p_flags |= PART_FLAG_ANCHOR_X;
-					if (pivot.y + 0.5f != init.anchorY)              p_flags |= PART_FLAG_ANCHOR_Y;
-					if (state->rotation.x != init.rotationX)          p_flags |= PART_FLAG_ROTATIONX;
-					if (state->rotation.y != init.rotationY)          p_flags |= PART_FLAG_ROTATIONY;
-					if (state->rotation.z != init.rotationZ)          p_flags |= PART_FLAG_ROTATIONZ;
+					if (cellIndex != init.cellIndex)						p_flags |= PART_FLAG_CELL_INDEX;
+					if ((int)( state->position.x * DOT ) != init.posX)		p_flags |= PART_FLAG_POSITION_X;
+					if ((int)( state->position.y * DOT ) != init.posY)		p_flags |= PART_FLAG_POSITION_Y;
+					if ((int)( state->position.z * DOT ) != init.posZ)		p_flags |= PART_FLAG_POSITION_Z;
+					if (pivot.x + 0.5f != init.anchorX)						p_flags |= PART_FLAG_ANCHOR_X;
+					if (pivot.y + 0.5f != init.anchorY)						p_flags |= PART_FLAG_ANCHOR_Y;
+					if (state->rotation.x != init.rotationX)				p_flags |= PART_FLAG_ROTATIONX;
+					if (state->rotation.y != init.rotationY)				p_flags |= PART_FLAG_ROTATIONY;
+					if (state->rotation.z != init.rotationZ)				p_flags |= PART_FLAG_ROTATIONZ;
 
 					float size_scale_x = state->scale.x;
 					float size_scale_y = state->scale.y;
-					if (size_scale_x != init.scaleX)               p_flags |= PART_FLAG_SCALE_X;
-					if (size_scale_y != init.scaleY)               p_flags |= PART_FLAG_SCALE_Y;
-					if ((int)( state->alpha * 255 ) != init.opacity)   p_flags |= PART_FLAG_OPACITY;
-					if (state->size.x != init.size_X)              p_flags |= PART_FLAG_SIZE_X;
-					if (state->size.y != init.size_X)              p_flags |= PART_FLAG_SIZE_Y;
-					if (state->uvTranslate.x != init.uv_move_X )   p_flags |= PART_FLAG_U_MOVE;
-					if (state->uvTranslate.y != init.uv_move_Y)    p_flags |= PART_FLAG_V_MOVE;
-					if (state->uvRotation != init.uv_rotation)     p_flags |= PART_FLAG_UV_ROTATION;
-					if (state->uvScale.x != init.uv_scale_X)       p_flags |= PART_FLAG_U_SCALE;
-					if (state->uvScale.y != init.uv_scale_Y)       p_flags |= PART_FLAG_V_SCALE;
-					if (state->boundingRadius != init.boundingRadius)	p_flags |= PART_FLAG_BOUNDINGRADIUS;
+					if (size_scale_x != init.scaleX)						p_flags |= PART_FLAG_SCALE_X;
+					if (size_scale_y != init.scaleY)						p_flags |= PART_FLAG_SCALE_Y;
+					if ((int)( state->alpha * 255 ) != init.opacity)		p_flags |= PART_FLAG_OPACITY;
+					if (state->size.x != init.size_X)						p_flags |= PART_FLAG_SIZE_X;
+					if (state->size.y != init.size_X)						p_flags |= PART_FLAG_SIZE_Y;
+					if (state->uvTranslate.x != init.uv_move_X )			p_flags |= PART_FLAG_U_MOVE;
+					if (state->uvTranslate.y != init.uv_move_Y)				p_flags |= PART_FLAG_V_MOVE;
+					if (state->uvRotation != init.uv_rotation)				p_flags |= PART_FLAG_UV_ROTATION;
+					if (state->uvScale.x != init.uv_scale_X)				p_flags |= PART_FLAG_U_SCALE;
+					if (state->uvScale.y != init.uv_scale_Y)				p_flags |= PART_FLAG_V_SCALE;
+					if (state->boundingRadius != init.boundingRadius)		p_flags |= PART_FLAG_BOUNDINGRADIUS;
 
 
 					// カラーブレンド値を格納する必要があるかチェック
@@ -677,6 +683,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (p_flags & PART_FLAG_CELL_INDEX) frameData->add(Lump::s16Data(cellIndex));
 					if (p_flags & PART_FLAG_POSITION_X) frameData->add(Lump::s16Data((int)(state->position.x * DOT)));
 					if (p_flags & PART_FLAG_POSITION_Y) frameData->add(Lump::s16Data((int)(state->position.y * DOT)));
+					if (p_flags & PART_FLAG_POSITION_Z) frameData->add(Lump::s16Data((int)(state->position.z * DOT)));
 
 					if (p_flags & PART_FLAG_ANCHOR_X) frameData->add(Lump::floatData(pivot.x + 0.5f));
 					if (p_flags & PART_FLAG_ANCHOR_Y) frameData->add(Lump::floatData(pivot.y + 0.5f));

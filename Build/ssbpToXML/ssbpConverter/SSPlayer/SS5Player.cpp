@@ -532,6 +532,7 @@ public:
 		setStateValue(_state.cellIndex, state.cellIndex);
 		setStateValue(_state.x, state.x);
 		setStateValue(_state.y, state.y);
+		setStateValue(_state.z, state.z);
 		setStateValue(_state.anchorX, state.anchorX);
 		setStateValue(_state.anchorY, state.anchorY);
 		setStateValue(_state.rotationX, state.rotationX);
@@ -1200,6 +1201,7 @@ void Player::setFrame(int frameNo)
 		int cellIndex  = flags & PART_FLAG_CELL_INDEX ? reader.readS16() : init->cellIndex;
 		float x        = flags & PART_FLAG_POSITION_X ? (float)reader.readS16() : (float)init->positionX;
 		float y        = flags & PART_FLAG_POSITION_Y ? (float)-reader.readS16() : (float)-init->positionY;		//上がマイナスなので反転させる
+		float z        = flags & PART_FLAG_POSITION_Z ? (float)-reader.readS16() : (float)init->positionZ;
 		float anchorX  = flags & PART_FLAG_ANCHOR_X ? reader.readFloat() : init->anchorX;
 		float anchorY  = flags & PART_FLAG_ANCHOR_Y ? reader.readFloat() : init->anchorY;
 		float rotationX = flags & PART_FLAG_ROTATIONX ? -reader.readFloat() : -init->rotationX;
@@ -1230,6 +1232,7 @@ void Player::setFrame(int frameNo)
 		//固定少数を少数へ戻す
 		x = x / DOT;
 		y = y / DOT;
+		z = z / DOT;
 
 		_partIndex[index] = partIndex;
 
@@ -1250,6 +1253,7 @@ void Player::setFrame(int frameNo)
 		state.cellIndex = cellIndex;
 		state.x = x;
 		state.y = y;
+		state.z = z;
 		state.anchorX = anchorX;
 		state.anchorY = anchorY;
 		state.rotationX = rotationX;

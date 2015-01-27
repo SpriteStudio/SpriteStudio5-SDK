@@ -178,6 +178,7 @@ struct ResluteState
 	int cellIndex;					/// パーツに割り当てられたセルの番号
 	float x;						/// SS5アトリビュート：X座標
 	float y;						/// SS5アトリビュート：X座標
+	float z;						/// SS5アトリビュート：Z座標
 	float anchorX;					/// 原点Xオフセット＋セルに設定された原点オフセットX
 	float anchorY;					/// 原点Yオフセット＋セルに設定された原点オフセットY
 	float rotationX;				/// X回転（親子関係計算済）
@@ -207,40 +208,41 @@ struct ResluteState
 
 //含まれるパーツデータフラグ
 enum {
-	PART_FLAG_INVISIBLE = 1 << 0,
-	PART_FLAG_FLIP_H = 1 << 2,
-	PART_FLAG_FLIP_V = 1 << 3,
+	PART_FLAG_INVISIBLE			= 1 << 0,
+	PART_FLAG_FLIP_H			= 1 << 1,
+	PART_FLAG_FLIP_V			= 1 << 2,
 
 	// optional parameter flags
-	PART_FLAG_CELL_INDEX = 1 << 4,
-	PART_FLAG_POSITION_X = 1 << 5,
-	PART_FLAG_POSITION_Y = 1 << 6,
-	PART_FLAG_ANCHOR_X = 1 << 7,
-	PART_FLAG_ANCHOR_Y = 1 << 8,
-	PART_FLAG_ROTATIONX = 1 << 9,
-	PART_FLAG_ROTATIONY = 1 << 10,
-	PART_FLAG_ROTATIONZ = 1 << 11,
-	PART_FLAG_SCALE_X = 1 << 12,
-	PART_FLAG_SCALE_Y = 1 << 13,
-	PART_FLAG_OPACITY = 1 << 14,
-	PART_FLAG_COLOR_BLEND = 1 << 15,
-	PART_FLAG_VERTEX_TRANSFORM = 1 << 16,
+	PART_FLAG_CELL_INDEX		= 1 << 3,
+	PART_FLAG_POSITION_X		= 1 << 4,
+	PART_FLAG_POSITION_Y		= 1 << 5,
+	PART_FLAG_POSITION_Z		= 1 << 6,
+	PART_FLAG_ANCHOR_X			= 1 << 7,
+	PART_FLAG_ANCHOR_Y			= 1 << 8,
+	PART_FLAG_ROTATIONX			= 1 << 9,
+	PART_FLAG_ROTATIONY			= 1 << 10,
+	PART_FLAG_ROTATIONZ			= 1 << 11,
+	PART_FLAG_SCALE_X			= 1 << 12,
+	PART_FLAG_SCALE_Y			= 1 << 13,
+	PART_FLAG_OPACITY			= 1 << 14,
+	PART_FLAG_COLOR_BLEND		= 1 << 15,
+	PART_FLAG_VERTEX_TRANSFORM	= 1 << 16,
 
-	PART_FLAG_SIZE_X = 1 << 17,
-	PART_FLAG_SIZE_Y = 1 << 18,
+	PART_FLAG_SIZE_X			= 1 << 17,
+	PART_FLAG_SIZE_Y			= 1 << 18,
 
-	PART_FLAG_U_MOVE = 1 << 19,
-	PART_FLAG_V_MOVE = 1 << 20,
-	PART_FLAG_UV_ROTATION = 1 << 21,
-	PART_FLAG_U_SCALE = 1 << 22,
-	PART_FLAG_V_SCALE = 1 << 23,
-	PART_FLAG_BOUNDINGRADIUS = 1 << 24,
+	PART_FLAG_U_MOVE			= 1 << 19,
+	PART_FLAG_V_MOVE			= 1 << 20,
+	PART_FLAG_UV_ROTATION		= 1 << 21,
+	PART_FLAG_U_SCALE			= 1 << 22,
+	PART_FLAG_V_SCALE			= 1 << 23,
+	PART_FLAG_BOUNDINGRADIUS	= 1 << 24,
 
 	PART_FLAG_INSTANCE_KEYFRAME = 1 << 25,
-	PART_FLAG_INSTANCE_START = 1 << 26,
-	PART_FLAG_INSTANCE_END = 1 << 27,
-	PART_FLAG_INSTANCE_SPEED = 1 << 28,
-	PART_FLAG_INSTANCE_LOOP = 1 << 29,
+	PART_FLAG_INSTANCE_START	= 1 << 26,
+	PART_FLAG_INSTANCE_END		= 1 << 27,
+	PART_FLAG_INSTANCE_SPEED	= 1 << 28,
+	PART_FLAG_INSTANCE_LOOP		= 1 << 29,
 	PART_FLAG_INSTANCE_LOOP_FLG = 1 << 30,
 
 	NUM_PART_FLAGS
