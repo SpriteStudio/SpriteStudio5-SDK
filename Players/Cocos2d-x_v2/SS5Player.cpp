@@ -596,7 +596,7 @@ struct State
 	int flags;						/// このフレームで更新が行われるステータスのフラグ
 	int cellIndex;					/// パーツに割り当てられたセルの番号
 	float x;						/// SS5アトリビュート：X座標
-	float y;						/// SS5アトリビュート：X座標
+	float y;						/// SS5アトリビュート：Y座標
 	float z;						/// SS5アトリビュート：Z座標
 	float anchorX;					/// 原点Xオフセット＋セルに設定された原点オフセットX
 	float anchorY;					/// 原点Yオフセット＋セルに設定された原点オフセットY
@@ -1372,7 +1372,7 @@ bool Player::getPartState(ResluteState& result, const char* name, int frameNo)
 					cocos2d::CCPoint pos = getPosition();			//プレイヤーの位置を取得
 
 					//パーツアトリビュート
-					//					sprite->_state;												//SpriteStudio上のアトリビュートの値は_stateから取得してください
+//					sprite->_state;												//SpriteStudio上のアトリビュートの値は_stateから取得してください
 					result.flags = sprite->_state.flags;						// このフレームで更新が行われるステータスのフラグ
 					result.cellIndex = sprite->_state.cellIndex;				// パーツに割り当てられたセルの番号
 					result.x = sprite->_mat[12] + pos.x;						//画面上のX座標を取得
@@ -2047,7 +2047,7 @@ void Player::setFrame(int frameNo)
 			}
 
 			//インスタンスパラメータを設定
-			sprite->_ssplayer->set_InstanceAlpha(opacity);
+			sprite->_ssplayer->setAlpha(opacity);
 			sprite->_ssplayer->set_InstanceRotation(rotationX, rotationY, rotationZ);
 
 			//インスタンス用SSPlayerに再生フレームを設定する
@@ -2266,7 +2266,7 @@ void Player::get_uv_rotation(float *u, float *v, float cu, float cv, float deg)
 }
 
 //インスタンスパーツのアルファ値を設定
-void  Player::set_InstanceAlpha(int alpha)
+void  Player::setAlpha(int alpha)
 {
 	_InstanceAlpha = alpha;
 }

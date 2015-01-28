@@ -10,14 +10,18 @@
   #include "SS5Player.h"
  
   ss::ResourceManager* resman = ss::ResourceManager::getInstance();
-  resman->addData("sample.ssbp");
+  resman->addData("sample.ssbp");		// ssbpの読み込み
 
-  ss::Player* player = ss::Player::create();
-  player->setData("sample");			// ssbpファイル名（拡張子不要）
-  player->play("anime1");				//
+  ss::Player* ssplayer = ss::Player::create();
+  ssplayer->setData("sample");			// ssbpファイル（拡張子不要）をプレイヤーに関連づけます
+  ssplayer->play("anime1");				// アニメーション名指定(ssae名/アニメーション名)
   CCPoint pos(200,200);
-  ssplayer->setPosition(pos);
-  this->addChild(player);
+  ssplayer->setPosition(pos);			// 位置設定
+  ssplayer->setAlpha(128);				// 透明度設定
+  ssplayer->setScaleX(1.0f);			// X拡大率設定
+  ssplayer->setScaleY(1.0f);			// Y拡大率設定
+  ssplayer->setRotation(0.0f);			// Z回転値設定(度)
+  this->addChild(ssplayer);
 
   SS5Player cocos2d-x ver2.x版は終了処理で resman を delete してください。
 
@@ -499,6 +503,13 @@ public:
 	*/
 	void setPartVisible( int partNo, bool flg );
 
+	/*
+	* プレイヤーの透明度を設定します(0～255).
+	* setOpacityではなくこちらを使用してください。
+	*/
+	void setAlpha(int alpha);
+
+
 	/** ユーザーデータなどの通知を受け取る、デリゲートを設定します.
 	 *  Set delegate. receive a notification, such as user data.
 	 *
@@ -548,7 +559,6 @@ protected:
 	void setFrame(int frameNo);
 	void checkUserData(int frameNo);
 	void get_uv_rotation(float *u, float *v, float cu, float cv, float deg);
-	void set_InstanceAlpha(int alpha);
 	void set_InstanceRotation(float rotX, float rotY, float rotZ);
 
 protected:

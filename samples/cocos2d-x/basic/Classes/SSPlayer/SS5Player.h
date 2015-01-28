@@ -10,13 +10,16 @@
   #include "SS5Player.h"
  
   auto resman = ss::ResourceManager::getInstance();
-  resman->addData("sample.ssbp");
+  resman->addData("sample.ssbp");			// ssbpの読み込み
 
-  auto player = ss::Player::create();
-  player->setData("sample");			// ssbpファイル名（拡張子不要）
-  player->play("anime1");
-  player->setPosition(200, 200);
-  this->addChild(player);
+  auto ssplayer = ss::Player::create();
+  ssplayer->setData("sample");				// ssbpファイル（拡張子不要）をプレイヤーに関連づけます
+  ssplayer->play("anime1");					// アニメーション名指定(ssae名/アニメーション名)
+  ssplayer->setPosition(200, 200);			// 位置設定
+  ssplayer->setAlpha(255);					// 透明度設定
+  ssplayer->setScale(1.0f,1.0f);			// 拡大率設定
+  ssplayer->setRotation(0.0f);				// Z回転値設定(度)
+  this->addChild(ssplayer);
 
   X回転、Y回転を使用する場合、アプリケーションの初期化で平行投影を設定しないとSS5と描画結果が異なります。
   Z回転とXまたはY回転を同時に行うとSS5と描画結果が異なります。
@@ -177,7 +180,7 @@ struct ResluteState
 	int flags;						/// このフレームで更新が行われるステータスのフラグ
 	int cellIndex;					/// パーツに割り当てられたセルの番号
 	float x;						/// SS5アトリビュート：X座標
-	float y;						/// SS5アトリビュート：X座標
+	float y;						/// SS5アトリビュート：Y座標
 	float z;						/// SS5アトリビュート：Z座標
 	float anchorX;					/// 原点Xオフセット＋セルに設定された原点オフセットX
 	float anchorY;					/// 原点Yオフセット＋セルに設定された原点オフセットY
@@ -497,6 +500,12 @@ public:
 	*/
 	void setPartVisible( int partNo, bool flg );
 
+	/*
+	* プレイヤーの透明度を設定します(0～255).
+	* setOpacityではなくこちらを使用してください。
+	*/
+	void setAlpha(int alpha);
+
 	typedef std::function<void(Player*, const UserData*)> UserDataCallback;
 	typedef std::function<void(Player*)> PlayEndCallback;
 
@@ -533,7 +542,6 @@ public:
 	void setPlayEndCallback(const PlayEndCallback& callback);
 
 
-
 public:
 	Player(void);
 	virtual ~Player();
@@ -553,7 +561,6 @@ protected:
 	void setFrame(int frameNo);
 	void checkUserData(int frameNo);
 	void get_uv_rotation(float *u, float *v, float cu, float cv, float deg);
-	void set_InstanceAlpha(int alpha);
 	void set_InstanceRotation(float rotX, float rotY, float rotZ);
 
 protected:
