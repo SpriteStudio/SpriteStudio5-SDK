@@ -506,6 +506,13 @@ public:
 	*/
 	void setAlpha(int alpha);
 
+	/*
+	* setContentScaleFactorの数値に合わせて内部のUV補正を有効にするか設定します。
+	* マルチ解像度テクスチャ対応を行う際にプレイヤーの画像はそのまま使用する場合は、trueを設定してプレイヤー内UV値を変更してください.
+	* 画像を差し替える場合はaddDataの第二引数でパスを指定し、解像度の違うテクスチャを読み込んでください.
+	*/
+	void setContentScaleEneble(bool eneble);
+
 	typedef std::function<void(Player*, const UserData*)> UserDataCallback;
 	typedef std::function<void(Player*)> PlayEndCallback;
 
@@ -578,6 +585,7 @@ protected:
 	bool				_isPlaying;
 	bool				_isPausing;
 	bool				_isPlayFirstUserdataChack;
+	bool				_isContentScaleFactorAuto;
 	int					_prevDrawFrameNo;
 	bool				_partVisible[PART_VISIBLE_MAX];
 	int					_partIndex[PART_VISIBLE_MAX];

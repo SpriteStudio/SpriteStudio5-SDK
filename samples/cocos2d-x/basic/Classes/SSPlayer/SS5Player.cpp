@@ -761,6 +761,8 @@ Player::Player(void)
 	, _InstanceRotX(0.0f)
 	, _InstanceRotY(0.0f)
 	, _InstanceRotZ(0.0f)
+	, _isContentScaleFactorAuto(false)
+
 
 	, _userDataCallback(nullptr)
 	, _playEndCallback(nullptr)
@@ -1407,6 +1409,12 @@ void Player::setPartVisible(int partNo, bool flg)
 	_partVisible[partNo] = flg;
 }
 
+// setContentScaleFactorの数値に合わせて内部のUV補正を有効にするか設定します。
+void Player::setContentScaleEneble(bool eneble)
+{
+	_isContentScaleFactorAuto = eneble;
+}
+
 
 void Player::setFrame(int frameNo)
 {
@@ -1643,6 +1651,19 @@ void Player::setFrame(int frameNo)
 
 		//頂点データの取得
 		cocos2d::V3F_C4B_T2F_Quad& quad = sprite->getAttributeRef();
+		if (_isContentScaleFactorAuto == true)
+		{
+			//ContentScaleFactor対応
+			float cScale = cocos2d::Director::getInstance()->getContentScaleFactor();
+			quad.tl.texCoords.u /= cScale;
+			quad.tr.texCoords.u /= cScale;
+			quad.bl.texCoords.u /= cScale;
+			quad.br.texCoords.u /= cScale;
+			quad.tl.texCoords.v /= cScale;
+			quad.tr.texCoords.v /= cScale;
+			quad.bl.texCoords.v /= cScale;
+			quad.br.texCoords.v /= cScale;
+		}
 
 		//サイズ設定
 		if (flags & PART_FLAG_SIZE_X)
