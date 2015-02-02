@@ -1,13 +1,18 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(sssdk)
 
+IF (WIN32)
 #SET(BOOST_ROOT "C:/boost-1_56_0")
 SET(BOOST_ROOT "C:/Boost/include/boost-1_56/")
 SET(BOOST_PYTHON_LIB "C:/Boost/lib" )
 SET(PYTHON_IHNCLUDE "C:/Python27/include")
 
 SET(PYTHON_LIB "C:/Python27/libs")
+ENDIF(WIN32)
 
+IF(APPLE)
+SET(PYTHON_LIB "/usr/local/lib")
+ENDIF(APPLE)
 
 link_directories(${SEARCH_LIB} ${BOOST_PYTHON_LIB} ${PYTHON_LIB}  )
 
@@ -95,7 +100,7 @@ ADD_EXECUTABLE(viewer_sample_dx9
 ./Viewer/source/myscene.h
 )
 
-
+IF(WIN32)
 ADD_EXECUTABLE(scriptbase_converter
 ./PythonBinder/script_base_conv.cpp
 ./PythonBinder/bind_SSXML.cpp
@@ -119,7 +124,7 @@ ADD_EXECUTABLE(scriptbase_converter
 ./PythonBinder/bind_Cellmap.cpp
 ./PythonBinder/bind_Cellmap.h
 )
-
+ENDIF(WIN32)
 
 ADD_EXECUTABLE(Ss5Converter
 ./Converter/main.cpp
@@ -165,17 +170,17 @@ IF(APPLE)
 	SET(LINK_LIB1 "ssloader")
 	SET(LINK_LIB2 "ssAnimater")
 	SET(LINK_LIB3 "ssHelper")	
-	SET(LINK_LIB4 "/usr/local/lib/libAntTweakBar.dylib /usr/local/lib/libglfw3.a -framework OpenGL -framework AppKit -framework IOKit" )
+	SET(LINK_LIB4 "libAntTweakBar.dylib libglfw3.a -framework OpenGL -framework AppKit -framework IOKit" )
     ADD_DEFINITIONS(-APPLE)
 ENDIF()
 
-
+#link_directories( SEARCH_LIB )
 include_directories(;${SEARCH_DIR} ; ${PYTHON_IHNCLUDE} ; ${BOOST_ROOT} ; ../Common/Loader/ ;../Common/Helper/ ; ../Common/Drawer/ ; ../Common/Animator)
 target_link_libraries(viewer_sample_gl ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4} )
 
-
+IF (WIN32)
 target_link_libraries(scriptbase_converter ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4} )
-
+ENDIF(WIN32)
 
 IF (WIN32)
 target_link_libraries(viewer_sample_dx9 ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4})

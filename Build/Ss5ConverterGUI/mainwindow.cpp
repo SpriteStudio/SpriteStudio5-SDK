@@ -1,11 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-QString fileName;       //コンバートするsspjファイル
-QString cnvOutputStr;   //コンバート結果
-QString sspjPathStr;    //引数で渡されるSSPJのパス
-QString OpenPathStr;    //ダイアログで開くパス
 QString execPathStr;    //実行しているコンバータGUIのパス
+QString cnvOutputStr;   //コンバート結果
+bool convert_exec = false;  //コンバート中か
+bool convert_error = false;  //コンバートエラーが発生したか
+int convet_index = 0;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,8 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //フォームの部品にアクセスする場合はuiのメンバを経由する
     ui->setupUi(this);
 
-    //コンバートファイル名の初期化
-    fileName.clear();
+    //ドラッグ＆ドロップを有効にする
+    setAcceptDrops(true);
 
     cnvProcess = new QProcess(this);
     // プロセスが終了した時に finished シグナル発信
@@ -24,10 +24,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(cnvProcess, SIGNAL(readyReadStandardError()), this, SLOT(processErrOutput()));
 
     //ウィンドウのタイトルをつける
-    setWindowTitle("Ss5Converter GUI");
+    setWindowTitle("Ss5ConveterGUI");
 
-    sspjPathStr.clear();
-    OpenPathStr.clear();
+    //初期化
+    convert_exec = false;
+    cnvOutputStr.clear();
 }
 
 MainWindow::~MainWindow()
@@ -42,88 +43,121 @@ void MainWindow::setText_to_List(QStringList list)
 
     if ( list.length() > 1 )
     {
-        sspjPathStr = list[1];
-        fileName = sspjPathStr;
-        if (fileName.isEmpty())
+        int i;
+        for ( i = 1; i < list.length(); i++ )
         {
-            //ファイル名なし
+            QString dragFilePath;
+            dragFilePath = list[i];
+            if ( ( dragFilePath.endsWith(".sspj")) || ( dragFilePath.endsWith(".SSPJ")) )
+            {
+                ui->listWidget->addItem(dragFilePath);
+            }
         }
-        else
-        {
-            ui->textBrowser_2->setText(fileName);
-        }
-    }
-    if ( list.length() > 2 )
-    {
-        OpenPathStr = list[2];
     }
 }
 
-
-void MainWindow::on_pushButton_clicked()
-{
-    QString SelectfileName = QFileDialog::getOpenFileName(this,
-            tr("Open SpriteStudio5 Project"),   //タイトル
-            OpenPathStr, //ディレクトリの指定
-            tr("Project files (*.sspj)"));  //フィルタ
-
-    if (SelectfileName.isEmpty())
-    {
-        //ファイル名なし
-    }
-    else
-    {
-        fileName = SelectfileName;
-        ui->textBrowser_2->setText(fileName);
-    }
-}
-
-void MainWindow::on_pushButton_2_clicked()
-{
-    //コンバータの起動
-    if (fileName.isEmpty())
-    {
-        //ファイル名なし
-    }
-    else
-    {
-        QString str;
-        QString execstr;
-
-#ifdef Q_OS_WIN32
-        // Windows
-        execstr = "Ss5Converter.exe";
-#else
-        // Mac
-        QDir dir = QDir(execPathStr);
-        dir.cd("..");
-        dir.cd("..");
-        dir.cd("..");
-        dir.cd("..");
-        QString str_current_path = dir.path();
-        execstr = str_current_path + "/Ss5Converter";
-#endif
-        if ( ui->checkBox->checkState() == Qt::Checked )
-        {
-            //チェックされているとき
-            str = execstr + " -p " + ui->lineEdit->text() + " " + fileName;
-        }
-        else
-        {
-            str = execstr + " " + fileName;
-        }
-        cnvProcess->start(str); //パスと引数
-
-        ui->textBrowser_3->setText(tr("Exec"));     //ステータス
-        ui->textBrowser->setText(tr(""));           //エラー
-        cnvOutputStr = "";
-    }
-}
-
-void MainWindow::on_pushButton_3_clicked()
+void MainWindow::on_pushButton_exit_clicked()
 {
     //アプリケーションの終了
     exit(0);
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *e)
+{
+    if(e->mimeData()->hasUrls())
+    {
+        e->acceptProposedAction();
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *e)
+{
+    if(e->mimeData()->hasUrls())
+    {
+        QList<QUrl> urlList = e->mimeData()->urls();
+        for(int i = 0; i < urlList.size(); i++)
+        {
+            //ドラッグしたファイルをリストに追加
+            //.sspj以外は弾く
+            QString dragFilePath;
+            dragFilePath = urlList[i].toLocalFile();
+            if ( ( dragFilePath.endsWith(".sspj")) || ( dragFilePath.endsWith(".SSPJ")) )
+            {
+                //同じ名前がリストにある場合は弾く
+                bool addname = true;
+                int j = 0;
+                for ( j = 0; j < ui->listWidget->count(); j++ )
+                {
+                    QString fileName = ui->listWidget->item(j)->text();
+                    if ( fileName == dragFilePath )
+                    {
+                        addname = false;
+                        break;
+                    }
+
+                }
+                if ( addname == true )
+                {
+                    ui->listWidget->addItem(dragFilePath);
+                }
+            }
+        }
+    }
+}
+
+void MainWindow::on_pushButton_listclear_clicked()
+{
+    //リストクリア
+    ui->listWidget->clear();
+}
+
+void MainWindow::on_pushButton_convert_clicked()
+{
+    //コンバート
+
+    if (( ui->listWidget->count() > 0 ) && (convert_exec == false))
+    {
+        convert_error = false;
+        convert_exec = false;  //コンバート中か
+        convet_index = 0;
+        QString st = QString("Exec %1/%2").arg(convet_index+1).arg(ui->listWidget->count());
+        ui->textBrowser_status->setText(st);     //ステータス
+        ui->textBrowser_err->setText(tr(""));           //エラー
+        cnvOutputStr = "";
+
+        {
+            QString fileName = ui->listWidget->item(convet_index)->text();
+            //コンバータの起動
+            if (fileName.isEmpty())
+            {
+                //ファイル名なし
+            }
+            else
+            {
+                QString str;
+                QString execstr;
+
+        #ifdef Q_OS_WIN32
+                // Windows
+                execstr = "Ss5Converter.exe";
+        #else
+                // Mac
+                QDir dir = QDir(execPathStr);
+                dir.cd("..");
+                dir.cd("..");
+                dir.cd("..");
+                dir.cd("..");
+                QString str_current_path = dir.path();
+                execstr = str_current_path + "/Ss5Converter";
+        #endif
+                str = execstr + " " + fileName;
+                cnvProcess->start(str); //パスと引数
+
+                convert_exec = true;  //コンバート中か
+                convet_index++;
+            }
+        }
+    }
 }
 
 void MainWindow::processErrOutput()
@@ -131,32 +165,77 @@ void MainWindow::processErrOutput()
     // 出力を全て取得
     QByteArray output = cnvProcess->readAllStandardError();
     cnvOutputStr = cnvOutputStr + QString::fromLocal8Bit( output );
-    ui->textBrowser->setText(cnvOutputStr);
+    ui->textBrowser_err->setText(cnvOutputStr);
 }
 void MainWindow::processFinished( int exitCode, QProcess::ExitStatus exitStatus)
 {
     if ( exitStatus == QProcess::CrashExit )
     {
 //        QMessageBox::warning( this, tr("Error"), tr("Crashed") );
-        ui->textBrowser_3->setText(tr("Error"));
+        cnvOutputStr = cnvOutputStr + "Error:" + ui->listWidget->item(convet_index-1)->text();
+        convert_error = true;
     }
     else if ( exitCode != 0 )
     {
 //        QMessageBox::warning( this, tr("Error"), tr("Failed") );
-        ui->textBrowser_3->setText(tr("Error"));   //ステータス
+        cnvOutputStr = cnvOutputStr + "Error:" + ui->listWidget->item(convet_index-1)->text();
+        convert_error = true;
     }
     else
     {
         // 正常終了時の処理
-        ui->textBrowser_3->setText(tr("Convert Success!"));
+//        ui->textBrowser_status->setText(tr("Convert Success!"));
 //    QMessageBox::information(this, tr("Ss5Converter"), tr("Convert success"));
     }
-}
 
+    if (( ui->listWidget->count() > convet_index ))
+    {
+        QString st = QString("Exec %1/%2").arg(convet_index+1).arg(ui->listWidget->count());
+        ui->textBrowser_status->setText(st);     //ステータス
+        {
+            QString fileName = ui->listWidget->item(convet_index)->text();
+            //コンバータの起動
+            if (fileName.isEmpty())
+            {
+                //ファイル名なし
+            }
+            else
+            {
+                QString str;
+                QString execstr;
 
+        #ifdef Q_OS_WIN32
+                // Windows
+                execstr = "Ss5Converter.exe";
+        #else
+                // Mac
+                QDir dir = QDir(execPathStr);
+                dir.cd("..");
+                dir.cd("..");
+                dir.cd("..");
+                dir.cd("..");
+                QString str_current_path = dir.path();
+                execstr = str_current_path + "/Ss5Converter";
+        #endif
+                str = execstr + " " + fileName;
+                cnvProcess->start(str); //パスと引数
 
-//チェックボックスの状態が変化した
-void MainWindow::on_checkBox_toggled(bool checked)
-{
-    ui->lineEdit->setEnabled(checked);
+                convet_index++;
+            }
+        }
+    }
+    else
+    {
+        convert_exec = false;  //コンバート中か
+        if ( convert_error == false )
+        {
+            ui->textBrowser_status->setText(tr("Convert Success!"));
+        }
+        else
+        {
+            ui->textBrowser_status->setText(tr("Error"));   //ステータス
+            ui->textBrowser_err->setText(cnvOutputStr);
+        }
+    }
+
 }

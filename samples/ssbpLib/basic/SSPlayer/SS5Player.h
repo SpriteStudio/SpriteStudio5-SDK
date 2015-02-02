@@ -382,7 +382,8 @@ struct State
 	int flags;						/// このフレームで更新が行われるステータスのフラグ
 	int cellIndex;					/// パーツに割り当てられたセルの番号
 	float x;						/// SS5アトリビュート：X座標
-	float y;						/// SS5アトリビュート：X座標
+	float y;						/// SS5アトリビュート：Y座標
+	float z;						/// SS5アトリビュート：Z座標
 	float anchorX;					/// 原点Xオフセット＋セルに設定された原点オフセットX
 	float anchorY;					/// 原点Yオフセット＋セルに設定された原点オフセットY
 	float rotationX;				/// X回転（親子関係計算済）
@@ -419,6 +420,7 @@ struct State
 		cellIndex = 0;
 		x = 0.0f;
 		y = 0.0f;
+		z = 0.0f;
 		anchorX = 0.0f;
 		anchorY = 0.0f;
 		rotationX = 0.0f;
@@ -466,7 +468,8 @@ struct ResluteState
 	int flags;						/// このフレームで更新が行われるステータスのフラグ
 	int cellIndex;					/// パーツに割り当てられたセルの番号
 	float x;						/// SS5アトリビュート：X座標
-	float y;						/// SS5アトリビュート：X座標
+	float y;						/// SS5アトリビュート：Y座標
+	float z;						/// SS5アトリビュート：Z座標
 	float anchorX;					/// 原点Xオフセット＋セルに設定された原点オフセットX
 	float anchorY;					/// 原点Yオフセット＋セルに設定された原点オフセットY
 	float rotationX;				/// X回転（親子関係計算済）
@@ -498,40 +501,41 @@ struct ResluteState
 * 再生するフレームに含まれるパーツデータのフラグ
 */
 enum {
-	PART_FLAG_INVISIBLE = 1 << 0,				/// 非表示
-	PART_FLAG_FLIP_H = 1 << 2,					/// 横反転
-	PART_FLAG_FLIP_V = 1 << 3,					/// 縦反転
+	PART_FLAG_INVISIBLE			= 1 << 0,		/// 非表示
+	PART_FLAG_FLIP_H			= 1 << 1,		/// 横反転
+	PART_FLAG_FLIP_V			= 1 << 2,		/// 縦反転
 
 	// optional parameter flags
-	PART_FLAG_CELL_INDEX = 1 << 4,				/// セル番号
-	PART_FLAG_POSITION_X = 1 << 5,				/// X座標
-	PART_FLAG_POSITION_Y = 1 << 6,				/// Y座標
-	PART_FLAG_ANCHOR_X = 1 << 7,				/// 原点オフセットX
-	PART_FLAG_ANCHOR_Y = 1 << 8,				/// 原点オフセットY
-	PART_FLAG_ROTATIONX = 1 << 9,				/// X回転
-	PART_FLAG_ROTATIONY = 1 << 10,				/// Y回転
-	PART_FLAG_ROTATIONZ = 1 << 11,				/// Z回転
-	PART_FLAG_SCALE_X = 1 << 12,				/// スケールX
-	PART_FLAG_SCALE_Y = 1 << 13,				/// スケールY
-	PART_FLAG_OPACITY = 1 << 14,				/// 不透明度
-	PART_FLAG_COLOR_BLEND = 1 << 15,			/// カラーブレンド
-	PART_FLAG_VERTEX_TRANSFORM = 1 << 16,		/// 頂点変形
+	PART_FLAG_CELL_INDEX		= 1 << 3,		/// セル番号
+	PART_FLAG_POSITION_X		= 1 << 4,		/// X座標
+	PART_FLAG_POSITION_Y		= 1 << 5,		/// Y座標
+	PART_FLAG_POSITION_Z		= 1 << 6,		/// Z座標
+	PART_FLAG_ANCHOR_X			= 1 << 7,		/// 原点オフセットX
+	PART_FLAG_ANCHOR_Y			= 1 << 8,		/// 原点オフセットY
+	PART_FLAG_ROTATIONX			= 1 << 9,		/// X回転
+	PART_FLAG_ROTATIONY			= 1 << 10,		/// Y回転
+	PART_FLAG_ROTATIONZ			= 1 << 11,		/// Z回転
+	PART_FLAG_SCALE_X			= 1 << 12,		/// スケールX
+	PART_FLAG_SCALE_Y			= 1 << 13,		/// スケールY
+	PART_FLAG_OPACITY			= 1 << 14,		/// 不透明度
+	PART_FLAG_COLOR_BLEND		= 1 << 15,		/// カラーブレンド
+	PART_FLAG_VERTEX_TRANSFORM	= 1 << 16,		/// 頂点変形
 
-	PART_FLAG_SIZE_X = 1 << 17,					/// サイズX
-	PART_FLAG_SIZE_Y = 1 << 18,					/// サイズY
+	PART_FLAG_SIZE_X			= 1 << 17,		/// サイズX
+	PART_FLAG_SIZE_Y			= 1 << 18,		/// サイズY
 
-	PART_FLAG_U_MOVE = 1 << 19,					/// UV移動X
-	PART_FLAG_V_MOVE = 1 << 20,					/// UV移動Y
-	PART_FLAG_UV_ROTATION = 1 << 21,			/// UV回転
-	PART_FLAG_U_SCALE = 1 << 22,				/// UVスケールX
-	PART_FLAG_V_SCALE = 1 << 23,				/// UVスケールY
-	PART_FLAG_BOUNDINGRADIUS = 1 << 24,			/// 当たり半径
+	PART_FLAG_U_MOVE			= 1 << 19,		/// UV移動X
+	PART_FLAG_V_MOVE			= 1 << 20,		/// UV移動Y
+	PART_FLAG_UV_ROTATION		= 1 << 21,		/// UV回転
+	PART_FLAG_U_SCALE			= 1 << 22,		/// UVスケールX
+	PART_FLAG_V_SCALE			= 1 << 23,		/// UVスケールY
+	PART_FLAG_BOUNDINGRADIUS	= 1 << 24,		/// 当たり半径
 
 	PART_FLAG_INSTANCE_KEYFRAME = 1 << 25,		/// インスタンス
-	PART_FLAG_INSTANCE_START = 1 << 26,			/// インスタンス：開始フレーム
-	PART_FLAG_INSTANCE_END = 1 << 27,			/// インスタンス：終了フレーム
-	PART_FLAG_INSTANCE_SPEED = 1 << 28,			/// インスタンス：再生速度
-	PART_FLAG_INSTANCE_LOOP = 1 << 29,			/// インスタンス：ループ回数
+	PART_FLAG_INSTANCE_START	= 1 << 26,		/// インスタンス：開始フレーム
+	PART_FLAG_INSTANCE_END		= 1 << 27,		/// インスタンス：終了フレーム
+	PART_FLAG_INSTANCE_SPEED	= 1 << 28,		/// インスタンス：再生速度
+	PART_FLAG_INSTANCE_LOOP		= 1 << 29,		/// インスタンス：ループ回数
 	PART_FLAG_INSTANCE_LOOP_FLG = 1 << 30,		/// インスタンス：ループ設定
 
 	NUM_PART_FLAGS

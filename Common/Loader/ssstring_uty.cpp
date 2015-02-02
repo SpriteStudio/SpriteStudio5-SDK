@@ -51,14 +51,22 @@ std::string path2file(const std::string &path) {
 
 
 
-bool	is_digit_string( std::string &in_str )
+bool	is_digit_string( std::string &in_str , bool* is_priod )
 {
 	std::istringstream in(in_str);
 	 char c;
+	
+	if ( is_priod != NULL )*is_priod = false;
+
 	while (in)
 	{
 		in.get(c);
 		if ( c < 0 ) return false;
+
+		if ( c =='.' )
+		{
+			if ( is_priod != NULL )*is_priod = true;
+		}
 		if ( !(isdigit( c ) || c =='.' || c=='-' || c=='+' ) )
 		{
 			return false;

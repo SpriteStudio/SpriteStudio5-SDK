@@ -10,13 +10,16 @@
   #include "SS5Player.h"
  
   auto resman = ss::ResourceManager::getInstance();
-  resman->addData("sample.ssbp");
+  resman->addData("sample.ssbp");			// ssbpの読み込み
 
-  auto player = ss::Player::create();
-  player->setData("sample");			// ssbpファイル名（拡張子不要）
-  player->play("anime1");
-  player->setPosition(200, 200);
-  this->addChild(player);
+  auto ssplayer = ss::Player::create();
+  ssplayer->setData("sample");				// ssbpファイル（拡張子不要）をプレイヤーに関連づけます
+  ssplayer->play("anime1");					// アニメーション名指定(ssae名/アニメーション名)
+  ssplayer->setPosition(200, 200);			// 位置設定
+  ssplayer->setAlpha(255);					// 透明度設定
+  ssplayer->setScale(1.0f,1.0f);			// 拡大率設定
+  ssplayer->setRotation(0.0f);				// Z回転値設定(度)
+  this->addChild(ssplayer);
 
   X回転、Y回転を使用する場合、アプリケーションの初期化で平行投影を設定しないとSS5と描画結果が異なります。
   Z回転とXまたはY回転を同時に行うとSS5と描画結果が異なります。
@@ -65,6 +68,7 @@ public:
 	 *
 	 * @param  ssbpFilepath  ssbpファイルのパス
 	 * @param  imageBaseDir  画像ファイルの読み込み元ルートパス. 省略時はssbpのある場所をルートとします.
+	 *                       解像度によって画像ファイルを差し替える時などに使用してください。
 	 * @return dataKey
 	 */
 	std::string addData(const std::string& ssbpFilepath, const std::string& imageBaseDir = s_null);
@@ -176,7 +180,8 @@ struct ResluteState
 	int flags;						/// このフレームで更新が行われるステータスのフラグ
 	int cellIndex;					/// パーツに割り当てられたセルの番号
 	float x;						/// SS5アトリビュート：X座標
-	float y;						/// SS5アトリビュート：X座標
+	float y;						/// SS5アトリビュート：Y座標
+	float z;						/// SS5アトリビュート：Z座標
 	float anchorX;					/// 原点Xオフセット＋セルに設定された原点オフセットX
 	float anchorY;					/// 原点Yオフセット＋セルに設定された原点オフセットY
 	float rotationX;				/// X回転（親子関係計算済）
@@ -206,40 +211,41 @@ struct ResluteState
 
 //含まれるパーツデータフラグ
 enum {
-	PART_FLAG_INVISIBLE = 1 << 0,
-	PART_FLAG_FLIP_H = 1 << 2,
-	PART_FLAG_FLIP_V = 1 << 3,
+	PART_FLAG_INVISIBLE			= 1 << 0,
+	PART_FLAG_FLIP_H			= 1 << 1,
+	PART_FLAG_FLIP_V			= 1 << 2,
 
 	// optional parameter flags
-	PART_FLAG_CELL_INDEX = 1 << 4,
-	PART_FLAG_POSITION_X = 1 << 5,
-	PART_FLAG_POSITION_Y = 1 << 6,
-	PART_FLAG_ANCHOR_X = 1 << 7,
-	PART_FLAG_ANCHOR_Y = 1 << 8,
-	PART_FLAG_ROTATIONX = 1 << 9,
-	PART_FLAG_ROTATIONY = 1 << 10,
-	PART_FLAG_ROTATIONZ = 1 << 11,
-	PART_FLAG_SCALE_X = 1 << 12,
-	PART_FLAG_SCALE_Y = 1 << 13,
-	PART_FLAG_OPACITY = 1 << 14,
-	PART_FLAG_COLOR_BLEND = 1 << 15,
-	PART_FLAG_VERTEX_TRANSFORM = 1 << 16,
+	PART_FLAG_CELL_INDEX		= 1 << 3,
+	PART_FLAG_POSITION_X		= 1 << 4,
+	PART_FLAG_POSITION_Y		= 1 << 5,
+	PART_FLAG_POSITION_Z		= 1 << 6,
+	PART_FLAG_ANCHOR_X			= 1 << 7,
+	PART_FLAG_ANCHOR_Y			= 1 << 8,
+	PART_FLAG_ROTATIONX			= 1 << 9,
+	PART_FLAG_ROTATIONY			= 1 << 10,
+	PART_FLAG_ROTATIONZ			= 1 << 11,
+	PART_FLAG_SCALE_X			= 1 << 12,
+	PART_FLAG_SCALE_Y			= 1 << 13,
+	PART_FLAG_OPACITY			= 1 << 14,
+	PART_FLAG_COLOR_BLEND		= 1 << 15,
+	PART_FLAG_VERTEX_TRANSFORM	= 1 << 16,
 
-	PART_FLAG_SIZE_X = 1 << 17,
-	PART_FLAG_SIZE_Y = 1 << 18,
+	PART_FLAG_SIZE_X			= 1 << 17,
+	PART_FLAG_SIZE_Y			= 1 << 18,
 
-	PART_FLAG_U_MOVE = 1 << 19,
-	PART_FLAG_V_MOVE = 1 << 20,
-	PART_FLAG_UV_ROTATION = 1 << 21,
-	PART_FLAG_U_SCALE = 1 << 22,
-	PART_FLAG_V_SCALE = 1 << 23,
-	PART_FLAG_BOUNDINGRADIUS = 1 << 24,
+	PART_FLAG_U_MOVE			= 1 << 19,
+	PART_FLAG_V_MOVE			= 1 << 20,
+	PART_FLAG_UV_ROTATION		= 1 << 21,
+	PART_FLAG_U_SCALE			= 1 << 22,
+	PART_FLAG_V_SCALE			= 1 << 23,
+	PART_FLAG_BOUNDINGRADIUS	= 1 << 24,
 
 	PART_FLAG_INSTANCE_KEYFRAME = 1 << 25,
-	PART_FLAG_INSTANCE_START = 1 << 26,
-	PART_FLAG_INSTANCE_END = 1 << 27,
-	PART_FLAG_INSTANCE_SPEED = 1 << 28,
-	PART_FLAG_INSTANCE_LOOP = 1 << 29,
+	PART_FLAG_INSTANCE_START	= 1 << 26,
+	PART_FLAG_INSTANCE_END		= 1 << 27,
+	PART_FLAG_INSTANCE_SPEED	= 1 << 28,
+	PART_FLAG_INSTANCE_LOOP		= 1 << 29,
 	PART_FLAG_INSTANCE_LOOP_FLG = 1 << 30,
 
 	NUM_PART_FLAGS
@@ -494,6 +500,19 @@ public:
 	*/
 	void setPartVisible( int partNo, bool flg );
 
+	/*
+	* プレイヤーの透明度を設定します(0～255).
+	* setOpacityではなくこちらを使用してください。
+	*/
+	void setAlpha(int alpha);
+
+	/*
+	* setContentScaleFactorの数値に合わせて内部のUV補正を有効にするか設定します。
+	* マルチ解像度テクスチャ対応を行う際にプレイヤーの画像はそのまま使用する場合は、trueを設定してプレイヤー内UV値を変更してください.
+	* 画像を差し替える場合はaddDataの第二引数でパスを指定し、解像度の違うテクスチャを読み込んでください.
+	*/
+	void setContentScaleEneble(bool eneble);
+
 	typedef std::function<void(Player*, const UserData*)> UserDataCallback;
 	typedef std::function<void(Player*)> PlayEndCallback;
 
@@ -530,7 +549,6 @@ public:
 	void setPlayEndCallback(const PlayEndCallback& callback);
 
 
-
 public:
 	Player(void);
 	virtual ~Player();
@@ -550,7 +568,6 @@ protected:
 	void setFrame(int frameNo);
 	void checkUserData(int frameNo);
 	void get_uv_rotation(float *u, float *v, float cu, float cv, float deg);
-	void set_InstanceAlpha(int alpha);
 	void set_InstanceRotation(float rotX, float rotY, float rotZ);
 
 protected:
@@ -568,6 +585,7 @@ protected:
 	bool				_isPlaying;
 	bool				_isPausing;
 	bool				_isPlayFirstUserdataChack;
+	bool				_isContentScaleFactorAuto;
 	int					_prevDrawFrameNo;
 	bool				_partVisible[PART_VISIBLE_MAX];
 	int					_partIndex[PART_VISIBLE_MAX];

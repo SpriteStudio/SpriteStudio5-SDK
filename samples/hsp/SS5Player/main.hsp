@@ -98,7 +98,7 @@ ret = SSPlayer_setPosition( 0, SCREEN_X / 2, SCREEN_Y / 2 )
 //スケール設定
 ret = SSPlayer_setScale( 0, double(1.0), double(1.0) ) 
 //反転設定
-ret = SSPlayer_setFlip( 0, 1, 1 ) 
+ret = SSPlayer_setFlip( 0, 0, 0 ) 
 //回転設定、X回転、Y回転は未対応
 ret = SSPlayer_setRotation( 0, 0, 0, 0 )
 //透明度設定
