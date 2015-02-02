@@ -149,9 +149,9 @@ FTransform FSsAnimeDecoder::GetPartTransformInCanvas(int PartIndex, int32 Canvas
 		return FTransform();
 	}
 
-	FSsPartState* State = SortList[PartIndex];
+	FSsPartState* State = &(PartState[PartIndex]);
 	float OffX = Option.CenterLocation.X;
-	float OffY = Option.CenterLocation.Y;
+	float OffY = CanvasHeight - Option.CenterLocation.Y;
 	
 	FVector2D PivotPosition(
 		(State->Matrix[12] * Option.Scale.X) * (Option.bFlipH ? -1.f : 1.f) + OffX,
