@@ -150,7 +150,7 @@ void MainWindow::on_pushButton_convert_clicked()
                 QString str_current_path = dir.path();
                 execstr = str_current_path + "/Ss5Converter";
         #endif
-                str = execstr + " " + fileName;
+                str = execstr + " \"" + fileName + "\"";
                 cnvProcess->start(str); //パスと引数
 
                 convert_exec = true;  //コンバート中か
@@ -217,7 +217,7 @@ void MainWindow::processFinished( int exitCode, QProcess::ExitStatus exitStatus)
                 QString str_current_path = dir.path();
                 execstr = str_current_path + "/Ss5Converter";
         #endif
-                str = execstr + " " + fileName;
+                str = execstr + " \"" + fileName + "\"";
                 cnvProcess->start(str); //パスと引数
 
                 convet_index++;
