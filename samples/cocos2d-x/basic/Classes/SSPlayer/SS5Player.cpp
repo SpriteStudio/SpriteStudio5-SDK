@@ -943,6 +943,7 @@ void Player::play(const std::string& packName, const std::string& animeName, int
 		auto msg = cocos2d::StringUtils::format("Not found animation > pack=%s, anime=%s", packName.c_str(), animeName.c_str());
 		CCASSERT(animeRef != nullptr, msg.c_str());
 	}
+	_currentAnimename = animeName;
 
 	play(animeRef, loop, startFrameNo);
 }
@@ -957,6 +958,7 @@ void Player::play(const std::string& animeName, int loop, int startFrameNo)
 		auto msg = cocos2d::StringUtils::format("Not found animation > anime=%s", animeName.c_str());
 		CCASSERT(animeRef != nullptr, msg.c_str());
 	}
+	_currentAnimename = animeName;
 
 	play(animeRef, loop, startFrameNo);
 }
@@ -1413,6 +1415,46 @@ void Player::setPartVisible(int partNo, bool flg)
 void Player::setContentScaleEneble(bool eneble)
 {
 	_isContentScaleFactorAuto = eneble;
+}
+
+// インスタンスパーツが再生するアニメを変更します。
+bool Player::changeInstanceAnime( std::string partsname, std::string animename )
+{
+	//名前からパーツを取得
+	bool rc = false;
+	if (_currentAnimeRef)
+	{
+		ToPointer ptr(_currentRs->data);
+
+		const AnimePackData* packData = _currentAnimeRef->animePackData;
+		const PartData* parts = static_cast<const PartData*>(ptr(packData->parts));
+
+		for (int index = 0; index < packData->numParts; index++)
+		{
+			int partIndex = _partIndex[index];
+
+			const PartData* partData = &parts[partIndex];
+			const char* partName = static_cast<const char*>(ptr(partData->name));
+			if (strcmp(partName, partsname.c_str()) == 0)
+			{
+				CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
+				if ( sprite->_ssplayer )
+				{
+					//パーツがインスタンスパーツの場合は再生するアニメを設定する
+					//アニメが入れ子にならないようにチェックする
+					if (_currentAnimename != animename )
+					{
+						sprite->_ssplayer->play(animename);
+						rc = true;
+					}
+				}
+
+				break;
+			}
+		}
+	}
+
+	return ( rc );
 }
 
 
@@ -2006,6 +2048,7 @@ void Player::setFrame(int frameNo)
 			//インスタンスパラメータを設定
 			sprite->_ssplayer->setAlpha(opacity);
 			sprite->_ssplayer->set_InstanceRotation(rotationX, rotationY, rotationZ);
+			sprite->_ssplayer->setContentScaleEneble(_isContentScaleFactorAuto);
 
 			//インスタンス用SSPlayerに再生フレームを設定する
 			sprite->_ssplayer->setFrameNo(_time);

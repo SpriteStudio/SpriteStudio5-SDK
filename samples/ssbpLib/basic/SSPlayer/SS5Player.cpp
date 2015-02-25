@@ -1175,6 +1175,7 @@ void Player::play(const std::string& packName, const std::string& animeName, int
 		std::string msg = Format("Not found animation > pack=%s, anime=%s", packName.c_str(), animeName.c_str());
 		SS_ASSERT2(animeRef != NULL, msg.c_str());
 	}
+	_currentAnimename = animeName;
 
 	play(animeRef, loop, startFrameNo);
 }
@@ -1189,6 +1190,7 @@ void Player::play(const std::string& animeName, int loop, int startFrameNo)
 		std::string msg = Format("Not found animation > anime=%s", animeName.c_str());
 		SS_ASSERT2(animeRef != NULL, msg.c_str());
 	}
+	_currentAnimename = animeName;
 
 	play(animeRef, loop, startFrameNo);
 }
@@ -1609,6 +1611,45 @@ void Player::setPartVisible(int partNo, bool flg)
 	_partVisible[partNo] = flg;
 }
 
+// インスタンスパーツが再生するアニメを変更します。
+bool Player::changeInstanceAnime(std::string partsname, std::string animename)
+{
+	//名前からパーツを取得
+	bool rc = false;
+	if (_currentAnimeRef)
+	{
+		ToPointer ptr(_currentRs->data);
+
+		const AnimePackData* packData = _currentAnimeRef->animePackData;
+		const PartData* parts = static_cast<const PartData*>(ptr(packData->parts));
+
+		for (int index = 0; index < packData->numParts; index++)
+		{
+			int partIndex = _partIndex[index];
+
+			const PartData* partData = &parts[partIndex];
+			const char* partName = static_cast<const char*>(ptr(partData->name));
+			if (strcmp(partName, partsname.c_str()) == 0)
+			{
+				CustomSprite* sprite = static_cast<CustomSprite*>(_parts.at(partIndex));
+				if (sprite->_ssplayer)
+				{
+					//パーツがインスタンスパーツの場合は再生するアニメを設定する
+					//アニメが入れ子にならないようにチェックする
+					if (_currentAnimename != animename)
+					{
+						sprite->_ssplayer->play(animename);
+						rc = true;
+					}
+				}
+
+				break;
+			}
+		}
+	}
+
+	return (rc);
+}
 
 void Player::setFrame(int frameNo)
 {
