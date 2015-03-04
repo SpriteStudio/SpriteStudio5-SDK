@@ -983,8 +983,9 @@ APP_NAME " converter version " APP_VERSION "\n"
 "option:\n"
 "  -h      Display usage.\n"
 "  -v      Verbose mode.\n"
+"  -o      set output path.\n"
 //"  -e arg  Encoding of output file (UTF8/SJIS) default:UTF8\n"
-"  -p arg  Specify image file load base path.\n"
+//"  -p arg  Specify image file load base path.\n"
 "\n";
 
 
@@ -997,6 +998,7 @@ struct Options
 	StringList						inList;
 	LumpExporter::StringEncoding	encoding;
 	std::string						imageBaseDir;
+	std::string						outputDir;
 
 
 	Options()
@@ -1064,11 +1066,19 @@ bool parseOption(Options& options, const std::string& opt, ArgumentPointer& args
 		}
 	}
 */
+/*
 	else if (opt == "-p")
 	{
 		if (!args.hasNext()) return false;
 
 		options.imageBaseDir = args.next();
+	}
+*/
+	else if (opt == "-o")
+	{
+		if (!args.hasNext()) return false;
+
+		options.outputDir = args.next();
 	}
 	else
 	{
@@ -1084,8 +1094,12 @@ bool parseOption(Options& options, const std::string& opt, ArgumentPointer& args
 
 bool parseArguments(Options& options, int argc, const char* argv[], std::string& illegalArgument)
 {
-	Options::StringList inList;
+	//オプションフラグの初期化
+	options.outputDir = "";
+	options.imageBaseDir = "";
 
+	//引数解析
+	Options::StringList inList;
 	ArgumentPointer args(argc, argv);
 	if (!args.hasNext())
 	{
@@ -1197,6 +1211,21 @@ int convertMain(int argc, const char * argv[])
 		std::string sspjPath = *it;
 		std::string outPath = FileUtil::replaceExtension(sspjPath, ".sspj", ".ssbp");
 		
+		if ( options.outputDir != "" ) 
+		{
+			//パスが指定されている場合
+			int st = 0;
+			st = outPath.find_last_of("\\");
+			std::string ssbpname = outPath.substr(st+1);
+
+			if ( options.outputDir.substr(options.outputDir.length() - 1) != "\\" )
+			{
+				//最後の１文字が"\\"でない場合付加する
+				options.outputDir = options.outputDir + "\\";
+			} 
+			outPath = options.outputDir + ssbpname;
+		}
+
 		if (options.isVerbose)
 		{
 			std::cout << "Convert: " << sspjPath << " -> " << outPath << std::endl;
