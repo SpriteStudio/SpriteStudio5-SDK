@@ -1215,14 +1215,26 @@ int convertMain(int argc, const char * argv[])
 		{
 			//パスが指定されている場合
 			int st = 0;
+#ifdef _WIN32
 			st = outPath.find_last_of("\\");
+#else
+            st = outPath.find_last_of("/");
+#endif
 			std::string ssbpname = outPath.substr(st+1);
 
+#ifdef _WIN32
 			if ( options.outputDir.substr(options.outputDir.length() - 1) != "\\" )
+#else
+			if ( options.outputDir.substr(options.outputDir.length() - 1) != "/" )
+#endif
 			{
 				//最後の１文字が"\\"でない場合付加する
+#ifdef _WIN32
 				options.outputDir = options.outputDir + "\\";
-			} 
+#else
+                options.outputDir = options.outputDir + "/";
+#endif
+			}
 			outPath = options.outputDir + ssbpname;
 		}
 
