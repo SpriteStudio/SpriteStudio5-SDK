@@ -13,7 +13,7 @@
   - The documents in this package were written for experienced application program developers. 
     General program development techniques have been omitted.
 
-  - SSAE,SSCE,SSPJ,SSOP file format specifications are subject to future change.
+  - SSAE,SSCE,SSPJ,SSOP,SSBP file format specifications are subject to future change.
 
   - Operation of programs created by customers is excluded from support.
 
@@ -38,7 +38,7 @@
   ・本SDK内のドキュメントはアプリケーションプログラム開発経験者向けに書かれ
     ています。一般的なプログラム開発の手法等につきましては省略しております。
 
-  ・SSAE,SSCE,SSPJ,SSOPファイルフォーマット仕様は、将来、変更される可能性
+  ・SSAE,SSCE,SSPJ,SSOP,SSBPファイルフォーマット仕様は、将来、変更される可能性
     があります。
 
   ・お客様が作成されたプログラムの動作に関しましては、サポート対象外とさせて
