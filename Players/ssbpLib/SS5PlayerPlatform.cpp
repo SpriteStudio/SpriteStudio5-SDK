@@ -1,18 +1,18 @@
-// 
+﻿// 
 //  SS5Platform.cpp
 //
 #include "SS5PlayerPlatform.h"
 
 /**
-* �e�v���b�g�t�H�[���ɍ��킹�ď������쐬���Ă�������
-* DX���C�u�����p�ɍ쐬����Ă��܂��B
+* 各プラットフォームに合わせて処理を作成してください
+* DXライブラリ用に作成されています。
 */
 #include "DxLib.h"
 
 namespace ss
 {
 	/**
-	* �t�@�C���ǂݍ���
+	* ファイル読み込み
 	*/
 	unsigned char* SSFileOpen(const char* pszFileName, const char* pszMode, unsigned long * pSize)
 	{
@@ -45,16 +45,16 @@ namespace ss
 	}
 
 	/**
-	* �e�N�X�`���̓ǂݍ���
+	* テクスチャの読み込み
 	*/
 	long SSTextureLoad(const char* pszFileName )
 	{
 		/**
-		* �e�N�X�`���Ǘ��p�̃��j�[�N�Ȓl��Ԃ��Ă��������B
-		* �e�N�X�`���̊Ǘ��̓Q�[�����ōs���`�ɂȂ�܂��B
-		* �e�N�X�`���ɃA�N�Z�X����n���h����A�e�N�X�`�������蓖�Ă��o�b�t�@�ԍ����ɂȂ�܂��B
+		* テクスチャ管理用のユニークな値を返してください。
+		* テクスチャの管理はゲーム側で行う形になります。
+		* テクスチャにアクセスするハンドルや、テクスチャを割り当てたバッファ番号等になります。
 		*
-		* �v���C���[�͂����ŕԂ����l�ƃp�[�c�̃X�e�[�^�X�������ɕ`����s���܂��B
+		* プレイヤーはここで返した値とパーツのステータスを引数に描画を行います。
 		*/
 		long rc = 0;
 
@@ -64,11 +64,11 @@ namespace ss
 	}
 	
 	/**
-	* �e�N�X�`���̉��
+	* テクスチャの解放
 	*/
 	bool SSTextureRelese(long handle)
 	{
-		/// �����������ԍ��ŉ��x������������Ă΂��̂ŁA��O���o�Ȃ��悤�ɍ쐬���Ă��������B
+		/// 解放後も同じ番号で何度も解放処理が呼ばれるので、例外が出ないように作成してください。
 		bool rc = true;
 
 		if ( DeleteGraph((int)handle) == -1 )
@@ -80,8 +80,8 @@ namespace ss
 	}
 
 	/**
-	* �e�N�X�`���̃T�C�Y���擾
-	* �e�N�X�`����UV��ݒ肷��̂Ɏg�p���܂��B
+	* テクスチャのサイズを取得
+	* テクスチャのUVを設定するのに使用します。
 	*/
 	bool SSGetTextureSize(long handle, int &w, int &h)
 	{
@@ -93,25 +93,25 @@ namespace ss
 	}
 
 	/**
-	* �X�v���C�g�̕\��
+	* スプライトの表示
 	*/
 	void SSDrawSprite(State state)
 	{
-		//���Ή��@�\
-		//�X�e�[�^�X��������擾���A�e�v���b�g�t�H�[���ɍ��킹�ċ@�\���������Ă��������B
-		//X��]�AY��]�A�㉺���]�A�J���[�u�����h�i�ꕔ�̂݁j
-		//���_�ό`�AX�T�C�Y�AY�T�C�Y
-		float x = state.mat[12];	/// �\�����W�̓}�g���N�X����擾���܂��B
-		float y = state.mat[13];	/// �\�����W�̓}�g���N�X����擾���܂��B
-		float rotationZ = RadianToDegree(state.rotationZ);		/// ��]�l
-		float scaleX = state.scaleX;							/// �g�嗦
-		float scaleY = state.scaleY;							/// �g�嗦
+		//未対応機能
+		//ステータスから情報を取得し、各プラットフォームに合わせて機能を実装してください。
+		//X回転、Y回転、上下反転、カラーブレンド（一部のみ）
+		//頂点変形、Xサイズ、Yサイズ
+		float x = state.mat[12];	/// 表示座標はマトリクスから取得します。
+		float y = state.mat[13];	/// 表示座標はマトリクスから取得します。
+		float rotationZ = RadianToDegree(state.rotationZ);		/// 回転値
+		float scaleX = state.scaleX;							/// 拡大率
+		float scaleY = state.scaleY;							/// 拡大率
 
-		//�`��t�@���N�V����
+		//描画ファンクション
 		//
 		switch (state.blendfunc)
 		{
-			case BLEND_MIX:		///< 0 �u�����h�i�~�b�N�X�j
+			case BLEND_MIX:		///< 0 ブレンド（ミックス）
 				if (state.opacity == 255)
 				{
 					SetDrawBlendMode(DX_BLENDMODE_NOBLEND, state.opacity);
@@ -121,13 +121,13 @@ namespace ss
 					SetDrawBlendMode(DX_BLENDMODE_ALPHA, state.opacity);
 				}
 				break;
-			case BLEND_MUL:		///< 1 ��Z
+			case BLEND_MUL:		///< 1 乗算
 				SetDrawBlendMode(DX_BLENDMODE_MULA, state.opacity);
 				break;
-			case BLEND_ADD:		///< 2 ���Z
+			case BLEND_ADD:		///< 2 加算
 				SetDrawBlendMode(DX_BLENDMODE_ADD, state.opacity);
 				break;
-			case BLEND_SUB:		///< 3 ���Z
+			case BLEND_SUB:		///< 3 減算
 				SetDrawBlendMode(DX_BLENDMODE_SUB, state.opacity);
 				break;
 
@@ -135,76 +135,76 @@ namespace ss
 
 		if (state.flags & PART_FLAG_COLOR_BLEND)
 		{
-			//RGB�̃J���[�u�����h��ݒ�
-			//�����ɍČ�����ɂ͐�p�̃V�F�[�_�[���g���A�e�N�X�`���ɃJ���[�l����������K�v������
-			//�쐬����ꍇ��ssShader_frag.h�ACustomSprite�̃R�����g�ƂȂ��Ă�V�F�[�_�[�������Q�l�ɂ��Ă��������B
+			//RGBのカラーブレンドを設定
+			//厳密に再現するには専用のシェーダーを使い、テクスチャにカラー値を合成する必要がある
+			//作成する場合はssShader_frag.h、CustomSpriteのコメントとなってるシェーダー処理を参考にしてください。
 			if (state.colorBlendType == VERTEX_FLAG_ONE)
 			{
-				//�P�F�J���[�u�����h
+				//単色カラーブレンド
 			}
 			else
 			{
-				//���_�J���[�u�����h
-				//���Ή�
+				//頂点カラーブレンド
+				//未対応
 			}
 			switch (state.colorBlendFunc)
 			{
 			case BLEND_MIX:
 				break;
-			case BLEND_MUL:		///< 1 ��Z
-				// �u�����h���@�͏�Z�ȊO���Ή�
-				// �Ƃ肠��������̐F�𔽉f������
+			case BLEND_MUL:		///< 1 乗算
+				// ブレンド方法は乗算以外未対応
+				// とりあえず左上の色を反映させる
 				SetDrawBright(state.quad.tl.colors.r, state.quad.tl.colors.g, state.quad.tl.colors.b);
 				break;
-			case BLEND_ADD:		///< 2 ���Z
+			case BLEND_ADD:		///< 2 加算
 				break;
-			case BLEND_SUB:		///< 3 ���Z
+			case BLEND_SUB:		///< 3 減算
 				break;
 			}
 
 		}
 
 		/**
-		* DX���C�u������X��Y�����g��Ȃ̂ŁA�Ƃ肠����X�X�P�[�����g�p����
-		* DX���C�u������Y���]�ł��Ȃ��̂Ŗ��Ή�
-		* DrawRectRotaGraph��x��y�����S�ɂȂ�悤�ɁA�e�N�X�`���̋�`��\�����܂��B
+		* DXライブラリはXとY同時拡大なので、とりあえずXスケールを使用する
+		* DXライブラリはY反転できないので未対応
+		* DrawRectRotaGraphはxとyが中心になるように、テクスチャの矩形を表示します。
 		*/
-		//���]���̓X�P�[����-�ƂȂ�̂ŁA���]�t���O���g�p���ăX�P�[�������ɖ߂�
+		//反転時はスケールが-となるので、反転フラグを使用してスケールを元に戻す
 		if (scaleX < 0.0f )
 		{
 			scaleX = -scaleX;
 		}
 
 		DrawRectRotaGraph(
-			(int)x, (int)y,	//���̍��W���摜�̒��S�ɂȂ�܂��B
+			(int)x, (int)y,	//この座標が画像の中心になります。
 			(int)state.rect.origin.x, (int)state.rect.origin.y, (int)state.rect.size.width, (int)state.rect.size.height,
 			scaleX, rotationZ,
 			state.texture, TRUE, state.flipX
 			);
 
 		SetDrawBright(255, 255, 255);
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);	//�u�����h�X�e�[�g��ʏ�֖߂�
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);	//ブレンドステートを通常へ戻す
 	}
 
 	/**
-	* ���[�U�[�f�[�^�̎擾
+	* ユーザーデータの取得
 	*/
 	void SSonUserData(Player *player, UserData *userData)
 	{
-		//�Q�[�����փ��[�U�[�f�[�^��ݒ肷��֐����Ăяo���Ă��������B
+		//ゲーム側へユーザーデータを設定する関数を呼び出してください。
 	}
 
 	/**
-	* ���[�U�[�f�[�^�̎擾
+	* ユーザーデータの取得
 	*/
 	void SSPlayEnd(Player *player)
 	{
-		//�Q�[�����փA�j���Đ��I����ݒ肷��֐����Ăяo���Ă��������B
+		//ゲーム側へアニメ再生終了を設定する関数を呼び出してください。
 	}
 
 
 	/**
-	* �����R�[�h�ϊ�
+	* 文字コード変換
 	*/ 
 	std::string utf8Togbk(const char *src)
 	{
@@ -228,7 +228,7 @@ namespace ss
 	}
 
 	/**
-	* windows�p�p�X�`�F�b�N
+	* windows用パスチェック
 	*/ 
 	bool isAbsolutePath(const std::string& strPath)
 	{

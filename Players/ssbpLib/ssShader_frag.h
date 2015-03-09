@@ -1,4 +1,4 @@
-"                                                                     \n\
+﻿"                                                                     \n\
 #ifdef GL_ES                                                          \n\
 precision lowp float;                                                 \n\
 #endif                                                                \n\

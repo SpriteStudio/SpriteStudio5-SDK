@@ -1,4 +1,4 @@
-#include "DxLib.h"
+ï»¿#include "DxLib.h"
 #include "SSPlayer\SS5Player.h"
 
 static int previousTime;
@@ -9,37 +9,41 @@ int mGameExec;
 
 void init(void);
 void update(float dt);
+void draw(void);
 void relese(void);
 
-/// SS5ƒvƒŒƒCƒ„[
+/// SS5ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
 ss::Player *ssplayer;
 ss::ResourceManager *resman;
 
 /**
-* ƒƒCƒ“ŠÖ”
+* ãƒ¡ã‚¤ãƒ³é–¢æ•°
 */
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	//DXƒ‰ƒCƒuƒ‰ƒŠ‚Ì‰Šú‰»
-	ChangeWindowMode(true);	//ƒEƒCƒ“ƒhƒEƒ‚[ƒh
+	//DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®åˆæœŸåŒ–
+	ChangeWindowMode(true);	//ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰
 	SetGraphMode(1280, 720, GetColorBitDepth() );
-	if (DxLib_Init() == -1)		// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠ‰Šú‰»ˆ—
+	if (DxLib_Init() == -1)		// ï¼¤ï¼¸ãƒ©ã‚¤ãƒ–ãƒ©ãƒªåˆæœŸåŒ–å‡¦ç†
 	{
-		return -1;			// ƒGƒ‰[‚ª‹N‚«‚½‚ç’¼‚¿‚ÉI—¹
+		return -1;			// ã‚¨ãƒ©ãƒ¼ãŒèµ·ããŸã‚‰ç›´ã¡ã«çµ‚äº†
 	}
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	//ƒƒCƒ“ƒ‹[ƒv
+	//ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—
 	mGameExec = 1;
 	previousTime = GetNowCount();
 	
-	/// ƒvƒŒƒCƒ„[‰Šú‰»
+	// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åˆæœŸåŒ–
 	init( );
 	
 	while(mGameExec == 1){
 		ClearDrawScreen();
-		update((float)waitTime / 1000.0f );
-		ScreenFlip();
+		update((float)waitTime / 1000.0f );		//ã‚²ãƒ¼ãƒ ã®æ›´æ–°
+		draw();									//ã‚²ãƒ¼ãƒ ã®æç”»
+		ScreenFlip();							//æç”»çµæœã‚’ç”»é¢ã«åæ˜ 
+
+		//æ¬¡ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã¾ã§ã®æ™‚é–“å¾…ã¡
 		waitTime = GetNowCount() - previousTime;
 		previousTime = GetNowCount();
 
@@ -50,55 +54,55 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
-	/// ƒvƒŒƒCƒ„[I—¹ˆ—
+	/// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼çµ‚äº†å‡¦ç†
 	relese( );
 
 
-	DxLib_End();			// ‚c‚wƒ‰ƒCƒuƒ‰ƒŠg—p‚ÌI—¹ˆ—
+	DxLib_End();			// ï¼¤ï¼¸ãƒ©ã‚¤ãƒ–ãƒ©ãƒªä½¿ç”¨ã®çµ‚äº†å‡¦ç†
 
-	return 0;				// ƒ\ƒtƒg‚ÌI—¹ 
+	return 0;				// ã‚½ãƒ•ãƒˆã®çµ‚äº† 
 }
 
 void init( void )
 {
 	/**********************************************************************************
 
-	SSƒAƒjƒ•\¦‚ÌƒTƒ“ƒvƒ‹ƒR[ƒh
-	Visual Studio Express 2013 for Windows DesktopADXƒ‰ƒCƒuƒ‰ƒŠ‚Å“®ì‚ğŠm”F‚µ‚Ä‚¢‚Ü‚·B
-	ssbp‚Æpng‚ª‚ ‚ê‚ÎÄ¶‚·‚é–‚ª‚Å‚«‚Ü‚·‚ªAResourcesƒtƒHƒ‹ƒ_‚Ésspj‚àŠÜ‚Ü‚ê‚Ä‚¢‚Ü‚·B
+	SSã‚¢ãƒ‹ãƒ¡è¡¨ç¤ºã®ã‚µãƒ³ãƒ—ãƒ«ã‚³ãƒ¼ãƒ‰
+	Visual Studio Express 2013 for Windows Desktopã€DXãƒ©ã‚¤ãƒ–ãƒ©ãƒªã§å‹•ä½œã‚’ç¢ºèªã—ã¦ã„ã¾ã™ã€‚
+	ssbpã¨pngãŒã‚ã‚Œã°å†ç”Ÿã™ã‚‹äº‹ãŒã§ãã¾ã™ãŒã€Resourcesãƒ•ã‚©ãƒ«ãƒ€ã«sspjã‚‚å«ã¾ã‚Œã¦ã„ã¾ã™ã€‚
 
 	**********************************************************************************/
 
-	//ƒŠƒ\[ƒXƒ}ƒl[ƒWƒƒ‚Ìì¬
+	//ãƒªã‚½ãƒ¼ã‚¹ãƒãƒãƒ¼ã‚¸ãƒ£ã®ä½œæˆ
 	resman = ss::ResourceManager::getInstance();
-	//ƒvƒŒƒCƒ„[‚Ìì¬
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½œæˆ
 	ssplayer = ss::Player::create();
 
-	//ƒAƒjƒƒf[ƒ^‚ğƒŠƒ\[ƒX‚É’Ç‰Á
+	//ã‚¢ãƒ‹ãƒ¡ãƒ‡ãƒ¼ã‚¿ã‚’ãƒªã‚½ãƒ¼ã‚¹ã«è¿½åŠ 
 
-	//‚»‚ê‚¼‚ê‚Ìƒvƒ‰ƒbƒgƒtƒH[ƒ€‚É‡‚í‚¹‚½ƒpƒX‚Ö•ÏX‚µ‚Ä‚­‚¾‚³‚¢B
+	//ãã‚Œãã‚Œã®ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ã«åˆã‚ã›ãŸãƒ‘ã‚¹ã¸å¤‰æ›´ã—ã¦ãã ã•ã„ã€‚
 	resman->addData("character_template_comipo\\character_template1.ssbp");
-	//ƒvƒŒƒCƒ„[‚ÉƒŠƒ\[ƒX‚ğŠ„‚è“–‚Ä
-	ssplayer->setData("character_template1");        // ssbpƒtƒ@ƒCƒ‹–¼iŠg’£q•s—vj
-	//Ä¶‚·‚éƒ‚[ƒVƒ‡ƒ“‚ğİ’è
-	ssplayer->play("character_template_3head/stance");				 // ƒAƒjƒ[ƒVƒ‡ƒ“–¼‚ğw’è(ssae–¼/ƒAƒjƒ[ƒVƒ‡ƒ“–¼‚à‰Â”\AÚ‚µ‚­‚ÍŒãq)
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ãƒªã‚½ãƒ¼ã‚¹ã‚’å‰²ã‚Šå½“ã¦
+	ssplayer->setData("character_template1");        // ssbpãƒ•ã‚¡ã‚¤ãƒ«åï¼ˆæ‹¡å¼µå­ä¸è¦ï¼‰
+	//å†ç”Ÿã™ã‚‹ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã‚’è¨­å®š
+	ssplayer->play("character_template_3head/stance");				 // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³åã‚’æŒ‡å®š(ssaeå/ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³åã‚‚å¯èƒ½ã€è©³ã—ãã¯å¾Œè¿°)
 
-	//•\¦ˆÊ’u‚ğİ’è
+	//è¡¨ç¤ºä½ç½®ã‚’è¨­å®š
 	ssplayer->setPosition(1280/2, 600);
-	//ƒXƒP[ƒ‹İ’è
+	//ã‚¹ã‚±ãƒ¼ãƒ«è¨­å®š
 	ssplayer->setScale(0.5f, 0.5f);
-	//‰ñ“]‚ğİ’è
+	//å›è»¢ã‚’è¨­å®š
 	ssplayer->setRotation(0.0f, 0.0f, 0.0f);
-	//“§–¾“x‚ğİ’è
+	//é€æ˜åº¦ã‚’è¨­å®š
 	ssplayer->setAlpha(255);
-	//”½“]‚ğİ’è
+	//åè»¢ã‚’è¨­å®š
 	ssplayer->setFlip(false, false);
 
 }
 
-//ƒƒCƒ“ƒ‹[ƒv
-//Zƒ{ƒ^ƒ“‚ÅƒAƒjƒ‚ğƒ|[ƒYAÄŠJ‚ğØ‚è‘Ö‚¦‚Å‚«‚Ü‚·B
-//ƒ|[ƒY’†‚Í¶‰EƒL[‚ÅÄ¶‚·‚éƒtƒŒ[ƒ€‚ğ•ÏX‚Å‚«‚Ü‚·B
+//ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—
+//Zãƒœã‚¿ãƒ³ã§ã‚¢ãƒ‹ãƒ¡ã‚’ãƒãƒ¼ã‚ºã€å†é–‹ã‚’åˆ‡ã‚Šæ›¿ãˆã§ãã¾ã™ã€‚
+//ãƒãƒ¼ã‚ºä¸­ã¯å·¦å³ã‚­ãƒ¼ã§å†ç”Ÿã™ã‚‹ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’å¤‰æ›´ã§ãã¾ã™ã€‚
 bool push = false;
 int count = 0;
 bool pause = false;
@@ -106,17 +110,16 @@ void update(float dt)
 {
 	char str[128];
 
-	//ƒp[ƒc–¼‚©‚çÀ•W‚Ìæ“¾‚ğs‚¤
-	//ƒp[ƒc‚ÌƒXƒe[ƒ^ƒX‚ğXV‚·‚é‚½‚ßAw’èƒtƒŒ[ƒ€‚©‚çî•ñ‚ğæ‚éê‡‚ÍA•`‰æ‘O‚Éupdate‚ğ—\”õo‚·‚±‚ÆB
+	//ãƒ‘ãƒ¼ãƒ„åã‹ã‚‰åº§æ¨™ç­‰ã®ã‚¹ãƒ†ãƒ¼ãƒˆã®å–å¾—ã‚’è¡Œã†å ´åˆã¯getPartStateã‚’ä½¿ç”¨ã—ã¾ã™ã€‚
 	ss::ResluteState result;
 	ssplayer->getPartState(result, "body");
 
-	//æ“¾À—p‚Ì•\¦
+	//å–å¾—åº§ç”¨ã®è¡¨ç¤º
 	sprintf(str, "body = x:%f y:%f", result.x, result.y);
 	DrawString(100, 120, str, GetColor(255, 255, 255));
 
 
-	//ƒL[“ü—Í‘€ì
+	//ã‚­ãƒ¼å…¥åŠ›æ“ä½œ
 	int animax = ssplayer->getMaxFrame();
 	if (CheckHitKey(KEY_INPUT_ESCAPE))
 	{
@@ -200,26 +203,31 @@ void update(float dt)
 		ssplayer->setFrameNo(count % animax);
 	}
 
-	//ƒAƒjƒ[ƒVƒ‡ƒ“‚ÌƒtƒŒ[ƒ€‚ğ•\¦
+	//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®ãƒ•ãƒ¬ãƒ¼ãƒ ã‚’è¡¨ç¤º
 	sprintf(str, "play:%d frame:%d", (int)pause, count );
 	DrawString(100, 100, str, GetColor(255, 255, 255));
 
-	//ƒvƒŒƒCƒ„[‚ÌXVAˆø”‚Í‘O‰ñ‚ÌXVˆ—‚©‚çŒo‰ß‚µ‚½ŠÔ
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æ›´æ–°ã€å¼•æ•°ã¯å‰å›ã®æ›´æ–°å‡¦ç†ã‹ã‚‰çµŒéã—ãŸæ™‚é–“
 	ssplayer->update(dt);
-	//ƒvƒŒƒCƒ„[‚Ì•`‰æ
-	ssplayer->draw();
 
 }
 
+//æç”»
+void draw(void)
+{
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æç”»
+	ssplayer->draw();
+}
+
 /**
-* ƒvƒŒƒCƒ„[I—¹ˆ—
+* ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼çµ‚äº†å‡¦ç†
 */
 void relese( void )
 {
 
-	//ƒeƒNƒXƒ`ƒƒ‚Ì‰ğ•ú
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®è§£æ”¾
 	resman->releseTexture("character_template1");
-	//SS5Player‚Ìíœ
+	//SS5Playerã®å‰Šé™¤
 	delete (ssplayer);	
 	delete (resman);
 }

@@ -1,4 +1,4 @@
-/**
+ï»¿/**
 *  SS5PlayerTypes.h
 */
 
@@ -8,7 +8,7 @@
 namespace ss
 {
 /**
-* ƒJƒ‰[\‘¢‘Ì
+* ã‚«ãƒ©ãƒ¼æ§‹é€ ä½“
 */
 typedef struct _SSColor4B
 {
@@ -19,7 +19,7 @@ typedef struct _SSColor4B
 } SSColor4B;
 
 /**
-* ’¸“_À•W\‘¢‘Ì
+* é ‚ç‚¹åº§æ¨™æ§‹é€ ä½“
 */
 typedef struct _SSVertex3F
 {
@@ -29,7 +29,7 @@ typedef struct _SSVertex3F
 } SSVertex3F;
 
 /**
-* ‚S’¸“_À•W\‘¢‘Ì
+* ï¼”é ‚ç‚¹åº§æ¨™æ§‹é€ ä½“
 */
 typedef struct _SSQuad3 {
 	SSVertex3F        bl;
@@ -39,7 +39,7 @@ typedef struct _SSQuad3 {
 } SSQuad3;
 
 /**
-* UV\‘¢‘Ì
+* UVæ§‹é€ ä½“
 */
 typedef struct _SSTex2F {
 	float u;
@@ -47,17 +47,17 @@ typedef struct _SSTex2F {
 } SSTex2F;
 
 /**
-* ’¸“_\‘¢‘Ì
+* é ‚ç‚¹æ§‹é€ ä½“
 */
 typedef struct _ccV3F_C4B_T2F
 {
-	SSVertex3F			vertices;	/// À•W
-	SSColor4B			colors;		/// ƒJƒ‰[
+	SSVertex3F			vertices;	/// åº§æ¨™
+	SSColor4B			colors;		/// ã‚«ãƒ©ãƒ¼
 	SSTex2F				texCoords;	/// UV
 } SSV3F_C4B_T2F;
 
 /**
-* ‚S’¸“_\‘¢‘Ì
+* ï¼”é ‚ç‚¹æ§‹é€ ä½“
 */
 typedef struct _SSV3F_C4B_T2F_Quad
 {
