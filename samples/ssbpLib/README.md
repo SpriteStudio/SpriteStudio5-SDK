@@ -1,8 +1,0 @@
-DXライブラリで使用する際のサンプルプログラムです。
-VisualStadioでDXライブラリの設定を行い、sssample.cppファイルと、SSPlayerフォルダをプロジェクトに追加してください。
-Resourcesフォルダの中身を実行ファイルと同じ場所か、デバッグ＞作業ディレクトリに設定したフォルダにコピーしてください。
-
-Visual Studio Express 2013 for Windows Desktop、DXライブラリで動作を確認しています。
-ssbpとpngがあれば再生する事ができますが、Resourcesフォルダにsspjも含まれています。
-
-
