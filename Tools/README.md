@@ -14,9 +14,6 @@ SpriteStudio 5 で作成したデータを利用するためのルーツが含�
 - viewer_sample_Mac.zip
   - SDKを利用したsspjからアニメを再生するMac版ビュワーです。
 
-- PlayStationMobile
-  - SpriteStudio 5 SDKから出力したスプライトシート(plist)からP layStationMobile SDKで利用しやすいxmlを作成するコンバータです。
-
-- ssbpToXML.zip
-  - ssbpからXMLを作成するWindows用コンバータです。
+- plistConverter.zip
+  - SpriteStudio 5 SDKから出力したスプライトシート(plist)をC#等で利用しやすいxml形式に変換するコンバータです。
 
