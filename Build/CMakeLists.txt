@@ -100,31 +100,32 @@ ADD_EXECUTABLE(viewer_sample_dx9
 ./Viewer/source/myscene.h
 )
 
-IF(WIN32)
-ADD_EXECUTABLE(scriptbase_converter
-./PythonBinder/script_base_conv.cpp
-./PythonBinder/bind_SSXML.cpp
-./PythonBinder/bind_SSXML.h
-./PythonBinder/bind_Animation.cpp
-./PythonBinder/bind_Animation.h
-./PythonBinder/bind_SsPart.cpp
-./PythonBinder/bind_SsPart.h
-./PythonBinder/bind_SsPartAnime.cpp
-./PythonBinder/bind_SsPartAnime.h
-./PythonBinder/bind_SsAnimeDecoder.cpp
-./PythonBinder/bind_SsAnimeDecoder.h
-./PythonBinder/bind_AnimePack.cpp
-./PythonBinder/bind_AnimePack.h
-./PythonBinder/bind_SsAttribute.cpp
-./PythonBinder/bind_SsAttribute.h
-./PythonBinder/bind_SsKeyframe.cpp
-./PythonBinder/bind_SsKeyframe.h
-./PythonBinder/package_SpriteStudio.cpp
-./PythonBinder/package_SpriteStudio.h
-./PythonBinder/bind_Cellmap.cpp
-./PythonBinder/bind_Cellmap.h
-)
-ENDIF(WIN32)
+#IF(WIN32)
+#ADD_EXECUTABLE(scriptbase_converter
+#./PythonBinder/script_base_conv.cpp
+#./PythonBinder/bind_SSXML.cpp
+#./PythonBinder/bind_SSXML.h
+#./PythonBinder/bind_Animation.cpp
+#./PythonBinder/bind_Animation.h
+#./PythonBinder/bind_SsPart.cpp
+#./PythonBinder/bind_SsPart.h
+#./PythonBinder/bind_SsPartAnime.cpp
+#./PythonBinder/bind_SsPartAnime.h
+#./PythonBinder/bind_SsAnimeDecoder.cpp
+#./PythonBinder/bind_SsAnimeDecoder.h
+#./PythonBinder/bind_AnimePack.cpp
+#./PythonBinder/bind_AnimePack.h
+#./PythonBinder/bind_SsAttribute.cpp
+#./PythonBinder/bind_SsAttribute.h
+#./PythonBinder/bind_SsKeyframe.cpp
+#./PythonBinder/bind_SsKeyframe.h
+#./PythonBinder/package_SpriteStudio.cpp
+#./PythonBinder/package_SpriteStudio.h
+#./PythonBinder/bind_Cellmap.cpp
+#./PythonBinder/bind_Cellmap.h
+#)
+#ENDIF(WIN32)
+
 
 ADD_EXECUTABLE(Ss5Converter
 ./Converter/main.cpp
@@ -178,9 +179,9 @@ ENDIF()
 include_directories(;${SEARCH_DIR} ; ${PYTHON_IHNCLUDE} ; ${BOOST_ROOT} ; ../Common/Loader/ ;../Common/Helper/ ; ../Common/Drawer/ ; ../Common/Animator)
 target_link_libraries(viewer_sample_gl ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4} )
 
-IF (WIN32)
-target_link_libraries(scriptbase_converter ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4} )
-ENDIF(WIN32)
+#IF (WIN32)
+#target_link_libraries(scriptbase_converter ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4} )
+#ENDIF(WIN32)
 
 IF (WIN32)
 target_link_libraries(viewer_sample_dx9 ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4})
