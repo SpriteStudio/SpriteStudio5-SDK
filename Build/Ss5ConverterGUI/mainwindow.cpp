@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(cnvProcess, SIGNAL(readyReadStandardError()), this, SLOT(processErrOutput()));
 
     //ウィンドウのタイトルをつける
-    setWindowTitle("Ss5ConveterGUI");
+    setWindowTitle("Ss5ConverterGUI");
 
     //初期化
     convert_exec = false;
