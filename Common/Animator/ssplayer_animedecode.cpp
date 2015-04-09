@@ -14,7 +14,7 @@
 //stdでののforeach宣言　
 #define USE_TRIANGLE_FIN (0)
 
-
+#define USE_COMPATIBLE_SS4 (1)
 
 
 
@@ -23,7 +23,8 @@ SsAnimeDecoder::SsAnimeDecoder() :
 	curAnimeEndFrame(0),
 	nowPlatTime(0) ,
 	curCellMapManager(0),
-	partState(0)
+	partState(0),
+	rootPartFunctionAsVer4(false)
 	{
 	}
 
@@ -427,6 +428,18 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 		}
 	}
 
+#if USE_COMPATIBLE_SS4
+    //SS4互換モード
+    if ( rootPartFunctionAsVer4 )
+    {
+    	//ルートあるいはルートの子である場合
+        if ( state->parent == 0 || (state->parent && state->parent->parent == 0) )
+        {
+	        state->inheritRates = part->inheritRates;
+        }
+	}
+#endif
+
 	bool	size_x_key_find = false;
 	bool	size_y_key_find = false;
 
@@ -583,29 +596,69 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 		state->hide = true;
 	}
 
+
 	// 継承
-	if (state->parent)
-	{
-		// α
-		if (state->inherits_(SsAttributeKind::alpha))
-		{
-			state->alpha *= state->parent->alpha;
-		}
 
-		// フリップの継承。継承ONだと親に対しての反転になる…ヤヤコシス
-		if (state->inherits_(SsAttributeKind::fliph))
-		{
-			state->hFlip = state->parent->hFlip ^ state->hFlip;
-		}
-		if (state->inherits_(SsAttributeKind::flipv))
-		{
-			state->vFlip = state->parent->vFlip ^ state->vFlip;
-		}
+	//SS4互換モードのとき
+    if ( rootPartFunctionAsVer4 )
+    {
 
-		// 引き継ぐ場合は親の値をそのまま引き継ぐ
-		if (state->inherits_(SsAttributeKind::hide))
+        if ( state->parent == 0 || (state->parent && state->parent->parent == 0) )
+        {
+        	//継承せず
+		}else{
+			//ルートではなく、ルートの子でないときに継承する
+            // α
+
+            if (state->inherits_(SsAttributeKind::alpha))
+                state->alpha *= state->parent->alpha;
+
+            // フリップの継承。継承ONだと親に対しての反転になる…ヤヤコシス
+            if (state->inherits_(SsAttributeKind::fliph))
+            {
+                state->hFlip = state->parent->hFlip ^ state->hFlip;
+            }
+
+            if (state->inherits_(SsAttributeKind::flipv))
+                state->vFlip = state->parent->vFlip ^ state->vFlip;
+
+            bool temp_hide = state->hide;
+            // 非表示は継承ONだと親のをただ引き継ぐ
+            if (state->inherits_(SsAttributeKind::hide))
+                state->hide = state->parent->hide;
+
+            //SS4では継承があろうが無かろうが
+            //非表示フラグが立っていればとにかく消える  (SS4互換）
+            if ( temp_hide )
+            {
+                state->hide = true;
+            }
+        }
+    }else{
+		// 継承 SS5
+		if (state->parent)
 		{
-			state->hide = state->parent->hide;
+			// α
+			if (state->inherits_(SsAttributeKind::alpha))
+			{
+				state->alpha *= state->parent->alpha;
+			}
+
+			// フリップの継承。継承ONだと親に対しての反転になる…ヤヤコシス
+			if (state->inherits_(SsAttributeKind::fliph))
+			{
+				state->hFlip = state->parent->hFlip ^ state->hFlip;
+			}
+			if (state->inherits_(SsAttributeKind::flipv))
+			{
+				state->vFlip = state->parent->vFlip ^ state->vFlip;
+			}
+
+			// 引き継ぐ場合は親の値をそのまま引き継ぐ
+			if (state->inherits_(SsAttributeKind::hide))
+			{
+				state->hide = state->parent->hide;
+			}
 		}
 	}
 

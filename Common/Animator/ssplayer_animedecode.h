@@ -37,6 +37,7 @@ public:
 class SsAnimeDecoder
 {
 public:
+	bool	rootPartFunctionAsVer4;
 
 private:
 
@@ -56,6 +57,7 @@ private:
 	int				curAnimeEndFrame;
 	int				curAnimeFPS;
 	SsAnimation*	curAnimation;
+
 
 private:
 	void	updateState( int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
