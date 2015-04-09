@@ -38,6 +38,7 @@ class SsAnimeDecoder
 {
 public:
 	bool	rootPartFunctionAsVer4;
+	bool	dontUseMatrixForTransform;
 
 private:
 
@@ -63,6 +64,8 @@ private:
 	void	updateState( int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
 	void	updateInstance( int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
 	void	updateMatrix(SsPart* part , SsPartAnime* anime , SsPartState* state);
+	void	update_matrix_ss4(SsPart* part , SsPartAnime* anime , SsPartState* state);
+
 	void	updateVertices(SsPart* part , SsPartAnime* anime , SsPartState* state);
 
     int		CalcAnimeLabel2Frame(const SsString& str, int offset, SsAnimation* Animation  );

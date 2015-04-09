@@ -54,6 +54,12 @@ struct SsPartState
 	SsAnimeDecoder*	refAnime;
 	
 
+	//V4互換計算用
+	SsVector3		_temp_position;
+	SsVector3		_temp_rotation;
+	SsVector2		_temp_scale;
+
+
 	SsPartState();
 
 	virtual ~SsPartState();
