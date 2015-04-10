@@ -33,7 +33,11 @@ public:
 	SsTexWrapMode::_enum		wrapMode;					//!< テクスチャのラップモード
 	SsTexFilterMode::_enum		filterMode;					//!< テクスチャのフィルタモード
 
-	SsProjectSetting(){}
+	int						dontUseMatrixForTransform;
+	int						rootPartFunctionAsVer4;
+
+
+	SsProjectSetting() : dontUseMatrixForTransform(0) , rootPartFunctionAsVer4(0) {}
 	
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
@@ -45,7 +49,11 @@ public:
 		SSAR_DECLARE(queryExportBaseDirectory);
 		SSAR_DECLARE_ENUM( wrapMode );
 		SSAR_DECLARE_ENUM( filterMode );
-}
+		
+		SSAR_DECLARE(dontUseMatrixForTransform);
+		SSAR_DECLARE(rootPartFunctionAsVer4);
+
+	}
 };
 
 

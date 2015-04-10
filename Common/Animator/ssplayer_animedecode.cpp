@@ -105,6 +105,10 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 	curAnimeEndFrame = anime->settings.frameCount;
 	curAnimeFPS = anime->settings.fps;
 
+	rootPartFunctionAsVer4 = sspj->settings.rootPartFunctionAsVer4 == 0 ? false : true;
+	dontUseMatrixForTransform = sspj->settings.dontUseMatrixForTransform == 0 ? false : true;
+
+
 }
 
 
