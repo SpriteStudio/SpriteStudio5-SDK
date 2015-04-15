@@ -743,9 +743,25 @@ void	SsAnimeDecoder::update_matrix_ss4(SsPart* part , SsPartAnime* anime , SsPar
     //ローカル回転
     state->_temp_rotation.z = state->rotation.z + state->parent->_temp_rotation.z;
 
-    //拡大率
+
+	float scx = state->inheritRates[SsAttributeKind::sclx];
+	float scy = state->inheritRates[SsAttributeKind::scly];
+
+
+		//拡大率
 	state->_temp_scale.x = state->scale.x * state->parent->_temp_scale.x;
 	state->_temp_scale.y = state->scale.y * state->parent->_temp_scale.y;
+	
+	if ( scx == 0.0f )
+	{
+		state->_temp_scale.x = state->scale.x;
+		state->scale.x = state->scale.x / state->parent->_temp_scale.x;
+	}
+	if ( scy == 0.0f )
+	{
+		state->_temp_scale.y = state->scale.y;	
+		state->scale.y = state->scale.y / state->parent->_temp_scale.y;
+	}
 
     //以上からローカルマトリクスを作る
 	TranslationMatrixM( state->matrix , state->_temp_position.x, state->_temp_position.y, state->_temp_position.z );//
