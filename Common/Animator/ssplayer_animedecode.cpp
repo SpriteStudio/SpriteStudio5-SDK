@@ -726,8 +726,8 @@ void	SsAnimeDecoder::update_matrix_ss4(SsPart* part , SsPartAnime* anime , SsPar
     //回転
     float angle = state->parent->_temp_rotation.z;
     double aa = DegreeToRadian( angle ) * temp;
-    double  asin = std::sin( aa );
-    double  acos = std::cos( aa );
+    double  asin = sinf( aa );
+    double  acos = cosf( aa );
 
     float rx = (float)( x * acos - y * asin );
     float ry = (float)( x * asin + y * acos );

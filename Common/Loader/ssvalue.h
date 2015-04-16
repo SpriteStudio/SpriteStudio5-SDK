@@ -168,7 +168,7 @@ template <> inline const SsString& SsValue::get<SsString>() const {
 		if (this->type == int_type )
 		{
 			char tmp[64+1];
-			sprintf_s( tmp , 64 , "%d" , _int );
+//			sprintf_s( tmp , 64 , "%d" , _int );
 			ret = tmp;
 		}
 

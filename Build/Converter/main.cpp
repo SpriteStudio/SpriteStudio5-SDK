@@ -97,6 +97,13 @@ enum {
 	USER_DATA_FLAG_STRING	= 1 << 3
 };
 
+
+enum {
+	HEAD_FLAG_rootPartFunctionAsVer4 = 1 << 0,
+	HEAD_FLAG_dontUseMatrixForTransform = 1 << 1,
+};
+
+
 //座標を固定少数で出力　100＝1ドット
 #define DOT ( 10.0f )
 
@@ -253,7 +260,19 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 
 	topLump->add(Lump::s32Data(DATA_ID));
 	topLump->add(Lump::s32Data(CURRENT_DATA_VERSION));
-	topLump->add(Lump::s32Data(0));
+
+	//4互換設定の出力
+	int headflag = 0;
+	if (proj->settings.rootPartFunctionAsVer4 != 0)
+	{
+		headflag = headflag | HEAD_FLAG_rootPartFunctionAsVer4;
+	}
+	if (proj->settings.dontUseMatrixForTransform != 0)
+	{
+		headflag = headflag | HEAD_FLAG_dontUseMatrixForTransform;
+	}
+	topLump->add(Lump::s32Data(headflag));
+
 	
 	if (imageBaseDir.length() > 0)
 	{
