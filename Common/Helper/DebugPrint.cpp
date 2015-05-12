@@ -1,6 +1,7 @@
 #include "DebugPrint.h"
 #include "stdio.h"
 #include <string>
+#include <iostream>
 
 
 #if _WIN32
@@ -20,6 +21,8 @@ void DEBUG_PRINTF( const char* strFormat, ...   )
 	va_end( arglist);
 
 	OutputDebugStringA( strBuffer );
+	std::cerr << strBuffer << "\n";
+
 #endif // MASTER_RELEASE
 }
 
