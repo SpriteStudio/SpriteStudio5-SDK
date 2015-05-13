@@ -12,18 +12,22 @@
 
 void DEBUG_PRINTF( const char* strFormat, ...   )
 {
-#if _WIN32
 	char strBuffer[1024];
 
 	va_list arglist;
 	va_start( arglist, strFormat);
-	_vsnprintf( strBuffer, 1024, strFormat, arglist);
-	va_end( arglist);
+#if _WIN32
+	_vsnprintf(strBuffer, 1024, strFormat, arglist);
+	va_end(arglist);
+	OutputDebugStringA(strBuffer);
+#else
+	vsnprintf(strBuffer, 1024, strFormat, arglist);
+	va_end(arglist);
+#endif // MASTER_RELEASE
 
-	OutputDebugStringA( strBuffer );
 	std::cerr << strBuffer << "\n";
 
-#endif // MASTER_RELEASE
+
 }
 
 void	THROW_ERROR_MESSAGE_MAIN( std::string str , char* fname , size_t line )
