@@ -58,6 +58,7 @@ private:
 	int				curAnimeEndFrame;
 	int				curAnimeFPS;
 	SsAnimation*	curAnimation;
+	bool			instancePartsHide;
 
 
 private:
@@ -104,6 +105,9 @@ public:
 	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsVertexAnime& v );
 	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsInstanceAttr& v );
 
+	void	setInstancePartsHide(bool hide){
+		instancePartsHide = hide;
+	}
 
 
 };

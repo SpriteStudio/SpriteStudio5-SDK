@@ -25,7 +25,8 @@ SsAnimeDecoder::SsAnimeDecoder() :
 	curCellMapManager(0),
 	partState(0),
 	rootPartFunctionAsVer4(false),
-	dontUseMatrixForTransform(false)
+	dontUseMatrixForTransform(false),
+	instancePartsHide(false)
 	{
 	}
 
@@ -664,6 +665,11 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 			{
 				state->hide = state->parent->hide;
 			}
+			//親がインスタンスパーツでかつ非表示フラグがある場合は非表示にする。
+			if (instancePartsHide == true )
+			{
+				state->hide = true;
+			}
 		}
 	}
 
@@ -1017,7 +1023,8 @@ void	SsAnimeDecoder::updateInstance( int nowTime , SsPart* part , SsPartAnime* p
     state->size.y = part->anime->settings.canvasSize.y;
 */
 
-	state->refAnime->setPlayFrame( _time );
+	state->refAnime->setInstancePartsHide(state->hide);
+	state->refAnime->setPlayFrame(_time);
 	state->refAnime->update(this->frameDelta);
 
   
