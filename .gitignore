@@ -25,7 +25,7 @@ CMakeCache.txt
 CMakeFiles
 CMakeScripts
 Debug
-cmake_install.cmake
+cmake_install.cmake/Users/kurooka/Documents/workspace/SpriteStudio5-SDK/.gitignore
 project.pbxproj
 sssdk.xcodeproj
 *.swp
@@ -56,3 +56,6 @@ Build/TestScript/psd2ss/setuptools/
 Build/AntTweakBar.lib
 Build/AntTweakBar64.lib
 Common/Animator/57314826.txt
+Build/TestScript/SpriteStudio_pythonモジュール仕様書.txt
+Tools/viewer_sample_Mac/viewer_sample_gl
+Tools/viewer_sample_gl
