@@ -111,12 +111,6 @@ static float bezier_(float start, float end, float time, const SsCurve * c)
 */
 static float hermite_(float start, float end, float time, const SsCurve * c)
 {
-	//値が変化しない場合は左キーを補間値とする
-	if ((start == end) && (c->startValue == 0.0f) && (c->endValue == 0.0f))
-	{
-		return start;
-	}
-
 	float t2 = time * time;
 	float t3 = t2 * time;
 	float result =
