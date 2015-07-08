@@ -97,11 +97,26 @@ enum {
 	USER_DATA_FLAG_STRING	= 1 << 3
 };
 
-
+//Ver4互換フラグ
 enum {
 	HEAD_FLAG_rootPartFunctionAsVer4 = 1 << 0,
 	HEAD_FLAG_dontUseMatrixForTransform = 1 << 1,
 };
+
+//パーツ種別定数
+enum
+{
+	PARTTYPE_INVALID = -1,
+	PARTTYPE_NULL,			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
+	PARTTYPE_NORMAL,		// 通常パーツ。領域を持つ。画像は無くてもいい。
+	PARTTYPE_TEXT,			// テキスト(予約　未実装）
+	PARTTYPE_INSTANCE,		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
+	PARTTYPE_ARMATURE,		//
+	PARTTYPE_EFFECT,		// 5.5エフェクトパーツ
+	PARTTYPE_NUM
+};
+
+
 
 
 //座標を固定少数で出力　100＝1ドット
@@ -370,7 +385,25 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			}
 			partData->add(Lump::s16Data(part->arrayIndex));
 			partData->add(Lump::s16Data(part->parentIndex));
-			partData->add(Lump::s16Data(part->type));
+			//5.5対応5.3.5に無いパーツ種別がある場合ワーニングを表示する
+			switch (part->type)
+			{
+			case PARTTYPE_NULL:			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
+			case PARTTYPE_NORMAL:		// 通常パーツ。領域を持つ。画像は無くてもいい。
+			case PARTTYPE_INSTANCE:		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
+				partData->add(Lump::s16Data(part->type));
+				break;
+			case PARTTYPE_INVALID:
+			case PARTTYPE_TEXT:			// テキスト(予約　未実装）
+			case PARTTYPE_ARMATURE:		//
+			case PARTTYPE_EFFECT:		// 5.5エフェクトパーツ
+			default:
+				//未実装　ワーニングを表示しNULLパーツにする
+				std::cerr << "ワーニング：未対応のパーツ種別が使われている: " << animePack->name << ".ssae " << part->name << "\n";
+
+				partData->add(Lump::s16Data(PARTTYPE_NULL));
+				break;
+			}
 			partData->add(Lump::s16Data(part->boundsType));
 			partData->add(Lump::s16Data(part->alphaBlendType));
 			//インスタンスアニメ名

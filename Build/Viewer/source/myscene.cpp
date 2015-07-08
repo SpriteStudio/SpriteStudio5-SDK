@@ -16,8 +16,6 @@ extern TwBar *g_twbar;
 extern float bgColor[];
 
 
-
-
 struct SampleScene::AnimePackSelecterType
 {
 	std::string		name;
