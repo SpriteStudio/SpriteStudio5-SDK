@@ -28,6 +28,9 @@ public:
 	SsString					animeBaseDirectory;			//!< アニメーションデータの読み書き基準ディレクトリ。
 	SsString					cellMapBaseDirectory;		//!< セルマップデータの読み書き基準ディレクトリ。
 	SsString					imageBaseDirectory;			//!< 画像データの読み込み元先基準ディレクトリ。
+	SsString					effectBaseDirectory;
+
+
 	SsString					exportBaseDirectory;		//!< エクスポート先の基準ディレクトリ。
 	bool						queryExportBaseDirectory;	//!< エクスポート先の基準ディレクトリ指定をさせるか？ 
 	SsTexWrapMode::_enum		wrapMode;					//!< テクスチャのラップモード
@@ -45,6 +48,8 @@ public:
 		SSAR_DECLARE(animeBaseDirectory);
 		SSAR_DECLARE(cellMapBaseDirectory);
 		SSAR_DECLARE(imageBaseDirectory);
+		SSAR_DECLARE(effectBaseDirectory);
+
 		SSAR_DECLARE(exportBaseDirectory);
 		SSAR_DECLARE(queryExportBaseDirectory);
 		SSAR_DECLARE_ENUM( wrapMode );
@@ -60,6 +65,7 @@ public:
 class SsAnimation;
 class SsAnimePack;
 class SsCellMap;
+class SsEffectFile;
 
 
 typedef std::vector<SsAnimePack*> SsAnimePackList;
@@ -68,6 +74,9 @@ typedef std::vector<SsAnimePack*>::iterator SsAnimePackListItr;
 typedef std::vector<SsCellMap*> SsSsCellMapList;
 typedef std::vector<SsCellMap*>::iterator SsSsCellMapListItr;
 
+
+typedef std::vector<SsEffectFile*> SsEffectFileList;
+typedef std::vector<SsEffectFile*>::iterator SsEffectFileListItr;
 
 /// XMLドキュメントとなっているsspjファイルのデータ保持を提供するクラスです。
 ///以下はエディタ情報のため読み飛ばします。
@@ -81,9 +90,12 @@ public:
 	SsProjectSetting		settings;			//!< プロジェクト設定
 	std::vector<SsString>	cellmapNames;		//!< セルマップファイルのリスト
 	std::vector<SsString>	animepackNames;		//!< アニメファイルのリスト
+	std::vector<SsString>	effectFileNames;	//!< エフェクトファイルのリスト
+
 
 	SsAnimePackList		animeList;		//!< アニメーションのリスト	
 	SsSsCellMapList		cellmapList;	//!< セルマップリスト
+	SsEffectFileList	effectfileList;
 
 	//ロード時に作成されるワーク
 	SsString	m_proj_filepath;	///プロジェクトファイルのパス
@@ -101,16 +113,28 @@ public:
 	///セルマップデータの数量を取得
 	const size_t getCellMapNum(){ return cellmapNames.size(); }
 
+	///セルマップデータの数量を取得
+	const size_t getEffectFileNum(){ return effectFileNames.size(); }
+
+
 	///アニメパックデータのコンテナを取得する
 	SsAnimePackList&	getAnimePackList(){ return animeList;}
 
 	///セルマップデータのコンテナを取得する
 	SsSsCellMapList&	getCellMapList(){ return cellmapList;}
-	
+
+	//エフェクトファイルのリスト
+	SsEffectFileList&	getEffectFileList(){ return effectfileList;}
+
+
 	//アニメパック名とアニメ名からアニメーションを取得する
 	SsAnimation*		findAnimation( SsString& animePackName , SsString& AnimeName );
 
 	SsAnimePack*		findAnimationPack( SsString& animePackName );
+
+	//
+	
+
 
 
 	SsCellMap* findCellMap( SsString& str );
@@ -124,6 +148,8 @@ public:
 		SSAR_STRUCT_DECLARE( settings );
 		SSAR_DECLARE( cellmapNames );
 		SSAR_DECLARE( animepackNames );
+		SSAR_DECLARE( effectFileNames );
+
 	}
 
 public:
@@ -140,6 +166,8 @@ public:
 	///ssaeデータの読み込み元の基準パスを取得する。
 	SsString	getSsaeBasepath();
 
+	SsString	getSseeBasepath();
+
 	SsString	getImageBasepath();
 
 
@@ -155,6 +183,11 @@ public:
         SsString str = getSsceBasepath();
         str = str + cellmapNames[index];
 		return str ;
+	}
+
+	SsString	getEffectFilePath( size_t index ) { 
+		if ( effectFileNames.size() <= index ) return "";
+		return getSseeBasepath() + effectFileNames[index];
 	}
 
 	SsString	getCelMapFileOriginalPath( size_t index ) { 

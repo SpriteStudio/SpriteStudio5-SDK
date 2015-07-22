@@ -24,6 +24,16 @@ struct EnumSsArchiver
 
 class SsXmlIArchiver;
 
+class SsXmlStringConverter
+{
+public:
+	SsXmlStringConverter(){}
+	virtual ~SsXmlStringConverter(){}
+
+	virtual bool	inputString( SsString str ) = 0;
+};
+
+
 /// アーカイバクラスのインターフェース
 class ISsXmlArchiver
 {
@@ -63,10 +73,14 @@ public:
 	virtual bool	dc( const char* name , SsString& member ) = 0;
 	virtual bool	dc( const char* name , SsPoint2& member ) = 0;
 	virtual bool	dc( const char* name , SsCurve& member ) = 0;
+	virtual bool	dc( const char* name , SsXmlStringConverter& member ) = 0;
+
 
 
 	virtual bool	dc_attr( const char* name , SsString& member ) = 0;
 	virtual bool	dc_attr( const char* name , int& member ) = 0;
+
+
 
 };
 
@@ -115,6 +129,13 @@ public:
 	virtual bool	dc( const char* name , std::vector<SsString>& list );
 	virtual bool	dc( const char* name , SsPoint2& member );
 	virtual bool	dc( const char* name , SsCurve& member );
+	virtual bool	dc( const char* name , SsXmlStringConverter& member )
+	{
+		SsString str;
+		dc(name,str);
+		return member.inputString(str);		
+	}
+
 
 	virtual bool	dc_attr( const char* name , SsString& member );
 	virtual bool	dc_attr( const char* name , int& member );

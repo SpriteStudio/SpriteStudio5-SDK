@@ -25,12 +25,17 @@ ADD_LIBRARY(ssloader
 ../Common/loader/ssloader_sspj.cpp 
 ../Common/loader/ssloader_ssae.cpp 
 ../Common/loader/ssloader_ssce.cpp 
+../Common/loader/ssloader_ssee.cpp 
+../Common/loader/effect/SsEffectBehavior.cpp
+../Common/loader/effect/SsEffectBehavior.h
+../Common/loader/effect/SsEffectElement.h
 ../Common/loader/ssstring_uty.cpp 
 ../Common/loader/ssarchiver.cpp 
 ../Common/loader/ssarchiver.h 
 ../Common/loader/ssloader_sspj.h 
 ../Common/loader/ssloader_ssae.h 
 ../Common/loader/ssloader_ssce.h 
+../Common/loader/ssloader_ssee.h 
 ../Common/loader/sstypes.cpp 
 ../Common/loader/sstypes.h 
 ../Common/loader/ssvalue.cpp 

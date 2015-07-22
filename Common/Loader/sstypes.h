@@ -201,6 +201,8 @@ typedef SsTColor<float> SsFColor;
 typedef SsTColor<u32> SsColor;
 
 
+typedef SsTColor<u8> SsU8Color;
+
 struct ToLower {
     char operator()(char c) { return tolower(c); }
 };

@@ -59,3 +59,6 @@ Common/Animator/57314826.txt
 Build/TestScript/SpriteStudio_pythonモジュール仕様書.txt
 Tools/viewer_sample_Mac/viewer_sample_gl
 Tools/viewer_sample_gl
+Build/Viewer/cmake_install.cmake
+Build/cmake_install.cmake
+SpriteStudio5-SDK.zip

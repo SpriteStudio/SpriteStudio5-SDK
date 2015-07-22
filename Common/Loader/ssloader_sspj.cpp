@@ -1,6 +1,8 @@
 ﻿#include "ssloader_sspj.h"
 #include "ssloader_ssae.h"
 #include "ssloader_ssce.h"
+#include "ssloader_ssee.h"
+
 #include "ssstring_uty.h"
 #include "../Helper/DebugPrint.h"
 
@@ -16,6 +18,14 @@ SsString	SsProject::getSsaeBasepath()
 { 
 	return getFullPath( m_proj_filepath , settings.animeBaseDirectory );
 }
+
+
+SsString	SsProject::getSseeBasepath()
+{ 
+	return getFullPath( m_proj_filepath , settings.animeBaseDirectory );
+}
+
+
 
 
 SsString	SsProject::getImageBasepath()
@@ -110,6 +120,22 @@ SsProject*	ssloader_sspj::Load(const std::string& filename )
 			}
 		}
 
+		for ( size_t i = 0 ;i < proj->getEffectFileNum() ; i++ )
+		{
+			SsString sscepath = proj->getEffectFilePath(i);
+
+			SsEffectFile* efile = ssloader_ssee::Load( sscepath );
+			if ( efile )
+			{
+				//efile->loadFilepath = proj->getCelMapFileOriginalPath(i);
+				proj->effectfileList.push_back( efile );
+			}else{
+				//エラー
+				DEBUG_PRINTF( "effect load error : %s" , sscepath.c_str() );
+				delete proj;
+				return 0;
+			}
+		}
 		return proj;
 	}	
 
