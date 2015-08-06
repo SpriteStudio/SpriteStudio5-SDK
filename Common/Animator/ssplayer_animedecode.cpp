@@ -828,6 +828,7 @@ void	SsAnimeDecoder::updateVertices(SsPart* part , SsPartAnime* anime , SsPartSt
 	SsCell * cell = state->cellValue.cell;
 
 	SsVector2 pivot;
+
 	if (cell)
 	{
 		// セルに設定された原点オフセットを適用する
@@ -846,6 +847,9 @@ void	SsAnimeDecoder::updateVertices(SsPart* part , SsPartAnime* anime , SsPartSt
 		pivot.x = 0.5f * state->size.x;
 		pivot.y = 0.5f * state->size.y;
 	}
+
+	pivot.x = 0.5f * state->size.x;
+	pivot.y = 0.5f * state->size.y;
 
 	// 次に原点オフセットアニメの値を足す
 	pivot.x += state->pivotOffset.x * state->size.x;

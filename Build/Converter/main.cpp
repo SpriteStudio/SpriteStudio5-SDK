@@ -339,6 +339,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			cellData->add(Lump::s16Data((int)cell->size.x));
 			cellData->add(Lump::s16Data((int)cell->size.y));
 			cellData->add(Lump::s16Data(0));	// reserved
+			cellData->add(Lump::floatData(cell->pivot.x + 0.5f));
+			cellData->add(Lump::floatData(-cell->pivot.y + 0.5f));
 		}
 	}
 
@@ -586,12 +588,12 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				foreach(std::list<SsPartState*>, partList, it)
 				{
 					const SsPartState* state = *it;
-					
 					//セルに設定された原点補正を取得
 					SsVector2 pivot;
 					pivot.x = 0;
 					pivot.y = 0;
-
+					//セルの原点情報はセル情報へ含める
+/*
 					SsCell * cell = state->cellValue.cell;
 					float cpx = 0;
 					float cpy = 0;
@@ -606,10 +608,12 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 						cpy = -cell->pivot.y;
 						if (state->vFlip) cpy = -cpy;	// 垂直フリップによって原点を入れ替える
 					}
-
 					// 次に原点オフセットアニメの値を足す
 					pivot.x = cpx + state->pivotOffset.x;
 					pivot.y = cpy + -state->pivotOffset.y;
+*/
+					pivot.x = state->pivotOffset.x;
+					pivot.y = -state->pivotOffset.y;
 
 
 					int cellIndex = -1;
