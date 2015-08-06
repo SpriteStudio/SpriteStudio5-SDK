@@ -449,10 +449,6 @@ namespace SsKeyValueType
 };
 
 
-
-
-
-
 ///カラーブレンドキーのカラー値
 struct SsColorBlendValue
 {
@@ -495,40 +491,6 @@ struct SsColorAnime
 				blendType( SsBlendType::invalid ){}
 
 };
-
-
-//エフェクト関連の定義
-//エフェクトのノードタイプ
-namespace SsEffectNodeType
-{
-	enum _enum{
-		invalid=-1,
-		root,
-		emmiter,
-		particle,
-		num
-	};
-};
-SS_DECLARE_ENUM_STRING_DEF( SsEffectNodeType );
-
-
-
-//エフェクト関連の定義
-//エフェクトのブレンドタイプ
-namespace SsRenderBlendType
-{
-	enum _enum{
-		invalid=-1,
-		Mix,
-		Add,
-		num
-	};
-};
-SS_DECLARE_ENUM_STRING_DEF( SsRenderBlendType );
-
-
-
-
 
 //参照セル値
 struct SsRefCell

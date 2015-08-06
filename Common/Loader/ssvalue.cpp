@@ -25,16 +25,8 @@ void	SsValueSeriarizer( ISsXmlArchiver* ar , SsValue& v , const std::string key)
 			if (str==0)
 			{
 				const char* err_log1 = e->Parent()->Value();
-
-				if ( e->Parent()->ToElement() )
-				{
-					const char* err_log2 = e->Parent()->ToElement()->GetText();
-
-					if ( e->Parent()->Parent()->ToElement()->FirstAttribute() )
-					{
-						const char* err_log3 = e->Parent()->Parent()->ToElement()->FirstAttribute()->Value();
-					}
-				}
+				const char* err_log2 = e->Parent()->ToElement()->GetText();
+				const char* err_log3 = e->Parent()->Parent()->ToElement()->FirstAttribute()->Value();
 				return ;
 			}
 			

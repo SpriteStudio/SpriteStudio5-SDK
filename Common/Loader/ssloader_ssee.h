@@ -70,34 +70,27 @@ public:
 
 
 
+enum SsEffectNodeType{
+	SsEffectNodeType_Root,
+	SsEffectNodeType_Emmiter,
+	SsEffectNodeType_Particle,
+};
+
 
 
 
 class SsEffectNode : public SimpleTree
 {
 public:
-	int						arrayIndex;
-	int						parentIndex;
-	SsEffectNodeType::_enum	type;
-	bool					visible;
+	int					arrayIndex;
+	int					parentIndex;
+	SsEffectNodeType	type;
 
-	SsEffectBehavior		behavior;
+	SsEffectBehavior*	myBehavior;
 
 public:
-	SsEffectNode() :
-	  arrayIndex(0), parentIndex(0),	
-		  type(SsEffectNodeType::invalid)
-	{}
+	SsEffectNode(){}
 	~SsEffectNode(){}
-
-	SSSERIALIZE_BLOCK
-	{
-		SSAR_DECLARE(arrayIndex);
-		SSAR_DECLARE(parentIndex);		
-		SSAR_DECLARE_ENUM(type);	
-		SSAR_DECLARE(visible);	
-		SSAR_STRUCT_DECLARE(behavior);	
-	}
 };
 
 
@@ -105,13 +98,12 @@ class SsEffectModel
 {
 private:
 	SsEffectNode* root;
-	std::vector<SsEffectNode*> nodeList;
 
 public:
 	int			lockRandSeed; 	 // ランダムシード固定値
 	bool    	isLockRandSeed;  // ランダムシードを固定するか否か
 	int			fps;             //
-	SsString	   bgcolor;
+	SsU8Color   bgcolor;
 
 public:
 	SsEffectModel()
@@ -132,9 +124,7 @@ public:
 		SSAR_DECLARE(lockRandSeed);
 		SSAR_DECLARE(isLockRandSeed);
 		SSAR_DECLARE(fps);
-		SSAR_DECLARE(bgcolor);
-
-		SSAR_DECLARE_LISTEX(nodeList,"node"); 
+		//SSAR_DECLARE(bgcolor); //bgcolorはとりこまない
 
 		EffectNodeLoader(ar);
 	}
