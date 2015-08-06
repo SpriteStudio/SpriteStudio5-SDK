@@ -13,6 +13,10 @@ typedef	wchar_t		SsChar;
 typedef std::vector<SsValue>		SsArray;
 typedef std::map<SsString,SsValue>	SsHash;
 
+//SsValue用のシリアライザ
+void	SsValueSeriarizer( ISsXmlArchiver* ar , SsValue& v , const std::string key = "value" );
+
+
 class SsValue{
 public:
 	enum{
@@ -159,6 +163,11 @@ public:
 		return false;
 	}
 
+	SSSERIALIZE_BLOCK
+	{
+		SsValueSeriarizer( ar , *this ,"" );	
+	}
+	
 };
 
 template <> inline const SsString& SsValue::get<SsString>() const {
@@ -313,7 +322,5 @@ static  SsValue	SsValueSeriarizer__MakeValue( const char* v )
 
 
 
-//SsValue用のシリアライザ
-void	SsValueSeriarizer( ISsXmlArchiver* ar , SsValue& v , const std::string key = "value" );
 
 #endif

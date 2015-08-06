@@ -206,6 +206,7 @@ inline bool	__SSAR_DECLARE_LIST__( ISsXmlArchiver* ar , std::vector<myclass*>& l
 }
 
 #define	SSAR_DECLARE_LIST(t)  __SSAR_DECLARE_LIST__( ar , t , #t)
+#define	SSAR_DECLARE_LIST2(t,s)  __SSAR_DECLARE_LIST__( ar , t , s)
 #define	SSAR_DECLARE_LISTEX(t,key)  __SSAR_DECLARE_LIST__( ar , t , #t , key )
 
 template<class myclass>

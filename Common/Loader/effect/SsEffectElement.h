@@ -14,40 +14,20 @@ enum EffectPartType
 
 
 
-enum EmmiterType
-{
-    EmmiterTypeNormal,
-    EmmiterTypeRibbon,
-};
-
-
-
-enum SsRenderType{
-    BaseNode,
-	EmmiterNode,
-    ParticleNode,
-};
-
-
-enum SsRenderBlendType
-{
-	Mix,
-	Add
-};
-
 
 class SsCell;
+
+
+
+
 
 //範囲値クラス
 template<class mytype>
 class VarianceValue : public SsXmlStringConverter
 {
 private:
-	enum RangeType{
-		None,
-		MinMax,
-		PlusMinus,
-	};
+
+	enum RangeType { None, MinMax, PlusMinus,};
 
 	RangeType 	type;
 	mytype 		value;
@@ -142,14 +122,10 @@ public:
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter ) {}
 	virtual void UpdateEmmiter( SsEffectRenderEmitter* emmiter ){}
 	virtual void UpdateEndEmmiter( SsEffectRenderEmitter* emmiter ){}
-
-
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle ){}
 	virtual void UpdateParticle( SsEffectRenderParticle* particle ){}
 
-
 	//シリアライザ
-	//SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
 
 	SSSERIALIZE_BLOCK
 	{
@@ -163,11 +139,9 @@ public:
 
 
 
-
-
 //--------------------------------------------------------------------------------------
 //パーティクルを構成する基本の値
-class  ParticleElementBasic
+class  ParticleElementBasic  : public SsEffectElementBase
 {
 public:
 	int		maximumParticle;
@@ -238,7 +212,6 @@ public:
 
 
 	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( Seed );
@@ -273,8 +246,6 @@ public:
 		SSAR_DECLARE( DelayTime );
 	}
 
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
 
 };
 
@@ -302,8 +273,6 @@ public:
 	{
 		SSAR_DECLARE( Gravity );
 	}
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
 
 };
 
@@ -330,8 +299,6 @@ public:
 		SSAR_DECLARE( OffsetY );
 	}
 
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
 
 };
 //--------------------------------------------------------------------------------------
@@ -357,14 +324,11 @@ public:
 		SSAR_DECLARE( OffsetY );
 	}
 
-	//シリアライザ
-	//SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
-
 };
 
 
 //--------------------------------------------------------------------------------------
-//角度変化な
+//角度変化
 class  ParticleElementRotation : public SsEffectElementBase
 {
 public:
@@ -382,12 +346,17 @@ public:
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
 
 	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
+	SSSERIALIZE_BLOCK
+	{
+		SSAR_DECLARE( Rotation );
+		SSAR_DECLARE( RotationAdd );
+	}
+
 
 };
 
 //--------------------------------------------------------------------------------------
-//角度変化な
+//角度変化
 class  ParticleElementRotationTrans : public SsEffectElementBase
 {
 public:
@@ -404,8 +373,12 @@ public:
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
  	virtual void UpdateParticle( SsEffectRenderParticle* particle );
 
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
+	SSSERIALIZE_BLOCK
+	{
+		SSAR_DECLARE( RotationFactor );
+		SSAR_DECLARE( EndLifeTimePer );
+	}
+
 
 };
 
@@ -426,8 +399,10 @@ public:
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
  	virtual void UpdateParticle( SsEffectRenderParticle* particle );
 
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
+	SSSERIALIZE_BLOCK
+	{
+		SSAR_DECLARE( Speed );
+	}
 };
 
 
@@ -448,40 +423,16 @@ public:
 
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 
-
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
-};
-
-//--------------------------------------------------------------------------------------
-//著点カラーを制御する   (旧バージョン
-class  ParticleElementColor : public SsEffectElementBase
-{
-public:
-	SsU8Color	StartColor;
-	SsU8Color   StartColorVariance;
-	SsU8Color	EndColor;
-	SsU8Color   EndColorVariance;
-
-	ParticleElementColor()
-        :	StartColor( 255,255,255,255 ),
-            StartColorVariance( 255,255,255,255 ),
-        	EndColor( 255,255,255,255 ),
-            EndColorVariance( 255,255,255,255 )
+	SSSERIALIZE_BLOCK
 	{
+		SSAR_DECLARE( Acceleration );
 	}
-	virtual ~ParticleElementColor(){}
-	virtual	SsEffectElementBase*  new_(){ return new ParticleElementColor(); }
-	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
-	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
+
 };
 
 
-
 //--------------------------------------------------------------------------------------
-//著点カラーを制御する
+//頂点カラーを制御する
 class  ParticleElementInitColor : public SsEffectElementBase
 {
 public:
@@ -495,12 +446,15 @@ public:
 	virtual	SsEffectElementBase*  new_(){ return new ParticleElementInitColor(); }
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
+
+	SSSERIALIZE_BLOCK
+	{
+		SSAR_DECLARE( Color );
+	}
 };
 
 //--------------------------------------------------------------------------------------
-//著点カラーを制御する
+//頂点カラーを制御する
 class  ParticleElementTransColor : public SsEffectElementBase
 {
 public:
@@ -514,8 +468,12 @@ public:
 	virtual	SsEffectElementBase*  new_(){ return new ParticleElementTransColor(); }
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
+
+	SSSERIALIZE_BLOCK
+	{
+		SSAR_DECLARE( Color );
+	}
+
 };
 
 
@@ -535,8 +493,13 @@ public:
 	virtual	SsEffectElementBase*  new_(){ return new ParticleElementAlphaFade(); }
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
+
+	SSSERIALIZE_BLOCK
+	{
+		SSAR_DECLARE( disprange );
+	}
+
+
 };
 
 //--------------------------------------------------------------------------------------
@@ -559,8 +522,13 @@ public:
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
 
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
+	SSSERIALIZE_BLOCK
+	{
+		SSAR_DECLARE( SizeX );
+		SSAR_DECLARE( SizeY );
+		SSAR_DECLARE( ScaleFactor );
+	}
+
 
 };
 
@@ -586,8 +554,12 @@ public:
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
 
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
+	SSSERIALIZE_BLOCK
+	{
+		SSAR_DECLARE( SizeX );
+		SSAR_DECLARE( SizeY );
+		SSAR_DECLARE( ScaleFactor );
+	}
 
 };
 
@@ -599,6 +571,7 @@ public:
 
 	SsVector2   Position;
     float		Power;
+
 
 
 	ParticlePointGravity()
@@ -617,42 +590,14 @@ public:
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
 
 
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
-
-};
-
-//--------------------------------------------------------------------------------------
-//リフレクションボックス
-class  ParticleReflectionBox : public SsEffectElementBase
-{
-public:
-	SsVector2   WH;
-	float		Factor;
-
-
-	ParticleReflectionBox() :Factor( 70 )
+	SSSERIALIZE_BLOCK
 	{
+		SSAR_DECLARE( Position );
+		SSAR_DECLARE( Power );
 	}
-	virtual ~ParticleReflectionBox(){}
-	virtual SsEffectElementBase*  new_(){ return new ParticleReflectionBox(); }
-
-	virtual void    ToolGuideDraw(SsEffectRenderEmitter* emmiter);
-
-
-	//各部で実装する
-	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter ){}
-	virtual void UpdateEmmiter( SsEffectRenderEmitter* emmiter ){}
-
-
-	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle ){}
-	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-
-
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
 
 };
+
 
 
 
@@ -677,10 +622,9 @@ public:
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle ){}
 
-
-	//シリアライザ
-//	SS_DECLARE_SPLIT_SERIALIZE_FUNCS();
-
+	SSSERIALIZE_BLOCK
+	{
+	}
 };
 
 

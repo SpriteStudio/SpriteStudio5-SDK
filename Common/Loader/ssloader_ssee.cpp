@@ -1,6 +1,9 @@
 #include "ssloader_ssee.h"
 #include "ssstring_uty.h"
 
+
+
+
 SsEffectFile*	ssloader_ssee::Load(const std::string& filename )
 {
 
@@ -29,7 +32,10 @@ void	SsEffectModel::EffectNodeLoader(ISsXmlArchiver* ar)
 {
 
 	//SsEffectNode* root;
-
+	//SsXmlIArchiver arc(ar , "nodeList" );
 	
+	//		SSAR_DECLARE_LIST( partList );
+
+
 
 }
