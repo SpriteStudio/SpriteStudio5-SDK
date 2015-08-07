@@ -131,8 +131,15 @@ public:
 	virtual bool	dc( const char* name , SsCurve& member );
 	virtual bool	dc( const char* name , SsXmlStringConverter& member )
 	{
+		XMLElement* e = getxml()->FirstChildElement( name );
+		SsXmlIArchiver _ar(e);
+
 		SsString str;
-		dc(name,str);
+		_ar.dc_attr( "value" , str );
+		
+		SsString str2;
+		_ar.dc_attr( "subvalue" , str2 );
+
 		return member.inputString(str);		
 	}
 

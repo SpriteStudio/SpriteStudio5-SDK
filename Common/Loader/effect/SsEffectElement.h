@@ -83,7 +83,9 @@ private:
 	//bool	load(SsXmlIArchive& ar, const unsigned int version);
 
 	virtual bool	inputString(SsString str )
-	{}
+	{
+	 return true;
+	}
 };
 
 
@@ -93,10 +95,10 @@ typedef VarianceValue<SsU8Color>    	SsU8cVValue;
 typedef VarianceValue<SsVector2>    	SsVec2VValue;
 
 
-template<> bool VarianceValue<float>::inputString(SsString str){}
-template<> bool VarianceValue<int>::inputString(SsString str){}
-template<> bool VarianceValue<SsU8Color>::inputString(SsString str){}
-template<> bool VarianceValue<SsVector2>::inputString(SsString str){}
+template<> bool VarianceValue<float>::inputString(SsString str){ return true;}
+template<> bool VarianceValue<int>::inputString(SsString str){ return true;}
+template<> bool VarianceValue<SsU8Color>::inputString(SsString str){ return true;}
+template<> bool VarianceValue<SsVector2>::inputString(SsString str){ return true;}
 
 
 
@@ -109,12 +111,13 @@ class   SsEffectElementBase
 public:
 	SsString            myName;
 	SsString			myCaption;	//エレメントの説明文とか
-	static int          uid;
+	int					uid;
 	int					myuid;
 public:
-	SsEffectElementBase();
-	virtual ~SsEffectElementBase();
+	SsEffectElementBase(){}
+	virtual ~SsEffectElementBase(){}
 
+#if 0
 	//各コマンドに対応したデバッグ表示用
 	virtual void    ToolGuideDraw(SsEffectRenderEmitter* emmiter){}
 
@@ -124,15 +127,17 @@ public:
 	virtual void UpdateEndEmmiter( SsEffectRenderEmitter* emmiter ){}
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle ){}
 	virtual void UpdateParticle( SsEffectRenderParticle* particle ){}
-
+#endif
 	//シリアライザ
 
-	SSSERIALIZE_BLOCK
+	virtual SSSERIALIZE_BLOCK
 	{
+/*
 		SSAR_DECLARE( myName );
 		SSAR_DECLARE( myCaption );
 		SSAR_DECLARE( uid );
 		SSAR_DECLARE( myuid );
+*/
 	}
 
 };
@@ -169,13 +174,12 @@ public:
 	}
 
 	virtual ~ParticleElementBasic(){}
-
+/*
 	virtual void ToolGuideDraw(SsEffectRenderEmitter* emmiter);
-
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter );
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle ){}
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( maximumParticle );
@@ -206,10 +210,10 @@ public:
 
 	}
 	virtual ~ParticleElementRndSeedChange(){}
-
+/*
 	//各部で実装する
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter );
-
+*/
 
 	//シリアライザ
 	SSSERIALIZE_BLOCK
@@ -231,7 +235,7 @@ public:
 	{
 	}
 	virtual ~ParticleElementDelay(){}
-
+/*
 	//各部で実装する
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter );
 	virtual void UpdateEmmiter( SsEffectRenderEmitter* emmiter );
@@ -240,7 +244,7 @@ public:
 	virtual void UpdateParticle( SsEffectRenderParticle* particle ){}
 
 	virtual void UpdateEndEmmiter( SsEffectRenderEmitter* emmiter );
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( DelayTime );
@@ -265,10 +269,10 @@ public:
 
 	}
 	virtual ~ParticleElementGravity(){}
-
+/*
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( Gravity );
@@ -290,9 +294,10 @@ public:
 	{
 	}
 	virtual ~ParticleElementPosition(){}
+/*
 	virtual    SsEffectElementBase*  new_(){ return new ParticleElementPosition(); }
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( OffsetX );
@@ -315,9 +320,10 @@ public:
 	{
 	}
 	virtual ~ParticleElementTransPosition(){}
+	/*
 	virtual    SsEffectElementBase*  new_(){ return new ParticleElementTransPosition(); }
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle ){}
-
+	*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( OffsetX );
@@ -341,10 +347,11 @@ public:
 	{
 	}
 	virtual ~ParticleElementRotation(){}
+/*
 	virtual    SsEffectElementBase*  new_(){ return new ParticleElementRotation(); }
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-
+*/
 	//シリアライザ
 	SSSERIALIZE_BLOCK
 	{
@@ -369,10 +376,11 @@ public:
 	{
 	}
 	virtual ~ParticleElementRotationTrans(){}
+/*
 	virtual    SsEffectElementBase*  new_(){ return new ParticleElementRotationTrans(); }
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
  	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( RotationFactor );
@@ -394,11 +402,12 @@ public:
 
 	}
 	virtual ~ParticleElementTransSpeed(){}
+/*
 	virtual    SsEffectElementBase*  new_(){ return new ParticleElementTransSpeed(); }
 
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
  	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( Speed );
@@ -419,10 +428,11 @@ public:
 
 	}
 	virtual ~ParticleElementTangentialAcceleration(){}
+/*
 	virtual    SsEffectElementBase*  new_(){ return new ParticleElementTangentialAcceleration(); }
 
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( Acceleration );
@@ -443,10 +453,11 @@ public:
 	{
 	}
 	virtual ~ParticleElementInitColor(){}
+/*
 	virtual	SsEffectElementBase*  new_(){ return new ParticleElementInitColor(); }
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( Color );
@@ -465,10 +476,11 @@ public:
 	{
 	}
 	virtual ~ParticleElementTransColor(){}
+/*
 	virtual	SsEffectElementBase*  new_(){ return new ParticleElementTransColor(); }
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( Color );
@@ -490,10 +502,11 @@ public:
 	{
 	}
 	virtual ~ParticleElementAlphaFade(){}
+/*
 	virtual	SsEffectElementBase*  new_(){ return new ParticleElementAlphaFade(); }
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( disprange );
@@ -518,10 +531,11 @@ public:
 	{
 	}
 	virtual ~ParticleElementSize(){}
+/*
 	virtual SsEffectElementBase*  new_(){ return new ParticleElementSize(); }
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( SizeX );
@@ -550,10 +564,11 @@ public:
 	{
 	}
 	virtual ~ParticleElementTransSize(){}
+/*
 	virtual SsEffectElementBase*  new_(){ return new ParticleElementTransSize(); }
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( SizeX );
@@ -579,16 +594,16 @@ public:
 	{
 	}
 	virtual ~ParticlePointGravity(){}
+
+	/*
 	virtual SsEffectElementBase*  new_(){ return new ParticlePointGravity(); }
-
-
 	//各部で実装する
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter ){}
 	virtual void UpdateEmmiter( SsEffectRenderEmitter* emmiter ){}
 
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
-
+*/
 
 	SSSERIALIZE_BLOCK
 	{
@@ -611,8 +626,8 @@ public:
 
 	}
 	virtual ~ParticleTurnToDirectionEnabled(){}
+/*
 	virtual SsEffectElementBase*  new_(){ return new ParticleTurnToDirectionEnabled(); }
-
 
 	//各部で実装する
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter ){}
@@ -621,7 +636,7 @@ public:
 
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle ){}
-
+*/
 	SSSERIALIZE_BLOCK
 	{
 	}
