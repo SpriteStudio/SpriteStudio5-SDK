@@ -29,9 +29,10 @@
 
 
 static const int DATA_VERSION_1			= 1;
+static const int DATA_VERSION_2         = 2;
 
 static const int DATA_ID				= 0x42505353;
-static const int CURRENT_DATA_VERSION	= DATA_VERSION_1;
+static const int CURRENT_DATA_VERSION	= DATA_VERSION_2;
 
 
 enum {
@@ -305,6 +306,12 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 	topLump->add(Lump::s16Data((int)cellList->size()));
 	topLump->add(Lump::s16Data((int)proj->animeList.size()));
 
+	//セルマップ警告
+	if (proj->cellmapList.size() == 0)
+	{
+		std::cerr << "警告：セルマップが存在しない" << "\n";
+		convert_error_exit = true;	//エラーが発生コンバート失敗
+	}
 	// セルの情報
 	for (size_t mapIndex = 0; mapIndex < proj->cellmapList.size(); mapIndex++)
 	{
@@ -339,9 +346,17 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			cellData->add(Lump::s16Data((int)cell->size.x));
 			cellData->add(Lump::s16Data((int)cell->size.y));
 			cellData->add(Lump::s16Data(0));	// reserved
+			cellData->add(Lump::floatData(cell->pivot.x));
+			cellData->add(Lump::floatData(-cell->pivot.y));
 		}
 	}
 
+	//アニメーション警告
+	if (proj->animeList.size() == 0)
+	{
+		std::cerr << "警告：アニメーションが存在しない" << "\n";
+		convert_error_exit = true;	//エラーが発生コンバート失敗
+	}
 	// パーツ、アニメ情報
 	for (int packIndex = 0; packIndex < (int)proj->animeList.size(); packIndex++)
 	{
@@ -490,8 +505,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				init.posX = (int)(state->position.x * DOT);
 				init.posY = (int)(state->position.y * DOT);
 				init.posZ = (int)(state->position.z * DOT);
-				init.anchorX = state->pivotOffset.x + 0.5f;
-				init.anchorY = state->pivotOffset.y + 0.5f;
+				init.anchorX = state->pivotOffset.x;
+				init.anchorY = state->pivotOffset.y;
 				init.rotationX = state->rotation.x;
 				init.rotationY = state->rotation.y;
 				init.rotationZ = state->rotation.z;
@@ -586,12 +601,12 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				foreach(std::list<SsPartState*>, partList, it)
 				{
 					const SsPartState* state = *it;
-					
 					//セルに設定された原点補正を取得
 					SsVector2 pivot;
 					pivot.x = 0;
 					pivot.y = 0;
-
+					//セルの原点情報はセル情報へ含める
+/*
 					SsCell * cell = state->cellValue.cell;
 					float cpx = 0;
 					float cpy = 0;
@@ -606,10 +621,12 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 						cpy = -cell->pivot.y;
 						if (state->vFlip) cpy = -cpy;	// 垂直フリップによって原点を入れ替える
 					}
-
 					// 次に原点オフセットアニメの値を足す
 					pivot.x = cpx + state->pivotOffset.x;
 					pivot.y = cpy + -state->pivotOffset.y;
+*/
+					pivot.x = state->pivotOffset.x;
+					pivot.y = state->pivotOffset.y;
 
 
 					int cellIndex = -1;
@@ -631,8 +648,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if ((int)( state->position.x * DOT ) != init.posX)		p_flags |= PART_FLAG_POSITION_X;
 					if ((int)( state->position.y * DOT ) != init.posY)		p_flags |= PART_FLAG_POSITION_Y;
 					if ((int)( state->position.z * DOT ) != init.posZ)		p_flags |= PART_FLAG_POSITION_Z;
-					if (pivot.x + 0.5f != init.anchorX)						p_flags |= PART_FLAG_ANCHOR_X;
-					if (pivot.y + 0.5f != init.anchorY)						p_flags |= PART_FLAG_ANCHOR_Y;
+					if (pivot.x != init.anchorX)							p_flags |= PART_FLAG_ANCHOR_X;
+					if (pivot.y != init.anchorY)							p_flags |= PART_FLAG_ANCHOR_Y;
 					if (state->rotation.x != init.rotationX)				p_flags |= PART_FLAG_ROTATIONX;
 					if (state->rotation.y != init.rotationY)				p_flags |= PART_FLAG_ROTATIONY;
 					if (state->rotation.z != init.rotationZ)				p_flags |= PART_FLAG_ROTATIONZ;
@@ -737,8 +754,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (p_flags & PART_FLAG_POSITION_Y) frameData->add(Lump::s16Data((int)(state->position.y * DOT)));
 					if (p_flags & PART_FLAG_POSITION_Z) frameData->add(Lump::s16Data((int)(state->position.z * DOT)));
 
-					if (p_flags & PART_FLAG_ANCHOR_X) frameData->add(Lump::floatData(pivot.x + 0.5f));
-					if (p_flags & PART_FLAG_ANCHOR_Y) frameData->add(Lump::floatData(pivot.y + 0.5f));
+					if (p_flags & PART_FLAG_ANCHOR_X) frameData->add(Lump::floatData(pivot.x));
+					if (p_flags & PART_FLAG_ANCHOR_Y) frameData->add(Lump::floatData(pivot.y));
 					if (p_flags & PART_FLAG_ROTATIONX) frameData->add(Lump::floatData(state->rotation.x));	// degree
 					if (p_flags & PART_FLAG_ROTATIONY) frameData->add(Lump::floatData(state->rotation.y));	// degree
 					if (p_flags & PART_FLAG_ROTATIONZ) frameData->add(Lump::floatData(state->rotation.z));	// degree
