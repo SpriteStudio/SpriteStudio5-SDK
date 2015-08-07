@@ -660,7 +660,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (size_scale_y != init.scaleY)						p_flags |= PART_FLAG_SCALE_Y;
 					if ((int)( state->alpha * 255 ) != init.opacity)		p_flags |= PART_FLAG_OPACITY;
 					if (state->size.x != init.size_X)						p_flags |= PART_FLAG_SIZE_X;
-					if (state->size.y != init.size_X)						p_flags |= PART_FLAG_SIZE_Y;
+					if (state->size.y != init.size_Y)						p_flags |= PART_FLAG_SIZE_Y;
 					if (state->uvTranslate.x != init.uv_move_X )			p_flags |= PART_FLAG_U_MOVE;
 					if (state->uvTranslate.y != init.uv_move_Y)				p_flags |= PART_FLAG_V_MOVE;
 					if (state->uvRotation != init.uv_rotation)				p_flags |= PART_FLAG_UV_ROTATION;
