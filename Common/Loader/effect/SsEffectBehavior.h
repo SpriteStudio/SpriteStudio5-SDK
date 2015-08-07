@@ -5,29 +5,14 @@
 #include "sstypes.h"
 #include "ssvalue.h"
 
-
-class SsEffectBehaviorValue
-{
-	SsValue value;
-public:
-	SsEffectBehaviorValue(){}
-	virtual ~SsEffectBehaviorValue(){}
-
-	SSSERIALIZE_BLOCK
-	{
-		SsValueSeriarizer( ar , value );
-	}
-};
-
+class SsEffectElementBase;
 
 
 class SsEffectBehavior
 {
 public:
 
-	//ParticleElementList 	plist;
-	//std::vector<SsEffectBehaviorValue*> plist;
-	std::vector<SsValue*> plist;
+	std::vector<SsEffectElementBase*> plist;
 
 
 public:
@@ -47,25 +32,59 @@ public:
 		SSAR_DECLARE_ENUM( blendType );
 
 		if ( ar->getxml() )
-			SSAR_DECLARE_LIST2( plist , "list" );
-
-//		SSAR_DECLARE_LIST( plist );
-//		if ( ar->getxml() )
-//			EffectElementLoader( ar );
+			EffectElementLoader( ar );
 	}
+
+	SsEffectElementBase*	Factory(const char* name , XMLElement* e )
+	{
+		SsEffectElementBase * ret = 0;
+
+		if ( strcmp( name , "Basic" ) == 0 ) ret = new ParticleElementBasic();
+		if ( strcmp( name , "OverWriteSeed" ) == 0 ) ret = new ParticleElementRndSeedChange();
+		if ( strcmp( name , "Delay" ) == 0 ) ret = new ParticleElementDelay();
+		if ( strcmp( name , "Gravity" ) == 0 ) ret = new ParticleElementGravity();
+		if ( strcmp( name , "init_position" ) == 0 ) ret = new ParticleElementPosition();
+		if ( strcmp( name , "trans_position" ) == 0 ) ret = new ParticleElementTransPosition();
+		if ( strcmp( name , "init_rotation" ) == 0 ) ret = new ParticleElementRotation();
+		if ( strcmp( name , "trans_rotation" ) == 0 ) ret = new ParticleElementRotationTrans();
+		if ( strcmp( name , "trans_speed" ) == 0 ) ret = new ParticleElementTransSpeed();
+		if ( strcmp( name , "add_tangentiala" ) == 0 ) ret = new ParticleElementTangentialAcceleration();
+		if ( strcmp( name , "init_vertexcolor" ) == 0 ) ret = new ParticleElementInitColor();
+		if ( strcmp( name , "trans_vertexcolor" ) == 0 ) ret = new ParticleElementTransColor();
+		if ( strcmp( name , "trans_colorfade" ) == 0 ) ret = new ParticleElementAlphaFade();
+		if ( strcmp( name , "init_size" ) == 0 ) ret = new ParticleElementSize();
+		if ( strcmp( name , "trans_size" ) == 0 ) ret = new ParticleElementTransSize();
+		if ( strcmp( name , "add_pointgravity" ) == 0 ) ret = new ParticlePointGravity();
+		if ( strcmp( name , "TurnToDirection" ) == 0 ) ret = new ParticleTurnToDirectionEnabled();
+
+		if ( ret )
+		{
+			SsXmlIArchiver _ar(e);
+			ret->__Serialize( &_ar );
+		}
+
+		return ret;
+	}
+
 
 	void	EffectElementLoader(ISsXmlArchiver* ar)
 	{
 		SsXmlIArchiver list_ar( ar , "list" );
 
+		XMLElement* e = list_ar.getxml()->FirstChildElement();
 
+		while( e )
+		{
+			const char* value = e->Attribute( "name" );
 
-		
+			SsEffectElementBase* v = Factory( value , e );
 
-		SsValue value;
-		SsValueSeriarizer( &list_ar , value );
-		//plist.push_back(value);
-
+			if ( v )
+			{
+				plist.push_back(v);
+			}
+			e = e->NextSiblingElement();
+		}
 
 	}
 

@@ -82,6 +82,7 @@ bool	SsXmlIArchiver::dc( const char* name , std::vector<SsString>& list )
 	AR_SELF_CHECK();
 	list.clear();
 	XMLElement* e = getxml()->FirstChildElement( name );
+	if (e==0)return false;
 	e = e->FirstChildElement( "value" );
 	while( e )
 	{
