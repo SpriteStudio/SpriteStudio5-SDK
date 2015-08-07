@@ -24,13 +24,14 @@ struct EnumSsArchiver
 
 class SsXmlIArchiver;
 
-class SsXmlStringConverter
+//class SsXmlStringConverter
+class SsXmlRangeValueConverter
 {
 public:
-	SsXmlStringConverter(){}
-	virtual ~SsXmlStringConverter(){}
+	SsXmlRangeValueConverter(){}
+	virtual ~SsXmlRangeValueConverter(){}
 
-	virtual bool	inputString( SsString str ) = 0;
+	virtual bool	inputString( SsString value , SsString subvalue ) = 0;
 };
 
 
@@ -73,7 +74,7 @@ public:
 	virtual bool	dc( const char* name , SsString& member ) = 0;
 	virtual bool	dc( const char* name , SsPoint2& member ) = 0;
 	virtual bool	dc( const char* name , SsCurve& member ) = 0;
-	virtual bool	dc( const char* name , SsXmlStringConverter& member ) = 0;
+	virtual bool	dc( const char* name , SsXmlRangeValueConverter& member ) = 0;
 
 
 
@@ -129,7 +130,7 @@ public:
 	virtual bool	dc( const char* name , std::vector<SsString>& list );
 	virtual bool	dc( const char* name , SsPoint2& member );
 	virtual bool	dc( const char* name , SsCurve& member );
-	virtual bool	dc( const char* name , SsXmlStringConverter& member )
+	virtual bool	dc( const char* name , SsXmlRangeValueConverter& member )
 	{
 		XMLElement* e = getxml()->FirstChildElement( name );
 		SsXmlIArchiver _ar(e);
@@ -140,7 +141,7 @@ public:
 		SsString str2;
 		_ar.dc_attr( "subvalue" , str2 );
 
-		return member.inputString(str);		
+		return member.inputString(str,str2);		
 	}
 
 

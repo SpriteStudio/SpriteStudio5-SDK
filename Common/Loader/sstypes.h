@@ -193,6 +193,30 @@ template<> inline u32 SsTColor<u32>::toARGB() const
 	return c;
 }
 
+
+
+template<> inline SsTColor<u8>::SsTColor(): r(255), g(255), b(255), a(255) {}
+template<> inline void SsTColor<u8>::fromARGB(u32 c)
+{
+	a = (c >> 24);
+	r = ((c >> 16) & 0xff);
+	g = ((c >> 8) & 0xff);
+	b = (c & 0xff);
+}
+template<> inline void SsTColor<u8>::fromBGRA(u32 c)
+{
+	b = (c >> 24) ;
+	g = ((c >> 16) & 0xff) ;
+	r = ((c >> 8) & 0xff) ;
+	a = (c & 0xff) ;
+}
+template<> inline u32 SsTColor<u8>::toARGB() const
+{
+	u32 c = (u8)(a) << 24 | (u8)(r) << 16 | (u8)(g) << 8 | (u8)(b);
+	return c;
+}
+
+
 ///floatでのカラー値定義
 typedef SsTColor<float> SsFColor;
 

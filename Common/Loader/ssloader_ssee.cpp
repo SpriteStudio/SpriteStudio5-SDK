@@ -17,7 +17,6 @@ SsEffectFile*	ssloader_ssee::Load(const std::string& filename )
 	{
 		SsXmlIArchiver ar( xml.GetDocument() , "SpriteStudioEffect" );
 		effectFile->__Serialize( &ar );
-		//effectFile->fname = path2file( filename );
 	}else{
 		delete effectFile;
 		effectFile = 0;
@@ -26,16 +25,4 @@ SsEffectFile*	ssloader_ssee::Load(const std::string& filename )
 	return effectFile;
 
 }
-
-
-void	SsEffectModel::EffectNodeLoader(ISsXmlArchiver* ar)
-{
-
-	//SsEffectNode* root;
-	//SsXmlIArchiver arc(ar , "nodeList" );
-	
-	//		SSAR_DECLARE_LIST( partList );
-
-
-
 }

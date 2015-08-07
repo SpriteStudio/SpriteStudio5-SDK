@@ -23,7 +23,7 @@ class SsCell;
 
 //”ÍˆÍ’lƒNƒ‰ƒX
 template<class mytype>
-class VarianceValue : public SsXmlStringConverter
+class VarianceValue : public SsXmlRangeValueConverter
 {
 private:
 
@@ -82,7 +82,8 @@ private:
 	//bool	save(SsXmlOArchive& ar, const unsigned int version) const;
 	//bool	load(SsXmlIArchive& ar, const unsigned int version);
 
-	virtual bool	inputString(SsString str )
+	virtual bool	inputString( SsString value , SsString subvalue )
+//	virtual bool	inputString(SsString str )
 	{
 	 return true;
 	}
@@ -92,14 +93,39 @@ private:
 typedef VarianceValue<float>   			f32VValue;
 typedef VarianceValue<int>    			i32VValue;
 typedef VarianceValue<SsU8Color>    	SsU8cVValue;
-typedef VarianceValue<SsVector2>    	SsVec2VValue;
+//typedef VarianceValue<SsVector2>    	SsVec2VValue;
 
 
-template<> bool VarianceValue<float>::inputString(SsString str){ return true;}
-template<> bool VarianceValue<int>::inputString(SsString str){ return true;}
-template<> bool VarianceValue<SsU8Color>::inputString(SsString str){ return true;}
-template<> bool VarianceValue<SsVector2>::inputString(SsString str){ return true;}
+template<> bool VarianceValue<float>::inputString( SsString _value , SsString _subvalue )
+{ 
+	value = atof(_value.c_str());
+	subvalue = atof(_subvalue.c_str());
 
+	return true;
+}
+template<> bool VarianceValue<int>::inputString( SsString _value , SsString _subvalue )
+{ 
+	value = atoi(_value.c_str());
+	subvalue = atoi(_subvalue.c_str());
+
+	return true;
+}
+template<> bool VarianceValue<SsU8Color>::inputString( SsString _value , SsString _subvalue )
+{ 
+	u32 a = strtoul( _value.c_str(), 0 , 16);
+	u32 b = strtoul( _subvalue.c_str(), 0 , 16);
+	value.fromARGB( a );
+	subvalue.fromARGB( b );
+	return true;
+}
+
+/*
+template<> bool VarianceValue<SsVector2>::inputString( SsString _value , SsString _subvalue )
+{ 
+	
+	return true;
+}
+*/
 
 
 class SsEffectRenderEmitter;
