@@ -19,7 +19,7 @@ public:
 	SimpleTree()
 		: parent(0),ctop(0),prev(0),next(0)
 	{}
-	~SimpleTree()
+	virtual ~SimpleTree()
 	{
 		destroy();
 	}
@@ -98,6 +98,12 @@ public:
 		SSAR_DECLARE(visible);	
 		SSAR_STRUCT_DECLARE(behavior);	
 	}
+
+
+	SsEffectNodeType::_enum	GetType(){ return type; }
+
+	SsEffectBehavior*	GetMyBehavior(){ return &behavior;}
+
 };
 
 
@@ -133,10 +139,7 @@ public:
 		SSAR_DECLARE(isLockRandSeed);
 		SSAR_DECLARE(fps);
 		SSAR_DECLARE(bgcolor);
-
 		SSAR_DECLARE_LISTEX(nodeList,"node"); 
-
-		EffectNodeLoader(ar);
 	}
 
 	void	EffectNodeLoader(ISsXmlArchiver* ar);

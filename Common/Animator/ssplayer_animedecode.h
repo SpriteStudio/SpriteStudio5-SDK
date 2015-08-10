@@ -8,8 +8,9 @@
 #include "ssplayer_types.h"
 #include "ssplayer_cellmap.h"
 #include "ssplayer_PartState.h"
+#include "ssplayer_macro.h"
 
-#define foreach(T, c, i) for(T::iterator i = c.begin(); i!=c.end(); ++i)
+
 
 
 class SsAnimeDecoder;

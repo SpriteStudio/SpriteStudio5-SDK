@@ -25,4 +25,3 @@ SsEffectFile*	ssloader_ssee::Load(const std::string& filename )
 	return effectFile;
 
 }
-}

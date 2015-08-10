@@ -73,6 +73,104 @@ public:
 		return SsPoint2(x / r, y / r);
 	}
 
+	float	length_sq() const
+	{
+		return (x * x) + (y * y);
+	}
+
+	float	length() const
+	{
+#ifdef _WIN32
+		float r = length_sq();
+		if ( r < 0.0001f && r > -0.0001f ) return 0;
+
+		return (float)std::sqrtf( r );
+#else
+		return (float)std::sqrt( length_sq() );
+#endif
+	}
+
+	static void	normalize(const SsPoint2& in, SsPoint2* out)
+	{
+
+		float len = in.length();
+		float div = 0;
+
+		if ( len == 0 )
+		{
+			div = 0;
+		}else{
+			div = (float)1 / in.length();
+		}
+
+		out->x = in.x * div;
+		out->y = in.y * div;
+	}
+
+	void		normalize()
+	{
+		normalize(*this, this);
+	}
+
+	//----------------------------------------------------------------------------
+	static	float	dot(const SsPoint2& l, const SsPoint2 r)
+	{
+		return (l.x * r.x) + (l.y * r.y);
+	}
+	static	float	cross(const SsPoint2& l, const SsPoint2& r)
+	{
+		return (l.x * r.y) - (l.y * r.x);
+	}
+
+	//----------------------------------------------------------------------------
+	/**
+		２つのベクトルが織りなす角度を求める
+		入力は単位ベクトルでなくてはいけない。
+	*/
+	//----------------------------------------------------------------------------
+	static	float 	get_angle_unit(const SsPoint2& v0, const SsPoint2 v1)
+	{
+		float ip = dot(v0, v1);
+		if (ip > 1.0f) ip = 1.0f;
+		if (ip < -1.0f) ip = -1.0f;
+		float f = acos(ip);
+		return f;		
+		
+	}
+	//----------------------------------------------------------------------------
+	/**
+		２つのベクトルが織りなす角度を求める
+	*/
+	//----------------------------------------------------------------------------
+	static	float 	get_angle(const SsPoint2& v0, const SsPoint2& v1)
+	{
+		SsPoint2 uv0(v0), uv1(v1);
+		uv0.normalize();
+		uv1.normalize();
+		return get_angle_unit(uv0, uv1);
+	}
+
+	// v0 から v1 への左回りの角度を返す
+	static	float 	get_angle_360_unit(const SsPoint2& v0, const SsPoint2 v1)
+	{
+		float ang = get_angle_unit(v0, v1);
+		float c = cross(v0, v1);
+
+		if (c < 0)
+		{
+			ang = (3.1415926535897932385f)*2.0f - ang;
+		}
+		return ang;
+	}
+
+	static	float 	get_angle_360(const SsPoint2& v0, const SsPoint2 v1)
+	{
+		SsPoint2 uv0(v0), uv1(v1);
+		uv0.normalize();
+		uv1.normalize();
+		return get_angle_360_unit(uv0, uv1);
+	}
+
 };
 
 ///３次元座標を表現するためのクラスです。

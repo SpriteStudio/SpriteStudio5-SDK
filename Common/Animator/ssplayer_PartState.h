@@ -48,7 +48,6 @@ struct SsPartState
 
 	SsInstanceAttr	instanceValue;
 
-
 	SsBlendType::_enum	alphaBlendType;
 		
 	SsAnimeDecoder*	refAnime;

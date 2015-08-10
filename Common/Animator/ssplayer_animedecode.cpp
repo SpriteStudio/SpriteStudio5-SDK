@@ -7,9 +7,6 @@
 #include "ssplayer_render.h"
 
 
-#define __PI__	(3.14159265358979323846f)
-#define RadianToDegree(Radian) ((double)Radian * (180.0f / __PI__))
-#define DegreeToRadian(Degree) ((double)Degree * (__PI__ / 180.0f))
 
 //stdでののforeach宣言　
 #define USE_TRIANGLE_FIN (0)

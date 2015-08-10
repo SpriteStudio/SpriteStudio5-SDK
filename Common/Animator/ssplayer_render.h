@@ -1,6 +1,11 @@
 ﻿#ifndef __SSPLAYER_RENDER__
 #define __SSPLAYER_RENDER__
 
+
+
+
+
+
 struct SsPartState;
 
 
