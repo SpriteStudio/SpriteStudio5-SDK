@@ -54,6 +54,8 @@ public:
 	SsString        refAnimePack;   ///< 参照アニメ名
 	SsString        refAnime;       ///< 参照アニメ名			
 
+	SsString        refEffectName;	///< 割り当てたパーティクル名
+
 public:
 	SsPart() : 
 	  name("") , arrayIndex(0), parentIndex(0) , show(0) , locked(0)
@@ -93,6 +95,11 @@ public:
 		SSAR_DECLARE( locked );
 		SSAR_DECLARE( refAnimePack );
 		SSAR_DECLARE( refAnime );
+
+		if ( type == SsPartType::effect )
+		{
+			SSAR_DECLARE( refEffectName ); 	
+		}
 
 		//継承率後に改良を実施
 		if ( ar->getType() == EnumSsArchiver::in )

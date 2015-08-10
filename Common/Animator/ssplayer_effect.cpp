@@ -290,6 +290,7 @@ bool	SsEffectRenderEmitter::genarate( SsEffectRenderer* render )
 				}
 			}
 			this->intervalleft-=this->interval;
+			if ( this->interval == 0 )return true;
 		}else{
 			return true;
 		}

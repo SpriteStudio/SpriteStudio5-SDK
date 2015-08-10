@@ -390,6 +390,7 @@ namespace SsPartType
 		normal,			///< 通常パーツ。領域を持つ。画像は無くてもいい。
 		text,			///< テキスト(予約　未実装）
 		instance,		///< インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
+		effect,
 		num
 	};
 };

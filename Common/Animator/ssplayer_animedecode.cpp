@@ -5,7 +5,7 @@
 #include "ssplayer_animedecode.h"
 #include "ssplayer_matrix.h"
 #include "ssplayer_render.h"
-
+#include "ssplayer_effect.h"
 
 
 //stdでののforeach宣言　
@@ -74,12 +74,12 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 		partState[i].inheritRates = p->inheritRates;
 		partState[i].index = i;
 
-
-		//インスタンスパーツの場合の初期設定
-		if ( p->type == SsPartType::instance )
+		if (sspj)
 		{
-			if (sspj)
+			//インスタンスパーツの場合の初期設定
+			if ( p->type == SsPartType::instance )
 			{
+
 				//参照アニメーションを取得
 				SsAnimePack* refpack = sspj->findAnimationPack( p->refAnimePack );
 				SsAnimation* refanime = refpack->findAnimation( p->refAnime );
@@ -92,8 +92,22 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 				//親子関係を付ける
 				animedecoder->partState[0].parent = &partState[i];
 			}
+
+			//エフェクトデータの初期設定
+			if ( p->type == SsPartType::effect )
+			{
+				SsEffectFile* f = sspj->findEffect( p->refEffectName );
+				SsEffectRenderer* er = new SsEffectRenderer();
+				er->setEffectData( &f->effectData );
+				er->reload();
+				er->stop();
+				er->setParentAnimeState( &partState[i] );
+
+				partState[i].refEffect = er;
+								
+			}
 		}
-				
+
 		sortList.push_back( &partState[i] );
 
 	}
@@ -925,6 +939,19 @@ void	SsAnimeDecoder::updateVertices(SsPart* part , SsPartAnime* anime , SsPartSt
 
 }
 
+void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state )
+{
+	if ( state && state->refEffect )
+	{
+		float fps = (float)state->refEffect->getCurrentFPS();
+		// 1 frameのsec * Stateのframeの変化値
+		float f = (1.0f / fps) * frameDelta;				
+
+		state->refEffect->update( f );
+		state->refEffect->play();
+	}
+}
+
 
 
 void	SsAnimeDecoder::updateInstance( int nowTime , SsPart* part , SsPartAnime* partanime , SsPartState* state )
@@ -1116,6 +1143,11 @@ void	SsAnimeDecoder::update(float frameDelta)
 		{
 			updateInstance( time , part , anime , &partState[cnt] );
 			updateVertices( part , anime , &partState[cnt] );
+		}
+
+		if ( part->type == SsPartType::effect)
+		{
+			updateEffect( frameDelta, time , part , anime , &partState[cnt] );
 		}
 
 		cnt++;

@@ -65,6 +65,9 @@ private:
 private:
 	void	updateState( int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
 	void	updateInstance( int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
+	void	updateEffect( float frameDelta , int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
+
+
 	void	updateMatrix(SsPart* part , SsPartAnime* anime , SsPartState* state);
 	void	update_matrix_ss4(SsPart* part , SsPartAnime* anime , SsPartState* state);
 
