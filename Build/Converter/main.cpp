@@ -45,8 +45,8 @@ enum {
 	PART_FLAG_POSITION_X		= 1 << 4,
 	PART_FLAG_POSITION_Y		= 1 << 5,
 	PART_FLAG_POSITION_Z		= 1 << 6,
-	PART_FLAG_ANCHOR_X			= 1 << 7,
-	PART_FLAG_ANCHOR_Y			= 1 << 8,
+	PART_FLAG_PIVOT_X			= 1 << 7,
+	PART_FLAG_PIVOT_Y           = 1 << 8,
 	PART_FLAG_ROTATIONX			= 1 << 9,
 	PART_FLAG_ROTATIONY			= 1 << 10,
 	PART_FLAG_ROTATIONZ			= 1 << 11,
@@ -219,8 +219,8 @@ struct PartInitialData
 	int		posX;
 	int		posY;
 	int		posZ;
-	float	anchorX;
-	float	anchorY;
+	float	pivotX;
+	float	pivotY;
 	float	rotationZ;
 	float	rotationX;
 	float	rotationY;
@@ -505,8 +505,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				init.posX = (int)(state->position.x * DOT);
 				init.posY = (int)(state->position.y * DOT);
 				init.posZ = (int)(state->position.z * DOT);
-				init.anchorX = state->pivotOffset.x;
-				init.anchorY = state->pivotOffset.y;
+				init.pivotX = state->pivotOffset.x;
+				init.pivotY = state->pivotOffset.y;
 				init.rotationX = state->rotation.x;
 				init.rotationY = state->rotation.y;
 				init.rotationZ = state->rotation.z;
@@ -550,8 +550,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				initialData->add(Lump::s16Data(init.posZ));
 				initialData->add(Lump::s16Data(init.opacity));
 				initialData->add(Lump::s16Data(0)); //ダミーデータ
-				initialData->add(Lump::floatData(init.anchorX));
-				initialData->add(Lump::floatData(init.anchorY));
+				initialData->add(Lump::floatData(init.pivotX));
+				initialData->add(Lump::floatData(init.pivotY));
 				initialData->add(Lump::floatData(init.rotationX));
 				initialData->add(Lump::floatData(init.rotationY));
 				initialData->add(Lump::floatData(init.rotationZ));
@@ -648,8 +648,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if ((int)( state->position.x * DOT ) != init.posX)		p_flags |= PART_FLAG_POSITION_X;
 					if ((int)( state->position.y * DOT ) != init.posY)		p_flags |= PART_FLAG_POSITION_Y;
 					if ((int)( state->position.z * DOT ) != init.posZ)		p_flags |= PART_FLAG_POSITION_Z;
-					if (pivot.x != init.anchorX)							p_flags |= PART_FLAG_ANCHOR_X;
-					if (pivot.y != init.anchorY)							p_flags |= PART_FLAG_ANCHOR_Y;
+					if (pivot.x != init.pivotX)								p_flags |= PART_FLAG_PIVOT_X;
+					if (pivot.y != init.pivotY)								p_flags |= PART_FLAG_PIVOT_Y;
 					if (state->rotation.x != init.rotationX)				p_flags |= PART_FLAG_ROTATIONX;
 					if (state->rotation.y != init.rotationY)				p_flags |= PART_FLAG_ROTATIONY;
 					if (state->rotation.z != init.rotationZ)				p_flags |= PART_FLAG_ROTATIONZ;
@@ -754,8 +754,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (p_flags & PART_FLAG_POSITION_Y) frameData->add(Lump::s16Data((int)(state->position.y * DOT)));
 					if (p_flags & PART_FLAG_POSITION_Z) frameData->add(Lump::s16Data((int)(state->position.z * DOT)));
 
-					if (p_flags & PART_FLAG_ANCHOR_X) frameData->add(Lump::floatData(pivot.x));
-					if (p_flags & PART_FLAG_ANCHOR_Y) frameData->add(Lump::floatData(pivot.y));
+					if (p_flags & PART_FLAG_PIVOT_X) frameData->add(Lump::floatData(pivot.x));
+					if (p_flags & PART_FLAG_PIVOT_Y) frameData->add(Lump::floatData(pivot.y));
 					if (p_flags & PART_FLAG_ROTATIONX) frameData->add(Lump::floatData(state->rotation.x));	// degree
 					if (p_flags & PART_FLAG_ROTATIONY) frameData->add(Lump::floatData(state->rotation.y));	// degree
 					if (p_flags & PART_FLAG_ROTATIONZ) frameData->add(Lump::floatData(state->rotation.z));	// degree
