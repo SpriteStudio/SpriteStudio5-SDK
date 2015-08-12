@@ -57,6 +57,9 @@ ADD_LIBRARY(ssAnimater
 ../Common/Animator/ssplayer_render.h
 ../Common/Animator/ssplayer_matrix.cpp
 ../Common/Animator/ssplayer_matrix.h
+../Common/Animator/ssplayer_effect.cpp
+../Common/Animator/ssplayer_effect.h
+../Common/Animator/MersenneTwister.h
 ../Common/Animator/ssplayer_animedecode.cpp
 ../Common/Animator/ssplayer_animedecode.h)
 

@@ -19,7 +19,7 @@ public:
 	SimpleTree()
 		: parent(0),ctop(0),prev(0),next(0)
 	{}
-	~SimpleTree()
+	virtual ~SimpleTree()
 	{
 		destroy();
 	}
@@ -98,6 +98,12 @@ public:
 		SSAR_DECLARE(visible);	
 		SSAR_STRUCT_DECLARE(behavior);	
 	}
+
+
+	SsEffectNodeType::_enum	GetType(){ return type; }
+
+	SsEffectBehavior*	GetMyBehavior(){ return &behavior;}
+
 };
 
 
@@ -114,11 +120,14 @@ public:
 	SsString	   bgcolor;
 
 public:
-	SsEffectModel()
+	SsEffectModel() : root(0)
 	{}
 
 	virtual ~SsEffectModel(){
-		delete root;
+		if (root)
+		{
+			delete root;
+		}
 		root = 0;
 	}
 
@@ -133,10 +142,22 @@ public:
 		SSAR_DECLARE(isLockRandSeed);
 		SSAR_DECLARE(fps);
 		SSAR_DECLARE(bgcolor);
+		SSAR_DECLARE_LISTEX(nodeList,"node");
 
-		SSAR_DECLARE_LISTEX(nodeList,"node"); 
+		//ツリーの構築
+		if ( nodeList.size() > 0 )
+		{
+			root = nodeList[0];
+			for ( size_t i = 1 ; i < nodeList.size() ; i++ )
+			{
+				int pi = nodeList[i]->parentIndex;
+				if ( pi >= 0 )
+				{
+					nodeList[pi]->addChildEnd( nodeList[i] );
+				}
+			}
+		}
 
-		EffectNodeLoader(ar);
 	}
 
 	void	EffectNodeLoader(ISsXmlArchiver* ar);
@@ -151,13 +172,14 @@ class SsEffectFile
 {
 public:
 	SsEffectModel	   effectData;  //親子構造＋各アトリビュート
-
+	SsString		   name;
 
 	SsEffectFile(){}
 	virtual ~SsEffectFile(){}
 
 	SSSERIALIZE_BLOCK
 	{
+		SSAR_DECLARE(name);
 		SSAR_STRUCT_DECLARE( effectData );
 	}
 

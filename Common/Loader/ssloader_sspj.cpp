@@ -69,6 +69,19 @@ SsAnimation*	SsProject::findAnimation( SsString& animePackName , SsString& Anime
 	return 0;
 }
 
+SsEffectFile*		SsProject::findEffect( SsString& effectName )
+{
+	for ( SsEffectFileList::iterator itr = effectfileList.begin()
+		; itr != effectfileList.end() ; ++itr )
+	{
+		if ( (*itr)->name == effectName )
+		{
+			return (*itr);
+		}
+	}
+
+	return 0;
+}
 
 
 SsProject*	ssloader_sspj::Load(const std::string& filename )

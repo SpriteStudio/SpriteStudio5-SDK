@@ -132,7 +132,9 @@ public:
 
 	SsAnimePack*		findAnimationPack( SsString& animePackName );
 
-	//
+	//エフェクトの名前からエフェクトを取得する
+	SsEffectFile*		findEffect( SsString& effectName );
+
 	
 
 

@@ -10,6 +10,10 @@ SsString	__EnumToString_( SsPartType::_enum n )
 	if ( SsPartType::normal ) return "normal";
 	if ( SsPartType::text ) return "text";
 	if ( SsPartType::instance ) return "instance";
+	if ( SsPartType::effect ) return "effect";
+
+	
+
 	return "invalid";	
 }
 
@@ -21,6 +25,8 @@ void 	__StringToEnum_( SsString n , SsPartType::_enum& out)
 	if ( n == "normal") out = SsPartType::normal;
 	if ( n == "text") out = SsPartType::text;
 	if ( n == "instance") out = SsPartType::instance;
+	if ( n == "effect") out = SsPartType::effect;
+
 }
 
 //---------------------------------------------------------------
@@ -291,9 +297,9 @@ SS_DECLARE_ENUM_STRING_DEF( SsEffectNodeType );
 SsString	__EnumToString_( SsEffectNodeType::_enum n )
 {
 	if ( n == SsEffectNodeType::invalid ) return "invalid";
-	if ( n == SsEffectNodeType::root ) return "root";
-	if ( n == SsEffectNodeType::emmiter ) return "emmiter";
-	if ( n == SsEffectNodeType::particle ) return "particle";
+	if ( n == SsEffectNodeType::root ) return "Root";
+	if ( n == SsEffectNodeType::emmiter ) return "Emmiter";
+	if ( n == SsEffectNodeType::particle ) return "Prticle";
 
 	return "invalid";	
 }
@@ -302,9 +308,9 @@ void 	__StringToEnum_( SsString n , SsEffectNodeType::_enum& out)
 {
 	out =  SsEffectNodeType::invalid;
 	if ( n == "invalid") out = SsEffectNodeType::invalid;
-	if ( n == "root") out = SsEffectNodeType::root;
-	if ( n == "emmiter") out = SsEffectNodeType::emmiter;
-	if ( n == "particle") out = SsEffectNodeType::particle;
+	if ( n == "Root") out = SsEffectNodeType::root;
+	if ( n == "Emmiter") out = SsEffectNodeType::emmiter;
+	if ( n == "Particle") out = SsEffectNodeType::particle;
 }
 
 

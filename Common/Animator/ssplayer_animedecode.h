@@ -8,8 +8,9 @@
 #include "ssplayer_types.h"
 #include "ssplayer_cellmap.h"
 #include "ssplayer_PartState.h"
+#include "ssplayer_macro.h"
 
-#define foreach(T, c, i) for(T::iterator i = c.begin(); i!=c.end(); ++i)
+
 
 
 class SsAnimeDecoder;
@@ -64,6 +65,9 @@ private:
 private:
 	void	updateState( int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
 	void	updateInstance( int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
+	void	updateEffect( float frameDelta , int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state );
+
+
 	void	updateMatrix(SsPart* part , SsPartAnime* anime , SsPartState* state);
 	void	update_matrix_ss4(SsPart* part , SsPartAnime* anime , SsPartState* state);
 

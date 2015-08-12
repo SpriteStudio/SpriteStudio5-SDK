@@ -23,7 +23,7 @@ class SsCell;
 
 //îÕàÕílÉNÉâÉX
 template<class mytype>
-class VarianceValue : public SsXmlStringConverter
+class VarianceValue : public SsXmlRangeValueConverter
 {
 private:
 
@@ -39,35 +39,35 @@ public:
 	VarianceValue( mytype v ){
 		value = v;
 		subvalue = v;
-        type = RangeType::None;
+        type = VarianceValue::None;
 	}
 	VarianceValue( mytype v , mytype v2){
 		value = v;
 		subvalue = v2;
-        type = RangeType::MinMax;
+        type = VarianceValue::MinMax;
 	}
 
 	void	setPlusMinus( mytype v1 , mytype v2 )
 	{
 		value = v;
 		subvalue = plusminus;
-        type = RangeType::PlusMinus;
+        type = VarianceValue::PlusMinus;
 	}
 
 	void	setMinMax(mytype min , mytype max)
 	{
 		value = min;
 		subvalue = max;
-        type = RangeType::MinMax;
+        type = VarianceValue::MinMax;
 	}
 
 	mytype	getValue(){ return value;}
 	mytype	getMinValue(){ return value;}
 	mytype	getMaxValue(){ return subvalue;}
 
-	bool	isTypeNone(){ return  type == RangeType::None; }
-	bool	isTypeMinMax(){ return  type == RangeType::MinMax; }
-	bool	isTypePlusMinus(){ return  type == RangeType::PlusMinus; }
+	bool	isTypeNone(){ return  type == VarianceValue::None; }
+	bool	isTypeMinMax(){ return  type == VarianceValue::MinMax; }
+	bool	isTypePlusMinus(){ return  type == VarianceValue::PlusMinus; }
 
 	mytype* getlpValue(){ return &value;}
 	mytype* getlpSubValue(){ return &subvalue;}
@@ -76,13 +76,7 @@ public:
 	operator mytype() { return value; }
 
 private:
-	//SS_FRIEND_SERIALIZATION_ACCESS
-	// AARRGGBB ÇÃÇPÇUêiêîï∂éöóÒÇ≈ï€ë∂
-	//SS_SERIALIZATION_SPLIT_MEMBER();
-	//bool	save(SsXmlOArchive& ar, const unsigned int version) const;
-	//bool	load(SsXmlIArchive& ar, const unsigned int version);
-
-	virtual bool	inputString(SsString str )
+	virtual bool	inputString( SsString value , SsString subvalue )
 	{
 	 return true;
 	}
@@ -92,14 +86,38 @@ private:
 typedef VarianceValue<float>   			f32VValue;
 typedef VarianceValue<int>    			i32VValue;
 typedef VarianceValue<SsU8Color>    	SsU8cVValue;
-typedef VarianceValue<SsVector2>    	SsVec2VValue;
 
 
-template<> bool VarianceValue<float>::inputString(SsString str){ return true;}
-template<> bool VarianceValue<int>::inputString(SsString str){ return true;}
-template<> bool VarianceValue<SsU8Color>::inputString(SsString str){ return true;}
-template<> bool VarianceValue<SsVector2>::inputString(SsString str){ return true;}
+template<> bool VarianceValue<float>::inputString( SsString _value , SsString _subvalue )
+{ 
+	value = (float)atof(_value.c_str());
+	subvalue = (float)atof(_subvalue.c_str());
 
+	return true;
+}
+template<> bool VarianceValue<int>::inputString( SsString _value , SsString _subvalue )
+{ 
+	value = atoi(_value.c_str());
+	subvalue = atoi(_subvalue.c_str());
+
+	return true;
+}
+template<> bool VarianceValue<SsU8Color>::inputString( SsString _value , SsString _subvalue )
+{ 
+	u32 a = strtoul( _value.c_str(), 0 , 16);
+	u32 b = strtoul( _subvalue.c_str(), 0 , 16);
+	value.fromARGB( a );
+	subvalue.fromARGB( b );
+	return true;
+}
+
+/*
+template<> bool VarianceValue<SsVector2>::inputString( SsString _value , SsString _subvalue )
+{ 
+	
+	return true;
+}
+*/
 
 
 class SsEffectRenderEmitter;
@@ -163,11 +181,11 @@ public:
 	ParticleElementBasic()
 			: 	maximumParticle( 50 ),
 				speed( 5.0f , 5.0f),
-				lifespan( 30.0f ,30.0f),
+				lifespan( 30 ,30 ),
 				angle(0.0f),
-				angleVariance(45),
-				interval(1.0f),
-				lifetime(30.0f),
+				angleVariance(45.0f),
+				interval(1),
+				lifetime(30),
 				attimeCreate(1),
                 priority(64)
 	{
