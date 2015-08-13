@@ -119,6 +119,12 @@ public:
 
 };
 
+
+
+//void getCellValue( int cellMapid , SsString& cellName , SsCellValue& v );
+void getCellValue( SsCellMapList* cellList, int cellMapid , SsString& cellName , SsCellValue& v );
+void getCellValue( SsCellMapList* cellList, SsString& cellMapName , SsString& cellName , SsCellValue& v );
+
 void calcUvs( SsCellValue* cellv );
 
 #endif

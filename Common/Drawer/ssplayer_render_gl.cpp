@@ -126,25 +126,21 @@ void	SsRenderGL::renderSetup()
 }
 
 
-static void	SetAlphaBlendMode(SsPartState* state)
+void	SsRenderGL::SetAlphaBlendMode(SsBlendType::_enum type)
 {
 	glBlendEquation( GL_FUNC_ADD );
 
 	// 演算方法の指定
-	switch (state->alphaBlendType)
+	switch ( type )
 	{
 	case SsBlendType::mix:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		break;
 	case SsBlendType::mul:
-		// TODO SrcAlpha を透明度として使えない
-		//glBlendFunc(GL_ZERO, GL_SRC_COLOR);
 		glBlendFuncSeparateEXT( GL_ZERO, GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_ONE );
 		break;
 	case SsBlendType::add:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		//glBlendFuncSeparateEXT( GL_SRC_ALPHA, GL_ONE, GL_SRC_ALPHA, GL_ONE );
-
 		break;
 	case SsBlendType::sub:
 		// TODO SrcAlpha を透明度として使えない
@@ -153,6 +149,26 @@ static void	SetAlphaBlendMode(SsPartState* state)
 
 		break;
 	}
+}
+
+void	SsRenderGL::renderSpriteSimple( float matrix[16], 
+									int width, int height, 
+									SsVector2& pivot , 
+									SsVector2 uv1, SsVector2 uv2, 
+									const SsFColor& color )
+{
+	glPushMatrix();
+
+	// update で計算しておいた行列をロード
+	glLoadMatrixf(matrix);
+/*
+	DrawSprite2(  0 , 0 ,
+				dispscale.x , dispscale.y ,  pivot,
+				dispCell->uvs[0],
+				dispCell->uvs[3], fcolor );
+*/
+	glPopMatrix();
+
 }
 
 
@@ -370,7 +386,7 @@ void	SsRenderGL::renderPart( SsPartState* state )
 	}
 
 	// αブレンドの設定
-	SetAlphaBlendMode( state );
+	SetAlphaBlendMode( state->alphaBlendType );
 
 
 	// 頂点カラーの指定

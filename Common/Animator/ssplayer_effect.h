@@ -3,6 +3,7 @@
 
 #include "../loader/ssloader.h"
 #include "MersenneTwister.h"
+#include "ssplayer_cellmap.h"
 
 
 class SsEffectModel;
@@ -152,7 +153,9 @@ class SsEffectDrawBatch
 {
 public:
 	int	priority;
-	SsCell*					dispCell;    //表示に使用するテクスチャ
+	//SsCell*					dispCell;    //表示に使用するテクスチャ
+	SsCellValue*			dispCell;
+
 	SsRenderBlendType::_enum       blendType;
 
 
@@ -175,7 +178,8 @@ class  SsEffectRenderEmitter : public SsEffectRenderAtom
 {
 public:
 	unsigned int myseed;
-	SsCell*					dispCell;    //表示に使用するテクスチャ
+//	SsCell*					dispCell;    //表示に使用するテクスチャ
+	SsCellValue				dispCell;
 	//エミッターパラメータ
 
 	//パーティクルパラメータ
@@ -218,7 +222,7 @@ public:
 		frame = 0;
 		frameDelta = 0;
 		particleCount = 0;
-		dispCell = 0;
+		//dispCell = 0;
 		_exsitTime = 0;
 
 		generate_ok = true;
@@ -247,18 +251,11 @@ public:
 	//----------------------------------------------------------------------
 	//パーティクルオブジェクトの生成
 	//----------------------------------------------------------------------
-//	virtual void	genarate(std::vector<SsEffectRenderAtom*>& list );
-//	virtual void	genarate(std::vector<SsEffectRenderAtom*>& list );
 	virtual bool	genarate( SsEffectRenderer* render );
 
 
 
 	virtual void	update(float delta);
-	//virtual void	draw(SsVector3& offsetpos){}
-	//virtual void	draw(SsEffectRenderer* render);
-
-	virtual void	debugdraw();
-
 	virtual void	count(){ particleCount = 0 ; }
 
 };
@@ -274,7 +271,8 @@ public:
 class  SsEffectRenderParticle : public SsEffectRenderAtom
 {
 public:
-    SsCell*					dispCell;
+//    SsCell*					dispCell;
+	SsCellValue*			dispCell;
 
 	float   				size;
 	SsEffectRenderEmitter*  parentEmitter;
@@ -362,7 +360,6 @@ public:
 	virtual bool	genarate( SsEffectRenderer* render );
 
     virtual void	update(float delta);
-//	virtual void	draw(SsVector3& offsetpos);
 	virtual void	draw(SsEffectRenderer* render);
 
 
@@ -371,10 +368,6 @@ public:
 		if ( parentEmitter )
 			parentEmitter->particleCount++;
 	}
-
-
-
-
 	virtual void	updateDelta(float delta);
 	virtual void 	updateForce(float delta);
 };
@@ -406,6 +399,8 @@ private:
 
 
 	SsVector3		layoutPosition;
+
+	SsCellMapList*	curCellMapManager;/// セルマップのリスト（アニメデコーダーからもらう
 
 
 #if PFMEM_TEST
@@ -477,8 +472,6 @@ public:
 		return 30;
 	}
 
-	virtual void debugDraw();
-
 	//データセット
 	void	setEffectData(SsEffectModel* data){
 					stop();
@@ -493,6 +486,8 @@ public:
 
 	u32		getAnimeFrameOffset(){ return parentAnimeStartFrame;}
 	void    setAnimeFrameOffset( u32 a ){ parentAnimeStartFrame = a; }
+	void	setCellmapManager( SsCellMapList* plist ) { curCellMapManager = plist; }
+
 };
 
 
