@@ -51,6 +51,7 @@ public:
 		return m_ident;
 	}
 
+		
 
 	void	setIdentify( const char* _ident )
 	{
@@ -72,6 +73,18 @@ public:
 	void	set_my_auto_destroy( bool flag )
 	{
 		_my_destroy = flag;
+	}
+
+	treeitem* get_root(){
+		treeitem* r = this->parent;
+		if (r==0) return this;
+		while(1)
+		{
+			treeitem *r2 =r;
+			r = r->parent;
+			if (r ==0)return r2;			
+		}
+		return 0;
 	}
 
 	treeitem* get_parent(){ return parent;}

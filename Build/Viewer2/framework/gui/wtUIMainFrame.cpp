@@ -31,6 +31,9 @@
 #endif
 
 
+static wtUIMainFrame* singletonMainFrame = 0;
+
+
 //コールバック
 void errorcb(int error, const char* desc)
 {
@@ -58,6 +61,7 @@ static void key(GLFWwindow* window, int key, int scancode, int action, int mods)
 
 void	framebuffer_size_callback( GLFWwindow* window , int width , int height )
 {
+	singletonMainFrame->resize( 0 , 0 , width , height );
 //	update_view( window );
 }
 
@@ -70,6 +74,7 @@ void MouseButtonCB( GLFWwindow*,int button ,int action ,int mods)
 //typedef void (* GLFWcursorposfun)(GLFWwindow*,double,double);
 void	MousePosCB(GLFWwindow*,double x ,double y)
 {
+	singletonMainFrame->mouseMove( x , y );
 	//TwEventMousePosGLFW( (int)(x*displayscale) , (int)(y*displayscale) );
 }
 
@@ -95,12 +100,17 @@ void	MouseScrollCB(  GLFWwindow* window, double x , double y )
 //	TwEventMouseWheelGLFW( (int)y );
 }
 
+
+
 int	wtUIMainFrame::start()
 {
+	singletonMainFrame = this;
+	this->setPause(false);
+	this->setShow(true);
 
 	GLFWwindow* window;
-	DemoData data;
-	NVGcontext* vg = NULL;
+	//DemoData data;
+	vg = NULL;
 	PerfGraph fps;
 	double prevt = 0;
 
@@ -170,12 +180,39 @@ int	wtUIMainFrame::start()
 		return -1;
 */
 
+	//フォントの読み込み
+	this->fontIcons = nvgCreateFont(vg, "icons", "./example/entypo.ttf");
+	if (this->fontIcons == -1) {
+		printf("Could not add font icons.\n");
+		//return -1;
+	}
+	this->fontNormal = nvgCreateFont(vg, "sans", "./example/Roboto-Regular.ttf");
+	if (this->fontNormal == -1) {
+		printf("Could not add font italic.\n");
+		//return -1;
+	}
+	this->fontBold = nvgCreateFont(vg, "sans-bold", "./example/Roboto-Bold.ttf");
+	if (this->fontBold == -1) {
+		printf("Could not add font bold.\n");
+		//return -1;
+	}
+	this->fontJapanease = nvgCreateFont(vg, "japanease", "./example/TanukiMagic.ttf");
+	if (this->fontBold == -1) {
+		printf("Could not add font bold.\n");
+		//return -1;
+	}
+	
+
+
 	glfwSwapInterval(0);
 
 	glfwSetTime(0);
 	prevt = glfwGetTime();
 
 
+	this->onCreate();
+
+	//メインループを回す
 	while (!glfwWindowShouldClose(window))
 	{
 		double mx, my, t, dt;
@@ -206,10 +243,10 @@ int	wtUIMainFrame::start()
 		nvgBeginFrame(vg, winWidth, winHeight, pxRatio);
 
 		//renderDemo(vg, mx,my, winWidth,winHeight, t, blowup, &data);
-		//renderGraph(vg, 5,5, &fps);
+		renderGraph(vg, 310,0, &fps);
 
 		this->execute();
-		this->draw();
+		this->execdraw();
 
 		nvgEndFrame(vg);
 /*
@@ -253,7 +290,7 @@ static void	execute_sub(wtUIObject* o)
 }
 static void	draw_sub(wtUIObject* o)
 {
-	if ( !o->isPause() && o->isShow() )
+	//if ( !o->isPause() && o->isShow() )
 	{
 		o->draw();
 
@@ -270,14 +307,151 @@ static void	draw_sub(wtUIObject* o)
 
 }
 
+//---------------------------------------------
 void	wtUIMainFrame::execute()
 {
 	execute_sub( this );
 }
 
-void	wtUIMainFrame::draw()
+//---------------------------------------------
+void	wtUIMainFrame::execdraw()
 {
 	draw_sub( this );
+}
+
+//---------------------------------------------
+void	wtUIMainFrame::onCreate()
+{
+	wtUIPanel* tt = new wtUIPanel();
+	tt->caption = "Tools";
+	tt->setShow(true);
+	tt->setPause(false);
+	tt->vg = this->vg;
+	tt->height = 64;
+	tt->DockStatus = wtUI::Dock::top;
+	this->appendchild( tt );
+
+	wtUIPanel* w = new wtUIPanel();
+	w->caption = "Explorer";
+	w->setShow(true);
+	w->setPause(false);
+	w->vg = this->vg;
+	w->DockStatus = wtUI::Dock::left;
+	this->appendchild( w );
+
+	wtUIPanel* w2 = new wtUIPanel();
+	w2->caption = "Frame Control";
+	w2->setShow(true);
+	w2->setPause(false);
+	w2->vg = this->vg;
+	w2->DockStatus = wtUI::Dock::bottom;
+	w2->height = 320;
+	this->appendchild( w2 );
+
+	wtUIPanel* w3 = new wtUIPanel();
+	w3->caption = "Attributes";
+	w3->setShow(true);
+	w3->setPause(false);
+	w3->vg = this->vg;
+	w3->DockStatus = wtUI::Dock::right;
+	w3->width = 350;
+	this->appendchild( w3 );
+
+
+	wtUIPanel* w4 = new wtUIPanel();
+	w4->caption = "Layout";
+	w4->setShow(true);
+	w4->setPause(false);
+	w4->vg = this->vg;
+	w4->DockStatus = wtUI::Dock::left;
+	w4->AlignStatus = wtUI::Align::full;
+
+	this->appendchild( w4 );
+
+
+
+}
+
+//---------------------------------------------
+//	リサイズの通知
+//---------------------------------------------
+void	wtUIMainFrame::resize( int x , int y , int w , int h )
+{
+	this->onResize( w , h );
+
+	//Dock、アライメント、アンカー再計算
+	std::vector<wtUIObject*> updatelist;
+	
+	//自分の子のみを取得
+	wtUIObject* o = this->get_child();
+	while(o)
+	{
+		updatelist.push_back(o);
+		o = o->get_sibling();
+	}
+	
+	//dockのプライオリティ順にソートする
+	
+	//現在は並んでる順に
+
+	int sx = 0;
+	int sy = 0;
+	int ex = w;
+	int ey = h;
+
+	//位置、サイズの計算を行う
+	for ( int i = 0 ; i < updatelist.size() ; i++ )
+	{
+		//位置の調整
+		wtUIObject* obj = updatelist[i];
+		wtUIPanel* panel = static_cast<wtUIPanel*>(obj);
+
+		if ( panel->AlignStatus == wtUI::Align::full )
+		{
+			panel->width = w;
+			panel->height = h;
+		}
+
+		if ( panel->DockStatus == wtUI::Dock::left )
+		{
+			int ww = panel->width;
+			if ( ww > ( ex - sx ) )
+			{
+				//残り範囲より大きい時
+				ww = ex-sx;
+			}
+			updatelist[i]->resize( sx , sy , ww , ey-sy );
+			sx+=panel->width;
+		}
+		if ( panel->DockStatus == wtUI::Dock::right )
+		{
+			updatelist[i]->resize( ex - panel->width , sy , panel->width , ey-sy );
+			ex-=panel->width;
+		}
+
+		if ( panel->DockStatus == wtUI::Dock::bottom )
+		{
+			updatelist[i]->resize( sx , ey - panel->height , ex - sx , panel->height );
+			ey-=panel->height;
+		}
+		if ( panel->DockStatus == wtUI::Dock::top )
+		{
+			updatelist[i]->resize( sx , sy, ex - sx , panel->height );
+			sy+=panel->height;
+		}
+		//updatelist[i]->onResize( w , h );
+	}
+}
+
+
+//---------------------------------------------
+//	リサイズの通知
+//---------------------------------------------
+void	wtUIMainFrame::onResize(int w, int h)
+{
+
+
+
 }
 
 
@@ -291,8 +465,8 @@ int main(void)
 	//メインフレームの作成
 	wtUIMainFrame* mainframe = new wtUIMainFrame();
 
-	mainframe->appendchild( new wtUIPanel() );
-
 	mainframe->start();
+
+	delete mainframe;
 
 }

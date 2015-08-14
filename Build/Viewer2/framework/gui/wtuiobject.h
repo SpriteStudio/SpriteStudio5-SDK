@@ -35,6 +35,7 @@ public:
 	virtual void	update(){}
 	virtual void	after_update(){}
 
+	virtual void	resize( int x , int y , int w , int h ){}
 
 	//イベントリスナ判定用
 	virtual bool	isMouseInArea( int x , int y ){ return false; }
@@ -46,23 +47,15 @@ public:
 
 	virtual void	onCreate(){}
 	virtual void	onDestroy(){}
+	virtual	void	onResize(int w, int h){}
+
 
 };
 
 typedef treeitem<_wtUIObject> wtUIObject;
 
-/*
-class wtUIObjectExecuter
-{
-private:
-	wtUIObject	*root;
-	
-public:
-	wtUIManager(){}
-	virtual ~wtUIManager(){}
 
-};
-*/
+
 
 
 #endif

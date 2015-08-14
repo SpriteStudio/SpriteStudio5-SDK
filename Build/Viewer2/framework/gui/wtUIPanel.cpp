@@ -1,12 +1,49 @@
 #include "../wtafx.h"
 #include "wtUIPanel.h"
+#include "wtUIMainFrame.h"	
 
 
-//void drawWindow(NVGcontext* vg, const char* title, float x, float y, float w, float h)
+
+void	wtUIPanel::resize( int x , int y , int w , int h )
+{
+	position.x = x;
+	position.y = y;
+	width = w;
+	height = h;
+	this->onResize( w , h);
+}
+
+void	wtUIPanel::update()
+{
+//	wtUIMainFrame* mf = static_cast<wtUIMainFrame*>(this->get_root());
+
+	drawPosition = position;
+	drawWidth = width;
+	drawHeight = height;
+/*	
+	//dock calculate
+	//たぶん本当はMainframeのpreupdateで終わらせておく
+	if ( DockStatus == wtUI::Dock::left )
+	{
+		drawPosition.x = 0;
+		drawPosition.y = 0;
+		drawHeight = 0;
+	}
+*/
+}
+
+
 void	wtUIPanel::draw()
 {
 
-	const char* title = "Test";
+	float x = drawPosition.x;
+	float y = drawPosition.y;
+
+	float w = drawWidth;
+	float h = drawHeight;
+	
+
+	const char* title = caption.c_str();
 
 	float cornerRadius = 3.0f;
 	NVGpaint shadowPaint;
@@ -43,8 +80,10 @@ void	wtUIPanel::draw()
 	nvgStrokeColor(vg, nvgRGBA(0,0,0,32));
 	nvgStroke(vg);
 
+
+	nvgBeginPath(vg);
 	nvgFontSize(vg, 18.0f);
-	nvgFontFace(vg, "sans-bold");
+	nvgFontFace(vg, "japanease");
 	nvgTextAlign(vg,NVG_ALIGN_CENTER|NVG_ALIGN_MIDDLE);
 
 	nvgFontBlur(vg,2);
@@ -53,7 +92,7 @@ void	wtUIPanel::draw()
 
 	nvgFontBlur(vg,0);
 	nvgFillColor(vg, nvgRGBA(220,220,220,160));
-	nvgText(vg, x+w/2,y+16, title, NULL);
+	nvgText(vg, x+w/2,y+16,  title, NULL);
 
 	nvgRestore(vg);	
 }

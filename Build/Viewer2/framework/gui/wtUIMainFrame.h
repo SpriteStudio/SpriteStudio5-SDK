@@ -8,9 +8,14 @@ struct NVGcontext;
 class wtUIMainFrame : public wtUIObject
 {
 private:
-	NVGcontext* vg;
+	int fontNormal;
+	int	fontBold;
+	int	fontIcons;
+	int	fontJapanease; 
 
 public:
+	NVGcontext* vg;
+
 	wtUIMainFrame(){}
 	virtual ~wtUIMainFrame(){}
 
@@ -18,7 +23,13 @@ public:
 	int	start();
 
 	void	execute();
-	virtual void	draw();
+	virtual void	execdraw();
+	virtual void	onCreate();
+	virtual	void	onResize(int w, int h);
+
+	virtual void	resize( int x , int y , int w , int h );
+
+
 
 };
 
