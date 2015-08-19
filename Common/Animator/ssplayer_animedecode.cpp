@@ -439,7 +439,8 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 	if ( anime == 0 ){
 		state->hide = true;
 		IdentityMatrix( state->matrix );
-		return ;
+		state->hide = true;
+		return;
 	}
 
 	// 親の継承設定を引用する設定の場合、ここで参照先を親のものに変えておく。
@@ -864,9 +865,6 @@ void	SsAnimeDecoder::updateVertices(SsPart* part , SsPartAnime* anime , SsPartSt
 		pivot.x = 0.5f * state->size.x;
 		pivot.y = 0.5f * state->size.y;
 	}
-
-	pivot.x = 0.5f * state->size.x;
-	pivot.y = 0.5f * state->size.y;
 
 	// 次に原点オフセットアニメの値を足す
 	pivot.x += state->pivotOffset.x * state->size.x;
