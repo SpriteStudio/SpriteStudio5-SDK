@@ -17,6 +17,15 @@ public:
 	virtual void	initialize();
 	virtual void	renderSetup();
 	virtual void	renderPart( SsPartState* state );
+	virtual void	renderSpriteSimple( float matrix[16], 
+										int width, int height, 
+										SsVector2& pivot , 
+										SsVector2 uv1, SsVector2 uv2, 
+										const SsFColor& color ){}
+
+	virtual void	SetAlphaBlendMode(SsBlendType::_enum type){}
+
+
 };
 
 #endif

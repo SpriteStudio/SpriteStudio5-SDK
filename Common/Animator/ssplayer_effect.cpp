@@ -6,8 +6,8 @@
 #include "ssplayer_animedecode.h"
 #include "ssplayer_effect.h"
 #include "ssplayer_macro.h"
-
-
+#include "ssplayer_matrix.h"
+#include "ssplayer_render.h"
 
 
 #if 0
@@ -96,10 +96,7 @@ static  int seed_table[] =
 //------------------------------------------------------------------------------
 SsEffectRenderAtom* SsEffectRenderer::CreateAtom( unsigned int seed , SsEffectRenderAtom* parent , SsEffectNode* node )
 {
-
 	SsEffectRenderAtom* ret = 0;
-
-	//SsString type = node->GetType();
 	SsEffectNodeType::_enum type = node->GetType(); 
 
 
@@ -131,7 +128,6 @@ SsEffectRenderAtom* SsEffectRenderer::CreateAtom( unsigned int seed , SsEffectRe
 
 
 	if ( type == SsEffectNodeType::emmiter )
-//	if (node->GetType() == _D("Emitter") )
 	{
 
 #if PFMEM_TEST
@@ -149,7 +145,6 @@ SsEffectRenderAtom* SsEffectRenderer::CreateAtom( unsigned int seed , SsEffectRe
 		em_pool_count++;
 		dpr_pool_count++;
 
-
 		p->data = node;
 		p->parent = parent;
 		p->myBatchList = bl;
@@ -159,9 +154,21 @@ SsEffectRenderAtom* SsEffectRenderer::CreateAtom( unsigned int seed , SsEffectRe
 		p->setMySeed( seed );
 		p->TrushRandom( em_pool_count%9 );
 
-
 		p->data->behavior.initalize(p);
-//		p->data->GetMyBehavior()->initalize(p);
+
+		//セルデータの検索とセット
+		//オリジナルでは上記initializeでやっているがクラス階層の関係からこちらでやる
+		SsCelMapLinker* link = this->curCellMapManager->getCellMapLink( p->data->behavior.CellMapName );
+		if ( link )
+		{
+			SsCell * cell = link->findCell( p->data->behavior.CellName );
+		
+			getCellValue(	this->curCellMapManager , 
+				p->data->behavior.CellMapName ,
+				p->data->behavior.CellName , 
+				p->dispCell ); 
+		}
+
 		updatelist.push_back( p );
 		createlist.push_back( p );
 		drawBatchList.push_back( bl );
@@ -327,34 +334,11 @@ void	SsEffectRenderEmitter::update(float delta)
 	if ( this->myBatchList )
 	{
 		this->myBatchList->priority = this->drawPriority;
-		this->myBatchList->dispCell = this->dispCell;
+		this->myBatchList->dispCell = &this->dispCell;
 		this->myBatchList->blendType = this->data->GetMyBehavior()->blendType;
 
 	}
 
-}
-
-//----------------------------------------------------------------------
-//
-//----------------------------------------------------------------------
-void	SsEffectRenderEmitter::debugdraw()
-{
-#if 0
-	//ツール用描画    //エディット時のみ
-	glEnable(GL_BLEND);
-
-	glBindTexture(GL_TEXTURE_2D, 0 );
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	SsVector3 eVec = this->getPosition();
-	//エミッターポジション 中央
-	DrawCross( SsVector2( eVec.x , eVec.y ) , 16 , SsFColor( 0.0f , 1.0f , 1.0f , 1.0f ) ,2 );
-
-	if ( data )
-	{
-		data->GetMyBehavior()->drawToolGuide(this);
-	}
-#endif
 }
 
 
@@ -377,7 +361,7 @@ void	SsEffectRenderParticle::Initialize()
 
 		parentEmitter = static_cast<SsEffectRenderEmitter*>(this->parent);
 
-		dispCell = parentEmitter->dispCell;
+		dispCell = &parentEmitter->dispCell;
 		if ( parentEmitter->data == 0 )
 		{
 			this->_life = 0.0f;
@@ -534,56 +518,44 @@ void 	SsEffectRenderParticle::updateForce(float delta)
 //------------------------------------------------------------------------------
 void	SsEffectRenderParticle::draw(SsEffectRenderer* render)
 {
-#if 0
 
 	if ( this->parentEmitter == NULL  )return;
 	if ( refBehavior == NULL ) return;
 	if ( dispCell == NULL ) return ;
 
 
-
-	SsOpenGLMatrix ss_matrix;
 	float		matrix[4 * 4];	///< 行列
-
+	IdentityMatrix( matrix );
 
 	if ( render->parentState )
-		ss_matrix.pushMatrix(render->parentState->matrix);
+	{
+		MultiplyMatrix( matrix ,render->parentState->matrix ,matrix ); 
+	}
+	TranslationMatrixM( matrix , _position.x, _position.y, 0.0f );
 
+	RotationXYZMatrixM( matrix , 0 , 0 , DegreeToRadian(_rotation)+direction );
 
-
-	ss_matrix.Translation( _position.x, _position.y, 0.0f );
-	ss_matrix.RotationXYZ( DegreeToRadian(0) ,
-						   DegreeToRadian(0) ,
-						   DegreeToRadian(_rotation)+direction );
-
-	ss_matrix.Scaling( _size.x, _size.y, 1.0f );
-    ss_matrix.popMatrix( matrix );
+    ScaleMatrixM(  matrix , _size.x, _size.y, 1.0f );
 
 	SsFColor fcolor;
 	fcolor.fromARGB( _color.toARGB() );
 	fcolor.a = fcolor.a * this->alpha;
 
-	//glEnable(GL_TEXTURE_2D);
+
+	SsVector2 pivot = SsVector2( dispCell->cell->pivot.x ,dispCell->cell->pivot.y);
+
+	pivot.x = pivot.x * dispCell->cell->size.x;
+	pivot.y = pivot.y * dispCell->cell->size.y;
+
+	SsVector2 dispscale = dispCell->cell->size;
 
 
-	SsVector2 pivot = SsVector2(dispCell->pivot.x,dispCell->pivot.y);
-	pivot*=dispCell->size;
-	SsVector2 dispscale = dispCell->size;
-
-
-	glPushMatrix();
-
-	// update で計算しておいた行列をロード
-	glLoadMatrixf(matrix);
-
-	DrawSprite2(  0 , 0 ,
-				dispscale.x , dispscale.y ,  pivot,
+	SsCurrentRenderer::getRender()->renderSpriteSimple(
+		matrix,
+		dispscale.x , dispscale.y ,  pivot,
 				dispCell->uvs[0],
 				dispCell->uvs[3], fcolor );
 
-	glPopMatrix();
-
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -708,12 +680,42 @@ void	SsEffectRenderer::update(float delta)
 //------------------------------------------------------------------------------
 void	SsEffectRenderer::draw()
 {
+	SsCurrentRenderer::getRender()->renderSetup();					
+
+	foreach( std::list<SsEffectDrawBatch*> , drawBatchList , e )
+	{
+		//セットアップ
+		if ( (*e)->dispCell )
+		{
+			switch( (*e)->blendType )
+			{
+				case SsRenderBlendType::Mix:
+					SsCurrentRenderer::getRender()->SetAlphaBlendMode(SsBlendType::mix);					
+					break;
+				case SsRenderBlendType::Add:
+					SsCurrentRenderer::getRender()->SetAlphaBlendMode(SsBlendType::add);					
+					break;
+			}
+		}
+
+		foreach( std::list<SsEffectRenderAtom*> , (*e)->drawlist , e2 )
+		{
+			if ( (*e2) )
+			{
+				if ( !(*e2)->m_isLive ) continue;
+				if ( (*e2)->_life <=0.0f ) continue;
+
+				(*e2)->draw(this);
+			}
+		}
+
+	}
+
+
+
 #if 0
 	//if (!m_isPlay) return;
 	glDisableClientState( GL_COLOR_ARRAY );
-
-
-
 
 	BOOST_FOREACH( SsEffectDrawBatch* e , drawBatchList )
 	{
@@ -811,10 +813,8 @@ void	SsEffectRenderer::clearUpdateList()
 	createlist.clear();
 
 	foreach( std::list<SsEffectDrawBatch*> , drawBatchList , e )
-//	BOOST_FOREACH( SsEffectDrawBatch* e , drawBatchList )
 	{
 		(*e)->drawlist.clear();
-//		e->drawlist.clear();
 	}
 
 	drawBatchList.clear();
@@ -827,10 +827,6 @@ void	SsEffectRenderer::clearUpdateList()
 
 void    SsEffectRenderer::reload()
 {
-
-
-	//SsOpenGLCriticalSection cs;
-
 	clearUpdateList();
 
 	//座標操作のためのルートノードを作成する
@@ -891,17 +887,6 @@ void	SsEffectRenderer::setLoop(bool flag)
 	m_isLoop = flag;
 }
 
-void 	SsEffectRenderer::debugDraw()
-{
-
-	//if ( renderunitRoot)
-	{
-		for ( size_t i = 0 ; i <  updatelist.size() ; i++ )
-		{
-			updatelist[i]->debugdraw();
-		}
-	}
-}
 
 
 

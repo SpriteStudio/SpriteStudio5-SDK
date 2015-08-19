@@ -98,6 +98,7 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 			{
 				SsEffectFile* f = sspj->findEffect( p->refEffectName );
 				SsEffectRenderer* er = new SsEffectRenderer();
+				er->setCellmapManager( this->curCellMapManager );
 				er->setEffectData( &f->effectData );
 				er->reload();
 				er->stop();
@@ -277,6 +278,10 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 	SsRefCell cell;
 	GetSsRefCell( leftkey , cell );
 
+	getCellValue(	this->curCellMapManager ,
+					cell.mapid , cell.name , v );
+
+/*
 	SsCelMapLinker* l = this->curCellMapManager->getCellMapLink( cell.mapid );
 	v.cell = l->findCell( cell.name );
 
@@ -293,7 +298,7 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 	}
 
 	calcUvs( &v );
-
+*/
 }
 
 //インスタンスアニメデータ
@@ -941,11 +946,11 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 {
 	if ( state && state->refEffect )
 	{
-		float fps = (float)state->refEffect->getCurrentFPS();
+//		float fps = (float)state->refEffect->getCurrentFPS();
 		// 1 frameのsec * Stateのframeの変化値
-		float f = (1.0f / fps) * frameDelta;				
+//		float f = (1.0f / fps) * frameDelta;				
 
-		state->refEffect->update( f );
+		state->refEffect->update( frameDelta );
 		state->refEffect->play();
 	}
 }
@@ -1170,7 +1175,11 @@ void	SsAnimeDecoder::draw()
 		if ( state->refAnime )
 		{
 			state->refAnime->draw();
-		}else{
+		}else if ( state->refEffect )
+		{
+			state->refEffect->draw();
+		}else
+		{
 			SsCurrentRenderer::getRender()->renderPart(state);
 		}
 	}

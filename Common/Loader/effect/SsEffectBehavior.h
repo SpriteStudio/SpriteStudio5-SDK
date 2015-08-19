@@ -6,7 +6,7 @@
 #include "ssvalue.h"
 
 class SsEffectElementBase;
-
+class SsEffectRenderer;
 
 class SsEffectBehavior
 {
@@ -40,7 +40,7 @@ public:
 	void	EffectElementLoader(ISsXmlArchiver* ar);
 
 	//エフェクトデータのセットアップ
-	void	initalize(SsEffectRenderEmitter* emmiter){}
+	void	initalize( SsEffectRenderEmitter* emmiter){}
 	void	updateEmmiter(SsEffectRenderEmitter* emmiter){}
 	void	initializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle ){}
 	void	updateParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle ){}

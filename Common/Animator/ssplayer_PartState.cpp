@@ -2,7 +2,7 @@
 #include "ssplayer_animedecode.h"
 #include "ssplayer_PartState.h"
 
-SsPartState::SsPartState() : refAnime(0), index(-1), parent(nullptr), noCells(false), alphaBlendType(SsBlendType::invalid) {init();}
+SsPartState::SsPartState() : refAnime(0), index(-1), parent(nullptr), noCells(false), alphaBlendType(SsBlendType::invalid),	refEffect(0) {init();}
 
 SsPartState::~SsPartState(){
 	destroy();
@@ -15,6 +15,11 @@ void	SsPartState::destroy()
 	{
 		delete refAnime;
 		refAnime = 0;
+	}
+	if ( refEffect )
+	{
+		delete refEffect;
+		refEffect = 0;
 	}
 }
 
@@ -50,6 +55,7 @@ void	SsPartState::init()
 	inheritRates = 0; 
 	
 	boundingRadius = 0;
+
 }
 
 

@@ -71,9 +71,52 @@ SsCelMapLinker*	SsCellMapList::getCellMapLink( const SsString& name )
 	SsCelMapLinker* l = CellMapDic[name];
 	if ( l != 0 ) return l;
 
+	std::vector<SsString> slist;
+	split_string( name , '.' , slist );
+	if ( slist.size() > 0 )
+	{
+		l = CellMapDic[slist[0]];
+		if ( l != 0 ) return l;
+	}
+
 	return 0;
 }
 
+
+void getCellValue( SsCelMapLinker* l, SsString& cellName , SsCellValue& v )
+{
+	v.cell = l->findCell( cellName );
+
+	v.filterMode = l->cellMap->filterMode;
+	v.wrapMode = l->cellMap->wrapMode;
+
+	if ( l->tex )
+	{
+		v.texture = l->tex;
+	}
+	else
+	{
+		v.texture = 0;
+	}
+
+	calcUvs( &v );
+}
+
+void getCellValue( SsCellMapList* cellList, SsString& cellMapName , SsString& cellName , SsCellValue& v )
+{
+	SsCelMapLinker* l = cellList->getCellMapLink( cellMapName );
+	getCellValue( l , cellName , v );
+
+
+}
+
+void getCellValue( SsCellMapList* cellList, int cellMapid , SsString& cellName , SsCellValue& v )
+{
+	SsCelMapLinker* l = cellList->getCellMapLink( cellMapid );
+	getCellValue( l , cellName , v );
+
+
+}
 
 void calcUvs( SsCellValue* cellv )
 {
