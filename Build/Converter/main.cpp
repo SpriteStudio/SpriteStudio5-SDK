@@ -574,7 +574,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 //						break;
 //					}
 //				}
-				
+
 				// パーツごとのデータを出力する
 				Lump* frameData = Lump::set("ss::ss_u16[]", true);
 				frameDataIndexArray->add(frameData);
@@ -586,7 +586,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				foreach(std::list<SsPartState*>, partList, it)
 				{
 					const SsPartState* state = *it;
-					
+
 					//セルに設定された原点補正を取得
 					SsVector2 pivot;
 					pivot.x = 0;

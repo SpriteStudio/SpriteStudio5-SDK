@@ -422,7 +422,8 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 	state->inheritRates = part->inheritRates;
 	if ( anime == 0 ){
 		IdentityMatrix( state->matrix );
-		return ;
+		state->hide = true;
+		return;
 	}
 
 	// 親の継承設定を引用する設定の場合、ここで参照先を親のものに変えておく。
@@ -452,7 +453,6 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 	state->is_vertex_transform = false;
 	state->is_color_blend = false;
 	state->alphaBlendType = part->alphaBlendType;
-
 
 	bool hidekey_find = false;
 
