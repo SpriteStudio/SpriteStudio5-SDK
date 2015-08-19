@@ -1056,7 +1056,9 @@ void drawScissor(NVGcontext* vg, float x, float y, float t)
 void renderDemo(NVGcontext* vg, float mx, float my, float width, float height,
 				float t, int blowup, DemoData* data)
 {
-#if 0
+
+
+#if 1
 	float x,y,popy;
 
 	drawEyes(vg, width - 250, 50, 150, 100, mx, my, t);

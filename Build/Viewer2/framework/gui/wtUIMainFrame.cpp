@@ -9,6 +9,7 @@
 
 #define NANOVG_GL2_IMPLEMENTATION
 #include "../../nanovg/nanovg_gl.h"
+#include "../../nanovg/nanovg_gl_utils.h"
 
 #include "../../nanovg/demo.h"
 #include "../../nanovg/perf.h"
@@ -102,17 +103,59 @@ void	MouseScrollCB(  GLFWwindow* window, double x , double y )
 
 
 
+void renderPattern(NVGcontext* vg, NVGLUframebuffer* fb, float t, float pxRatio)
+{
+	int winWidth, winHeight;
+	int fboWidth, fboHeight;
+	int pw, ph, x, y;
+	float s = 20.0f;
+	float sr = (cosf(t)+1)*0.5f;
+	float r = s * 0.6f * (0.2f + 0.8f * sr);
+
+	if (fb == NULL) return;
+
+	nvgImageSize(vg, fb->image, &fboWidth, &fboHeight);
+	winWidth = (int)(fboWidth / pxRatio);
+	winHeight = (int)(fboHeight / pxRatio);
+
+	// Draw some stull to an FBO as a test
+	nvgluBindFramebuffer(fb);
+	glViewport(0, 0, fboWidth, fboHeight);
+	glClearColor(0, 0, 0, 0);
+	glClear(GL_COLOR_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+	nvgBeginFrame(vg, winWidth, winHeight, pxRatio);
+
+	pw = (int)ceilf(winWidth / s);
+	ph = (int)ceilf(winHeight / s);
+
+	nvgBeginPath(vg);
+	for (y = 0; y < ph; y++) {
+		for (x = 0; x < pw; x++) {
+			float cx = (x+0.5f) * s;
+			float cy = (y+0.5f) * s;
+			nvgCircle(vg, cx,cy, r);
+		}
+	}
+	nvgFillColor(vg, nvgRGBA(220,160,0,200));
+	nvgFill(vg);
+
+	nvgEndFrame(vg);
+	nvgluBindFramebuffer(NULL);
+}
 int	wtUIMainFrame::start()
 {
 	singletonMainFrame = this;
 	this->setPause(false);
 	this->setShow(true);
 
+	NVGLUframebuffer* fb = NULL;
 	GLFWwindow* window;
-	//DemoData data;
+	DemoData data;
 	vg = NULL;
-	PerfGraph fps;
+	PerfGraph fps,cpuGraph;
 	double prevt = 0;
+	float pxRatio;
+
 
 	if (!glfwInit()) {
 		printf("Failed to init GLFW.");
@@ -120,6 +163,7 @@ int	wtUIMainFrame::start()
 	}
 
 	initGraph(&fps, GRAPH_RENDER_FPS, "Frame Time");
+	initGraph(&cpuGraph, GRAPH_RENDER_MS, "CPU Time");
 
 	glfwSetErrorCallback(errorcb);
 
@@ -175,10 +219,20 @@ int	wtUIMainFrame::start()
 		printf("Could not init nanovg.\n");
 		return -1;
 	}
-/*
+
 	if (loadDemoData(vg, &data) == -1)
 		return -1;
-*/
+
+	int winWidth, winHeight;
+	int fbWidth, fbHeight;
+	glfwGetWindowSize(window, &winWidth, &winHeight);
+	glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+	pxRatio = (float)fbWidth / (float)winWidth;
+	fb = nvgluCreateFramebuffer(vg, (int)(100*pxRatio), (int)(100*pxRatio));
+	if (fb == NULL) {
+		printf("Could not create FBO.\n");
+		//return -1;
+	}
 
 	//ƒtƒHƒ“ƒg‚Ì“Ç‚Ýž‚Ý
 	this->fontIcons = nvgCreateFont(vg, "icons", "./example/entypo.ttf");
@@ -244,11 +298,37 @@ int	wtUIMainFrame::start()
 
 		//renderDemo(vg, mx,my, winWidth,winHeight, t, blowup, &data);
 		renderGraph(vg, 310,0, &fps);
+		renderGraph(vg, 5+200+315,0, &cpuGraph);
 
 		this->execute();
 		this->execdraw();
 
+		// Use the FBO as image pattern.
+		if (fb != NULL) {
+			NVGpaint img = nvgImagePattern(vg, 0, 0, 100, 100, 0, fb->image, NVG_REPEATX|NVG_REPEATY, 1.0f);
+			nvgSave(vg);
+
+			for (int i = 0; i < 20; i++) {
+				nvgBeginPath(vg);
+				nvgRect(vg, 10 + i*30,10, 10, winHeight-20);
+				nvgFillColor(vg, nvgHSLA(i/19.0f, 0.5f, 0.5f, 255));
+				nvgFill(vg);
+			}
+
+			nvgBeginPath(vg);
+			nvgRoundedRect(vg, 140 + sinf(t*1.3f)*100, 140 + cosf(t*1.71244f)*100, 250, 250, 20);
+			nvgFillPaint(vg, img);
+			nvgFill(vg);
+			nvgStrokeColor(vg, nvgRGBA(220,160,0,255));
+			nvgStrokeWidth(vg, 3.0f);
+			nvgStroke(vg);
+
+			nvgRestore(vg);
+		}
+
 		nvgEndFrame(vg);
+		//cpuTime = glfwGetTime() - t;
+		//updateGraph(&cpuGraph, cpuTime);
 /*
 		if (screenshot) {
 			screenshot = 0;

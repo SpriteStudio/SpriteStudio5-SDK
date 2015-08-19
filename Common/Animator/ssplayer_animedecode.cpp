@@ -437,6 +437,7 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 	state->init();
 	state->inheritRates = part->inheritRates;
 	if ( anime == 0 ){
+		state->hide = true;
 		IdentityMatrix( state->matrix );
 		return ;
 	}
