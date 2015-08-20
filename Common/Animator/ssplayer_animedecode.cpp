@@ -1136,7 +1136,9 @@ void	SsAnimeDecoder::draw()
 	{
 		SsPartState* state = (*e);
 
-		if ( state->refAnime )
+		if (state->hide)continue;
+
+		if (state->refAnime)
 		{
 			state->refAnime->draw();
 		}else{
