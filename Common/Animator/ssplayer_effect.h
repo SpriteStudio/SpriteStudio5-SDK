@@ -253,8 +253,6 @@ public:
 	//----------------------------------------------------------------------
 	virtual bool	genarate( SsEffectRenderer* render );
 
-
-
 	virtual void	update(float delta);
 	virtual void	count(){ particleCount = 0 ; }
 
