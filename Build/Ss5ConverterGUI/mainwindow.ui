@@ -147,6 +147,32 @@
      <string>sspjファイルをドラッグ＆ドロップするとファイルが追加されます。</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_listload">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>330</y>
+      <width>131</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>List Load</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_listsave">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>330</y>
+      <width>131</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>List Save</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

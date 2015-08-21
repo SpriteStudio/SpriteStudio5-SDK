@@ -7,6 +7,8 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QDir>
+#include <QFileDialog>
+#include <QTextStream>
 
 namespace Ui {
 class MainWindow;
@@ -37,6 +39,8 @@ private:
 private slots:
     void processErrOutput();
     void processFinished( int exitCode, QProcess::ExitStatus exitStatus);
+    void on_pushButton_listload_clicked();
+    void on_pushButton_listsave_clicked();
 };
 
 #endif // MAINWINDOW_H
