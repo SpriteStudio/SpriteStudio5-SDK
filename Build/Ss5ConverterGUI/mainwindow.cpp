@@ -239,3 +239,61 @@ void MainWindow::processFinished( int exitCode, QProcess::ExitStatus exitStatus)
     }
 
 }
+
+//リストの読み込み
+void MainWindow::on_pushButton_listload_clicked()
+{
+    QFileDialog::Options options;
+    QString strSelectedFilter;
+    QString fileName;
+    fileName = QFileDialog::getOpenFileName(this, tr("select list File"), ".", tr("text(*.txt)"), &strSelectedFilter, options);
+
+    if ( fileName != "" )
+    {
+        //リストクリア
+        ui->listWidget->clear();
+
+        //読み込んだファイルをリストに設定
+        QFile file(fileName);
+
+        if (!file.open(QIODevice::ReadOnly))//読込のみでオープンできたかチェック
+        {
+            return;
+        }
+
+        QTextStream in(&file);
+        while ( !in.atEnd() ) {
+            QString str = in.readLine();//1行読込
+            ui->listWidget->addItem(str);
+        }
+    }
+
+}
+
+//リストの保存
+void MainWindow::on_pushButton_listsave_clicked()
+{
+    QFileDialog::Options options;
+    QString strSelectedFilter;
+    QString fileName;
+    fileName = QFileDialog::getSaveFileName(this, tr("save list File"), ".", tr("text(*.txt)"), &strSelectedFilter, options);
+
+    if ( fileName != "" )
+    {
+        //読み込んだファイルをリストに設定
+        QFile file(fileName);
+
+        if (!file.open(QIODevice::WriteOnly))//読込のみでオープンできたかチェック
+        {
+            return;
+        }
+
+        QTextStream out(&file);
+        int i;
+        for ( i = 0; i < ui->listWidget->count(); i++ )
+        {
+            QString str = ui->listWidget->item(i)->text();
+            out << str << endl; //書込み
+        }
+    }
+}
