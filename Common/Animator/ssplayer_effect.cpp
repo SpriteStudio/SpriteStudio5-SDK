@@ -8,6 +8,7 @@
 #include "ssplayer_macro.h"
 #include "ssplayer_matrix.h"
 #include "ssplayer_render.h"
+#include "ssplayer_effectfunction.h"
 
 
 #if 0
@@ -154,7 +155,8 @@ SsEffectRenderAtom* SsEffectRenderer::CreateAtom( unsigned int seed , SsEffectRe
 		p->setMySeed( seed );
 		p->TrushRandom( em_pool_count%9 );
 
-		p->data->behavior.initalize(p);
+		//p->data->behavior.initalize(p);
+		SsEffectFunctionExecuter::initalize( &p->data->behavior , p );
 
 		//セルデータの検索とセット
 		//オリジナルでは上記initializeでやっているがクラス階層の関係からこちらでやる
@@ -248,7 +250,8 @@ void	SsEffectRenderEmitter::Initialize()
 
 		if (this->data->GetMyBehavior())
 		{
-			this->data->GetMyBehavior()->initalize( this );
+			//this->data->GetMyBehavior()->initalize( this );
+			SsEffectFunctionExecuter::initalize( this->data->GetMyBehavior() , this );
 		}
         intervalleft = this->interval;
 	}
@@ -328,7 +331,9 @@ void	SsEffectRenderEmitter::update(float delta)
 	}
 	if (this->data->GetMyBehavior())
 	{
-		this->data->GetMyBehavior()->updateEmmiter(this);
+//		this->data->GetMyBehavior()->updateEmmiter(this);
+		SsEffectFunctionExecuter::initalize( this->data->GetMyBehavior() , this );
+
 	}
 
 	if ( this->myBatchList )
@@ -372,7 +377,9 @@ void	SsEffectRenderParticle::Initialize()
 		this->refBehavior = parentEmitter->data->GetMyBehavior();
 		if ( refBehavior )
 		{
-			 refBehavior->initializeParticle( parentEmitter , this );
+			 //refBehavior->initializeParticle( parentEmitter , this );
+			 SsEffectFunctionExecuter::initializeParticle( refBehavior , parentEmitter , this );
+
 		}
 	}
 
@@ -437,7 +444,8 @@ void	SsEffectRenderParticle::update(float delta)
 
 		if ( refBehavior )
 		{
-			 refBehavior->updateParticle( parentEmitter , this );
+			 //refBehavior->updateParticle( parentEmitter , this );
+			 SsEffectFunctionExecuter::updateParticle( refBehavior , parentEmitter , this );
 		}
 
 		updateForce( delta );

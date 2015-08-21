@@ -29,6 +29,7 @@ ADD_LIBRARY(ssloader
 ../Common/loader/effect/SsEffectBehavior.cpp
 ../Common/loader/effect/SsEffectBehavior.h
 ../Common/loader/effect/SsEffectElement.h
+../Common/loader/effect/SsEffectElement.cpp
 ../Common/loader/ssstring_uty.cpp 
 ../Common/loader/ssarchiver.cpp 
 ../Common/loader/ssarchiver.h 
@@ -59,6 +60,8 @@ ADD_LIBRARY(ssAnimater
 ../Common/Animator/ssplayer_matrix.h
 ../Common/Animator/ssplayer_effect.cpp
 ../Common/Animator/ssplayer_effect.h
+../Common/Animator/ssplayer_effectfunction.cpp
+../Common/Animator/ssplayer_effectfunction.h
 ../Common/Animator/MersenneTwister.h
 ../Common/Animator/ssplayer_animedecode.cpp
 ../Common/Animator/ssplayer_animedecode.h)

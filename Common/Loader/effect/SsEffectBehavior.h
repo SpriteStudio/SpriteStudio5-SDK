@@ -11,9 +11,7 @@ class SsEffectRenderer;
 class SsEffectBehavior
 {
 public:
-
 	std::vector<SsEffectElementBase*> plist;
-
 
 public:
     SsCell*							refCell;
@@ -39,14 +37,13 @@ public:
 
 	void	EffectElementLoader(ISsXmlArchiver* ar);
 
+/*
 	//エフェクトデータのセットアップ
 	void	initalize( SsEffectRenderEmitter* emmiter){}
 	void	updateEmmiter(SsEffectRenderEmitter* emmiter){}
 	void	initializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle ){}
 	void	updateParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle ){}
-
-
-
+*/
 
 
 };

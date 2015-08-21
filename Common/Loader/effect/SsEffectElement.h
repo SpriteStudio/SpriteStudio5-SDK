@@ -13,6 +13,31 @@ enum EffectPartType
 };
 
 
+//命令種別
+namespace SsEffectFunctionType
+{
+	enum enum_
+	{
+		Base,
+		Basic	,
+		RndSeedChange , 
+		Delay,
+		Gravity,
+		Position,
+		TransPosition,
+		Rotation,
+		TransRotation,
+		TransSpeed,
+		TangentialAcceleration,
+		InitColor,
+		TransColor,
+		AlphaFade,
+		Size,
+		TransSize,
+		PointGravity,
+		TurnToDirectionEnabled,
+	};
+}
 
 
 class SsCell;
@@ -111,13 +136,7 @@ template<> bool VarianceValue<SsU8Color>::inputString( SsString _value , SsStrin
 	return true;
 }
 
-/*
-template<> bool VarianceValue<SsVector2>::inputString( SsString _value , SsString _subvalue )
-{ 
-	
-	return true;
-}
-*/
+
 
 
 class SsEffectRenderEmitter;
@@ -127,18 +146,18 @@ class SsEffectRenderParticle;
 class   SsEffectElementBase 
 {
 public:
-	SsString            myName;
-	SsString			myCaption;	//エレメントの説明文とか
+	//SsString            myName;
+	SsEffectFunctionType::enum_ myType;
+
 	int					uid;
 	int					myuid;
 public:
-	SsEffectElementBase(){}
+	SsEffectElementBase() : myType(SsEffectFunctionType::Base) {}
 	virtual ~SsEffectElementBase(){}
 
-#if 0
-	//各コマンドに対応したデバッグ表示用
-	virtual void    ToolGuideDraw(SsEffectRenderEmitter* emmiter){}
+	void	setType(SsEffectFunctionType::enum_ type){ myType = type; } 
 
+#if 0
 	//各部で実装する
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter ) {}
 	virtual void UpdateEmmiter( SsEffectRenderEmitter* emmiter ){}
@@ -150,12 +169,7 @@ public:
 
 	virtual SSSERIALIZE_BLOCK
 	{
-/*
-		SSAR_DECLARE( myName );
-		SSAR_DECLARE( myCaption );
-		SSAR_DECLARE( uid );
-		SSAR_DECLARE( myuid );
-*/
+
 	}
 
 };
@@ -167,15 +181,15 @@ public:
 class  ParticleElementBasic  : public SsEffectElementBase
 {
 public:
-	int		maximumParticle;
+	int			maximumParticle;
 	f32VValue	speed;
 	i32VValue 	lifespan;
-	float	angle;
-	float	angleVariance;
-	int		interval;
-	int		lifetime;
-	int		attimeCreate;
-    int		priority;
+	float		angle;
+	float		angleVariance;
+	int			interval;
+	int			lifetime;
+	int			attimeCreate;
+    int			priority;
 
 public:
 	ParticleElementBasic()
@@ -189,11 +203,11 @@ public:
 				attimeCreate(1),
                 priority(64)
 	{
+		setType( SsEffectFunctionType::Basic );
 	}
 
 	virtual ~ParticleElementBasic(){}
 /*
-	virtual void ToolGuideDraw(SsEffectRenderEmitter* emmiter);
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter );
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle ){}
@@ -225,7 +239,7 @@ public:
 
 		:	Seed( 0 )
 	{
-
+		setType( SsEffectFunctionType::RndSeedChange );
 	}
 	virtual ~ParticleElementRndSeedChange(){}
 /*
@@ -251,6 +265,7 @@ public:
 	ParticleElementDelay()
 		:	DelayTime( 0 )
 	{
+		setType( SsEffectFunctionType::Delay );
 	}
 	virtual ~ParticleElementDelay(){}
 /*
@@ -284,6 +299,7 @@ public:
 	ParticleElementGravity()
         : Gravity(	0	,	-3.0f	)
     {
+		setType( SsEffectFunctionType::Gravity );
 
 	}
 	virtual ~ParticleElementGravity(){}
@@ -310,6 +326,7 @@ public:
 	ParticleElementPosition()
 		: OffsetX(0,0),OffsetY(0,0)
 	{
+		setType( SsEffectFunctionType::Position );
 	}
 	virtual ~ParticleElementPosition(){}
 /*
@@ -336,6 +353,8 @@ public:
 	ParticleElementTransPosition()
 		: OffsetX(0,0),OffsetY(0,0)
 	{
+		setType( SsEffectFunctionType::TransPosition );
+
 	}
 	virtual ~ParticleElementTransPosition(){}
 	/*
@@ -363,6 +382,8 @@ public:
 		:  Rotation( 0 ,0 ),
 		   RotationAdd(0,0)
 	{
+		setType( SsEffectFunctionType::TransRotation );
+
 	}
 	virtual ~ParticleElementRotation(){}
 /*
@@ -392,6 +413,8 @@ public:
 		:  	RotationFactor( 0 ) ,
 			EndLifeTimePer( 75 )
 	{
+		setType( SsEffectFunctionType::TransRotation );
+
 	}
 	virtual ~ParticleElementRotationTrans(){}
 /*
@@ -417,7 +440,7 @@ public:
 	ParticleElementTransSpeed()
         :	Speed( 0,0 )
 	{
-
+		setType( SsEffectFunctionType::TransSpeed );
 	}
 	virtual ~ParticleElementTransSpeed(){}
 /*
@@ -443,6 +466,7 @@ public:
 	ParticleElementTangentialAcceleration()
 			: Acceleration( 0, 0 )
 	{
+		setType( SsEffectFunctionType::TangentialAcceleration );
 
 	}
 	virtual ~ParticleElementTangentialAcceleration(){}
@@ -469,6 +493,7 @@ public:
 	ParticleElementInitColor()
 		: Color( SsU8Color(255,255,255,255) , SsU8Color(255,255,255,255) )
 	{
+		setType( SsEffectFunctionType::InitColor );
 	}
 	virtual ~ParticleElementInitColor(){}
 /*
@@ -492,6 +517,7 @@ public:
 	ParticleElementTransColor()
 		: Color( SsU8Color(255,255,255,255) , SsU8Color(255,255,255,255) )
 	{
+		setType( SsEffectFunctionType::TransColor );
 	}
 	virtual ~ParticleElementTransColor(){}
 /*
@@ -518,6 +544,7 @@ public:
 	ParticleElementAlphaFade()
 		: disprange(25,75)
 	{
+		setType( SsEffectFunctionType::AlphaFade );
 	}
 	virtual ~ParticleElementAlphaFade(){}
 /*
@@ -547,6 +574,7 @@ public:
 			SizeY( 1.0f , 1.0f ),
 			ScaleFactor( 1.0f , 1.0f )
 	{
+		setType( SsEffectFunctionType::Size );
 	}
 	virtual ~ParticleElementSize(){}
 /*
@@ -580,6 +608,7 @@ public:
 			SizeY( 1.0f , 1.0f ),
 			ScaleFactor( 1.0f , 1.0f )
 	{
+		setType( SsEffectFunctionType::TransSize );
 	}
 	virtual ~ParticleElementTransSize(){}
 /*
@@ -610,6 +639,7 @@ public:
 	ParticlePointGravity()
 		: Position( 0 , 0 ) ,Power(0.0f)
 	{
+		setType( SsEffectFunctionType::Gravity );
 	}
 	virtual ~ParticlePointGravity(){}
 
@@ -641,7 +671,7 @@ public:
 
 	ParticleTurnToDirectionEnabled()
 	{
-
+		setType( SsEffectFunctionType::TurnToDirectionEnabled );
 	}
 	virtual ~ParticleTurnToDirectionEnabled(){}
 /*
