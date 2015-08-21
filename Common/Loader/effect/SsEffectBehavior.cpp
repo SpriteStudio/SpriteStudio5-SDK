@@ -12,7 +12,7 @@ SsEffectElementBase*	SsEffectBehavior::Factory(const char* name , XMLElement* e 
 	if ( strcmp( name , "Delay" ) == 0 ) ret = new ParticleElementDelay();
 	if ( strcmp( name , "Gravity" ) == 0 ) ret = new ParticleElementGravity();
 	if ( strcmp( name , "init_position" ) == 0 ) ret = new ParticleElementPosition();
-	if ( strcmp( name , "trans_position" ) == 0 ) ret = new ParticleElementTransPosition();
+//	if ( strcmp( name , "trans_position" ) == 0 ) ret = new ParticleElementTransPosition();
 	if ( strcmp( name , "init_rotation" ) == 0 ) ret = new ParticleElementRotation();
 	if ( strcmp( name , "trans_rotation" ) == 0 ) ret = new ParticleElementRotationTrans();
 	if ( strcmp( name , "trans_speed" ) == 0 ) ret = new ParticleElementTransSpeed();
