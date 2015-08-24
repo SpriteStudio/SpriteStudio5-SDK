@@ -104,19 +104,6 @@ enum {
 	HEAD_FLAG_dontUseMatrixForTransform = 1 << 1,
 };
 
-//パーツ種別定数
-enum
-{
-	PARTTYPE_INVALID = -1,
-	PARTTYPE_NULL,			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
-	PARTTYPE_NORMAL,		// 通常パーツ。領域を持つ。画像は無くてもいい。
-	PARTTYPE_TEXT,			// テキスト(予約　未実装）
-	PARTTYPE_INSTANCE,		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
-	PARTTYPE_ARMATURE,		//
-	PARTTYPE_EFFECT,		// 5.5エフェクトパーツ
-	PARTTYPE_NUM
-};
-
 
 
 
@@ -303,8 +290,11 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 	topLump->add(cellsData);
 	Lump* packDataArray = Lump::set("ss::AnimePackData[]", true);
 	topLump->add(packDataArray);
+	Lump* effectList = Lump::set("ss::EffectList[]", true);
+	topLump->add(effectList);
 	topLump->add(Lump::s16Data((int)cellList->size()));
 	topLump->add(Lump::s16Data((int)proj->animeList.size()));
+	topLump->add(Lump::s16Data((int)proj->effectfileList.size()));
 
 	//セルマップ警告
 	if (proj->cellmapList.size() == 0)
@@ -403,20 +393,45 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			//5.5対応5.3.5に無いパーツ種別がある場合ワーニングを表示する
 			switch (part->type)
 			{
-			case PARTTYPE_NULL:			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
-			case PARTTYPE_NORMAL:		// 通常パーツ。領域を持つ。画像は無くてもいい。
-			case PARTTYPE_INSTANCE:		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
+			case SsPartType::null:			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
+			case SsPartType::normal:		// 通常パーツ。領域を持つ。画像は無くてもいい。
 				partData->add(Lump::s16Data(part->type));
 				break;
-			case PARTTYPE_INVALID:
-			case PARTTYPE_TEXT:			// テキスト(予約　未実装）
-			case PARTTYPE_ARMATURE:		//
-			case PARTTYPE_EFFECT:		// 5.5エフェクトパーツ
+			case SsPartType::instance:		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
+				//参照アニメのポインタが無い場合はNULLパーツになる。
+				{
+					//後で解決する----------------------
+					SsAnimePack* refpack = proj->findAnimationPack((const SsString)part->refAnimePack);
+					SsAnimation* refanime = refpack->findAnimation((const SsString)part->refAnime);
+					//----------------------------------
+					if (refanime == NULL)
+					{
+						partData->add(Lump::s16Data(SsPartType::null));
+						std::cerr << "ワーニング：参照のないインスタンスパーツがある: " << animePack->name << ".ssae " << part->name << "\n";
+					}
+					else
+					{
+						partData->add(Lump::s16Data(part->type));
+					}
+				}
+				break;
+			case SsPartType::effect:		// 5.5エフェクトパーツ
+				//参照エフェクト名が空の場合はNULLパーツになる。
+				if (part->refEffectName == "")
+				{
+					partData->add(Lump::s16Data(SsPartType::null));
+					//未実装　ワーニングを表示しNULLパーツにする
+					std::cerr << "ワーニング：参照のないエフェクトパーツがある: " << animePack->name << ".ssae " << part->name << "\n";
+				}
+				else
+				{
+					partData->add(Lump::s16Data(part->type));
+				}
+				break;
 			default:
-				//未実装　ワーニングを表示しNULLパーツにする
+				//未対応パーツ　ワーニングを表示しNULLパーツにする
 				std::cerr << "ワーニング：未対応のパーツ種別が使われている: " << animePack->name << ".ssae " << part->name << "\n";
-
-				partData->add(Lump::s16Data(PARTTYPE_NULL));
+				partData->add(Lump::s16Data(SsPartType::null));
 				break;
 			}
 			partData->add(Lump::s16Data(part->boundsType));
@@ -434,7 +449,17 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 //				partData->add(Lump::s16Data((int)str.length()));				//文字列のサイズ
 				partData->add(Lump::stringData(str));							//文字列
 			}
-
+			//エフェクト名
+			if (part->refEffectName == "")
+			{
+				const SsString str = "";
+				partData->add(Lump::stringData(str));							//文字列
+			}
+			else
+			{
+				const SsString str = part->refEffectName;
+				partData->add(Lump::stringData(str));							//文字列
+			}
 
 		}
 
@@ -984,8 +1009,19 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			animeData->add(Lump::s16Data(decoder.getAnimeEndFrame()));
 			animeData->add(Lump::s16Data(anime->settings.fps));
 			animeData->add(Lump::s16Data(label_idx));				//ラベルデータ数
+
 		}
-		
+		//エフェクトデータ
+		for (int effectIndex = 0; effectIndex < (int)proj->effectfileList.size(); effectIndex++)
+		{
+			Lump* effectData = Lump::set("ss::Effect");
+			effectList->add(effectData);
+
+			const SsEffectFile* effectPack = proj->effectfileList[effectIndex];
+			effectData->add(Lump::stringData(effectPack->name));	//エフェクト名
+			//			SsEffectModel	   effectData;  //親子構造＋各アトリビュート
+		}
+
 	}
 	
 	return topLump;
