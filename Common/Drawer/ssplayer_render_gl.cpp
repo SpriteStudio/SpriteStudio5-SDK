@@ -113,6 +113,20 @@ void	SsRenderGL::initialize()
 
 void	SsRenderGL::renderSetup()
 {
+	glDisableClientState( GL_COLOR_ARRAY );
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0 );
+
+	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.0);
+
+	glBlendEquation( GL_FUNC_ADD );
+
+/*
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
@@ -120,7 +134,7 @@ void	SsRenderGL::renderSetup()
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_ALPHA_TEST);
 	glAlphaFunc(GL_GREATER, 0.0);
-
+*/
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -174,9 +188,10 @@ void	SsRenderGL::renderSpriteSimple( float matrix[16],
  	float w = width / 2.0f ;
 	float h = height / 2.0f ;
 
-	//glEnable(GL_BLEND);
+	glEnable(GL_BLEND);
 	glBegin(GL_QUADS);
 	glColor4f(color.r, color.g, color.b, color.a);
+//	glColor4f(color.r, 0, 0, color.a);
 
 	glTexCoord2d(uv1.x, uv1.y);
 	glVertex2f( -w - pivot.x ,  h - pivot.y );
