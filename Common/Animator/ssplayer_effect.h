@@ -226,6 +226,10 @@ public:
 		_exsitTime = 0;
 
 		generate_ok = true;
+
+		param_particle = 0;
+		type = EmmiterType::EmmiterTypeNormal;
+
 	}
 
 	SsEffectRenderEmitter(){}

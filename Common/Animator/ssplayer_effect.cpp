@@ -530,7 +530,7 @@ void	SsEffectRenderParticle::draw(SsEffectRenderer* render)
 	if ( this->parentEmitter == NULL  )return;
 	if ( refBehavior == NULL ) return;
 	if ( dispCell == NULL ) return ;
-
+	if ( dispCell->texture == NULL ) return;
 
 	float		matrix[4 * 4];	///< 行列
 	IdentityMatrix( matrix );
@@ -704,6 +704,7 @@ void	SsEffectRenderer::draw()
 					SsCurrentRenderer::getRender()->SetAlphaBlendMode(SsBlendType::add);					
 					break;
 			}
+			SsCurrentRenderer::getRender()->SetTexture( (*e)->dispCell );
 		}
 
 		foreach( std::list<SsEffectRenderAtom*> , (*e)->drawlist , e2 )
@@ -719,62 +720,6 @@ void	SsEffectRenderer::draw()
 
 	}
 
-
-
-#if 0
-	//if (!m_isPlay) return;
-	glDisableClientState( GL_COLOR_ARRAY );
-
-	BOOST_FOREACH( SsEffectDrawBatch* e , drawBatchList )
-	{
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-		glBindTexture(GL_TEXTURE_2D, 0 );
-		glEnable(GL_BLEND);
-		glBlendEquation( GL_FUNC_ADD );
-		glBlendFunc(GL_ONE, GL_ZERO);
-		glEnable(GL_TEXTURE_2D);
-
-		if ( e->dispCell )
-		{
-			switch( e->blendType )
-			{
-				case SsRenderBlendType::Mix:	///< 0 ブレンド（ミックス）
-
-					//プリマルチα前提の式へ変更
-					glBindTexture(GL_TEXTURE_2D,  e->dispCell->map->image->texture->glOrgTexName());
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-					if ( renderTexture )
-					{
-						glBlendFuncSeparateEXT( GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA , GL_ONE , GL_ONE_MINUS_SRC_ALPHA );
-					}else{
-						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-					}
-
-					break;
-				case SsRenderBlendType::Add:	///< 2 加算
-					glBindTexture(GL_TEXTURE_2D,  e->dispCell->map->image->texture->glTexName());
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-					break;
-			}
-
-		}
-
-
-		BOOST_FOREACH( SsEffectRenderAtom* re , e->drawlist )
-		{
-			if ( re )
-			{
-				if ( !re->m_isLive ) continue;
-				if ( re->_life <=0.0f ) continue;
-
-				re->draw(this);
-			}
-		}
-	}
-
-#endif
 
 
 }

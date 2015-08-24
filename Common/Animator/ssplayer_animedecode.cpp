@@ -100,11 +100,11 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 				if ( f )
 				{
 					SsEffectRenderer* er = new SsEffectRenderer();
+					er->setParentAnimeState( &partState[i] );
 					er->setCellmapManager( this->curCellMapManager );
 					er->setEffectData( &f->effectData );
 					er->reload();
 					er->stop();
-					er->setParentAnimeState( &partState[i] );
 
 					partState[i].refEffect = er;
 				}

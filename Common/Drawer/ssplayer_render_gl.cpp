@@ -19,6 +19,8 @@
 #include "ssplayer_render_gl.h"
 #include "ssplayer_shader_gl.h"
 
+#include "ssplayer_cellmap.h"
+
 
 //ISsRenderer*	SsCurrentRenderer::m_currentrender = 0;
 
@@ -167,7 +169,71 @@ void	SsRenderGL::renderSpriteSimple( float matrix[16],
 				dispCell->uvs[0],
 				dispCell->uvs[3], fcolor );
 */
+
+
+ 	float w = width / 2.0f ;
+	float h = height / 2.0f ;
+
+	//glEnable(GL_BLEND);
+	glBegin(GL_QUADS);
+	glColor4f(color.r, color.g, color.b, color.a);
+
+	glTexCoord2d(uv1.x, uv1.y);
+	glVertex2f( -w - pivot.x ,  h - pivot.y );
+
+	glTexCoord2d(uv1.x, uv2.y);
+	glVertex2f( -w - pivot.x  , -h - pivot.y );
+
+	glTexCoord2d(uv2.x, uv2.y);
+	glVertex2f(  w - pivot.x  , -h - pivot.y );
+
+	glTexCoord2d(uv2.x, uv1.y);
+	glVertex2f(  w - pivot.x ,  h - pivot.y );
+	glEnd();
+
 	glPopMatrix();
+
+}
+
+void	SsRenderGL::SetTexture( SsCellValue* cellvalue )
+{
+	int		gl_target = GL_TEXTURE_2D;
+	bool texture_is_pow2 = true;
+
+	if ( cellvalue == 0 ) return ;
+	SsCell * cell = cellvalue->cell;
+	if ( cell == 0 ) return ;
+
+	ISSTexture*	texture = cellvalue->texture;
+	if ( texture == 0 ) return ;
+
+	SsPoint2 texturePixelSize;
+	texturePixelSize.x = cellvalue->texture->getWidth();
+	texturePixelSize.y = cellvalue->texture->getHeight();
+
+	if (cell)
+	{
+		// テクスチャのサイズが2のべき乗かチェック
+		if ( texture->isPow2() )
+		{
+			// 2のべき乗
+			texture_is_pow2 = true;
+			gl_target = GL_TEXTURE_2D;
+		}
+		else
+		{
+			// 2のべき乗ではない:NPOTテクスチャ
+			texture_is_pow2 = false;
+			gl_target = GL_TEXTURE_RECTANGLE_ARB;
+		}
+
+
+		glEnable(gl_target);
+
+		SSTextureGL* tex_gl = (SSTextureGL*)texture;
+		glBindTexture(gl_target, tex_gl->tex);
+
+	}
 
 }
 

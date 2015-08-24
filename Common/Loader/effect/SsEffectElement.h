@@ -24,7 +24,7 @@ namespace SsEffectFunctionType
 		Delay,
 		Gravity,
 		Position,
-		TransPosition,
+		//TransPosition,
 		Rotation,
 		TransRotation,
 		TransSpeed,

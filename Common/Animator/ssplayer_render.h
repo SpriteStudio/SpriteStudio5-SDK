@@ -7,6 +7,7 @@
 
 
 struct SsPartState;
+struct SsCellValue;
 
 class ISsRenderer
 {
@@ -22,6 +23,8 @@ public:
 										const SsFColor& color ) = 0;
 
 	virtual void	SetAlphaBlendMode(SsBlendType::_enum type)=0;
+	virtual void	SetTexture( SsCellValue* cell )=0;
+
 
 };
 
