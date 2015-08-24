@@ -97,15 +97,17 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 			if ( p->type == SsPartType::effect )
 			{
 				SsEffectFile* f = sspj->findEffect( p->refEffectName );
-				SsEffectRenderer* er = new SsEffectRenderer();
-				er->setCellmapManager( this->curCellMapManager );
-				er->setEffectData( &f->effectData );
-				er->reload();
-				er->stop();
-				er->setParentAnimeState( &partState[i] );
+				if ( f )
+				{
+					SsEffectRenderer* er = new SsEffectRenderer();
+					er->setCellmapManager( this->curCellMapManager );
+					er->setEffectData( &f->effectData );
+					er->reload();
+					er->stop();
+					er->setParentAnimeState( &partState[i] );
 
-				partState[i].refEffect = er;
-								
+					partState[i].refEffect = er;
+				}
 			}
 		}
 
