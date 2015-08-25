@@ -68,6 +68,7 @@ void	SampleScene::update(double delta)
 		{
 			m_nowPlayFrame = 0;
 			m_nowPlayFrameD = 0;
+			m_player->restart();
 		}
 	}
 	static float backframe = 0;

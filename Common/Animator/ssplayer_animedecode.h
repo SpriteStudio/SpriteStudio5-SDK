@@ -112,7 +112,7 @@ public:
 	void	setInstancePartsHide(bool hide){
 		instancePartsHide = hide;
 	}
-
+	void	restart();
 
 };
 

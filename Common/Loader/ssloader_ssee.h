@@ -113,11 +113,12 @@ private:
 	SsEffectNode* root;
 
 public:
+	std::vector<SsEffectNode*> nodeList;
 	int			lockRandSeed; 	 // ランダムシード固定値
 	bool    	isLockRandSeed;  // ランダムシードを固定するか否か
 	int			fps;             //
 	SsString	   bgcolor;
-	std::vector<SsEffectNode*> nodeList;
+	SsString			effectName;
 
 public:
 	SsEffectModel() : root(0)
@@ -166,8 +167,6 @@ public:
 };
 
 
-
-
 class SsEffectFile
 {
 public:
@@ -181,11 +180,13 @@ public:
 	{
 		SSAR_DECLARE(name);
 		SSAR_STRUCT_DECLARE( effectData );
+		effectData.effectName = name;
 	}
 
 };
 
 
+class SsProject;
 //!sspjのローダークラスです。
 class ssloader_ssee
 {
@@ -194,7 +195,11 @@ public:
 	virtual ~ssloader_ssee(){}
 
 	static SsEffectFile*	Load(const std::string& filename );
-
+	static void	loadPostProcessing( SsEffectFile* file , SsProject* pj );
 };
+
+
+
+
 
 #endif

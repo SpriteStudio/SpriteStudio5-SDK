@@ -11,66 +11,7 @@
 #include "ssplayer_effectfunction.h"
 
 
-#if 0
-#include "SsPch.h"
-#pragma hdrstop
 
-
-
-//---------------------------------------------------
-//     OpenGL
-//---------------------------------------------------
-#ifdef _WIN32
-#include "lib/glew/glew.h"	// windows では GL_CLAMP_TO_EDGE 定義のために必要。
-#endif
-
-// GLEW
-#include "lib/glew/glew.h"
-#ifdef _WIN32
-#pragma link "lib/glew/glew32.lib"
-#pragma link "lib/glew/glew32_2.lib"
-#endif
-#ifdef __APPLE__
-#pragma link "lib/glew/ssglew.dylib"
-#endif
-
-
-#include "SsOpenGLRender.h"
-
-
-#include "SsCell.h"
-#include "SsCellMap.h"
-#include "SsImage.h"
-#include "SsOpenGLTexture.h"
-
-
-#include "SsPartState.h"
-
-#include "SsMatrix.h"
-
-//-------------------------------------------
-
-
-#include "SsEffect.h"
-#include "SsParticleMethods.h"
-
-
-#include "SsUtility.h"
-
-#include "SsEffectRenderer.h"
-
-/*
-enum SsRenderType{
-    BaseNode,
-	EmmiterNode,
-    ParticleNode,
-};
-*/
-
-#endif
-
-
-//static SsEffectRenderAtom* CreateAtom( unsigned int seed , SsEffectRenderAtom* parent , SsEffectNode* node );
 class SsEffectRenderParticle;
 
 
@@ -169,6 +110,11 @@ SsEffectRenderAtom* SsEffectRenderer::CreateAtom( unsigned int seed , SsEffectRe
 				p->data->behavior.CellMapName ,
 				p->data->behavior.CellName , 
 				p->dispCell ); 
+		}else{
+			DEBUG_PRINTF( "cell not found : %s , %s\n" , 
+				p->data->behavior.CellMapName.c_str(), 
+				p->data->behavior.CellName.c_str()
+				);
 		}
 
 		updatelist.push_back( p );
@@ -331,9 +277,7 @@ void	SsEffectRenderEmitter::update(float delta)
 	}
 	if (this->data->GetMyBehavior())
 	{
-//		this->data->GetMyBehavior()->updateEmmiter(this);
-		SsEffectFunctionExecuter::initalize( this->data->GetMyBehavior() , this );
-
+		SsEffectFunctionExecuter::updateEmmiter( this->data->GetMyBehavior() , this );
 	}
 
 	if ( this->myBatchList )
@@ -535,10 +479,12 @@ void	SsEffectRenderParticle::draw(SsEffectRenderer* render)
 	float		matrix[4 * 4];	///< 行列
 	IdentityMatrix( matrix );
 
-	if ( render->parentState )
+
+	if (render->parentState)
 	{
-		MultiplyMatrix( matrix ,render->parentState->matrix ,matrix ); 
+		memcpy( matrix , render->parentState->matrix , sizeof( float ) * 16 );
 	}
+
 	TranslationMatrixM( matrix , _position.x, _position.y, 0.0f );
 
 	RotationXYZMatrixM( matrix , 0 , 0 , DegreeToRadian(_rotation)+direction );
@@ -566,6 +512,7 @@ void	SsEffectRenderParticle::draw(SsEffectRenderer* render)
 
 }
 
+#if 0
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
@@ -598,6 +545,9 @@ void	SsEffectRenderer::setFrame( float frame )
 	}
 
 }
+#endif
+
+
 //--------------------------------------------------------------------------------------
 //
 //--------------------------------------------------------------------------------------
@@ -711,10 +661,9 @@ void	SsEffectRenderer::draw()
 		{
 			if ( (*e2) )
 			{
-				if ( !(*e2)->m_isLive ) continue;
-				if ( (*e2)->_life <=0.0f ) continue;
-
-				(*e2)->draw(this);
+				if ( (*e2)->m_isLive && (*e2)->_life > 0.0f ){
+					(*e2)->draw(this);
+				}
 			}
 		}
 

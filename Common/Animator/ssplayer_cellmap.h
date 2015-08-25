@@ -86,7 +86,8 @@ private:
 	SsString	CellMapPath;
 
 private:
-	void	add(SsCellMap* cellmap);
+	void	addIndex(SsCellMap* cellmap);
+	void	addMap(SsCellMap* cellmap);
 
 public:
 	SsCellMapList(){}
@@ -96,6 +97,12 @@ public:
 		{
 			delete itr->second;
 		}
+
+		for ( size_t i = 0 ; i < CellMapList.size(); i++ )
+		{
+			delete CellMapList[i];
+		}
+		CellMapList.clear();
 		CellMapDic.clear();
 	}
 
