@@ -36,10 +36,8 @@ void	ssloader_ssee::loadPostProcessing( SsEffectFile* file , SsProject* pj )
 	{
 
 		SsEffectBehavior* beh = &file->effectData.nodeList[i]->behavior;
-		if ( beh->CellMapName == "" )continue;
-
-
 		beh->refCell = 0;
+		if ( beh->CellMapName == "" )continue;
 		SsCellMap* map =pj->findCellMap( beh->CellMapName );
 
 		if ( map )

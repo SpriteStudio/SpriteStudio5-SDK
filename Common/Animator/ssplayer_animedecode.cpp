@@ -1249,6 +1249,7 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 //		float f = (1.0f / fps) * frameDelta;				
 		state->refEffect->update( frameDelta );
 	}
+
 }
 //描画
 void	SsAnimeDecoder::draw()
