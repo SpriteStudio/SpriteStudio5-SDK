@@ -139,7 +139,6 @@ public:
 		p->_backposition = p->_position;
 
 		p->_lifetime   = VarianceCalc( e , source->lifespan.getMinValue() , source->lifespan.getMaxValue() );
-
 		p->_life = source->lifetime;
 		float temp_angle = VarianceCalcFin( e ,  source->angle+eAngle , source->angleVariance/2.0f);
 

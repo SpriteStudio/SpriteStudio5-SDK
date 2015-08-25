@@ -37,49 +37,75 @@ void	SsCellMapList::setCellMapPath(  const SsString& filepath )
 	CellMapPath = filepath;
 }
 
-
 void	SsCellMapList::set(SsProject* proj , SsAnimePack* animepack )
 {
 	clear();
 	setCellMapPath( proj->getImageBasepath() );
 
+//	for ( size_t i = 0 ; i < proj->cellmapNames.size() ; i++ )
 	for ( size_t i = 0 ; i < animepack->cellmapNames.size() ; i++ )
 	{
+//		SsCellMap* cell = proj->findCellMap( proj->cellmapNames[i] );
 		SsCellMap* cell = proj->findCellMap( animepack->cellmapNames[i] );
 		if ( cell==0 )
 		{
 			//THROW_ERROR_MESSAGE( "Not found cellmap"  ); 
 			DEBUG_PRINTF( " Not found cellmap = %s" , animepack->cellmapNames[i].c_str() );
-			SsCellMap* cell = proj->findCellMap( animepack->cellmapNames[i] );
+			//SsCellMap* cell = proj->findCellMap( animepack->cellmapNames[i] );
 		}else{
-			add( cell );
+			addIndex( cell );
 		}
 	}
 
-}
+	for ( size_t i = 0 ; i < proj->cellmapNames.size() ; i++ )
+	{
+		SsCellMap* cell = proj->findCellMap( proj->cellmapNames[i] );
+		if ( cell==0 )
+		{
+			DEBUG_PRINTF( " Not found cellmap = %s" , animepack->cellmapNames[i].c_str() );
+		}else{
+			addMap( cell );
+		}
+	}
 
-void	SsCellMapList::add(SsCellMap* cellmap)
+
+}
+void	SsCellMapList::addMap(SsCellMap* cellmap)
 {
 	SsCelMapLinker* linker = new SsCelMapLinker(cellmap , this->CellMapPath );
 	CellMapDic[ cellmap->name+".ssce" ] = linker ;
+
+}
+
+void	SsCellMapList::addIndex(SsCellMap* cellmap)
+{
+	SsCelMapLinker* linker = new SsCelMapLinker(cellmap , this->CellMapPath );
 	CellMapList.push_back( linker );
 
 }
 
 SsCelMapLinker*	SsCellMapList::getCellMapLink( const SsString& name )
 {
-	SsCelMapLinker* l = CellMapDic[name];
-	if ( l != 0 ) return l;
 
-	std::vector<SsString> slist;
-	split_string( name , '.' , slist );
-	if ( slist.size() > 0 )
+	std::map<SsString,SsCelMapLinker*>::iterator itr = CellMapDic.find(name);
+	if ( itr != CellMapDic.end() )
 	{
-		l = CellMapDic[slist[0]];
-		if ( l != 0 ) return l;
+		return itr->second;
+	}else{
+		std::vector<SsString> slist;
+		split_string( name , '.' , slist );
+		
+		std::map<SsString,SsCelMapLinker*>::iterator itr = CellMapDic.find(slist[0]);
+		if ( itr != CellMapDic.end() )
+		{
+			return itr->second;
+		}else{
+			DEBUG_PRINTF( "CellMapName not found : %s " , name.c_str() );
+		}
 	}
 
 	return 0;
+
 }
 
 

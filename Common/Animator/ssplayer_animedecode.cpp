@@ -27,6 +27,22 @@ SsAnimeDecoder::SsAnimeDecoder() :
 	{
 	}
 
+	
+
+void	SsAnimeDecoder::restart()
+{
+	foreach( std::list<SsPartState*> , sortList , e )
+	{
+		SsPartState* state = (*e);
+		if ( state->refEffect )
+		{
+			state->refEffect->reload();
+			state->refEffect->stop();
+		}
+	}
+
+
+}
 
 
 void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellMapList* cellmap , SsProject* sspj )
@@ -475,6 +491,8 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 
 
 	bool hidekey_find = false;
+	bool hideTriger = false;
+
 
 	if ( !anime->attributes.empty() )
 	{
@@ -527,6 +545,7 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 				case SsAttributeKind::flipv:	///< 上下反転(セルの原点を軸にする)
 					SsGetKeyValue( nowTime , attr , state->vFlip );
 					break;
+#if 1
 				case SsAttributeKind::hide:		///< 非表示
 					{
 						int useTime = SsGetKeyValue( nowTime , attr , state->hide );
@@ -542,6 +561,42 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 						}
 					}
 					break;
+#else
+				case SsAttributeKind::hide:		///< 非表示
+				{
+						int useTime = SsGetKeyValue( nowTime , attr , state->hide );
+
+						// 非表示キーがないか、先頭の非表示キーより手前の場合は常に非表示にする。
+						if ( useTime > nowTime )
+						{
+							state->hide = true;
+						}
+						else
+						{
+							//非表示キーがあり、かつ最初のキーフレームを取得した
+							hidekey_find = true;
+						}
+
+						if (  nowTime == useTime )
+						{
+							bool hide2 = true;
+
+
+							int useTime2 = nowTime -1;
+							if ( nowTime >0 )
+								useTime2 = SsGetKeyValue( useTime2 , attr , hide2 );
+
+							
+							if ( (useTime2 !=useTime) && !state->hide && hide2 )
+							{
+								hideTriger = true;
+							}
+						}
+						break;
+				}
+#endif
+
+
 				case SsAttributeKind::color:	///< カラーブレンド
 					SsGetKeyValue( nowTime , attr , state->colorValue );
 					state->is_color_blend = true;
@@ -712,6 +767,34 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 		}
 
 		updateVertices(part , anime , state);
+	}
+
+
+	if ( part->type == SsPartType::effect )
+	{
+
+		SsString pname = part->refEffectName;
+
+		bool reload = false;
+		SsEffectRenderer * effectRender = state->refEffect;
+
+		if ( effectRender )
+		{
+			if ( state->hide )
+			{
+				effectRender->stop();
+				effectRender->reload();
+			}else{
+				//if ( hideTriger )
+				{
+					effectRender->setSeed( rand()%31 );
+
+//					effectRender->setAnimeFrameOffset( nowtime );
+					effectRender->setLoop(false);
+					effectRender->play();
+				}
+			}
+		}
 	}
 
 
@@ -949,12 +1032,12 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 {
 	if ( state && state->refEffect )
 	{
-//		float fps = (float)state->refEffect->getCurrentFPS();
+		float fps = (float)state->refEffect->getCurrentFPS();
 		// 1 frameのsec * Stateのframeの変化値
 //		float f = (1.0f / fps) * frameDelta;				
 
 		state->refEffect->update( frameDelta );
-		state->refEffect->play();
+		//state->refEffect->play();
 	}
 }
 
@@ -1153,7 +1236,8 @@ void	SsAnimeDecoder::update(float frameDelta)
 
 		if ( part->type == SsPartType::effect)
 		{
-			updateEffect( frameDelta, time , part , anime , &partState[cnt] );
+			updateMatrix( part , anime , &partState[cnt]);
+			updateEffect( frameDelta , time , part , anime , &partState[cnt] );
 		}
 
 		cnt++;

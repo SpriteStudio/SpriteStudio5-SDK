@@ -169,6 +169,11 @@ SsEffectRenderAtom* SsEffectRenderer::CreateAtom( unsigned int seed , SsEffectRe
 				p->data->behavior.CellMapName ,
 				p->data->behavior.CellName , 
 				p->dispCell ); 
+		}else{
+			DEBUG_PRINTF( "cell not found : %s , %s\n" , 
+				p->data->behavior.CellMapName.c_str(), 
+				p->data->behavior.CellName.c_str()
+				);
 		}
 
 		updatelist.push_back( p );
@@ -535,10 +540,12 @@ void	SsEffectRenderParticle::draw(SsEffectRenderer* render)
 	float		matrix[4 * 4];	///< s—ñ
 	IdentityMatrix( matrix );
 
-	if ( render->parentState )
+
+	if (render->parentState)
 	{
-		MultiplyMatrix( matrix ,render->parentState->matrix ,matrix ); 
+		memcpy( matrix , render->parentState->matrix , sizeof( float ) * 16 );
 	}
+
 	TranslationMatrixM( matrix , _position.x, _position.y, 0.0f );
 
 	RotationXYZMatrixM( matrix , 0 , 0 , DegreeToRadian(_rotation)+direction );
@@ -566,6 +573,7 @@ void	SsEffectRenderParticle::draw(SsEffectRenderer* render)
 
 }
 
+#if 0
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
@@ -598,6 +606,9 @@ void	SsEffectRenderer::setFrame( float frame )
 	}
 
 }
+#endif
+
+
 //--------------------------------------------------------------------------------------
 //
 //--------------------------------------------------------------------------------------
@@ -711,10 +722,9 @@ void	SsEffectRenderer::draw()
 		{
 			if ( (*e2) )
 			{
-				if ( !(*e2)->m_isLive ) continue;
-				if ( (*e2)->_life <=0.0f ) continue;
-
-				(*e2)->draw(this);
+				if ( (*e2)->m_isLive && (*e2)->_life > 0.0f ){
+					(*e2)->draw(this);
+				}
 			}
 		}
 

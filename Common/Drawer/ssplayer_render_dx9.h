@@ -23,7 +23,9 @@ public:
 										SsVector2 uv1, SsVector2 uv2, 
 										const SsFColor& color ){}
 
+	//後実装
 	virtual void	SetAlphaBlendMode(SsBlendType::_enum type){}
+	virtual void	SetTexture( SsCellValue* cell ){}
 
 
 };

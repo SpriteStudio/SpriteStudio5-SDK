@@ -482,12 +482,12 @@ public:
 			}
 	void	setParentAnimeState( SsPartState* state ){ parentState = state; }
 
-	virtual void	setFrame( float frame );
+//	virtual void	setFrame( float frame );
 
 	SsEffectRenderAtom* CreateAtom( unsigned int seed , SsEffectRenderAtom* parent , SsEffectNode* node );
 
-	u32		getAnimeFrameOffset(){ return parentAnimeStartFrame;}
-	void    setAnimeFrameOffset( u32 a ){ parentAnimeStartFrame = a; }
+//	u32		getAnimeFrameOffset(){ return parentAnimeStartFrame;}
+//	void    setAnimeFrameOffset( u32 a ){ parentAnimeStartFrame = a; }
 	void	setCellmapManager( SsCellMapList* plist ) { curCellMapManager = plist; }
 
 };

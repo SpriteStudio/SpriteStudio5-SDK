@@ -215,12 +215,18 @@ void	SsRenderGL::SetTexture( SsCellValue* cellvalue )
 	int		gl_target = GL_TEXTURE_2D;
 	bool texture_is_pow2 = true;
 
-	if ( cellvalue == 0 ) return ;
+	if ( cellvalue == 0 ){
+		return ;
+	}
 	SsCell * cell = cellvalue->cell;
-	if ( cell == 0 ) return ;
+	if ( cell == 0 ){
+		return ;
+	}
 
 	ISSTexture*	texture = cellvalue->texture;
-	if ( texture == 0 ) return ;
+	if ( texture == 0 ){
+		return ;
+	}
 
 	SsPoint2 texturePixelSize;
 	texturePixelSize.x = cellvalue->texture->getWidth();
