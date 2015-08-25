@@ -474,6 +474,11 @@ public:
 		return 30;
 	}
 
+	SsEffectModel* getEffectData()
+	{
+		return effectData;
+	}
+
 	//データセット
 	void	setEffectData(SsEffectModel* data){
 					stop();

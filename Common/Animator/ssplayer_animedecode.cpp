@@ -1028,18 +1028,7 @@ void	SsAnimeDecoder::updateVertices(SsPart* part , SsPartAnime* anime , SsPartSt
 
 }
 
-void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state )
-{
-	if ( state && state->refEffect )
-	{
-		float fps = (float)state->refEffect->getCurrentFPS();
-		// 1 frameのsec * Stateのframeの変化値
-//		float f = (1.0f / fps) * frameDelta;				
 
-		state->refEffect->update( frameDelta );
-		//state->refEffect->play();
-	}
-}
 
 
 
@@ -1248,7 +1237,16 @@ void	SsAnimeDecoder::update(float frameDelta)
 }
 
 
-
+void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state )
+{
+	if ( state && state->refEffect )
+	{
+		float fps = (float)state->refEffect->getCurrentFPS();
+		// 1 frameのsec * Stateのframeの変化値
+//		float f = (1.0f / fps) * frameDelta;				
+		state->refEffect->update( frameDelta );
+	}
+}
 //描画
 void	SsAnimeDecoder::draw()
 {
@@ -1264,6 +1262,7 @@ void	SsAnimeDecoder::draw()
 		if ( state->refAnime )
 		{
 			state->refAnime->draw();
+
 		}else if ( state->refEffect )
 		{
 			state->refEffect->draw();

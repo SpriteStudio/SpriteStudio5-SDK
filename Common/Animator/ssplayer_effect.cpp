@@ -11,66 +11,7 @@
 #include "ssplayer_effectfunction.h"
 
 
-#if 0
-#include "SsPch.h"
-#pragma hdrstop
 
-
-
-//---------------------------------------------------
-//     OpenGL
-//---------------------------------------------------
-#ifdef _WIN32
-#include "lib/glew/glew.h"	// windows では GL_CLAMP_TO_EDGE 定義のために必要。
-#endif
-
-// GLEW
-#include "lib/glew/glew.h"
-#ifdef _WIN32
-#pragma link "lib/glew/glew32.lib"
-#pragma link "lib/glew/glew32_2.lib"
-#endif
-#ifdef __APPLE__
-#pragma link "lib/glew/ssglew.dylib"
-#endif
-
-
-#include "SsOpenGLRender.h"
-
-
-#include "SsCell.h"
-#include "SsCellMap.h"
-#include "SsImage.h"
-#include "SsOpenGLTexture.h"
-
-
-#include "SsPartState.h"
-
-#include "SsMatrix.h"
-
-//-------------------------------------------
-
-
-#include "SsEffect.h"
-#include "SsParticleMethods.h"
-
-
-#include "SsUtility.h"
-
-#include "SsEffectRenderer.h"
-
-/*
-enum SsRenderType{
-    BaseNode,
-	EmmiterNode,
-    ParticleNode,
-};
-*/
-
-#endif
-
-
-//static SsEffectRenderAtom* CreateAtom( unsigned int seed , SsEffectRenderAtom* parent , SsEffectNode* node );
 class SsEffectRenderParticle;
 
 
@@ -337,7 +278,7 @@ void	SsEffectRenderEmitter::update(float delta)
 	if (this->data->GetMyBehavior())
 	{
 //		this->data->GetMyBehavior()->updateEmmiter(this);
-		SsEffectFunctionExecuter::initalize( this->data->GetMyBehavior() , this );
+		SsEffectFunctionExecuter::updateEmmiter( this->data->GetMyBehavior() , this );
 
 	}
 

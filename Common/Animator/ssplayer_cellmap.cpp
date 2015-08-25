@@ -42,16 +42,12 @@ void	SsCellMapList::set(SsProject* proj , SsAnimePack* animepack )
 	clear();
 	setCellMapPath( proj->getImageBasepath() );
 
-//	for ( size_t i = 0 ; i < proj->cellmapNames.size() ; i++ )
 	for ( size_t i = 0 ; i < animepack->cellmapNames.size() ; i++ )
 	{
-//		SsCellMap* cell = proj->findCellMap( proj->cellmapNames[i] );
 		SsCellMap* cell = proj->findCellMap( animepack->cellmapNames[i] );
 		if ( cell==0 )
 		{
-			//THROW_ERROR_MESSAGE( "Not found cellmap"  ); 
 			DEBUG_PRINTF( " Not found cellmap = %s" , animepack->cellmapNames[i].c_str() );
-			//SsCellMap* cell = proj->findCellMap( animepack->cellmapNames[i] );
 		}else{
 			addIndex( cell );
 		}

@@ -118,6 +118,7 @@ public:
 	bool    	isLockRandSeed;  // ランダムシードを固定するか否か
 	int			fps;             //
 	SsString	   bgcolor;
+	SsString			effectName;
 
 public:
 	SsEffectModel() : root(0)
@@ -181,6 +182,7 @@ public:
 	{
 		SSAR_DECLARE(name);
 		SSAR_STRUCT_DECLARE( effectData );
+		effectData.effectName = name;
 	}
 
 };
