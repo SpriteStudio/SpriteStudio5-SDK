@@ -260,9 +260,7 @@ bool	SsEffectRenderEmitter::genarate( SsEffectRenderer* render )
 void	SsEffectRenderEmitter::update(float delta)
 {
 
-
 	_exsitTime+=delta;
-
 	_life = _lifetime - _exsitTime;
 	intervalleft+=delta;
 
@@ -273,7 +271,6 @@ void	SsEffectRenderEmitter::update(float delta)
 		this->rotation = this->parent->rotation;
 		this->scale = this->parent->scale;
 		this->alpha = this->parent->alpha;
-
 	}
 	if (this->data->GetMyBehavior())
 	{
@@ -483,6 +480,7 @@ void	SsEffectRenderParticle::draw(SsEffectRenderer* render)
 	if (render->parentState)
 	{
 		memcpy( matrix , render->parentState->matrix , sizeof( float ) * 16 );
+		this->alpha = render->render_root->alpha;
 	}
 
 	TranslationMatrixM( matrix , _position.x, _position.y, 0.0f );

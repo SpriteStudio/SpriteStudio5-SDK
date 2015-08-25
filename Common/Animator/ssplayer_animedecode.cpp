@@ -1225,7 +1225,7 @@ void	SsAnimeDecoder::update(float frameDelta)
 
 		if ( part->type == SsPartType::effect)
 		{
-			if ( partState[cnt].refEffect->getEffectData()->effectName == "001c" )
+			//if ( partState[cnt].refEffect->getEffectData()->effectName == "001c" )
 			{
 				updateMatrix( part , anime , &partState[cnt]);
 				updateEffect( frameDelta , time , part , anime , &partState[cnt] );
@@ -1268,7 +1268,7 @@ void	SsAnimeDecoder::draw()
 
 		}else if ( state->refEffect )
 		{
-			if ( state->refEffect->getEffectData()->effectName == "001c" )
+			//if ( state->refEffect->getEffectData()->effectName == "001c" )
 			{
 				state->refEffect->draw();
 			}
