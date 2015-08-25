@@ -149,10 +149,8 @@ public:
 	//SsString            myName;
 	SsEffectFunctionType::enum_ myType;
 
-	int					uid;
-	int					myuid;
 public:
-	SsEffectElementBase() : myType(SsEffectFunctionType::Base) {}
+	SsEffectElementBase() : myType (SsEffectFunctionType::Base) {}
 	virtual ~SsEffectElementBase(){}
 
 	void	setType(SsEffectFunctionType::enum_ type){ myType = type; } 
@@ -385,7 +383,7 @@ public:
 		:  Rotation( 0 ,0 ),
 		   RotationAdd(0,0)
 	{
-		setType( SsEffectFunctionType::TransRotation );
+		setType( SsEffectFunctionType::Rotation );
 
 	}
 	virtual ~ParticleElementRotation(){}
