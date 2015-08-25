@@ -1069,6 +1069,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					{
 					case SsEffectFunctionType::Basic:
 					{
+						//基本情報
 						ParticleElementBasic *element = (ParticleElementBasic*)elementbase;
 
 						int			maximumParticle = element->maximumParticle;
@@ -1097,6 +1098,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					}
 					case SsEffectFunctionType::RndSeedChange:
 					{
+						//シード上書き
 						ParticleElementRndSeedChange *element = (ParticleElementRndSeedChange*)elementbase;
 						int		Seed = element->Seed;
 						effectcommand->add(Lump::s32Data(Seed));					//上書きする値
@@ -1104,96 +1106,147 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					}
 					case SsEffectFunctionType::Delay:
 					{
+						//発生：タイミング
 						ParticleElementDelay *element = (ParticleElementDelay*)elementbase;
 						int		DelayTime = element->DelayTime;
+						effectcommand->add(Lump::s32Data(DelayTime));				//遅延時間
 						break;
 					}
 					case SsEffectFunctionType::Gravity:
 					{
+						//重力を加える
 						ParticleElementGravity *element = (ParticleElementGravity*)elementbase;
 						SsVector2   Gravity = element->Gravity;
+						effectcommand->add(Lump::floatData(Gravity.x));				//X方向の重力
+						effectcommand->add(Lump::floatData(Gravity.y));				//Y方向の重力
 						break;
 					}
 					case SsEffectFunctionType::Position:
 					{
+						//座標：生成時
 						ParticleElementPosition *element = (ParticleElementPosition*)elementbase;
 						f32VValue   OffsetX = element->OffsetX;
 						f32VValue   OffsetY = element->OffsetY;
+						effectcommand->add(Lump::floatData(OffsetX.getMinValue()));				//X座標に加算最小
+						effectcommand->add(Lump::floatData(OffsetX.getMaxValue()));				//X座標に加算最大
+						effectcommand->add(Lump::floatData(OffsetY.getMinValue()));				//X座標に加算最小
+						effectcommand->add(Lump::floatData(OffsetY.getMaxValue()));				//X座標に加算最大
 						break;
 					}
 					case SsEffectFunctionType::Rotation:
 					{
+						//Z回転を追加
 						ParticleElementRotation *element = (ParticleElementRotation*)elementbase;
 						f32VValue   Rotation = element->Rotation;
 						f32VValue   RotationAdd = element->RotationAdd;
+						effectcommand->add(Lump::floatData(Rotation.getMinValue()));			//角度初期値最小
+						effectcommand->add(Lump::floatData(Rotation.getMaxValue()));			//角度初期値最大
+						effectcommand->add(Lump::floatData(RotationAdd.getMinValue()));			//角度初期加算値最小
+						effectcommand->add(Lump::floatData(RotationAdd.getMaxValue()));			//角度初期加算値最大
 						break;
 					}
 					case SsEffectFunctionType::TransRotation:
 					{
+						//Z回転速度変更
 						ParticleElementRotationTrans *element = (ParticleElementRotationTrans*)elementbase;
 						float   RotationFactor = element->RotationFactor;
 						float	EndLifeTimePer = element->EndLifeTimePer;
+						effectcommand->add(Lump::floatData(RotationFactor));					//角度目標加算値
+						effectcommand->add(Lump::floatData(EndLifeTimePer));					//到達時間
 						break;
 					}
 					case SsEffectFunctionType::TransSpeed:
 					{
+						//速度：変化
 						ParticleElementTransSpeed *element = (ParticleElementTransSpeed*)elementbase;
 						f32VValue	Speed = element->Speed;
+						effectcommand->add(Lump::floatData(Speed.getMinValue()));				//速度目標値最小
+						effectcommand->add(Lump::floatData(Speed.getMaxValue()));				//速度目標値最大
 						break;
 					}
 					case SsEffectFunctionType::TangentialAcceleration:
 					{
+						//接線加速度
 						ParticleElementTangentialAcceleration *element = (ParticleElementTangentialAcceleration*)elementbase;
 						f32VValue	Acceleration = element->Acceleration;
+						effectcommand->add(Lump::floatData(Acceleration.getMinValue()));		//設定加速度最小
+						effectcommand->add(Lump::floatData(Acceleration.getMaxValue()));		//設定加速度最大
 						break;
 					}
 					case SsEffectFunctionType::InitColor:
 					{
+						//カラーRGBA：生成時
 						ParticleElementInitColor *element = (ParticleElementInitColor*)elementbase;
 						SsU8cVValue Color = element->Color;
+						effectcommand->add(Lump::s32Data(Color.getMinValue().toARGB()));		//設定カラー最小
+						effectcommand->add(Lump::s32Data(Color.getMaxValue().toARGB()));		//設定カラー最大
 						break;
 					}
 					case SsEffectFunctionType::TransColor:
 					{
+						//カラーRGB：変化
 						ParticleElementTransColor *element = (ParticleElementTransColor*)elementbase;
 						SsU8cVValue Color = element->Color;
+						effectcommand->add(Lump::s32Data(Color.getMinValue().toARGB()));		//設定カラー最小
+						effectcommand->add(Lump::s32Data(Color.getMaxValue().toARGB()));		//設定カラー最大
 						break;
 					}
 					case SsEffectFunctionType::AlphaFade:
 					{
+						//フェード
 						ParticleElementAlphaFade *element = (ParticleElementAlphaFade*)elementbase;
 						f32VValue  disprange = element->disprange;
+						effectcommand->add(Lump::floatData(disprange.getMinValue()));			//表示区間開始
+						effectcommand->add(Lump::floatData(disprange.getMaxValue()));			//表示区間終了
 						break;
 					}
 					case SsEffectFunctionType::Size:
 					{
+						//スケール：生成時
 						ParticleElementSize *element = (ParticleElementSize*)elementbase;
 						f32VValue SizeX = element->SizeX;
 						f32VValue SizeY = element->SizeY;
 						f32VValue ScaleFactor = element->ScaleFactor;
+						effectcommand->add(Lump::floatData(SizeX.getMinValue()));				//幅倍率最小
+						effectcommand->add(Lump::floatData(SizeX.getMaxValue()));				//幅倍率最大
+						effectcommand->add(Lump::floatData(SizeY.getMinValue()));				//高さ倍率最小
+						effectcommand->add(Lump::floatData(SizeY.getMaxValue()));				//高さ倍率最大
+						effectcommand->add(Lump::floatData(ScaleFactor.getMinValue()));			//倍率最小
+						effectcommand->add(Lump::floatData(ScaleFactor.getMaxValue()));			//倍率最大
 
 						break;
 					}
 					case SsEffectFunctionType::TransSize:
 					{
+						//スケール：変化
 						ParticleElementTransSize *element = (ParticleElementTransSize*)elementbase;
 						f32VValue SizeX = element->SizeX;
 						f32VValue SizeY = element->SizeY;
 						f32VValue ScaleFactor = element->ScaleFactor;
+						effectcommand->add(Lump::floatData(SizeX.getMinValue()));				//幅倍率最小
+						effectcommand->add(Lump::floatData(SizeX.getMaxValue()));				//幅倍率最大
+						effectcommand->add(Lump::floatData(SizeY.getMinValue()));				//高さ倍率最小
+						effectcommand->add(Lump::floatData(SizeY.getMaxValue()));				//高さ倍率最大
+						effectcommand->add(Lump::floatData(ScaleFactor.getMinValue()));			//倍率最小
+						effectcommand->add(Lump::floatData(ScaleFactor.getMaxValue()));			//倍率最大
 						break;
 					}
 					case SsEffectFunctionType::PointGravity:
 					{
+						//重力点の追加
 						ParticlePointGravity *element = (ParticlePointGravity*)elementbase;
 						SsVector2   Position = element->Position;
 						float		Power = element->Power;
+						effectcommand->add(Lump::floatData(Position.x));						//重力点X
+						effectcommand->add(Lump::floatData(Position.y));						//重力点Y
+						effectcommand->add(Lump::floatData(Power));								//パワー
 						break;
 					}
 					case SsEffectFunctionType::TurnToDirectionEnabled:
 					{
+						//進行方向に向ける
 						ParticleTurnToDirectionEnabled *element = (ParticleTurnToDirectionEnabled*)elementbase;
 						//コマンドがあれば有効
-						bool eneble = true;
 						break;
 					}
 					case SsEffectFunctionType::Base:
