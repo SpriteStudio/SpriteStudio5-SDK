@@ -1063,7 +1063,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 
 					SsEffectElementBase *elementbase = behavior.plist[plistindex];
 					SsEffectFunctionType::enum_ myType = elementbase->myType;
-					effectcommand->add(Lump::s16Data(myType));	//コマンドタイプ
+					effectcommand->add(Lump::s32Data(myType));	//コマンドタイプ
 
 					switch (myType)
 					{
@@ -1081,11 +1081,25 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 						int			attimeCreate = element->attimeCreate;
 						int			priority = element->priority;
 						break;
+
+						effectcommand->add(Lump::s32Data(priority));				//表示優先度
+						effectcommand->add(Lump::s32Data(maximumParticle));			//最大パーティクル数
+						effectcommand->add(Lump::s32Data(attimeCreate));			//一度に作成するパーティクル数
+						effectcommand->add(Lump::s32Data(interval));				//生成間隔
+						effectcommand->add(Lump::s32Data(lifetime));				//エミッター生存時間
+						effectcommand->add(Lump::floatData(speed.getMinValue()));	//初速最小
+						effectcommand->add(Lump::floatData(speed.getMaxValue()));	//初速最大
+						effectcommand->add(Lump::s32Data(lifespan.getMinValue()));	//パーティクル生存時間最小
+						effectcommand->add(Lump::s32Data(lifespan.getMaxValue()));	//パーティクル生存時間最大
+						effectcommand->add(Lump::floatData(angle));					//射出方向
+						effectcommand->add(Lump::floatData(angleVariance));			//射出方向範囲
+
 					}
 					case SsEffectFunctionType::RndSeedChange:
 					{
 						ParticleElementRndSeedChange *element = (ParticleElementRndSeedChange*)elementbase;
 						int		Seed = element->Seed;
+						effectcommand->add(Lump::s32Data(Seed));					//上書きする値
 						break;
 					}
 					case SsEffectFunctionType::Delay:
