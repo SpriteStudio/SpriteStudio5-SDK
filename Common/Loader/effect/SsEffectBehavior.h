@@ -20,7 +20,7 @@ public:
 	SsRenderBlendType::_enum		blendType;
 
 public:
-	SsEffectBehavior(){}
+	SsEffectBehavior() : refCell(0),blendType(SsRenderBlendType::invalid) {}
 	virtual ~SsEffectBehavior(){}
 
 	SSSERIALIZE_BLOCK
