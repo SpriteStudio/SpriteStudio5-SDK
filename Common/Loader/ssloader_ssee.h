@@ -111,13 +111,13 @@ class SsEffectModel
 {
 private:
 	SsEffectNode* root;
-	std::vector<SsEffectNode*> nodeList;
 
 public:
 	int			lockRandSeed; 	 // ランダムシード固定値
 	bool    	isLockRandSeed;  // ランダムシードを固定するか否か
 	int			fps;             //
 	SsString	   bgcolor;
+	std::vector<SsEffectNode*> nodeList;
 
 public:
 	SsEffectModel() : root(0)

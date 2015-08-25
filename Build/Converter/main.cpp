@@ -290,8 +290,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 	topLump->add(cellsData);
 	Lump* packDataArray = Lump::set("ss::AnimePackData[]", true);
 	topLump->add(packDataArray);
-	Lump* effectList = Lump::set("ss::EffectList[]", true);
-	topLump->add(effectList);
+	Lump* effectlist = Lump::set("ss::EffectList[]", true);
+	topLump->add(effectlist);
 	topLump->add(Lump::s16Data((int)cellList->size()));
 	topLump->add(Lump::s16Data((int)proj->animeList.size()));
 	topLump->add(Lump::s16Data((int)proj->effectfileList.size()));
@@ -1014,12 +1014,182 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 		//エフェクトデータ
 		for (int effectIndex = 0; effectIndex < (int)proj->effectfileList.size(); effectIndex++)
 		{
-			Lump* effectData = Lump::set("ss::Effect");
-			effectList->add(effectData);
+			Lump* effect = Lump::set("ss::EffectFile");
+			effectlist->add(effect);
 
-			const SsEffectFile* effectPack = proj->effectfileList[effectIndex];
-			effectData->add(Lump::stringData(effectPack->name));	//エフェクト名
-			//			SsEffectModel	   effectData;  //親子構造＋各アトリビュート
+			const SsEffectFile* effectfile = proj->effectfileList[effectIndex];
+			effect->add(Lump::stringData(effectfile->name));	//エフェクト名
+			SsEffectModel effectmodel = effectfile->effectData;
+			effect->add(Lump::s16Data(effectmodel.fps));				//FPS
+			effect->add(Lump::s16Data(effectmodel.isLockRandSeed));		//乱数を固定するかどうか
+			effect->add(Lump::s16Data(effectmodel.lockRandSeed));		//固定する場合の乱数の種
+			//エフェクトノードの出力
+			effect->add(Lump::s16Data((int)effectmodel.nodeList.size()));	//エフェクトノード数
+			for (size_t nodeindex = 0; nodeindex < effectmodel.nodeList.size(); nodeindex++)
+			{
+				//エフェクトノードを追加
+				Lump* effectnode = Lump::set("ss::EffectNode");
+				effect->add(effectnode);
+
+				SsEffectNode *node = effectmodel.nodeList[nodeindex];
+				int	arrayIndex = node->arrayIndex;				//通し番号
+				int	parentIndex = node->parentIndex;			//親の番号
+				SsEffectNodeType::_enum	type = node->type;		//ノードの種類
+//				bool visible = = node->visible;					//エディター用
+				SsEffectBehavior behavior = node->behavior;		//動作パラメータ
+				SsRenderBlendType::_enum blendType = behavior.blendType;	//描画方法
+				//セル番号
+				SsCell*	refCell = behavior.refCell;
+				int cellIndex = -1;
+				if (refCell)
+				{
+					cellIndex = (*cellList)[refCell];
+				}
+				SsString CellName = behavior.CellName;
+				SsString CellMapName = behavior.CellMapName;
+				//ファイルへ書き出し
+				effectnode->add(Lump::s16Data(arrayIndex));		//通し番号
+				effectnode->add(Lump::s16Data(parentIndex));	//親の番号
+				effectnode->add(Lump::s16Data(type));			//ノードの種類
+				effectnode->add(Lump::s16Data(cellIndex));		//セルの番号
+				effectnode->add(Lump::s16Data(blendType));		//描画方法
+				effectnode->add(Lump::s16Data(behavior.plist.size()));	//コマンドパラメータ数
+
+				//コマンドパラメータ
+				for (size_t plistindex = 0; plistindex < behavior.plist.size(); plistindex++)
+				{
+					Lump* effectcommand = Lump::set("ss::EffectCommand");
+					effectnode->add(effectcommand);
+
+					SsEffectElementBase *elementbase = behavior.plist[plistindex];
+					SsEffectFunctionType::enum_ myType = elementbase->myType;
+					effectcommand->add(Lump::s16Data(myType));	//コマンドタイプ
+
+					switch (myType)
+					{
+					case SsEffectFunctionType::Basic:
+					{
+						ParticleElementBasic *element = (ParticleElementBasic*)elementbase;
+
+						int			maximumParticle = element->maximumParticle;
+						f32VValue	speed = element->speed;
+						i32VValue 	lifespan = element->lifespan;
+						float		angle = element->angle;
+						float		angleVariance = element->angleVariance;
+						int			interval = element->interval;
+						int			lifetime = element->lifetime;
+						int			attimeCreate = element->attimeCreate;
+						int			priority = element->priority;
+						break;
+					}
+					case SsEffectFunctionType::RndSeedChange:
+					{
+						ParticleElementRndSeedChange *element = (ParticleElementRndSeedChange*)elementbase;
+						int		Seed = element->Seed;
+						break;
+					}
+					case SsEffectFunctionType::Delay:
+					{
+						ParticleElementDelay *element = (ParticleElementDelay*)elementbase;
+						int		DelayTime = element->DelayTime;
+						break;
+					}
+					case SsEffectFunctionType::Gravity:
+					{
+						ParticleElementGravity *element = (ParticleElementGravity*)elementbase;
+						SsVector2   Gravity = element->Gravity;
+						break;
+					}
+					case SsEffectFunctionType::Position:
+					{
+						ParticleElementPosition *element = (ParticleElementPosition*)elementbase;
+						f32VValue   OffsetX = element->OffsetX;
+						f32VValue   OffsetY = element->OffsetY;
+						break;
+					}
+					case SsEffectFunctionType::Rotation:
+					{
+						ParticleElementRotation *element = (ParticleElementRotation*)elementbase;
+						f32VValue   Rotation = element->Rotation;
+						f32VValue   RotationAdd = element->RotationAdd;
+						break;
+					}
+					case SsEffectFunctionType::TransRotation:
+					{
+						ParticleElementRotationTrans *element = (ParticleElementRotationTrans*)elementbase;
+						float   RotationFactor = element->RotationFactor;
+						float	EndLifeTimePer = element->EndLifeTimePer;
+						break;
+					}
+					case SsEffectFunctionType::TransSpeed:
+					{
+						ParticleElementTransSpeed *element = (ParticleElementTransSpeed*)elementbase;
+						f32VValue	Speed = element->Speed;
+						break;
+					}
+					case SsEffectFunctionType::TangentialAcceleration:
+					{
+						ParticleElementTangentialAcceleration *element = (ParticleElementTangentialAcceleration*)elementbase;
+						f32VValue	Acceleration = element->Acceleration;
+						break;
+					}
+					case SsEffectFunctionType::InitColor:
+					{
+						ParticleElementInitColor *element = (ParticleElementInitColor*)elementbase;
+						SsU8cVValue Color = element->Color;
+						break;
+					}
+					case SsEffectFunctionType::TransColor:
+					{
+						ParticleElementTransColor *element = (ParticleElementTransColor*)elementbase;
+						SsU8cVValue Color = element->Color;
+						break;
+					}
+					case SsEffectFunctionType::AlphaFade:
+					{
+						ParticleElementAlphaFade *element = (ParticleElementAlphaFade*)elementbase;
+						f32VValue  disprange = element->disprange;
+						break;
+					}
+					case SsEffectFunctionType::Size:
+					{
+						ParticleElementSize *element = (ParticleElementSize*)elementbase;
+						f32VValue SizeX = element->SizeX;
+						f32VValue SizeY = element->SizeY;
+						f32VValue ScaleFactor = element->ScaleFactor;
+
+						break;
+					}
+					case SsEffectFunctionType::TransSize:
+					{
+						ParticleElementTransSize *element = (ParticleElementTransSize*)elementbase;
+						f32VValue SizeX = element->SizeX;
+						f32VValue SizeY = element->SizeY;
+						f32VValue ScaleFactor = element->ScaleFactor;
+						break;
+					}
+					case SsEffectFunctionType::PointGravity:
+					{
+						ParticlePointGravity *element = (ParticlePointGravity*)elementbase;
+						SsVector2   Position = element->Position;
+						float		Power = element->Power;
+						break;
+					}
+					case SsEffectFunctionType::TurnToDirectionEnabled:
+					{
+						ParticleTurnToDirectionEnabled *element = (ParticleTurnToDirectionEnabled*)elementbase;
+						//コマンドがあれば有効
+						bool eneble = true;
+						break;
+					}
+					case SsEffectFunctionType::Base:
+					default:
+						//未使用のコマンドが含まれている
+						break;
+					}
+				}
+			}
+
 		}
 
 	}
