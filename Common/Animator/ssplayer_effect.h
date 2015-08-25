@@ -58,9 +58,9 @@ public:
 	bool				m_isInit;
     bool				m_isCreateChild;
 
-	float				_lifetime;		//ƒIƒuƒWƒFƒNƒg‚ÌÅ‘å¶‘¶ŠÔ
-	float				_exsitTime;		//‘¶İ‚µ‚½ŠÔ
-	float				_life;          //õ–½ = 0‚Å€
+	float				_lifetime;		//ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®æœ€å¤§ç”Ÿå­˜æ™‚é–“
+	float				_exsitTime;		//å­˜åœ¨ã—ãŸæ™‚é–“
+	float				_life;          //å¯¿å‘½ = 0ã§æ­»
 
 	bool                undead;
 
@@ -153,7 +153,7 @@ class SsEffectDrawBatch
 {
 public:
 	int	priority;
-	//SsCell*					dispCell;    //•\¦‚Ég—p‚·‚éƒeƒNƒXƒ`ƒƒ
+	//SsCell*					dispCell;    //è¡¨ç¤ºã«ä½¿ç”¨ã™ã‚‹ãƒ†ã‚¯ã‚¹ãƒãƒ£
 	SsCellValue*			dispCell;
 
 	SsRenderBlendType::_enum       blendType;
@@ -172,22 +172,22 @@ public:
 
 
 //--------------------------------------------------------------------------
-//ƒp[ƒeƒBƒNƒ‹¶¬”\—Í‚ğ‚ÂƒIƒuƒWƒFƒNƒg
+//ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ç”Ÿæˆèƒ½åŠ›ã‚’æŒã¤ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 //--------------------------------------------------------------------------
 class  SsEffectRenderEmitter : public SsEffectRenderAtom
 {
 public:
 	unsigned int myseed;
-//	SsCell*					dispCell;    //•\¦‚Ég—p‚·‚éƒeƒNƒXƒ`ƒƒ
+//	SsCell*					dispCell;    //è¡¨ç¤ºã«ä½¿ç”¨ã™ã‚‹ãƒ†ã‚¯ã‚¹ãƒãƒ£
 	SsCellValue				dispCell;
-	//ƒGƒ~ƒbƒ^[ƒpƒ‰ƒ[ƒ^
+	//ã‚¨ãƒŸãƒƒã‚¿ãƒ¼ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿
 
-	//ƒp[ƒeƒBƒNƒ‹ƒpƒ‰ƒ[ƒ^
+	//ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿
     SsEffectNode*		param_particle;
 
 	CMersenneTwister	     MT;
 
-	//ˆÈ‘O‚©‚ç‚ÌˆÚA
+	//ä»¥å‰ã‹ã‚‰ã®ç§»æ¤
 
 	int				maxParticle;    //
 	int				delay;
@@ -249,11 +249,11 @@ public:
 	}
 
 	//----------------------------------------------------------------------
-	//¶¬ƒtƒF[ƒY           SsEffectRenderer‚ÖˆÚ“®‚µ‚Ä‚à‚¢‚¢‚©‚à
+	//ç”Ÿæˆãƒ•ã‚§ãƒ¼ã‚º           SsEffectRendererã¸ç§»å‹•ã—ã¦ã‚‚ã„ã„ã‹ã‚‚
 	//----------------------------------------------------------------------
 	virtual void	Initialize();
 	//----------------------------------------------------------------------
-	//ƒp[ƒeƒBƒNƒ‹ƒIƒuƒWƒFƒNƒg‚Ì¶¬
+	//ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç”Ÿæˆ
 	//----------------------------------------------------------------------
 	virtual bool	genarate( SsEffectRenderer* render );
 
@@ -267,8 +267,8 @@ public:
 
 
 //--------------------------------------------------------------------------
-//ƒp[ƒeƒBƒNƒ‹ƒIƒuƒWƒFƒNƒg
-//ƒGƒ~ƒbƒ^[‚Ìe‚É‚È‚é‚½‚ß«¿‚ğˆê‚É‚·‚é
+//ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+//ã‚¨ãƒŸãƒƒã‚¿ãƒ¼ã®è¦ªã«ãªã‚‹ãŸã‚æ€§è³ªã‚’ä¸€ç·’ã«ã™ã‚‹
 //--------------------------------------------------------------------------
 class  SsEffectRenderParticle : public SsEffectRenderAtom
 {
@@ -280,10 +280,10 @@ public:
 	SsEffectRenderEmitter*  parentEmitter;
     SsEffectBehavior*		refBehavior;
 
-	//ˆÈ‘O‚©‚ç‚ÌˆÚA
-	SsVector2   _baseEmiterPosition;   //‚à‚µ‚©‚µ‚Ä‚à‚¤g‚Á‚Ä‚È‚¢‚©‚à
-	SsVector2   _backposition;         //forceŒvZ‘O‚Ìƒ|ƒWƒVƒ‡ƒ“
-	SsVector2   _position;             //•`‰æ—pƒ|ƒWƒVƒ‡ƒ“
+	//ä»¥å‰ã‹ã‚‰ã®ç§»æ¤
+	SsVector2   _baseEmiterPosition;   //ã‚‚ã—ã‹ã—ã¦ã‚‚ã†ä½¿ã£ã¦ãªã„ã‹ã‚‚
+	SsVector2   _backposition;         //forceè¨ˆç®—å‰ã®ãƒã‚¸ã‚·ãƒ§ãƒ³
+	SsVector2   _position;             //æç”»ç”¨ãƒã‚¸ã‚·ãƒ§ãƒ³
 
 	float		_rotation;
 	float		_rotationAdd;
@@ -299,14 +299,14 @@ public:
 	SsU8Color	_endcolor;
 
 
-	float		speed;		//Œ»İ‚Á‚Ä‚¢‚é‘¬“x
+	float		speed;		//ç¾åœ¨æŒã£ã¦ã„ã‚‹é€Ÿåº¦
 	float		firstspeed;
     float		lastspeed;
 	SsVector2   vector;
 
-	SsVector2   _force;    //—İÏ‚³‚ê‚Ä‚¢‚é—Í
-	SsVector2   _gravity;  //‚¢‚ç‚È‚¢‚©‚àH
-	SsVector2   _orggravity;  //‚¢‚ç‚È‚¢‚©‚àH
+	SsVector2   _force;    //ç´¯ç©ã•ã‚Œã¦ã„ã‚‹åŠ›
+	SsVector2   _gravity;  //ã„ã‚‰ãªã„ã‹ã‚‚ï¼Ÿ
+	SsVector2   _orggravity;  //ã„ã‚‰ãªã„ã‹ã‚‚ï¼Ÿ
 
 
 	float 		_radialAccel;
@@ -314,7 +314,7 @@ public:
 	float		direction;
 	bool		isTurnDirection;
 
-	SsVector2   _execforce;				//ˆ—’†‚Ì—Í ÅI“I‚É‚Í’PˆÊ“–‚½‚è‚Ì—Í‚É•ÏŠ·
+	SsVector2   _execforce;				//å‡¦ç†ä¸­ã®åŠ› æœ€çµ‚çš„ã«ã¯å˜ä½å½“ãŸã‚Šã®åŠ›ã«å¤‰æ›
 
 
 
@@ -356,7 +356,7 @@ public:
 	virtual ~SsEffectRenderParticle(){}
     SsRenderType::_enum	getMyType(){ return SsRenderType::ParticleNode;}
 
-	//¶¬ƒtƒF[ƒY
+	//ç”Ÿæˆãƒ•ã‚§ãƒ¼ã‚º
 	virtual void	Initialize();
 
 	virtual bool	genarate( SsEffectRenderer* render );
@@ -384,7 +384,7 @@ public:
 
 
 //--------------------------------------------------------------------------
-//ƒGƒtƒFƒNƒg‚Ì•`‰æˆ—ƒƒCƒ“
+//ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®æç”»å‡¦ç†ãƒ¡ã‚¤ãƒ³
 //--------------------------------------------------------------------------
 class SsEffectRenderer
 {
@@ -400,7 +400,7 @@ private:
 
 	SsVector3		layoutPosition;
 
-	SsCellMapList*	curCellMapManager;/// ƒZƒ‹ƒ}ƒbƒv‚ÌƒŠƒXƒgiƒAƒjƒƒfƒR[ƒ_[‚©‚ç‚à‚ç‚¤
+	SsCellMapList*	curCellMapManager;/// ã‚»ãƒ«ãƒãƒƒãƒ—ã®ãƒªã‚¹ãƒˆï¼ˆã‚¢ãƒ‹ãƒ¡ãƒ‡ã‚³ãƒ¼ãƒ€ãƒ¼ã‹ã‚‰ã‚‚ã‚‰ã†
 
 
 #if PFMEM_TEST
@@ -416,7 +416,7 @@ private:
 #endif
 
 public:
-	//ƒAƒbƒvƒf[ƒg•¨‚ÌƒŠƒXƒg
+	//ã‚¢ãƒƒãƒ—ãƒ‡ãƒ¼ãƒˆç‰©ã®ãƒªã‚¹ãƒˆ
 	SsEffectRenderAtom* render_root;
 
 	bool			usePreMultiTexture;
@@ -458,7 +458,7 @@ public:
     virtual void	draw();
 	virtual void    reload();
 
-    //‘€ì
+    //æ“ä½œ
 	void    play();
 	void	stop();
 	void    pause();
@@ -479,7 +479,7 @@ public:
 		return effectData;
 	}
 
-	//ƒf[ƒ^ƒZƒbƒg
+	//ãƒ‡ãƒ¼ã‚¿ã‚»ãƒƒãƒˆ
 	void	setEffectData(SsEffectModel* data){
 					stop();
                     clearUpdateList();

@@ -1,4 +1,4 @@
-﻿#ifndef __SSPLAYER_MATRIX__
+#ifndef __SSPLAYER_MATRIX__
 #define __SSPLAYER_MATRIX__
 
 

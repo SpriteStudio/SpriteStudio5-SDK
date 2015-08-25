@@ -1,4 +1,4 @@
-﻿#ifndef __SSVALUE__
+#ifndef __SSVALUE__
 #define __SSVALUE__
 
 #include "ssarchiver.h"

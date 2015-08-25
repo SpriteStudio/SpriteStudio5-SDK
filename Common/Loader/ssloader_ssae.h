@@ -1,4 +1,4 @@
-﻿#ifndef __SSLOADER_SSAE__
+#ifndef __SSLOADER_SSAE__
 #define __SSLOADER_SSAE__
 
 #include "sstypes.h"

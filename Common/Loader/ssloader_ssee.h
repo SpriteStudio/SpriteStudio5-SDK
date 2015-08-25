@@ -114,8 +114,8 @@ private:
 
 public:
 	std::vector<SsEffectNode*> nodeList;
-	int			lockRandSeed; 	 // ƒ‰ƒ“ƒ_ƒ€ƒV[ƒhŒÅ’è’l
-	bool    	isLockRandSeed;  // ƒ‰ƒ“ƒ_ƒ€ƒV[ƒh‚ğŒÅ’è‚·‚é‚©”Û‚©
+	int			lockRandSeed; 	 // ãƒ©ãƒ³ãƒ€ãƒ ã‚·ãƒ¼ãƒ‰å›ºå®šå€¤
+	bool    	isLockRandSeed;  // ãƒ©ãƒ³ãƒ€ãƒ ã‚·ãƒ¼ãƒ‰ã‚’å›ºå®šã™ã‚‹ã‹å¦ã‹
 	int			fps;             //
 	SsString	   bgcolor;
 	SsString			effectName;
@@ -132,11 +132,11 @@ public:
 		root = 0;
 	}
 
-    //ƒAƒNƒZƒX
+    //ã‚¢ã‚¯ã‚»ã‚¹
 	SsEffectNode* GetRoot(){ return root;}
 
 
-	//ƒVƒŠƒAƒ‰ƒCƒU
+	//ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚¶
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE(lockRandSeed);
@@ -145,7 +145,7 @@ public:
 		SSAR_DECLARE(bgcolor);
 		SSAR_DECLARE_LISTEX(nodeList,"node");
 
-		//ƒcƒŠ[‚Ì\’z
+		//ãƒ„ãƒªãƒ¼ã®æ§‹ç¯‰
 		if ( nodeList.size() > 0 )
 		{
 			root = nodeList[0];
@@ -170,7 +170,7 @@ public:
 class SsEffectFile
 {
 public:
-	SsEffectModel	   effectData;  //eq\‘¢{ŠeƒAƒgƒŠƒrƒ…[ƒg
+	SsEffectModel	   effectData;  //è¦ªå­æ§‹é€ ï¼‹å„ã‚¢ãƒˆãƒªãƒ“ãƒ¥ãƒ¼ãƒˆ
 	SsString		   name;
 
 	SsEffectFile(){}
@@ -187,7 +187,7 @@ public:
 
 
 class SsProject;
-//!sspj‚Ìƒ[ƒ_[ƒNƒ‰ƒX‚Å‚·B
+//!sspjã®ãƒ­ãƒ¼ãƒ€ãƒ¼ã‚¯ãƒ©ã‚¹ã§ã™ã€‚
 class ssloader_ssee
 {
 public:

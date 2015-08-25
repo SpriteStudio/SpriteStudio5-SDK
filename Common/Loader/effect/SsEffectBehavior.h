@@ -20,7 +20,7 @@ public:
 	SsRenderBlendType::_enum		blendType;
 
 public:
-	SsEffectBehavior(){}
+	SsEffectBehavior() : refCell(0),blendType(SsRenderBlendType::invalid) {}
 	virtual ~SsEffectBehavior(){}
 
 	SSSERIALIZE_BLOCK
@@ -38,7 +38,7 @@ public:
 	void	EffectElementLoader(ISsXmlArchiver* ar);
 
 /*
-	//�G�t�F�N�g�f�[�^�̃Z�b�g�A�b�v
+	//エフェクトデータのセットアップ
 	void	initalize( SsEffectRenderEmitter* emmiter){}
 	void	updateEmmiter(SsEffectRenderEmitter* emmiter){}
 	void	initializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle ){}

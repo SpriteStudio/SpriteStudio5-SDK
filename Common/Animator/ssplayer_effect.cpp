@@ -30,11 +30,11 @@ static  int seed_table[] =
 
 
 //------------------------------------------------------------------------------
-//	ƒ†[ƒeƒBƒŠƒeƒB
+//	ãƒ¦ãƒ¼ãƒ†ã‚£ãƒªãƒ†ã‚£
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-//—v‘f¶¬ŠÖ”
+//è¦ç´ ç”Ÿæˆé–¢æ•°
 //------------------------------------------------------------------------------
 SsEffectRenderAtom* SsEffectRenderer::CreateAtom( unsigned int seed , SsEffectRenderAtom* parent , SsEffectNode* node )
 {
@@ -99,8 +99,8 @@ SsEffectRenderAtom* SsEffectRenderer::CreateAtom( unsigned int seed , SsEffectRe
 		//p->data->behavior.initalize(p);
 		SsEffectFunctionExecuter::initalize( &p->data->behavior , p );
 
-		//ƒZƒ‹ƒf[ƒ^‚ÌŒŸõ‚ÆƒZƒbƒg
-		//ƒIƒŠƒWƒiƒ‹‚Å‚Íã‹Linitialize‚Å‚â‚Á‚Ä‚¢‚é‚ªƒNƒ‰ƒXŠK‘w‚ÌŠÖŒW‚©‚ç‚±‚¿‚ç‚Å‚â‚é
+		//ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿ã®æ¤œç´¢ã¨ã‚»ãƒƒãƒˆ
+		//ã‚ªãƒªã‚¸ãƒŠãƒ«ã§ã¯ä¸Šè¨˜initializeã§ã‚„ã£ã¦ã„ã‚‹ãŒã‚¯ãƒ©ã‚¹éšå±¤ã®é–¢ä¿‚ã‹ã‚‰ã“ã¡ã‚‰ã§ã‚„ã‚‹
 		SsCelMapLinker* link = this->curCellMapManager->getCellMapLink( p->data->behavior.CellMapName );
 		if ( link )
 		{
@@ -176,14 +176,14 @@ void	SsEffectRenderEmitter::setMySeed( unsigned int seed )
 
 
 //----------------------------------------------------------------------
-//¶¬ƒtƒF[ƒY           SsEffectRenderer‚ÖˆÚ“®‚µ‚Ä‚à‚¢‚¢‚©‚à
+//ç”Ÿæˆãƒ•ã‚§ãƒ¼ã‚º           SsEffectRendererã¸ç§»å‹•ã—ã¦ã‚‚ã„ã„ã‹ã‚‚
 //----------------------------------------------------------------------
 void	SsEffectRenderEmitter::Initialize()
 {
 	SsEffectNode* n = static_cast<SsEffectNode*>(this->data->ctop);
 
 	if ( !m_isInit )
-	{                                                                                                                                                 		//q—v‘f‚ğ‰ğÍ(ˆê“x‚¾‚¯j
+	{                                                                                                                                                 		//å­è¦ç´ ã‚’è§£æ(ä¸€åº¦ã ã‘ï¼‰
 		while ( n )
 		{
 			if ( n->GetType() ==  SsEffectNodeType::particle )
@@ -207,7 +207,7 @@ void	SsEffectRenderEmitter::Initialize()
 }
 
 //----------------------------------------------------------------------
-//ƒp[ƒeƒBƒNƒ‹ƒIƒuƒWƒFƒNƒg‚Ì¶¬
+//ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ç”Ÿæˆ
 //----------------------------------------------------------------------
 bool	SsEffectRenderEmitter::genarate( SsEffectRenderer* render )
 {
@@ -225,7 +225,7 @@ bool	SsEffectRenderEmitter::genarate( SsEffectRenderer* render )
 	{
 		if ( this->intervalleft >= this->interval )
 		{
-			for ( int i = 0 ; i < create_count; i++)//Å‘åì¬”
+			for ( int i = 0 ; i < create_count; i++)//æœ€å¤§ä½œæˆæ•°
 			{
 				if ( pc < maxParticle )
 				{
@@ -266,7 +266,7 @@ void	SsEffectRenderEmitter::update(float delta)
 
 	if ( this->parent )
 	{
-		//ˆÈ‰º‚Í‰¼
+		//ä»¥ä¸‹ã¯ä»®
 		this->position = this->parent->position;
 		this->rotation = this->parent->rotation;
 		this->scale = this->parent->scale;
@@ -289,9 +289,9 @@ void	SsEffectRenderEmitter::update(float delta)
 
 
 //----------------------------------------------------------------------
-//ƒp[ƒeƒBƒNƒ‹ƒNƒ‰ƒX
+//ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚¯ãƒ©ã‚¹
 //----------------------------------------------------------------------
-//¶¬ƒtƒF[ƒY
+//ç”Ÿæˆãƒ•ã‚§ãƒ¼ã‚º
 void	SsEffectRenderParticle::Initialize()
 {
 
@@ -300,9 +300,9 @@ void	SsEffectRenderParticle::Initialize()
 	{
 		SsEffectNode* n = static_cast<SsEffectNode*>(this->data->ctop);
 
-		//q—v‘f‚ğ‰ğÍ  Šî–{“I‚ÉƒGƒ~ƒbƒ^[‚Ì‚İ‚Ì¶¬‚Ì‚Í‚¸@i‚o‚Å‚ÍƒGƒ‰[‚Å‚¢‚¢j
-		//ˆ—‚ğÈ‚¢‚ÄƒGƒ~ƒbƒ^[¶¬‚Ì‚Â‚à‚è‚Åì¬‚·‚é
-		//ƒp[ƒeƒBƒNƒ‹‚É•R‚Ã‚¢‚½ƒGƒ~ƒbƒ^[‚ª¶¬‚³‚ê‚é
+		//å­è¦ç´ ã‚’è§£æ  åŸºæœ¬çš„ã«ã‚¨ãƒŸãƒƒã‚¿ãƒ¼ã®ã¿ã®ç”Ÿæˆã®ã¯ãšã€€ï¼ˆï¼°ã§ã¯ã‚¨ãƒ©ãƒ¼ã§ã„ã„ï¼‰
+		//å‡¦ç†ã‚’çœã„ã¦ã‚¨ãƒŸãƒƒã‚¿ãƒ¼ç”Ÿæˆã®ã¤ã‚‚ã‚Šã§ä½œæˆã™ã‚‹
+		//ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã«ç´ã¥ã„ãŸã‚¨ãƒŸãƒƒã‚¿ãƒ¼ãŒç”Ÿæˆã•ã‚Œã‚‹
 		parentEmitter = 0;
 
 		parentEmitter = static_cast<SsEffectRenderEmitter*>(this->parent);
@@ -375,7 +375,7 @@ void	SsEffectRenderParticle::update(float delta)
 	 this->scale = this->parent->scale;
 	 this->alpha = this->parent->alpha;
 
-	 //‰Šú’l“Ë‚Á‚ñ‚Å‚¨‚­Aƒp[ƒeƒBƒNƒ‹ƒƒ\ƒbƒh‚ÌƒAƒbƒvƒf[ƒg‚É‚Á‚Ä‚­H
+	 //åˆæœŸå€¤çªã£è¾¼ã‚“ã§ãŠãã€ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ãƒ¡ã‚½ãƒƒãƒ‰ã®ã‚¢ãƒƒãƒ—ãƒ‡ãƒ¼ãƒˆã«æŒã£ã¦ãï¼Ÿ
 	 this->_color = this->_startcolor;
 
 	//this->parent
@@ -395,7 +395,7 @@ void	SsEffectRenderParticle::update(float delta)
 		{
 //			_life = 0.0f;
 		}else{
-			//‰¼
+			//ä»®
 			this->position.x = this->_position.x;
 			this->position.y = this->_position.y;
 		}
@@ -416,7 +416,7 @@ void	SsEffectRenderParticle::updateDelta(float delta)
 
 	SsVector2	tangential = SsVector2( 0 , 0 );
 
-	//Úü‰Á‘¬“x‚ÌŒvZ
+	//æ¥ç·šåŠ é€Ÿåº¦ã®è¨ˆç®—
 	SsVector2  radial = SsVector2(this->_position.x,this->_position.y);
 
     SsVector2::normalize( radial , &radial );
@@ -456,7 +456,7 @@ void 	SsEffectRenderParticle::updateForce(float delta)
         this->direction = 0;
 	}
 
-	//ƒtƒH[ƒX‚ğ‰ÁZ
+	//ãƒ•ã‚©ãƒ¼ã‚¹ã‚’åŠ ç®—
 	this->_position.x+= (ff.x * delta );
 	this->_position.y+= (ff.y * delta );
 
@@ -473,7 +473,7 @@ void	SsEffectRenderParticle::draw(SsEffectRenderer* render)
 	if ( dispCell == NULL ) return ;
 	if ( dispCell->texture == NULL ) return;
 
-	float		matrix[4 * 4];	///< s—ñ
+	float		matrix[4 * 4];	///< è¡Œåˆ—
 	IdentityMatrix( matrix );
 
 
@@ -611,8 +611,8 @@ void	SsEffectRenderer::update(float delta)
 		updatecount++;
 	}
 
-	//Œãˆ—  õ–½‚Åíœ
-	//€–SŒŸoAíœ‚Ì2’iŠK
+	//å¾Œå‡¦ç†  å¯¿å‘½ã§å‰Šé™¤
+	//æ­»äº¡æ¤œå‡ºã€å‰Šé™¤ã®2æ®µéš
 	std::vector<SsEffectRenderAtom*>::iterator endi = remove_if( updatelist.begin(), updatelist.end(), particleDelete );
     updatelist.erase( endi, updatelist.end() );
 
@@ -640,7 +640,7 @@ void	SsEffectRenderer::draw()
 
 	foreach( std::list<SsEffectDrawBatch*> , drawBatchList , e )
 	{
-		//ƒZƒbƒgƒAƒbƒv
+		//ã‚»ãƒƒãƒˆã‚¢ãƒƒãƒ—
 		if ( (*e)->dispCell )
 		{
 			switch( (*e)->blendType )
@@ -729,16 +729,16 @@ void    SsEffectRenderer::reload()
 {
 	clearUpdateList();
 
-	//À•W‘€ì‚Ì‚½‚ß‚Ìƒ‹[ƒgƒm[ƒh‚ğì¬‚·‚é
+	//åº§æ¨™æ“ä½œã®ãŸã‚ã®ãƒ«ãƒ¼ãƒˆãƒãƒ¼ãƒ‰ã‚’ä½œæˆã™ã‚‹
 	if ( render_root == 0 )
 	{
 		render_root = new SsEffectRenderAtom();
 	}
 
-	//ƒ‹[ƒg‚Ìq—v‘f‚ğ’²¸‚µ‚Äì¬‚·‚é
+	//ãƒ«ãƒ¼ãƒˆã®å­è¦ç´ ã‚’èª¿æŸ»ã—ã¦ä½œæˆã™ã‚‹
 	SsEffectNode* root = this->effectData->GetRoot();
 
-	//ƒV[ƒh’l‚ÌŒˆ’è
+	//ã‚·ãƒ¼ãƒ‰å€¤ã®æ±ºå®š
 	u32 seed = 0;
 
 	if ( this->effectData->isLockRandSeed )
@@ -749,7 +749,7 @@ void    SsEffectRenderer::reload()
 	}
 
 	SimpleTree* n = root->ctop;
-	//q—v‘f‚¾‚¯‚Â‚­‚Á‚Ä‚±‚ê‚ğí‚É‚·‚é
+	//å­è¦ç´ ã ã‘ã¤ãã£ã¦ã“ã‚Œã‚’ç¨®ã«ã™ã‚‹
 	while( n )
 	{
 		SsEffectNode* enode = static_cast<SsEffectNode*>(n);

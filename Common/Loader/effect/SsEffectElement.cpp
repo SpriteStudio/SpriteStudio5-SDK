@@ -4,7 +4,7 @@
 #include "ssloader.h"
 
 
-//loader‚Ìƒ‚ƒWƒ…[ƒ‹‚ÅƒŒƒ“ƒ_ƒ‰[‘¤‚Ìƒ‚ƒWƒ…[ƒ‹‚ğQÆ‚µ‚Ä‚¢‚é‚Ì‚ª‹Ø‚ª—Ç‚­–³‚¢
+//loaderã®ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã§ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼å´ã®ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã‚’å‚ç…§ã—ã¦ã„ã‚‹ã®ãŒç­‹ãŒè‰¯ãç„¡ã„
 
 #include "SsEffectElement.h"
 #include "ssplayer_animedecode.h"

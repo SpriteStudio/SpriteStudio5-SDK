@@ -1,4 +1,4 @@
-﻿#include "ssloader.h"
+#include "ssloader.h"
 #include "ssInterpolation.h"
 
 
