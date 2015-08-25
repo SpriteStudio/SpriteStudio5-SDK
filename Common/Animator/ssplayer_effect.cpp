@@ -277,9 +277,7 @@ void	SsEffectRenderEmitter::update(float delta)
 	}
 	if (this->data->GetMyBehavior())
 	{
-//		this->data->GetMyBehavior()->updateEmmiter(this);
 		SsEffectFunctionExecuter::updateEmmiter( this->data->GetMyBehavior() , this );
-
 	}
 
 	if ( this->myBatchList )

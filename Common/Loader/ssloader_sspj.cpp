@@ -142,12 +142,15 @@ SsProject*	ssloader_sspj::Load(const std::string& filename )
 			{
 				//efile->loadFilepath = proj->getCelMapFileOriginalPath(i);
 				proj->effectfileList.push_back( efile );
+				ssloader_ssee::loadPostProcessing( efile , proj );
 			}else{
 				//エラー
 				DEBUG_PRINTF( "effect load error : %s" , sscepath.c_str() );
 				delete proj;
 				return 0;
 			}
+
+
 		}
 		return proj;
 	}	
