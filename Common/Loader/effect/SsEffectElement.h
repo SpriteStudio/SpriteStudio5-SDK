@@ -13,7 +13,7 @@ enum EffectPartType
 };
 
 
-//–½—ßí•Ê
+//å‘½ä»¤ç¨®åˆ¥
 namespace SsEffectFunctionType
 {
 	enum enum_
@@ -46,7 +46,7 @@ class SsCell;
 
 
 
-//”ÍˆÍ’lƒNƒ‰ƒX
+//ç¯„å›²å€¤ã‚¯ãƒ©ã‚¹
 template<class mytype>
 class VarianceValue : public SsXmlRangeValueConverter
 {
@@ -156,14 +156,14 @@ public:
 	void	setType(SsEffectFunctionType::enum_ type){ myType = type; } 
 
 #if 0
-	//Še•”‚ÅÀ‘•‚·‚é
+	//å„éƒ¨ã§å®Ÿè£…ã™ã‚‹
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter ) {}
 	virtual void UpdateEmmiter( SsEffectRenderEmitter* emmiter ){}
 	virtual void UpdateEndEmmiter( SsEffectRenderEmitter* emmiter ){}
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle ){}
 	virtual void UpdateParticle( SsEffectRenderParticle* particle ){}
 #endif
-	//ƒVƒŠƒAƒ‰ƒCƒU
+	//ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚¶
 
 	virtual SSSERIALIZE_BLOCK
 	{
@@ -175,7 +175,7 @@ public:
 
 
 //--------------------------------------------------------------------------------------
-//ƒp[ƒeƒBƒNƒ‹‚ğ\¬‚·‚éŠî–{‚Ì’l
+//ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã‚’æ§‹æˆã™ã‚‹åŸºæœ¬ã®å€¤
 class  ParticleElementBasic  : public SsEffectElementBase
 {
 public:
@@ -227,7 +227,7 @@ public:
 
 
 //--------------------------------------------------------------------------------------
-//’x‚ê
+//é…ã‚Œ
 class  ParticleElementRndSeedChange : public SsEffectElementBase
 {
 public:
@@ -241,11 +241,11 @@ public:
 	}
 	virtual ~ParticleElementRndSeedChange(){}
 /*
-	//Še•”‚ÅÀ‘•‚·‚é
+	//å„éƒ¨ã§å®Ÿè£…ã™ã‚‹
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter );
 */
 
-	//ƒVƒŠƒAƒ‰ƒCƒU
+	//ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚¶
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( Seed );
@@ -254,7 +254,7 @@ public:
 };
 
 //--------------------------------------------------------------------------------------
-//’x‚ê
+//é…ã‚Œ
 class  ParticleElementDelay : public SsEffectElementBase
 {
 public:
@@ -267,7 +267,7 @@ public:
 	}
 	virtual ~ParticleElementDelay(){}
 /*
-	//Še•”‚ÅÀ‘•‚·‚é
+	//å„éƒ¨ã§å®Ÿè£…ã™ã‚‹
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter );
 	virtual void UpdateEmmiter( SsEffectRenderEmitter* emmiter );
 
@@ -286,7 +286,7 @@ public:
 
 
 //--------------------------------------------------------------------------------------
-//d—Í‚Ö‚Ì‰e‹¿
+//é‡åŠ›ã¸ã®å½±éŸ¿
 class  ParticleElementGravity : public SsEffectElementBase
 {
 public:
@@ -313,7 +313,7 @@ public:
 };
 
 //--------------------------------------------------------------------------------------
-//”­¶ˆÊ’u‚Ö‚Ì‰e‹¿
+//ç™ºç”Ÿä½ç½®ã¸ã®å½±éŸ¿
 class  ParticleElementPosition : public SsEffectElementBase
 {
 public:
@@ -340,9 +340,9 @@ public:
 
 };
 
-#if 0	//ƒIƒ~ƒbƒg
+#if 0	//ã‚ªãƒŸãƒƒãƒˆ
 //--------------------------------------------------------------------------------------
-//”­¶ˆÊ’u‚Ö‚Ì‰e‹¿
+//ç™ºç”Ÿä½ç½®ã¸ã®å½±éŸ¿
 class  ParticleElementTransPosition : public SsEffectElementBase
 {
 public:
@@ -372,7 +372,7 @@ public:
 
 
 //--------------------------------------------------------------------------------------
-//Šp“x•Ï‰»
+//è§’åº¦å¤‰åŒ–
 class  ParticleElementRotation : public SsEffectElementBase
 {
 public:
@@ -392,7 +392,7 @@ public:
 	virtual void InitializeParticle( SsEffectRenderEmitter* e , SsEffectRenderParticle* particle );
 	virtual void UpdateParticle( SsEffectRenderParticle* particle );
 */
-	//ƒVƒŠƒAƒ‰ƒCƒU
+	//ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚¶
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( Rotation );
@@ -403,7 +403,7 @@ public:
 };
 
 //--------------------------------------------------------------------------------------
-//Šp“x•Ï‰»
+//è§’åº¦å¤‰åŒ–
 class  ParticleElementRotationTrans : public SsEffectElementBase
 {
 public:
@@ -458,7 +458,7 @@ public:
 
 
 //--------------------------------------------------------------------------------------
-//Úí‰Á‘¬“x‚ğ—^‚¦‚é
+//æ¥æˆ¦åŠ é€Ÿåº¦ã‚’ä¸ãˆã‚‹
 class  ParticleElementTangentialAcceleration : public SsEffectElementBase
 {
 public:
@@ -485,7 +485,7 @@ public:
 
 
 //--------------------------------------------------------------------------------------
-//’¸“_ƒJƒ‰[‚ğ§Œä‚·‚é
+//é ‚ç‚¹ã‚«ãƒ©ãƒ¼ã‚’åˆ¶å¾¡ã™ã‚‹
 class  ParticleElementInitColor : public SsEffectElementBase
 {
 public:
@@ -509,7 +509,7 @@ public:
 };
 
 //--------------------------------------------------------------------------------------
-//’¸“_ƒJƒ‰[‚ğ§Œä‚·‚é
+//é ‚ç‚¹ã‚«ãƒ©ãƒ¼ã‚’åˆ¶å¾¡ã™ã‚‹
 class  ParticleElementTransColor : public SsEffectElementBase
 {
 public:
@@ -535,7 +535,7 @@ public:
 
 
 //--------------------------------------------------------------------------------------
-//’˜“_ƒJƒ‰[‚ğ§Œä‚·‚é
+//è‘—ç‚¹ã‚«ãƒ©ãƒ¼ã‚’åˆ¶å¾¡ã™ã‚‹
 class  ParticleElementAlphaFade : public SsEffectElementBase
 {
 public:
@@ -562,7 +562,7 @@ public:
 };
 
 //--------------------------------------------------------------------------------------
-//ƒTƒCƒY‰Šú
+//ã‚µã‚¤ã‚ºåˆæœŸ
 class  ParticleElementSize : public SsEffectElementBase
 {
 public:
@@ -595,7 +595,7 @@ public:
 
 
 //--------------------------------------------------------------------------------------
-//ƒTƒCƒY•ÏX
+//ã‚µã‚¤ã‚ºå¤‰æ›´
 class  ParticleElementTransSize : public SsEffectElementBase
 {
 public:
@@ -627,7 +627,7 @@ public:
 };
 
 //--------------------------------------------------------------------------------------
-//d—Í“_
+//é‡åŠ›ç‚¹
 class  ParticlePointGravity : public SsEffectElementBase
 {
 public:
@@ -646,7 +646,7 @@ public:
 
 	/*
 	virtual SsEffectElementBase*  new_(){ return new ParticlePointGravity(); }
-	//Še•”‚ÅÀ‘•‚·‚é
+	//å„éƒ¨ã§å®Ÿè£…ã™ã‚‹
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter ){}
 	virtual void UpdateEmmiter( SsEffectRenderEmitter* emmiter ){}
 
@@ -678,7 +678,7 @@ public:
 /*
 	virtual SsEffectElementBase*  new_(){ return new ParticleTurnToDirectionEnabled(); }
 
-	//Še•”‚ÅÀ‘•‚·‚é
+	//å„éƒ¨ã§å®Ÿè£…ã™ã‚‹
 	virtual void InitializeEmmiter( SsEffectRenderEmitter* emmiter ){}
 	virtual void UpdateEmmiter( SsEffectRenderEmitter* emmiter ){}
 

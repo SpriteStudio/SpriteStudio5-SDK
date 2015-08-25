@@ -12,7 +12,7 @@
 
 
 
-//“ñ‚Â‚Ì’l‚Ì”ÍˆÍ‚©‚ç’l‚ğƒ‰ƒ“ƒ_ƒ€‚Å“¾‚é
+//äºŒã¤ã®å€¤ã®ç¯„å›²ã‹ã‚‰å€¤ã‚’ãƒ©ãƒ³ãƒ€ãƒ ã§å¾—ã‚‹
 static u8 GetRandamNumberRange( SsEffectRenderEmitter* e , u8 a , u8 b )
 {
 	u8 min = a < b ? a : b;
@@ -205,7 +205,7 @@ public:
 	virtual void	updateEmmiter( SsEffectElementBase* ele , SsEffectRenderEmitter* emmiter)
 	{
 		ParticleElementDelay* source = static_cast<ParticleElementDelay*>(ele);
-		//Šù’è‚ÌŠÔ‚Ü‚ÅƒXƒgƒbƒvH
+		//æ—¢å®šã®æ™‚é–“ã¾ã§ã‚¹ãƒˆãƒƒãƒ—ï¼Ÿ
 		if ( emmiter->_exsitTime >= source->DelayTime )
 		{
 			emmiter->generate_ok = true;
@@ -261,7 +261,7 @@ public:
 static FuncParticleElementPosition		funcPosition;
 
 
-#if 0		//ƒIƒ~ƒbƒg
+#if 0		//ã‚ªãƒŸãƒƒãƒˆ
 //-----------------------------------------------------------------
 //
 //-----------------------------------------------------------------
@@ -565,7 +565,7 @@ public:
 		Target.x = source->Position.x + p->parentEmitter->position.x;
 		Target.y = source->Position.y + p->parentEmitter->position.y;
 
-		//Œ»İ’n“_‚©‚çw’è‚³‚ê‚½“_‚É‘Î‚µ‚Ä‚ÌƒxƒNƒgƒ‹*ƒpƒ[‚ğ—^‚¦‚é
+		//ç¾åœ¨åœ°ç‚¹ã‹ã‚‰æŒ‡å®šã•ã‚ŒãŸç‚¹ã«å¯¾ã—ã¦ã®ãƒ™ã‚¯ãƒˆãƒ«*ãƒ‘ãƒ¯ãƒ¼ã‚’ä¸ãˆã‚‹
 		SsVector2 v2 = Target - p->_position;
 		SsVector2 v2_temp = v2;
 
@@ -598,8 +598,8 @@ static FuncParticleTurnToDirectionEnabled		funcTurnToDirectionEnabled;
 
 
 //-------------------------------------------------------------------
-//‹““®”½‰fƒNƒ‰ƒX‚ÌŒÄ‚Ño‚µƒe[ƒuƒ‹
-//SsEffectFunctionType‚Ì‡‚É•À‚×‚é‚±‚Æ
+//æŒ™å‹•åæ˜ ã‚¯ãƒ©ã‚¹ã®å‘¼ã³å‡ºã—ãƒ†ãƒ¼ãƒ–ãƒ«
+//SsEffectFunctionTypeã®é †ã«ä¸¦ã¹ã‚‹ã“ã¨
 //-------------------------------------------------------------------
 static EffectFuncBase* callTable[] =
 {

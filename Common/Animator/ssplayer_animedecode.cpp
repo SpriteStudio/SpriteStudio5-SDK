@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <cstdlib>
 
 #include "../loader/ssloader.h"

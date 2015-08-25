@@ -1,4 +1,4 @@
-﻿#include "ssplayer_matrix.h"
+#include "ssplayer_matrix.h"
 #include <stdio.h>
 #include <stdlib.h>
 //#include <malloc.h>

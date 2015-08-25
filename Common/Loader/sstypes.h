@@ -1,4 +1,4 @@
-﻿#ifndef __SSTYPES__
+#ifndef __SSTYPES__
 #define __SSTYPES__
 
 #include <stdlib.h>

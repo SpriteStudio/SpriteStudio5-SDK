@@ -1,4 +1,4 @@
-﻿#ifndef __SSPLAYER_PARTSTATE__
+#ifndef __SSPLAYER_PARTSTATE__
 #define __SSPLAYER_PARTSTATE__
 
 //#include "../loader/ssloader.h"

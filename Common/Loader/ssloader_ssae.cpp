@@ -1,4 +1,4 @@
-﻿#include "ssloader_ssae.h"
+#include "ssloader_ssae.h"
 
 
 SsAnimePack*	ssloader_ssae::Load(const std::string& filename )

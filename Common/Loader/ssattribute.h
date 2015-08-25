@@ -1,4 +1,4 @@
-﻿#ifndef __SSATRIBUTE__
+#ifndef __SSATRIBUTE__
 #define __SSATRIBUTE__
 
 #include "sstypes.h"
