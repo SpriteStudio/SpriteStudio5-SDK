@@ -391,8 +391,6 @@ class SsEffectRenderer
 private:
 	SsEffectModel*		effectData;
 
-	//アップデート物のリスト
-	SsEffectRenderAtom* render_root;
 
 	bool			m_isPlay;
 	bool			m_isPause;
@@ -418,6 +416,8 @@ private:
 #endif
 
 public:
+	//アップデート物のリスト
+	SsEffectRenderAtom* render_root;
 
 	bool			usePreMultiTexture;
 	u32				parentAnimeStartFrame;
