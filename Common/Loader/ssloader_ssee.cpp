@@ -51,7 +51,7 @@ void	ssloader_ssee::loadPostProcessing( SsEffectFile* file , SsProject* pj )
 			}
 			if ( beh->refCell == 0 )
 			{
-				DEBUG_PRINTF( "not fount cell : %s , %s" , beh->CellMapName.c_str() , beh->CellName.c_str() );
+				DEBUG_PRINTF("not fount cell : %s , %s", beh->CellMapName.c_str(), beh->CellName.c_str());
 			}
 		}
 	}

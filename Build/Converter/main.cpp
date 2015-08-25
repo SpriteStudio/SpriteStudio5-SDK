@@ -104,19 +104,6 @@ enum {
 	HEAD_FLAG_dontUseMatrixForTransform = 1 << 1,
 };
 
-//パーツ種別定数
-enum
-{
-	PARTTYPE_INVALID = -1,
-	PARTTYPE_NULL,			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
-	PARTTYPE_NORMAL,		// 通常パーツ。領域を持つ。画像は無くてもいい。
-	PARTTYPE_TEXT,			// テキスト(予約　未実装）
-	PARTTYPE_INSTANCE,		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
-	PARTTYPE_ARMATURE,		//
-	PARTTYPE_EFFECT,		// 5.5エフェクトパーツ
-	PARTTYPE_NUM
-};
-
 
 
 
@@ -303,8 +290,11 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 	topLump->add(cellsData);
 	Lump* packDataArray = Lump::set("ss::AnimePackData[]", true);
 	topLump->add(packDataArray);
+	Lump* effectlist = Lump::set("ss::EffectList[]", true);
+	topLump->add(effectlist);
 	topLump->add(Lump::s16Data((int)cellList->size()));
 	topLump->add(Lump::s16Data((int)proj->animeList.size()));
+	topLump->add(Lump::s16Data((int)proj->effectfileList.size()));
 
 	//セルマップ警告
 	if (proj->cellmapList.size() == 0)
@@ -403,20 +393,45 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			//5.5対応5.3.5に無いパーツ種別がある場合ワーニングを表示する
 			switch (part->type)
 			{
-			case PARTTYPE_NULL:			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
-			case PARTTYPE_NORMAL:		// 通常パーツ。領域を持つ。画像は無くてもいい。
-			case PARTTYPE_INSTANCE:		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
+			case SsPartType::null:			// null。領域を持たずSRT情報のみ。ただし円形の当たり判定は設定可能。
+			case SsPartType::normal:		// 通常パーツ。領域を持つ。画像は無くてもいい。
 				partData->add(Lump::s16Data(part->type));
 				break;
-			case PARTTYPE_INVALID:
-			case PARTTYPE_TEXT:			// テキスト(予約　未実装）
-			case PARTTYPE_ARMATURE:		//
-			case PARTTYPE_EFFECT:		// 5.5エフェクトパーツ
+			case SsPartType::instance:		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
+				//参照アニメのポインタが無い場合はNULLパーツになる。
+				{
+					//後で解決する----------------------
+					SsAnimePack* refpack = proj->findAnimationPack((const SsString)part->refAnimePack);
+					SsAnimation* refanime = refpack->findAnimation((const SsString)part->refAnime);
+					//----------------------------------
+					if (refanime == NULL)
+					{
+						partData->add(Lump::s16Data(SsPartType::null));
+						std::cerr << "ワーニング：参照のないインスタンスパーツがある: " << animePack->name << ".ssae " << part->name << "\n";
+					}
+					else
+					{
+						partData->add(Lump::s16Data(part->type));
+					}
+				}
+				break;
+			case SsPartType::effect:		// 5.5エフェクトパーツ
+				//参照エフェクト名が空の場合はNULLパーツになる。
+				if (part->refEffectName == "")
+				{
+					partData->add(Lump::s16Data(SsPartType::null));
+					//未実装　ワーニングを表示しNULLパーツにする
+					std::cerr << "ワーニング：参照のないエフェクトパーツがある: " << animePack->name << ".ssae " << part->name << "\n";
+				}
+				else
+				{
+					partData->add(Lump::s16Data(part->type));
+				}
+				break;
 			default:
-				//未実装　ワーニングを表示しNULLパーツにする
+				//未対応パーツ　ワーニングを表示しNULLパーツにする
 				std::cerr << "ワーニング：未対応のパーツ種別が使われている: " << animePack->name << ".ssae " << part->name << "\n";
-
-				partData->add(Lump::s16Data(PARTTYPE_NULL));
+				partData->add(Lump::s16Data(SsPartType::null));
 				break;
 			}
 			partData->add(Lump::s16Data(part->boundsType));
@@ -434,7 +449,17 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 //				partData->add(Lump::s16Data((int)str.length()));				//文字列のサイズ
 				partData->add(Lump::stringData(str));							//文字列
 			}
-
+			//エフェクト名
+			if (part->refEffectName == "")
+			{
+				const SsString str = "";
+				partData->add(Lump::stringData(str));							//文字列
+			}
+			else
+			{
+				const SsString str = part->refEffectName;
+				partData->add(Lump::stringData(str));							//文字列
+			}
 
 		}
 
@@ -984,8 +1009,256 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			animeData->add(Lump::s16Data(decoder.getAnimeEndFrame()));
 			animeData->add(Lump::s16Data(anime->settings.fps));
 			animeData->add(Lump::s16Data(label_idx));				//ラベルデータ数
+
 		}
-		
+		//エフェクトデータ
+		for (int effectIndex = 0; effectIndex < (int)proj->effectfileList.size(); effectIndex++)
+		{
+			Lump* effect = Lump::set("ss::EffectFile");
+			effectlist->add(effect);
+
+			const SsEffectFile* effectfile = proj->effectfileList[effectIndex];
+			effect->add(Lump::stringData(effectfile->name));	//エフェクト名
+			SsEffectModel effectmodel = effectfile->effectData;
+			effect->add(Lump::s16Data(effectmodel.fps));				//FPS
+			effect->add(Lump::s16Data(effectmodel.isLockRandSeed));		//乱数を固定するかどうか
+			effect->add(Lump::s16Data(effectmodel.lockRandSeed));		//固定する場合の乱数の種
+			//エフェクトノードの出力
+			effect->add(Lump::s16Data((int)effectmodel.nodeList.size()));	//エフェクトノード数
+			for (size_t nodeindex = 0; nodeindex < effectmodel.nodeList.size(); nodeindex++)
+			{
+				//エフェクトノードを追加
+				Lump* effectnode = Lump::set("ss::EffectNode");
+				effect->add(effectnode);
+
+				SsEffectNode *node = effectmodel.nodeList[nodeindex];
+				int	arrayIndex = node->arrayIndex;				//通し番号
+				int	parentIndex = node->parentIndex;			//親の番号
+				SsEffectNodeType::_enum	type = node->type;		//ノードの種類
+//				bool visible = = node->visible;					//エディター用
+				SsEffectBehavior behavior = node->behavior;		//動作パラメータ
+				SsRenderBlendType::_enum blendType = behavior.blendType;	//描画方法
+				//セル番号
+				SsCell*	refCell = behavior.refCell;
+				int cellIndex = -1;
+				if (refCell)
+				{
+					cellIndex = (*cellList)[refCell];
+				}
+				SsString CellName = behavior.CellName;
+				SsString CellMapName = behavior.CellMapName;
+				//ファイルへ書き出し
+				effectnode->add(Lump::s16Data(arrayIndex));		//通し番号
+				effectnode->add(Lump::s16Data(parentIndex));	//親の番号
+				effectnode->add(Lump::s16Data(type));			//ノードの種類
+				effectnode->add(Lump::s16Data(cellIndex));		//セルの番号
+				effectnode->add(Lump::s16Data(blendType));		//描画方法
+				effectnode->add(Lump::s16Data(behavior.plist.size()));	//コマンドパラメータ数
+
+				//コマンドパラメータ
+				for (size_t plistindex = 0; plistindex < behavior.plist.size(); plistindex++)
+				{
+					Lump* effectcommand = Lump::set("ss::EffectCommand");
+					effectnode->add(effectcommand);
+
+					SsEffectElementBase *elementbase = behavior.plist[plistindex];
+					SsEffectFunctionType::enum_ myType = elementbase->myType;
+					effectcommand->add(Lump::s32Data(myType));	//コマンドタイプ
+
+					switch (myType)
+					{
+					case SsEffectFunctionType::Basic:
+					{
+						//基本情報
+						ParticleElementBasic *element = (ParticleElementBasic*)elementbase;
+
+						int			maximumParticle = element->maximumParticle;
+						f32VValue	speed = element->speed;
+						i32VValue 	lifespan = element->lifespan;
+						float		angle = element->angle;
+						float		angleVariance = element->angleVariance;
+						int			interval = element->interval;
+						int			lifetime = element->lifetime;
+						int			attimeCreate = element->attimeCreate;
+						int			priority = element->priority;
+						break;
+
+						effectcommand->add(Lump::s32Data(priority));				//表示優先度
+						effectcommand->add(Lump::s32Data(maximumParticle));			//最大パーティクル数
+						effectcommand->add(Lump::s32Data(attimeCreate));			//一度に作成するパーティクル数
+						effectcommand->add(Lump::s32Data(interval));				//生成間隔
+						effectcommand->add(Lump::s32Data(lifetime));				//エミッター生存時間
+						effectcommand->add(Lump::floatData(speed.getMinValue()));	//初速最小
+						effectcommand->add(Lump::floatData(speed.getMaxValue()));	//初速最大
+						effectcommand->add(Lump::s32Data(lifespan.getMinValue()));	//パーティクル生存時間最小
+						effectcommand->add(Lump::s32Data(lifespan.getMaxValue()));	//パーティクル生存時間最大
+						effectcommand->add(Lump::floatData(angle));					//射出方向
+						effectcommand->add(Lump::floatData(angleVariance));			//射出方向範囲
+
+					}
+					case SsEffectFunctionType::RndSeedChange:
+					{
+						//シード上書き
+						ParticleElementRndSeedChange *element = (ParticleElementRndSeedChange*)elementbase;
+						int		Seed = element->Seed;
+						effectcommand->add(Lump::s32Data(Seed));					//上書きする値
+						break;
+					}
+					case SsEffectFunctionType::Delay:
+					{
+						//発生：タイミング
+						ParticleElementDelay *element = (ParticleElementDelay*)elementbase;
+						int		DelayTime = element->DelayTime;
+						effectcommand->add(Lump::s32Data(DelayTime));				//遅延時間
+						break;
+					}
+					case SsEffectFunctionType::Gravity:
+					{
+						//重力を加える
+						ParticleElementGravity *element = (ParticleElementGravity*)elementbase;
+						SsVector2   Gravity = element->Gravity;
+						effectcommand->add(Lump::floatData(Gravity.x));				//X方向の重力
+						effectcommand->add(Lump::floatData(Gravity.y));				//Y方向の重力
+						break;
+					}
+					case SsEffectFunctionType::Position:
+					{
+						//座標：生成時
+						ParticleElementPosition *element = (ParticleElementPosition*)elementbase;
+						f32VValue   OffsetX = element->OffsetX;
+						f32VValue   OffsetY = element->OffsetY;
+						effectcommand->add(Lump::floatData(OffsetX.getMinValue()));				//X座標に加算最小
+						effectcommand->add(Lump::floatData(OffsetX.getMaxValue()));				//X座標に加算最大
+						effectcommand->add(Lump::floatData(OffsetY.getMinValue()));				//X座標に加算最小
+						effectcommand->add(Lump::floatData(OffsetY.getMaxValue()));				//X座標に加算最大
+						break;
+					}
+					case SsEffectFunctionType::Rotation:
+					{
+						//Z回転を追加
+						ParticleElementRotation *element = (ParticleElementRotation*)elementbase;
+						f32VValue   Rotation = element->Rotation;
+						f32VValue   RotationAdd = element->RotationAdd;
+						effectcommand->add(Lump::floatData(Rotation.getMinValue()));			//角度初期値最小
+						effectcommand->add(Lump::floatData(Rotation.getMaxValue()));			//角度初期値最大
+						effectcommand->add(Lump::floatData(RotationAdd.getMinValue()));			//角度初期加算値最小
+						effectcommand->add(Lump::floatData(RotationAdd.getMaxValue()));			//角度初期加算値最大
+						break;
+					}
+					case SsEffectFunctionType::TransRotation:
+					{
+						//Z回転速度変更
+						ParticleElementRotationTrans *element = (ParticleElementRotationTrans*)elementbase;
+						float   RotationFactor = element->RotationFactor;
+						float	EndLifeTimePer = element->EndLifeTimePer;
+						effectcommand->add(Lump::floatData(RotationFactor));					//角度目標加算値
+						effectcommand->add(Lump::floatData(EndLifeTimePer));					//到達時間
+						break;
+					}
+					case SsEffectFunctionType::TransSpeed:
+					{
+						//速度：変化
+						ParticleElementTransSpeed *element = (ParticleElementTransSpeed*)elementbase;
+						f32VValue	Speed = element->Speed;
+						effectcommand->add(Lump::floatData(Speed.getMinValue()));				//速度目標値最小
+						effectcommand->add(Lump::floatData(Speed.getMaxValue()));				//速度目標値最大
+						break;
+					}
+					case SsEffectFunctionType::TangentialAcceleration:
+					{
+						//接線加速度
+						ParticleElementTangentialAcceleration *element = (ParticleElementTangentialAcceleration*)elementbase;
+						f32VValue	Acceleration = element->Acceleration;
+						effectcommand->add(Lump::floatData(Acceleration.getMinValue()));		//設定加速度最小
+						effectcommand->add(Lump::floatData(Acceleration.getMaxValue()));		//設定加速度最大
+						break;
+					}
+					case SsEffectFunctionType::InitColor:
+					{
+						//カラーRGBA：生成時
+						ParticleElementInitColor *element = (ParticleElementInitColor*)elementbase;
+						SsU8cVValue Color = element->Color;
+						effectcommand->add(Lump::s32Data(Color.getMinValue().toARGB()));		//設定カラー最小
+						effectcommand->add(Lump::s32Data(Color.getMaxValue().toARGB()));		//設定カラー最大
+						break;
+					}
+					case SsEffectFunctionType::TransColor:
+					{
+						//カラーRGB：変化
+						ParticleElementTransColor *element = (ParticleElementTransColor*)elementbase;
+						SsU8cVValue Color = element->Color;
+						effectcommand->add(Lump::s32Data(Color.getMinValue().toARGB()));		//設定カラー最小
+						effectcommand->add(Lump::s32Data(Color.getMaxValue().toARGB()));		//設定カラー最大
+						break;
+					}
+					case SsEffectFunctionType::AlphaFade:
+					{
+						//フェード
+						ParticleElementAlphaFade *element = (ParticleElementAlphaFade*)elementbase;
+						f32VValue  disprange = element->disprange;
+						effectcommand->add(Lump::floatData(disprange.getMinValue()));			//表示区間開始
+						effectcommand->add(Lump::floatData(disprange.getMaxValue()));			//表示区間終了
+						break;
+					}
+					case SsEffectFunctionType::Size:
+					{
+						//スケール：生成時
+						ParticleElementSize *element = (ParticleElementSize*)elementbase;
+						f32VValue SizeX = element->SizeX;
+						f32VValue SizeY = element->SizeY;
+						f32VValue ScaleFactor = element->ScaleFactor;
+						effectcommand->add(Lump::floatData(SizeX.getMinValue()));				//幅倍率最小
+						effectcommand->add(Lump::floatData(SizeX.getMaxValue()));				//幅倍率最大
+						effectcommand->add(Lump::floatData(SizeY.getMinValue()));				//高さ倍率最小
+						effectcommand->add(Lump::floatData(SizeY.getMaxValue()));				//高さ倍率最大
+						effectcommand->add(Lump::floatData(ScaleFactor.getMinValue()));			//倍率最小
+						effectcommand->add(Lump::floatData(ScaleFactor.getMaxValue()));			//倍率最大
+
+						break;
+					}
+					case SsEffectFunctionType::TransSize:
+					{
+						//スケール：変化
+						ParticleElementTransSize *element = (ParticleElementTransSize*)elementbase;
+						f32VValue SizeX = element->SizeX;
+						f32VValue SizeY = element->SizeY;
+						f32VValue ScaleFactor = element->ScaleFactor;
+						effectcommand->add(Lump::floatData(SizeX.getMinValue()));				//幅倍率最小
+						effectcommand->add(Lump::floatData(SizeX.getMaxValue()));				//幅倍率最大
+						effectcommand->add(Lump::floatData(SizeY.getMinValue()));				//高さ倍率最小
+						effectcommand->add(Lump::floatData(SizeY.getMaxValue()));				//高さ倍率最大
+						effectcommand->add(Lump::floatData(ScaleFactor.getMinValue()));			//倍率最小
+						effectcommand->add(Lump::floatData(ScaleFactor.getMaxValue()));			//倍率最大
+						break;
+					}
+					case SsEffectFunctionType::PointGravity:
+					{
+						//重力点の追加
+						ParticlePointGravity *element = (ParticlePointGravity*)elementbase;
+						SsVector2   Position = element->Position;
+						float		Power = element->Power;
+						effectcommand->add(Lump::floatData(Position.x));						//重力点X
+						effectcommand->add(Lump::floatData(Position.y));						//重力点Y
+						effectcommand->add(Lump::floatData(Power));								//パワー
+						break;
+					}
+					case SsEffectFunctionType::TurnToDirectionEnabled:
+					{
+						//進行方向に向ける
+						ParticleTurnToDirectionEnabled *element = (ParticleTurnToDirectionEnabled*)elementbase;
+						//コマンドがあれば有効
+						break;
+					}
+					case SsEffectFunctionType::Base:
+					default:
+						//未使用のコマンドが含まれている
+						break;
+					}
+				}
+			}
+
+		}
+
 	}
 	
 	return topLump;
