@@ -72,10 +72,10 @@ public:
         type = VarianceValue::MinMax;
 	}
 
-	void	setPlusMinus( mytype v1 , mytype v2 )
+	void	setPlusMinus( mytype v1  )
 	{
-		value = v;
-		subvalue = plusminus;
+		value = -v;
+		subvalue = v;
         type = VarianceValue::PlusMinus;
 	}
 
