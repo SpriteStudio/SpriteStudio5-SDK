@@ -5,6 +5,8 @@
 //  Created by kurooka on 2013/07/18.
 //
 //
+#ifndef __OSXFILEOPEN__
+#define __OSXFILEOPEN__
 
 #ifndef _WIN32
 
@@ -28,3 +30,4 @@ public:
 #endif
 
 //void    testOpenDlg();
+#endif

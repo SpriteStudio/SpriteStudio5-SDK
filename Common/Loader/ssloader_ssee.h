@@ -1,4 +1,5 @@
 #ifndef __SSLOADER_SSEE__
+#define __SSLOADER_SSEE__
 
 #include "sstypes.h"
 #include "ssarchiver.h"
@@ -57,14 +58,15 @@ public:
 			destroysub(t->next);
 		}
 
-		this->ctop = 0;
-		this->next = 0;
-		this->prev = 0;
-		delete this;
+		t->ctop = 0;
+		t->next = 0;
+		t->prev = 0;
+		delete t;
 	}
 	void destroy()
 	{
-		destroysub(this);	
+		if ( this->ctop )
+			destroysub(this->ctop);	
 	}
 };
 

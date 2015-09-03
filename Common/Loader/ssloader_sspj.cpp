@@ -39,6 +39,9 @@ SsProject::~SsProject()
 		itr != animeList.end() ; itr ++ ) delete (*itr);	
 	for ( SsSsCellMapList::iterator itr = cellmapList.begin() ; 
 		itr != cellmapList.end() ; itr ++ ) delete (*itr);	
+	for ( SsEffectFileList::iterator itr = effectfileList.begin() ; 
+		itr != effectfileList.end() ; itr ++ ) delete (*itr);	
+
 }
 
 
