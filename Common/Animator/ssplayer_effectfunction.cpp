@@ -555,7 +555,7 @@ public:
 	virtual void	updateEmmiter( SsEffectElementBase* ele , SsEffectRenderEmitter* emmiter){}
 	virtual void	initializeParticle( SsEffectElementBase* ele , SsEffectRenderEmitter* e , SsEffectRenderParticle* p )
 	{
-		p->_orggravity = p->_gravity;	
+		//p->_orggravity = p->_gravity;	
 	}
 	virtual void	updateParticle( SsEffectElementBase* ele , SsEffectRenderEmitter* e , SsEffectRenderParticle* p )
 	{

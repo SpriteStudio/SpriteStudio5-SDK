@@ -296,9 +296,6 @@ int	wtUIMainFrame::start()
 
 		nvgBeginFrame(vg, winWidth, winHeight, pxRatio);
 
-		//renderDemo(vg, mx,my, winWidth,winHeight, t, blowup, &data);
-		renderGraph(vg, 310,0, &fps);
-		renderGraph(vg, 5+200+315,0, &cpuGraph);
 
 		this->execute();
 		this->execdraw();
@@ -325,6 +322,11 @@ int	wtUIMainFrame::start()
 
 			nvgRestore(vg);
 		}
+
+		//renderDemo(vg, mx,my, winWidth,winHeight, t, blowup, &data);
+		renderGraph(vg, 310,0, &fps);
+		renderGraph(vg, 5+200+315,0, &cpuGraph);
+
 
 		nvgEndFrame(vg);
 		//cpuTime = glfwGetTime() - t;
