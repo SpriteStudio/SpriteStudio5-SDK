@@ -499,7 +499,7 @@ namespace SsTexFilterMode
 	enum _enum
 	{
 		invalid = -1,
-		nearest,	///< ニアレストネイバー
+		nearlest,	///< ニアレストネイバー
 		linear,		///< リニア、バイリニア
 		num
 	};

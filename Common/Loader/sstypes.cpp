@@ -173,7 +173,7 @@ void	__StringToEnum_( SsString n , SsTexWrapMode::_enum &out )
 SsString	__EnumToString_( SsTexFilterMode::_enum n )
 {
 	if ( SsTexFilterMode::invalid )		return "invalid";
-	if ( SsTexFilterMode::nearest )		return "nearest";
+	if ( SsTexFilterMode::nearlest )		return "nearlest";
 	if ( SsTexFilterMode::linear )		return "linear";
 
 	return "invalid";	
@@ -183,7 +183,7 @@ void	__StringToEnum_( SsString n , SsTexFilterMode::_enum &out )
 {
 	out = SsTexFilterMode::invalid;
 	if ( n == "invalid") out = SsTexFilterMode::invalid;
-	if ( n == "nearest") out = SsTexFilterMode::nearest;
+	if ( n == "nearlest") out = SsTexFilterMode::nearlest;
 	if ( n == "linear") out = SsTexFilterMode::linear;
 
 }
