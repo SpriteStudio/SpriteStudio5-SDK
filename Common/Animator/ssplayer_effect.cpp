@@ -96,7 +96,6 @@ SsEffectRenderAtom* SsEffectRenderer::CreateAtom( unsigned int seed , SsEffectRe
 		p->setMySeed( seed );
 		p->TrushRandom( em_pool_count%9 );
 
-		//p->data->behavior.initalize(p);
 		SsEffectFunctionExecuter::initalize( &p->data->behavior , p );
 
 		//セルデータの検索とセット
@@ -196,7 +195,6 @@ void	SsEffectRenderEmitter::Initialize()
 
 		if (this->data->GetMyBehavior())
 		{
-			//this->data->GetMyBehavior()->initalize( this );
 			SsEffectFunctionExecuter::initalize( this->data->GetMyBehavior() , this );
 		}
         intervalleft = this->interval;
@@ -318,7 +316,6 @@ void	SsEffectRenderParticle::Initialize()
 		this->refBehavior = parentEmitter->data->GetMyBehavior();
 		if ( refBehavior )
 		{
-			 //refBehavior->initializeParticle( parentEmitter , this );
 			 SsEffectFunctionExecuter::initializeParticle( refBehavior , parentEmitter , this );
 
 		}
@@ -385,7 +382,6 @@ void	SsEffectRenderParticle::update(float delta)
 
 		if ( refBehavior )
 		{
-			 //refBehavior->updateParticle( parentEmitter , this );
 			 SsEffectFunctionExecuter::updateParticle( refBehavior , parentEmitter , this );
 		}
 
@@ -393,7 +389,6 @@ void	SsEffectRenderParticle::update(float delta)
 
 		if (parent->_life <= 0.0f)
 		{
-//			_life = 0.0f;
 		}else{
 			//仮
 			this->position.x = this->_position.x;
@@ -422,13 +417,13 @@ void	SsEffectRenderParticle::updateDelta(float delta)
     SsVector2::normalize( radial , &radial );
 	tangential = radial;
 
-    radial = radial * _radialAccel;//SsVector2( radial.x * radialAccel , radial.x * radialAccel );
+    radial = radial * _radialAccel;
 
 	float newY = tangential.x;
 	tangential.x = -tangential.y;
 	tangential.y = newY;
 
-	tangential = tangential* _tangentialAccel;// SsVector2( tangential.x * tangentialAccel , tangential.x * tangentialAccel );
+	tangential = tangential* _tangentialAccel;
 
 	SsVector2 tmp = radial + tangential;
 
@@ -445,7 +440,7 @@ void 	SsEffectRenderParticle::updateForce(float delta)
 
 	this->_backposition = this->_position;
 
-	this->_force = _gravity;// * _exsitTime;
+	this->_force = _gravity;
 	SsVector2 ff = (this->vector * this->speed) + this->_execforce + this->_force;
 
 
@@ -509,41 +504,6 @@ void	SsEffectRenderParticle::draw(SsEffectRenderer* render)
 				dispCell->uvs[3], fcolor );
 
 }
-
-#if 0
-//------------------------------------------------------------------------------
-//
-//------------------------------------------------------------------------------
-void	SsEffectRenderer::setFrame( float frame )
-{
-
-	reload();
-
-	float addf = ONEFRAME * 2.0f;
-	float timef = (1.0f / 30.0f) * frame;
-	float addt = timef / 10.0f;
-	addf = 0.5f;
-
-	if ( frame == 0 )
-	{
-		update( 0 );
-		return ;
-	}
-
-	float t = 0.0f;
-	for ( int i = 0 ; i <= (int)(frame*2) ; i ++ )
-	{
-		if ( i == 0 )
-		{
-			update( 0 );
-		}else{
-			update( addf );
-		}
-
-	}
-
-}
-#endif
 
 
 //--------------------------------------------------------------------------------------

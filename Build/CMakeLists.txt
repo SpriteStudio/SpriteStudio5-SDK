@@ -99,29 +99,7 @@ ADD_EXECUTABLE(viewer_sample_gl
 ./Viewer/source/myscene.h
 )
 
-ADD_EXECUTABLE(viewer_sample2_gl
-./Viewer2/nanovg/demo.cpp
-./Viewer2/nanovg/perf.cpp
-./Viewer2/nanovg/nanovg.cpp
-./Viewer2/framework/wtafx.h
-./Viewer2/framework/wtAtom.cpp
-./Viewer2/framework/wtAtom.h
-./Viewer2/framework/wtdef.h
-./Viewer2/framework/wtFramework.h
-./Viewer2/framework/wtobject.cpp
-./Viewer2/framework/wtobject.h
-./Viewer2/framework/gui/wtui.h
-./Viewer2/framework/gui/wtuiobject.cpp
-./Viewer2/framework/gui/wtuiobject.h
-./Viewer2/framework/gui/wtUIMainFrame.cpp
-./Viewer2/framework/gui/wtUIMainFrame.h
-./Viewer2/framework/gui/wtUIPanel.cpp
-./Viewer2/framework/gui/wtUIPanel.h
-./Viewer2/framework/system/wtMemory.cpp
-./Viewer2/framework/system/wtMemory.h
-./Viewer2/framework/system/wtTask.cpp
-./Viewer2/framework/system/wtTask.h
-)
+
 
 ADD_EXECUTABLE(viewer_sample_dx9
 ../Common/Helper/DirectX/d3dsimple.cpp
@@ -214,7 +192,6 @@ ENDIF()
 #link_directories( SEARCH_LIB )
 include_directories(;${SEARCH_DIR} ; ${PYTHON_IHNCLUDE} ; ${BOOST_ROOT} ; ../Common/Loader/ ;../Common/Helper/ ; ../Common/Drawer/ ; ../Common/Animator)
 target_link_libraries(viewer_sample_gl ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4} )
-target_link_libraries(viewer_sample2_gl ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4} )
 
 #IF (WIN32)
 #target_link_libraries(scriptbase_converter ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4} )

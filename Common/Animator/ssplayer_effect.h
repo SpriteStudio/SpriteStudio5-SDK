@@ -115,7 +115,6 @@ public:
 
 
     virtual void	update(float delta){}
-	//virtual void	draw(SsVector3& offsetpos){}
 	virtual void	draw(SsEffectRenderer* render){}
 
 	virtual void	debugdraw(){}
@@ -153,7 +152,6 @@ class SsEffectDrawBatch
 {
 public:
 	int	priority;
-	//SsCell*					dispCell;    //表示に使用するテクスチャ
 	SsCellValue*			dispCell;
 
 	SsRenderBlendType::_enum       blendType;
@@ -178,7 +176,6 @@ class  SsEffectRenderEmitter : public SsEffectRenderAtom
 {
 public:
 	unsigned int myseed;
-//	SsCell*					dispCell;    //表示に使用するテクスチャ
 	SsCellValue				dispCell;
 	//エミッターパラメータ
 
@@ -188,7 +185,6 @@ public:
 	CMersenneTwister	     MT;
 
 	//以前からの移植
-
 	int				maxParticle;    //
 	int				delay;
 	float				interval;
@@ -222,7 +218,6 @@ public:
 		frame = 0;
 		frameDelta = 0;
 		particleCount = 0;
-		//dispCell = 0;
 		_exsitTime = 0;
 
 		generate_ok = true;
@@ -241,20 +236,14 @@ public:
 
 	virtual ~SsEffectRenderEmitter(){}
 	SsRenderType::_enum		getMyType(){ return SsRenderType::EmmiterNode;}
-	void			setMySeed( unsigned int seed );//{myseed = seed;}
+	void			setMySeed( unsigned int seed );
 	void			TrushRandom(int loop)
 	{
 		for ( int i = 0 ; i < loop ; i++ )
 			MT.genrand_uint32();
 	}
 
-	//----------------------------------------------------------------------
-	//生成フェーズ           SsEffectRendererへ移動してもいいかも
-	//----------------------------------------------------------------------
 	virtual void	Initialize();
-	//----------------------------------------------------------------------
-	//パーティクルオブジェクトの生成
-	//----------------------------------------------------------------------
 	virtual bool	genarate( SsEffectRenderer* render );
 
 	virtual void	update(float delta);
@@ -268,19 +257,16 @@ public:
 
 //--------------------------------------------------------------------------
 //パーティクルオブジェクト
-//エミッターの親になるため性質を一緒にする
 //--------------------------------------------------------------------------
 class  SsEffectRenderParticle : public SsEffectRenderAtom
 {
 public:
-//    SsCell*					dispCell;
 	SsCellValue*			dispCell;
 
 	float   				size;
 	SsEffectRenderEmitter*  parentEmitter;
     SsEffectBehavior*		refBehavior;
 
-	//以前からの移植
 	SsVector2   _baseEmiterPosition;   //もしかしてもう使ってないかも
 	SsVector2   _backposition;         //force計算前のポジション
 	SsVector2   _position;             //描画用ポジション
@@ -304,10 +290,9 @@ public:
     float		lastspeed;
 	SsVector2   vector;
 
-	SsVector2   _force;    //累積されている力
-	SsVector2   _gravity;  //いらないかも？
-	SsVector2   _orggravity;  //いらないかも？
-
+	SsVector2   _force;
+	SsVector2   _gravity;
+//	SsVector2   _orggravity;
 
 	float 		_radialAccel;
 	float 		_tangentialAccel;
@@ -487,12 +472,8 @@ public:
 			}
 	void	setParentAnimeState( SsPartState* state ){ parentState = state; }
 
-//	virtual void	setFrame( float frame );
-
 	SsEffectRenderAtom* CreateAtom( unsigned int seed , SsEffectRenderAtom* parent , SsEffectNode* node );
 
-//	u32		getAnimeFrameOffset(){ return parentAnimeStartFrame;}
-//	void    setAnimeFrameOffset( u32 a ){ parentAnimeStartFrame = a; }
 	void	setCellmapManager( SsCellMapList* plist ) { curCellMapManager = plist; }
 
 };
