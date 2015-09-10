@@ -311,7 +311,20 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 		cellMapData->add(Lump::stringData(cellMap->name));
 		cellMapData->add(Lump::stringData(cellMap->imagePath));
 		cellMapData->add(Lump::s16Data((int)mapIndex));
+		if (cellMap->overrideTexSettings == true )							///< テクスチャ設定をプロジェクトの設定ではなく下記設定を使う
+		{
+			//個別の設定を使う
+			cellMapData->add(Lump::s16Data(cellMap->wrapMode));			///< テクスチャのラップモード
+			cellMapData->add(Lump::s16Data(cellMap->filterMode));		///< テクスチャのフィルタモード
+		}
+		else
+		{
+			//プロジェクトの設定を使う
+			cellMapData->add(Lump::s16Data(proj->settings.wrapMode));			///< テクスチャのラップモード
+			cellMapData->add(Lump::s16Data(proj->settings.filterMode));		///< テクスチャのフィルタモード
+		}
 		cellMapData->add(Lump::s16Data(0));	// reserved
+
 
 		//全角チェック
 		if ( isZenkaku( &cellMap->name ) == true )
@@ -553,11 +566,19 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					init.size_X = cell->size.x;
 					init.size_Y = cell->size.y;
 				}
+				//初期値をSSのディフォルトにする
+/*
 				init.uv_move_X = state->uvTranslate.x;
 				init.uv_move_Y = state->uvTranslate.y;
 				init.uv_rotation = state->uvRotation;
 				init.uv_scale_X = state->uvScale.x;
 				init.uv_scale_Y = state->uvScale.y;
+*/
+				init.uv_move_X = 0;
+				init.uv_move_Y = 0;
+				init.uv_rotation = 0;
+				init.uv_scale_X = 1;
+				init.uv_scale_Y = 1;
 				init.boundingRadius = state->boundingRadius;
 
 
