@@ -74,8 +74,8 @@ public:
 
 	void	setPlusMinus( mytype v1  )
 	{
-		value = -v;
-		subvalue = v;
+		value = -v1;
+		subvalue = v1;
         type = VarianceValue::PlusMinus;
 	}
 
@@ -101,10 +101,12 @@ public:
 	operator mytype() { return value; }
 
 private:
+
 	virtual bool	inputString( SsString value , SsString subvalue )
 	{
 	 return true;
 	}
+
 };
 
 
@@ -113,21 +115,21 @@ typedef VarianceValue<int>    			i32VValue;
 typedef VarianceValue<SsU8Color>    	SsU8cVValue;
 
 
-template<> bool VarianceValue<float>::inputString( SsString _value , SsString _subvalue )
+template<> inline bool VarianceValue<float>::inputString( SsString _value , SsString _subvalue )
 { 
 	value = (float)atof(_value.c_str());
 	subvalue = (float)atof(_subvalue.c_str());
 
 	return true;
 }
-template<> bool VarianceValue<int>::inputString( SsString _value , SsString _subvalue )
+template<> inline bool VarianceValue<int>::inputString( SsString _value , SsString _subvalue )
 { 
 	value = atoi(_value.c_str());
 	subvalue = atoi(_subvalue.c_str());
 
 	return true;
 }
-template<> bool VarianceValue<SsU8Color>::inputString( SsString _value , SsString _subvalue )
+template<> inline bool VarianceValue<SsU8Color>::inputString( SsString _value , SsString _subvalue )
 { 
 	u32 a = strtoul( _value.c_str(), 0 , 16);
 	u32 b = strtoul( _subvalue.c_str(), 0 , 16);

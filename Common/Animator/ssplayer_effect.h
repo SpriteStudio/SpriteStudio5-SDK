@@ -138,7 +138,11 @@ public:
 	}
 	void	setRotation( float z  )
 	{
+#ifdef EMCC
+		rotation = fmod( z , 360 ) ;
+#else
 		rotation = std::fmod( z , 360 ) ;
+#endif
 	}
 
 	float		getRotation() const { return rotation; }

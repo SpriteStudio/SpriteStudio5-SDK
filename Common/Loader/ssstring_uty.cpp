@@ -78,6 +78,11 @@ bool	is_digit_string( std::string &in_str , bool* is_priod )
 
 std::string getFullPath( const std::string& basePath , const std::string &relPath )
 {
+
+#ifdef EMCC
+
+	return "";
+#else
 #ifdef _WIN32
 	static char	curPath[_MAX_PATH];
 
@@ -123,5 +128,5 @@ std::string getFullPath( const std::string& basePath , const std::string &relPat
     ret_temp+="/";
     return ret_temp;
 #endif
-
+#endif
 }

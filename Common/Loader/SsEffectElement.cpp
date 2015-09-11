@@ -4,15 +4,15 @@
 #include "ssloader.h"
 
 
-//loaderのモジュールでレンダラー側のモジュールを参照しているのが筋が良く無い
+//loaderのモジュールでレンダラー側のモジュールを参照しているのが筋が良く無いどうにかしたい
 
 #include "SsEffectElement.h"
-#include "ssplayer_animedecode.h"
-#include "ssplayer_effect.h"
-#include "ssplayer_macro.h"
-#include "ssplayer_matrix.h"
-#include "ssplayer_render.h"
-#include "ssplayer_effectfunction.h"
+#include "../Animator/ssplayer_animedecode.h"
+#include "../Animator/ssplayer_effect.h"
+#include "../Animator/ssplayer_macro.h"
+#include "../Animator/ssplayer_matrix.h"
+#include "../Animator/ssplayer_render.h"
+#include "../Animator/ssplayer_effectfunction.h"
 
 
 

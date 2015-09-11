@@ -1,7 +1,7 @@
 ﻿#ifndef __SAMPLESCENE__
 #define __SAMPLESCENE__
 
-#include "ssHelper.h"
+#include "../../../common/Helper/ssHelper.h"
 //#include "./player/ssplayer_animedecode.h"
 
 class SsAnimeDecoder;

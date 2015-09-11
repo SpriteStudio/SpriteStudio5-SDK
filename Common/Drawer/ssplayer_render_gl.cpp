@@ -1,13 +1,19 @@
 ﻿#include <stdio.h>
 #include <cstdlib>
 
-#ifndef _WIN32
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
+#ifdef EMCC
+
+#include <SDL/SDL.h>
+
 #else
-#include <GL/glew.h>
-#include <GL/GL.h>
+	#ifndef _WIN32
+		#include <OpenGL/gl.h>
+		#include <OpenGL/glu.h>
+		#include <OpenGL/glext.h>
+	#else
+		#include <GL/glew.h>
+		#include <GL/GL.h>
+	#endif
 #endif
 
 
@@ -19,7 +25,7 @@
 #include "ssplayer_render_gl.h"
 #include "ssplayer_shader_gl.h"
 
-#include "ssplayer_cellmap.h"
+#include "../Animator/ssplayer_cellmap.h"
 
 
 //ISsRenderer*	SsCurrentRenderer::m_currentrender = 0;
@@ -153,7 +159,7 @@ void	SsRenderGL::SetAlphaBlendMode(SsBlendType::_enum type)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		break;
 	case SsBlendType::mul:
-		glBlendFuncSeparateEXT( GL_ZERO, GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_ONE );
+//★		glBlendFuncSeparateEXT( GL_ZERO, GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_ONE );
 		break;
 	case SsBlendType::add:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -161,7 +167,7 @@ void	SsRenderGL::SetAlphaBlendMode(SsBlendType::_enum type)
 	case SsBlendType::sub:
 		// TODO SrcAlpha を透明度として使えない
 		glBlendEquation( GL_FUNC_REVERSE_SUBTRACT );
-		glBlendFuncSeparateEXT( GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_DST_ALPHA );
+//★		glBlendFuncSeparateEXT( GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_DST_ALPHA );
 
 		break;
 	}
@@ -607,6 +613,7 @@ void	SsRenderGL::renderPart( SsPartState* state )
 
 		if ( glpgObject )
 		{
+#if 0//★
 			VertexLocation = glpgObject->GetAttribLocation( "vertexID" );
 			glVertexAttribPointer( VertexLocation , 2 , GL_FLOAT , GL_FALSE, 0, vertexID);//GL_FALSE→データを正規化しない
 			glEnableVertexAttribArray(VertexLocation);//有効化
@@ -624,6 +631,7 @@ void	SsRenderGL::renderPart( SsPartState* state )
 			uid = glpgObject->GetUniformLocation( "rates" );
 			if ( uid >= 0 )
 				glUniform1fv( uid , 5 , rates );
+#endif
 		}
 	}
 
@@ -652,7 +660,7 @@ void	SsRenderGL::renderPart( SsPartState* state )
 		{
 			if ( glpgObject )
 			{
-				glDisableVertexAttribArray(VertexLocation);//無効化
+//★				glDisableVertexAttribArray(VertexLocation);//無効化
 				glpgObject->Disable();
 			}
 		}

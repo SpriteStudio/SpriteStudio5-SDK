@@ -80,6 +80,12 @@ public:
 
 	float	length() const
 	{
+#ifdef EMCC
+		float r = length_sq();
+		if ( r < 0.0001f && r > -0.0001f ) return 0;
+
+		return (float)sqrtf( r );
+#else
 #ifdef _WIN32
 		float r = length_sq();
 		if ( r < 0.0001f && r > -0.0001f ) return 0;
@@ -87,6 +93,7 @@ public:
 		return (float)std::sqrtf( r );
 #else
 		return (float)std::sqrt( length_sq() );
+#endif
 #endif
 	}
 

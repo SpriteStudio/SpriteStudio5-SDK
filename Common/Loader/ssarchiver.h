@@ -31,7 +31,7 @@ public:
 	SsXmlRangeValueConverter(){}
 	virtual ~SsXmlRangeValueConverter(){}
 
-	virtual bool	inputString( SsString value , SsString subvalue ) = 0;
+	virtual bool	inputString( SsString value , SsString subvalue ){return false;}
 };
 
 

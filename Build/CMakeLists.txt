@@ -3,9 +3,9 @@ PROJECT(sssdk)
 
 IF (WIN32)
 #SET(BOOST_ROOT "C:/boost-1_56_0")
-SET(BOOST_ROOT "C:/Boost/include/boost-1_56/")
-SET(BOOST_PYTHON_LIB "C:/Boost/lib" )
-SET(PYTHON_IHNCLUDE "C:/Python27/include")
+#SET(BOOST_ROOT "C:/Boost/include/boost-1_56/")
+#SET(BOOST_PYTHON_LIB "C:/Boost/lib" )
+#SET(PYTHON_IHNCLUDE "C:/Python27/include")
 
 SET(PYTHON_LIB "C:/Python27/libs")
 ENDIF(WIN32)
@@ -190,7 +190,8 @@ IF(APPLE)
 ENDIF()
 
 #link_directories( SEARCH_LIB )
-include_directories(;${SEARCH_DIR} ; ${PYTHON_IHNCLUDE} ; ${BOOST_ROOT} ; ../Common/Loader/ ;../Common/Helper/ ; ../Common/Drawer/ ; ../Common/Animator)
+#include_directories(;${SEARCH_DIR} ; ${PYTHON_IHNCLUDE} ; ${BOOST_ROOT} ; ../Common/Loader/ ;../Common/Helper/ ; ../Common/Drawer/ ; ../Common/Animator)
+include_directories()
 target_link_libraries(viewer_sample_gl ${LINK_LIB1} ${LINK_LIB2} ${LINK_LIB3} ${LINK_LIB4} )
 
 #IF (WIN32)

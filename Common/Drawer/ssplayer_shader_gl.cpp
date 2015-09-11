@@ -1,10 +1,18 @@
-﻿#ifdef _WIN32
-#include <GL/glew.h>
+﻿
+#ifdef EMCC
+
+#include <SDL/SDL.h>
+		#include <GL/glew.h>
 #else
-//#include <OpenGL/OpenGL.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glext.h>
+	#ifdef _WIN32
+		#include <GL/glew.h>
+	#else
+		#include <OpenGL/gl.h>
+		#include <OpenGL/glext.h>
+	#endif
 #endif
+
+
 #include "ssplayer_shader_gl.h"
 
 #include	<fstream>

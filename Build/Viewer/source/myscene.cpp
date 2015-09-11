@@ -1,7 +1,7 @@
 ﻿#include "myscene.h"
 
-#include "ssHelper.h"
-#include "ssplayer_animedecode.h"
+#include "../../../common/Helper/ssHelper.h"
+#include "../../../common/Animator/ssplayer_animedecode.h"
 
 //パラメータ等をウインドウへ表示するために使用します。
 #include <AntTweakBar.h>
