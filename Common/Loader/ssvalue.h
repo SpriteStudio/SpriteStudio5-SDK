@@ -107,18 +107,18 @@ public:
 		return *this;
 	}
 
-    //リリースの判断が甘い
+
 	void	release()
 	{
         
 		if ( type == string_type && _str) {
             delete _str;
-            ;return;
+            return;
         }
         
 		if ( type == array_type && _array){
             delete _array;
-            ;return;
+            return;
         }
 		if ( type == hash_type && _hash )
         {
@@ -126,7 +126,6 @@ public:
             
             return;
         }
-		//_str = 0;
 
 	}
 

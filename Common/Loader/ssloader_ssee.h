@@ -4,7 +4,7 @@
 #include "sstypes.h"
 #include "ssarchiver.h"
 
-#include "effect/SsEffectBehavior.h"
+#include "SsEffectBehavior.h"
 
 
 

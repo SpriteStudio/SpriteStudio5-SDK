@@ -329,7 +329,7 @@ void	SsRenderGL::renderPart( SsPartState* state )
 		switch (fmode)
 		{
 		default:
-		case SsTexFilterMode::nearest:
+		case SsTexFilterMode::nearlest:
 			filterMode = GL_NEAREST;
 			break;
 		case SsTexFilterMode::linear:

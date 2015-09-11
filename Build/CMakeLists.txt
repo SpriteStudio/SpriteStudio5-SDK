@@ -26,10 +26,10 @@ ADD_LIBRARY(ssloader
 ../Common/loader/ssloader_ssae.cpp 
 ../Common/loader/ssloader_ssce.cpp 
 ../Common/loader/ssloader_ssee.cpp 
-../Common/loader/effect/SsEffectBehavior.cpp
-../Common/loader/effect/SsEffectBehavior.h
-../Common/loader/effect/SsEffectElement.h
-../Common/loader/effect/SsEffectElement.cpp
+../Common/loader/SsEffectBehavior.cpp
+../Common/loader/SsEffectBehavior.h
+../Common/loader/SsEffectElement.h
+../Common/loader/SsEffectElement.cpp
 ../Common/loader/ssstring_uty.cpp 
 ../Common/loader/ssarchiver.cpp 
 ../Common/loader/ssarchiver.h 
