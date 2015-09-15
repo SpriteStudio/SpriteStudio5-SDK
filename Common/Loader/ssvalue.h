@@ -6,16 +6,20 @@
 #include <map>
 #include <vector>
 #include <cassert>
+#include <string>
+#include "sstypes.h"
 
 class SsValue;
+
 
 typedef	wchar_t		SsChar;
 typedef std::vector<SsValue>		SsArray;
 typedef std::map<SsString,SsValue>	SsHash;
 
+#ifdef USE_SSARCHIVER
 //SsValue用のシリアライザ
 void	SsValueSeriarizer( ISsXmlArchiver* ar , SsValue& v , const std::string key = "value" );
-
+#endif
 
 class SsValue{
 public:
@@ -162,10 +166,13 @@ public:
 		return false;
 	}
 
+
+#ifdef USE_SSARCHIVER
 	SSSERIALIZE_BLOCK
 	{
 		SsValueSeriarizer( ar , *this ,"" );	
 	}
+#endif
 	
 };
 

@@ -1,6 +1,7 @@
 #include "SsEffectBehavior.h"
 
 
+#ifdef USE_SSARCHIVER
 
 
 SsEffectElementBase*	SsEffectBehavior::Factory(const char* name , XMLElement* e )
@@ -58,3 +59,4 @@ void	SsEffectBehavior::EffectElementLoader(ISsXmlArchiver* ar)
 
 }
 
+#endif

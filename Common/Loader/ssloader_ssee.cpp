@@ -8,7 +8,7 @@
 
 SsEffectFile*	ssloader_ssee::Load(const std::string& filename )
 {
-
+#ifdef USE_SSARCHIVER
 	SsString _basepath = "";
 
 	
@@ -25,6 +25,9 @@ SsEffectFile*	ssloader_ssee::Load(const std::string& filename )
 	}
 
 	return effectFile;
+#else
+	return 0;
+#endif
 
 }
 

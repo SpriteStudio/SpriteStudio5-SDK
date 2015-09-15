@@ -26,6 +26,8 @@ public:
 	  {}
 	virtual ~SsKeyframe(){}
 
+
+#ifdef USE_SSARCHIVER
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE_ATTRIBUTE( time );
@@ -37,8 +39,9 @@ public:
 		}
 		
 		SsValueSeriarizer( ar , value );
-
 	}
+#endif
+
 };
 
 typedef std::vector<SsKeyframe*> AttributeKeyList;
@@ -63,7 +66,7 @@ public:
 			itr != key.end() ; itr ++ ) delete (*itr);
 	}
 
-
+#ifdef USE_SSARCHIVER
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE_ATTRIBUTE_ENUM( tag );
@@ -77,6 +80,7 @@ public:
 			key_dic[time] = key;
 		}
 	}
+#endif
 
 	bool	isEmpty()
 	{

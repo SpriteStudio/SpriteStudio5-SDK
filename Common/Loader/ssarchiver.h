@@ -1,6 +1,9 @@
 #ifndef  __SSARCHIVER__
 #define  __SSARCHIVER__
 
+//#define USE_SSARCHIVER
+
+#ifdef USE_SSARCHIVER
 #include "./tinyxml2/tinyxml2.h"
 #include "./babel/babel.h"
 #include "sstypes.h"
@@ -251,8 +254,7 @@ inline bool	__SSAR_DECLARE_ATTRIBUTE_ENUM__( ISsXmlArchiver* ar ,myclass& type, 
 #define SSAR_DECLARE_ATTRIBUTE_ENUM(t) __SSAR_DECLARE_ATTRIBUTE_ENUM__( ar , t , #t)
 
 
-bool	StringToPoint2( const std::string& str , SsPoint2& point );
-bool	StringToIRect( const std::string& str , SsIRect& rect );
+
 
 
 ///SpriteStudio XMLデータ読み書きの初期化
@@ -260,6 +262,13 @@ void	SsArchiverInit();
 
 
 #define AR_SELF_CHECK() if ( this->getxml() == 0 ) return false;
+
+#else
+
+
+
+#endif
+
 
 
 #endif

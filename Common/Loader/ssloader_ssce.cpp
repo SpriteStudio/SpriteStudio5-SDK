@@ -5,6 +5,7 @@
 
 SsCellMap*	ssloader_ssce::Load(const std::string& filename )
 {
+#ifdef USE_SSARCHIVER
 	SsString _basepath = "";
 
 	
@@ -22,6 +23,11 @@ SsCellMap*	ssloader_ssce::Load(const std::string& filename )
 	}
 
 	return cellmap;
+#else
+
+	return 0;
+#endif
+
 }
 
 

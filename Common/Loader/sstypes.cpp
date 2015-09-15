@@ -1,5 +1,47 @@
 
 #include "sstypes.h"
+#include "ssstring_uty.h"
+
+
+
+bool	StringToPoint2( const std::string& str , SsPoint2& point )
+{
+	std::vector<SsString>	str_list;
+	split_string( str , ' ' , str_list );
+	if ( str_list.size() < 2 )
+	{
+		point.x = 0;
+		point.y = 0;
+		return false;
+	}else{
+		point.x = (float)atof( str_list[0].c_str() );
+		point.y = (float)atof( str_list[1].c_str() );
+	}
+
+	return true;
+}
+
+
+bool	StringToIRect( const std::string& str , SsIRect& rect )
+{
+	std::vector<SsString>	str_list;
+	split_string( str , ' ' , str_list );
+	if ( str_list.size() < 4 )
+	{
+		rect.x = 0;
+		rect.y = 0;
+		rect.w = 0;
+		rect.h = 0;
+		return false;
+	}else{
+		rect.x = (int)atof( str_list[0].c_str() );
+		rect.y = (int)atof( str_list[1].c_str() );
+		rect.w = (int)atof( str_list[2].c_str() );
+		rect.h = (int)atof( str_list[3].c_str() );
+	}
+
+	return true;
+}
 
 //---------------------------------------------------------------
 //相互変換 SsPartType

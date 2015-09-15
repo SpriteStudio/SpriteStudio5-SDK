@@ -92,7 +92,7 @@ public:
 	{}
 	~SsEffectNode(){}
 
-
+#ifdef USE_SSARCHIVER
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE(arrayIndex);
@@ -101,7 +101,7 @@ public:
 		SSAR_DECLARE(visible);	
 		SSAR_STRUCT_DECLARE(behavior);	
 	}
-
+#endif
 
 	SsEffectNodeType::_enum	GetType(){ return type; }
 
@@ -138,7 +138,7 @@ public:
     //アクセス
 	SsEffectNode* GetRoot(){ return root;}
 
-
+#ifdef USE_SSARCHIVER
 	//シリアライザ
 	SSSERIALIZE_BLOCK
 	{
@@ -163,8 +163,9 @@ public:
 		}
 
 	}
-
 	void	EffectNodeLoader(ISsXmlArchiver* ar);
+#endif
+
 
 
 };
@@ -179,12 +180,15 @@ public:
 	SsEffectFile(){}
 	virtual ~SsEffectFile(){}
 
+
+#ifdef USE_SSARCHIVER
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE(name);
 		SSAR_STRUCT_DECLARE( effectData );
 		effectData.effectName = name;
 	}
+#endif
 
 };
 

@@ -41,7 +41,9 @@ public:
 
 
 	SsProjectSetting() : dontUseMatrixForTransform(0) , rootPartFunctionAsVer4(0) {}
-	
+
+
+#ifdef USE_SSARCHIVER
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
@@ -59,6 +61,8 @@ public:
 		SSAR_DECLARE(rootPartFunctionAsVer4);
 
 	}
+#endif
+
 };
 
 
@@ -142,7 +146,7 @@ public:
 	SsCellMap* findCellMap( SsString& str );
 	SsCellMap* getCellMap( int index );
 
-
+#ifdef USE_SSARCHIVER
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
@@ -153,6 +157,7 @@ public:
 		SSAR_DECLARE( effectFileNames );
 
 	}
+#endif
 
 public:
 

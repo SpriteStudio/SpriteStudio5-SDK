@@ -20,7 +20,7 @@ public:
 	SsCell(){}
 	virtual ~SsCell(){}
 
-
+#ifdef USE_SSARCHIVER
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
@@ -30,6 +30,8 @@ public:
 		SSAR_DECLARE( pivot );
 		SSAR_DECLARE( rotated );
 	}
+#endif
+
 };
 
 
@@ -67,7 +69,7 @@ public:
 		for ( std::vector<SsCell*>::iterator itr = cells.begin() ; 
 			itr != cells.end() ; itr ++ ) delete (*itr);	
 	}
-
+#ifdef USE_SSARCHIVER
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
@@ -81,6 +83,7 @@ public:
 
 		SSAR_DECLARE_LISTEX( cells ,"cell" );
 	}
+#endif
 };
 
 

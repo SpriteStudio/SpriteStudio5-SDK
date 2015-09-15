@@ -728,5 +728,8 @@ public:
 
 };
 
+bool	StringToPoint2( const std::string& str , SsPoint2& point );
+bool	StringToIRect( const std::string& str , SsIRect& rect );
+
 
 #endif

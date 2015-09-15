@@ -89,7 +89,7 @@ SsEffectFile*		SsProject::findEffect( SsString& effectName )
 
 SsProject*	ssloader_sspj::Load(const std::string& filename )
 {
-
+#ifdef USE_SSARCHIVER
 	XMLDocument xml;
 	if ( XML_SUCCESS == xml.LoadFile( filename.c_str() ) )
 	{
@@ -157,7 +157,7 @@ SsProject*	ssloader_sspj::Load(const std::string& filename )
 		}
 		return proj;
 	}	
-
+#endif
 	return 0;
 }
 

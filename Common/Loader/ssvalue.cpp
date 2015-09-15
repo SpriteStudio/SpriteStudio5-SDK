@@ -3,7 +3,7 @@
 #include "ssvalue.h"
 
 
-
+#ifdef USE_SSARCHIVER
 //SsValue用のシリアライザ
 void	SsValueSeriarizer( ISsXmlArchiver* ar , SsValue& v , const std::string key) 
 {
@@ -74,3 +74,4 @@ void	SsValueSeriarizer( ISsXmlArchiver* ar , SsValue& v , const std::string key)
 	//assert(e);
 
 }
+#endif

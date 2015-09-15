@@ -3,7 +3,7 @@
 
 SsAnimePack*	ssloader_ssae::Load(const std::string& filename )
 {
-
+#ifdef USE_SSARCHIVER
 	SsAnimePack* anime = new SsAnimePack();
 
 	XMLDocument xml;
@@ -17,6 +17,8 @@ SsAnimePack*	ssloader_ssae::Load(const std::string& filename )
 	}
 
 	return anime;
+#endif
+	return 0;
 }
 
 

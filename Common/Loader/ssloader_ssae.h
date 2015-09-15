@@ -20,6 +20,7 @@ public:
 	virtual ~SsAnimationSettings(){}
 public:
 
+#ifdef USE_SSARCHIVER
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
@@ -29,6 +30,7 @@ public:
 		SSAR_DECLARE( pivot );
 		SSAR_DECLARE_ENUM(sortMode);
 	}
+#endif
 };
 
 
@@ -79,7 +81,7 @@ public:
 	  }
 	virtual ~SsPart(){}
 
-
+#ifdef USE_SSARCHIVER
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
@@ -122,6 +124,8 @@ public:
 		}
 
 	}
+#endif
+
 };
 
 
@@ -139,12 +143,13 @@ public:
 			itr != partList.end() ; itr ++ ) delete (*itr);
 	}
 
+#ifdef USE_SSARCHIVER
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE_LIST( partList );
 	}
-
+#endif
 };
 
 
@@ -163,12 +168,14 @@ public:
 			itr != attributes.end() ; itr ++ ) delete (*itr);	
 	}
 
+#ifdef USE_SSARCHIVER
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( partName );
 		SSAR_DECLARE_LISTEX( attributes , "attribute" );
 	}
+#endif
 };
 
 
@@ -179,12 +186,13 @@ public:
 	SsString	name;	///< 名前 [変数名変更禁止]
 	int			time;	///< 設置された時間(フレーム) [変数名変更禁止]
 
+#ifdef USE_SSARCHIVER
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE( name );
 		SSAR_DECLARE( time );
 	}
-
+#endif
 private:
 
 };
@@ -209,6 +217,7 @@ public:
 			itr != labels.end() ; itr ++ ) delete (*itr);	
 	}
 
+#ifdef USE_SSARCHIVER
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
@@ -217,6 +226,7 @@ public:
 		SSAR_DECLARE_LISTEX( labels , "value" );
 		SSAR_DECLARE_LISTEX( partAnimes , "partAnime" );
 	}
+#endif
 };
 
 /**
@@ -241,6 +251,7 @@ public:
 			itr != animeList.end() ; itr ++ ) delete (*itr);		
 	}
 
+#ifdef USE_SSARCHIVER
 	///シリアライズのための宣言です。
 	SSSERIALIZE_BLOCK
 	{
@@ -251,7 +262,7 @@ public:
 		SSAR_DECLARE( cellmapNames );
 		SSAR_DECLARE_LISTEX( animeList , "anime" );
 	}
-
+#endif
 	//アニメーション名からアニメーションを取得する
 	SsAnimation*	findAnimation(SsString& name);
 

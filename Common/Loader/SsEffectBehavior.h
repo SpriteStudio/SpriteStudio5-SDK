@@ -23,6 +23,7 @@ public:
 	SsEffectBehavior() : refCell(0),blendType(SsRenderBlendType::invalid) {}
 	virtual ~SsEffectBehavior(){}
 
+#ifdef USE_SSARCHIVER
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE(CellName);
@@ -32,10 +33,11 @@ public:
 		if ( ar->getxml() )
 			EffectElementLoader( ar );
 	}
-
-	SsEffectElementBase*	Factory(const char* name , XMLElement* e );
-
 	void	EffectElementLoader(ISsXmlArchiver* ar);
+	SsEffectElementBase*	Factory(const char* name , XMLElement* e );
+#endif
+
+
 
 /*
 	//エフェクトデータのセットアップ

@@ -2,8 +2,8 @@
 #include <cstdlib>
 
 
-#include "stb_image.h"
-#include "ssHelper.h"
+#include "../../Helper/stb_image.h"
+#include "../../Helper/ssHelper.h"
 #include "SSTextureDX9.h"
 
 #if 0
