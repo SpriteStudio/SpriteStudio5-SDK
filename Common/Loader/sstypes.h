@@ -80,7 +80,7 @@ public:
 
 	float	length() const
 	{
-#ifdef EMCC
+#ifdef EMSCRIPTEN
 		float r = length_sq();
 		if ( r < 0.0001f && r > -0.0001f ) return 0;
 

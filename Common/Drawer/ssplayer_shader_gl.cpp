@@ -1,5 +1,5 @@
 ﻿
-#ifdef EMCC
+#ifdef EMSCRIPTEN
 
 #include <SDL/SDL.h>
 		#include <GL/glew.h>

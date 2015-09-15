@@ -92,6 +92,7 @@ public:
 	{}
 	~SsEffectNode(){}
 
+
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE(arrayIndex);

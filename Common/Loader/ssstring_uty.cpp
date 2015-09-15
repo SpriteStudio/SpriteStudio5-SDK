@@ -79,7 +79,7 @@ bool	is_digit_string( std::string &in_str , bool* is_priod )
 std::string getFullPath( const std::string& basePath , const std::string &relPath )
 {
 
-#ifdef EMCC
+#ifdef EMSCRIPTEN
 
 	return "";
 #else

@@ -1,7 +1,7 @@
 #ifndef __SSPLAYER_EFFECT__
 #define __SSPLAYER_EFFECT__
 
-#include "../loader/ssloader.h"
+//#include "../loader/ssloader.h"
 #include "MersenneTwister.h"
 #include "ssplayer_cellmap.h"
 
@@ -138,7 +138,7 @@ public:
 	}
 	void	setRotation( float z  )
 	{
-#ifdef EMCC
+#ifdef EMSCRIPTEN
 		rotation = fmod( z , 360 ) ;
 #else
 		rotation = std::fmod( z , 360 ) ;

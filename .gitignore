@@ -62,3 +62,7 @@ Tools/viewer_sample_gl
 Build/Viewer/cmake_install.cmake
 Build/cmake_install.cmake
 SpriteStudio5-SDK.zip
+!Build/Emscripten/*
+Build/Emscripten/maketest.suo
+Build/Emscripten/maketest.sdf
+Build/Emscripten/maketest/emscripten-fileio-master/

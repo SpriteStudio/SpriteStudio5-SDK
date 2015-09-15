@@ -1,7 +1,7 @@
 ﻿#include <stdio.h>
 #include <cstdlib>
 
-#ifdef EMCC
+#ifdef EMSCRIPTEN
 
 #include <SDL/SDL.h>
 
