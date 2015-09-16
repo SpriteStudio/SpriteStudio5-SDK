@@ -1,77 +1,106 @@
+#include <stdlib.h>
 #include <stdio.h>
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
+#include <GL/glfw.h>
+#include <emscripten/emscripten.h>
+//#include "game.h"
+ 
+int init_gl();
+void do_frame();
+void shutdown_gl();
 
-#ifdef EMSCRIPTEN
-#include <emscripten.h>
-#endif
+
+#include "../../../common/Helper/OpenGL/SSTextureGL.h"
+#include "../../../common/Drawer/ssplayer_shader_gl.h"
+#include "../../../common/Drawer/ssplayer_render_gl.h"
+#include "../../../common/Animator/ssplayer_animedecode.h"
 
 
- SDL_Surface *screen = 0;
 
-void one_iter() {
-  // process input
-  // render to screen
-  //printf("hello, world!\n");	
+#pragma comment(lib, "opengl32.lib")
+#pragma comment(lib, "glew32.lib")
+#pragma comment(lib, "glfw3.lib")
+#pragma comment(lib, "glu32.lib")
+
+
+
+SsAnimeDecoder*	m_player;
+SsCellMapList*	m_cellmap;
+SsProject*	m_proj;
+
+
+int init_gl()
+{
+    const int width = 512,
+             height = 512;
+ 
+    if (glfwInit() != GL_TRUE) {
+        printf("glfwInit() failed\n");
+        return GL_FALSE;
+    }
+ 
+    if (glfwOpenWindow(width, height, 8, 8, 8, 8, 16, 0, GLFW_WINDOW) != GL_TRUE) {
+        printf("glfwOpenWindow() failed\n");
+        return GL_FALSE;
+    }
+
 	
-	SDL_Flip(screen); 
-}
+	SSTextureFactory*	texfactory = new SSTextureFactory( new SSTextureGL() );//どこで解放しよう？
+	SsCurrentRenderer::SetCurrentRender( new SsRenderGL() );
 
+	m_player = new SsAnimeDecoder();
+	m_cellmap = new SsCellMapList();
 
+	m_proj = ssloader_sspj::Load( "input.sspj");
+#if 0
+	SsAnimePack* animepack = m_proj->getAnimePackList()[0]; 
 
-extern "C" int main(int argc, char** argv) {
-  printf("IMG_LOAD\n");
+	//アニメパックのパーツ構造を取得
+	SsModel* model = &animepack->Model;
 
-  SDL_Init(SDL_INIT_VIDEO);
-  screen = SDL_SetVideoMode(256, 256, 32, SDL_SWSURFACE);
+	//アニメパック内のアニメーションを選択
+	SsAnimation* anime = animepack->animeList[0]; 
 
+	//セルマップ情報を作成
+	m_cellmap->set( m_proj , animepack );
 
-	SDL_Surface* image;
-	image = IMG_Load("sample.png");
-//	image = SDL_LoadBMP("sample.bmp");
-
-	if ( image == 0 )
+	//パーツ構造　アニメーション　セルマップからアニメ再生情報を作成する
+	if ( m_cellmap->size() == 0 )
 	{
-		printf( "image not loaded\n" );
+		DEBUG_PRINTF( "error : cellmap array size == 0" );
 	}
 
+	m_player->setAnimation( model , anime , m_cellmap , m_proj );
 
-#ifdef TEST_SDL_LOCK_OPTS
-  EM_ASM("SDL.defaults.copyOnLock = false; SDL.defaults.discardOnLock = true; SDL.defaults.opaqueFrontBuffer = false;");
 #endif
 
-  if (SDL_MUSTLOCK(screen)) SDL_LockSurface(screen);
-  for (int i = 0; i < 256; i++) {
-    for (int j = 0; j < 256; j++) {
-#ifdef TEST_SDL_LOCK_OPTS
-      // Alpha behaves like in the browser, so write proper opaque pixels.
-      int alpha = 255;
-#else
-      // To emulate native behavior with blitting to screen, alpha component is ignored. Test that it is so by outputting
-      // data (and testing that it does get discarded)
-      int alpha = (i+j) % 255;
-#endif
-      *((Uint32*)screen->pixels + i * 256 + j) = SDL_MapRGBA(screen->format, i, j, 255-i, alpha);
-    }
-  }
-  if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
-  SDL_Flip(screen); 
-
-  printf("you should see a smoothly-colored square - no sharp lines but the square borders!\n");
-  printf("and here is some text that should be HTML-friendly: amp: |&| double-quote: |\"| quote: |'| less-than, greater-than, html-like tags: |<cheez></cheez>|\nanother line.\n");
-
-  #ifdef EMSCRIPTEN
-	emscripten_set_main_loop(one_iter, 16 , 1);
-  #else
-	  while (1) {
-		one_iter();
-		SDL_Delay(time_to_next_frame());
-	  }
-  #endif
-
-
-  SDL_Quit();
-
-  return 0;
+	return GL_TRUE;
 }
+ 
+void do_frame()
+{
+
+	//m_player->update(1.0f);
+	//m_player->draw();
+    //on_draw_frame();
+    glfwSwapBuffers();
+}
+ 
+void shutdown_gl()
+{
+    glfwTerminate();
+}
+int main()
+{
+    if (init_gl() == GL_TRUE) {
+
+        //on_surface_created();
+        //on_surface_changed();
+        emscripten_set_main_loop(do_frame, 0, 1);
+    }
+ 
+    shutdown_gl();
+ 
+    return 0;
+}
+
 

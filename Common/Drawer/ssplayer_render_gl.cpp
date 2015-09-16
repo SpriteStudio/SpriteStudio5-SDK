@@ -5,6 +5,13 @@
 
 #include <SDL/SDL.h>
 
+#include <GL/gl.h>
+#include <GL/glew.h>
+#include <GL/glext.h>
+#include <GL/glut.h>
+
+//#include <GLES3/gl3.h>
+
 #else
 	#ifndef _WIN32
 		#include <OpenGL/gl.h>
@@ -94,9 +101,13 @@ inline void blendColor_(float * dest, SsBlendType::_enum blendType, const SsColo
 
 void	SsRenderGL::initialize()
 {
+#ifndef EMSCRIPTEN
 //	if ( m_isInit ) return ;
 	SSOpenGLShaderMan::Create();
+
+	printf("SsRenderGL::initialize()");
 	SSOpenGLVertexShader*	vs = new SSOpenGLVertexShader( "basic_vs" , glshader_sprite_vs );
+
 	SSOpenGLFragmentShader*	fs1 = new SSOpenGLFragmentShader( "normal_fs" , glshader_sprite_fs );
 	SSOpenGLFragmentShader*	fs2 = new SSOpenGLFragmentShader( "pot_fs" ,glshader_sprite_fs_pot );
 
@@ -112,7 +123,7 @@ void	SsRenderGL::initialize()
 	pgo2->Attach( fs2 );
 	pgo2->Link();
 	SSOpenGLShaderMan::PushPgObject( pgo2 );
-
+#endif
 //	m_isInit = true;
 
 }
@@ -132,16 +143,6 @@ void	SsRenderGL::renderSetup()
 
 	glBlendEquation( GL_FUNC_ADD );
 
-/*
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glEnable(GL_TEXTURE_2D);
-
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_ALPHA_TEST);
-	glAlphaFunc(GL_GREATER, 0.0);
-*/
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -159,7 +160,9 @@ void	SsRenderGL::SetAlphaBlendMode(SsBlendType::_enum type)
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		break;
 	case SsBlendType::mul:
-//★		glBlendFuncSeparateEXT( GL_ZERO, GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_ONE );
+#ifndef EMSCRIPTEN
+		glBlendFuncSeparateEXT( GL_ZERO, GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA, GL_ONE );
+#endif
 		break;
 	case SsBlendType::add:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -167,8 +170,9 @@ void	SsRenderGL::SetAlphaBlendMode(SsBlendType::_enum type)
 	case SsBlendType::sub:
 		// TODO SrcAlpha を透明度として使えない
 		glBlendEquation( GL_FUNC_REVERSE_SUBTRACT );
-//★		glBlendFuncSeparateEXT( GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_DST_ALPHA );
-
+#ifndef EMSCRIPTEN
+		glBlendFuncSeparateEXT( GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_DST_ALPHA );
+#endif
 		break;
 	}
 }
@@ -599,6 +603,7 @@ void	SsRenderGL::renderPart( SsPartState* state )
 	{
 		//セルが無いので描画を行わない
 	}else{
+#ifndef EMSCRIPTEN
 
 #if PROGRAMABLE_SHADER_ON
 	if ( colorBlendEnabled )
@@ -613,10 +618,10 @@ void	SsRenderGL::renderPart( SsPartState* state )
 
 		if ( glpgObject )
 		{
-#if 0//★
+
 			VertexLocation = glpgObject->GetAttribLocation( "vertexID" );
-			glVertexAttribPointer( VertexLocation , 2 , GL_FLOAT , GL_FALSE, 0, vertexID);//GL_FALSE→データを正規化しない
-			glEnableVertexAttribArray(VertexLocation);//有効化
+			glVertexAttribPointer( VertexLocation , 2 , GL_FLOAT , GL_FALSE, 0, vertexID);
+			glEnableVertexAttribArray(VertexLocation);
 
 			//シェーダのセットアップ
 			glpgObject->Enable();
@@ -631,10 +636,11 @@ void	SsRenderGL::renderPart( SsPartState* state )
 			uid = glpgObject->GetUniformLocation( "rates" );
 			if ( uid >= 0 )
 				glUniform1fv( uid , 5 , rates );
-#endif
+
 		}
 	}
 
+#endif
 #endif
 
 #if USE_TRIANGLE_FIN
@@ -660,7 +666,9 @@ void	SsRenderGL::renderPart( SsPartState* state )
 		{
 			if ( glpgObject )
 			{
-//★				glDisableVertexAttribArray(VertexLocation);//無効化
+#ifndef EMSCRIPTEN
+				glDisableVertexAttribArray(VertexLocation);
+#endif
 				glpgObject->Disable();
 			}
 		}

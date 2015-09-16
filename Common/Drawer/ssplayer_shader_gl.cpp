@@ -61,6 +61,8 @@ SSOpenGLShader::SSOpenGLShader( const std::string&  name , const std::string& st
 	const char	*s = str.c_str();
 	int l = str.length();
 
+	printf( "load shader : %s" , str.c_str());
+
 	glShaderSourceARB( h, 1, &s, &l );
 	if ( glGetError() != GL_NO_ERROR ) {
 //		SsLogInfo( _D("ShaderObject::ShaderObject(): cannot set shader source: " ) , myname );

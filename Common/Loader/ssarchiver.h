@@ -1,7 +1,10 @@
 #ifndef  __SSARCHIVER__
 #define  __SSARCHIVER__
 
-//#define USE_SSARCHIVER
+#define USE_SSARCHIVER
+
+
+
 
 #ifdef USE_SSARCHIVER
 #include "./tinyxml2/tinyxml2.h"
