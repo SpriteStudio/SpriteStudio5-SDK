@@ -279,7 +279,7 @@ void	SsEffectRenderEmitter::update(float delta)
 	{
 		this->myBatchList->priority = this->drawPriority;
 		this->myBatchList->dispCell = &this->dispCell;
-		this->myBatchList->blendType = this->data->GetMyBehavior()->blendType;
+		this->myBatchList->blendType = this->data->GetMyBehavior()->BlendType;
 
 	}
 

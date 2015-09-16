@@ -17,17 +17,17 @@ public:
     SsCell*							refCell;
 	SsString						CellName;
 	SsString						CellMapName;
-	SsRenderBlendType::_enum		blendType;
+	SsRenderBlendType::_enum		BlendType;
 
 public:
-	SsEffectBehavior() : refCell(0),blendType(SsRenderBlendType::invalid) {}
+	SsEffectBehavior() : refCell(0),BlendType(SsRenderBlendType::invalid) {}
 	virtual ~SsEffectBehavior(){}
 
 	SSSERIALIZE_BLOCK
 	{
 		SSAR_DECLARE(CellName);
 		SSAR_DECLARE(CellMapName);
-		SSAR_DECLARE_ENUM( blendType );
+		SSAR_DECLARE_ENUM( BlendType );
 
 		if ( ar->getxml() )
 			EffectElementLoader( ar );
