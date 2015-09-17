@@ -3,12 +3,8 @@
 
 #ifdef EMSCRIPTEN
 
-#include <SDL/SDL.h>
-
-#include <GL/gl.h>
-#include <GL/glew.h>
-#include <GL/glext.h>
-#include <GL/glut.h>
+	#include <GLFW/glfw3.h>
+	#include <emscripten/emscripten.h>
 
 //#include <GLES3/gl3.h>
 
@@ -131,8 +127,9 @@ void	SsRenderGL::initialize()
 void	SsRenderGL::renderSetup()
 {
 	glDisableClientState( GL_COLOR_ARRAY );
+#ifndef EMSCRIPTEN
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
+#endif
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0 );
 
@@ -187,13 +184,6 @@ void	SsRenderGL::renderSpriteSimple( float matrix[16],
 
 	// update で計算しておいた行列をロード
 	glLoadMatrixf(matrix);
-/*
-	DrawSprite2(  0 , 0 ,
-				dispscale.x , dispscale.y ,  pivot,
-				dispCell->uvs[0],
-				dispCell->uvs[3], fcolor );
-*/
-
 
  	float w = width / 2.0f ;
 	float h = height / 2.0f ;
@@ -201,7 +191,6 @@ void	SsRenderGL::renderSpriteSimple( float matrix[16],
 	glEnable(GL_BLEND);
 	glBegin(GL_QUADS);
 	glColor4f(color.r, color.g, color.b, color.a);
-//	glColor4f(color.r, 0, 0, color.a);
 
 	glTexCoord2d(uv1.x, uv1.y);
 	glVertex2f( -w - pivot.x ,  h - pivot.y );
@@ -280,6 +269,7 @@ void	SsRenderGL::renderPart( SsPartState* state )
 	int		gl_target = GL_TEXTURE_2D;
 	float	rates[5];
 
+	printf("render parts");
 
 	if ( state->hide ) return ; //非表示なので処理をしない
 
@@ -303,6 +293,10 @@ void	SsRenderGL::renderPart( SsPartState* state )
 
 	if (cell)
 	{
+
+#ifdef EMSCRIPTEN
+		gl_target = GL_TEXTURE_2D;
+#else
 		// テクスチャのサイズが2のべき乗かチェック
 		if ( texture->isPow2() )
 		{
@@ -316,7 +310,7 @@ void	SsRenderGL::renderPart( SsPartState* state )
 			texture_is_pow2 = false;
 			gl_target = GL_TEXTURE_RECTANGLE_ARB;
 		}
-
+#endif
 
 		glEnable(gl_target);
 
@@ -569,7 +563,7 @@ void	SsRenderGL::renderPart( SsPartState* state )
 	{
 		for (int i = 0; i < 5; ++i)
 			state->colors[i * 4 + 3] = state->alpha;
-
+#ifndef EMSCRIPTEN
 		// カラーは１００％テクスチャ
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 		glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE);
@@ -580,6 +574,7 @@ void	SsRenderGL::renderPart( SsPartState* state )
 		glTexEnvi(GL_TEXTURE_ENV, GL_SOURCE1_ALPHA, GL_PRIMARY_COLOR);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA);
 		glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_ALPHA, GL_SRC_ALPHA);
+#endif
 	}
 
 

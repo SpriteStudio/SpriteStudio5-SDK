@@ -30,11 +30,11 @@ Module['preRun'] = function () {
         false
     );
 */
-
+/*
     FS.createPreloadedFile(
         '/',
         'input.sspj',
-        'data/NewProject.sspj',  // httpでアクセスする際のURLを指定
+        'data2/NewProject.sspj',  // httpでアクセスする際のURLを指定
         true,
         false
     );
@@ -42,7 +42,7 @@ Module['preRun'] = function () {
     FS.createPreloadedFile(
         '/',
         'chr01.ssae',
-        'data/chr01.ssae',  // httpでアクセスする際のURLを指定
+        'data2/chr01.ssae',  // httpでアクセスする際のURLを指定
         true,
         false
     );
@@ -50,7 +50,7 @@ Module['preRun'] = function () {
     FS.createPreloadedFile(
         '/',
         'chr_00.ssce',
-        'data/chr_00.ssce',  // httpでアクセスする際のURLを指定
+        'data2/chr_00.ssce',  // httpでアクセスする際のURLを指定
         true,
         false
     );
@@ -58,7 +58,64 @@ Module['preRun'] = function () {
     FS.createPreloadedFile(
         '/',
         'chr_00.png',
-        'data/chr_00.png',  // httpでアクセスする際のURLを指定
+        'data2/chr_00.png',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );	
+*/
+
+    FS.createPreloadedFile(
+        '/',
+        'input.sspj',
+        'data3/character_unity.sspj',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
+
+    FS.createPreloadedFile(
+        '/',
+        'unitychan_3head.ssae',
+        'data3/unitychan_3head.ssae',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
+
+    FS.createPreloadedFile(
+        '/',
+        'unitykamen_2head.ssae',
+        'data3/unitykamen_2head.ssae',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
+
+    FS.createPreloadedFile(
+        '/',
+        'unity_2head.ssce',
+        'data3/unity_2head.ssce',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
+
+    FS.createPreloadedFile(
+        '/',
+        'unity_3head.ssce',
+        'data3/unity_3head.ssce',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
+
+    FS.createPreloadedFile(
+        '/',
+        'unitykamen_2head.png',
+        'data3/unitykamen_2head.png',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );	
+
+    FS.createPreloadedFile(
+        '/',
+        'unitychan_3head.png',
+        'data3/unitychan_3head.png',  // httpでアクセスする際のURLを指定
         true,
         false
     );	

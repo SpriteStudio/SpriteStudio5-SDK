@@ -299,24 +299,7 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 	getCellValue(	this->curCellMapManager ,
 					cell.mapid , cell.name , v );
 
-/*
-	SsCelMapLinker* l = this->curCellMapManager->getCellMapLink( cell.mapid );
-	v.cell = l->findCell( cell.name );
 
-	v.filterMode = l->cellMap->filterMode;
-	v.wrapMode = l->cellMap->wrapMode;
-
-	if ( l->tex )
-	{
-		v.texture = l->tex;
-	}
-	else
-	{
-		v.texture = 0;
-	}
-
-	calcUvs( &v );
-*/
 }
 
 //インスタンスアニメデータ
@@ -1201,6 +1184,8 @@ void	SsAnimeDecoder::update(float frameDelta)
 {
 	int	time = (int)nowPlatTime;
 
+	printf( "update" );
+
 	this->frameDelta = frameDelta;
 
 	int cnt = 0;
@@ -1254,6 +1239,7 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 //描画
 void	SsAnimeDecoder::draw()
 {
+	printf( "draw" );
 
 	SsCurrentRenderer::getRender()->renderSetup();
 

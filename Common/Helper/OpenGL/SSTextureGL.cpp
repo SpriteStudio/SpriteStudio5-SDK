@@ -1,6 +1,11 @@
 ﻿#include <stdio.h>
 #include <cstdlib>
 
+#if EMSCRIPTEN
+	#include <GLFW/glfw3.h>
+	#include <emscripten/emscripten.h>
+
+#else
 #ifndef _WIN32
     #include <OpenGL/gl.h>
     #include <OpenGL/glu.h>
@@ -8,6 +13,7 @@
 #else
     #include <GL/glew.h>
     #include <GL/GL.h>
+#endif
 #endif
 
 #include "../stb_image.h"
@@ -25,6 +31,9 @@ GLuint	LoadTextureGL( const char* Filename ,int& width , int& height)
 	stbi_uc* image = stbi_load( Filename, &width , &height , &bpp , 0 );
 	if ( image == 0 ) return 0;
 
+#if EMSCRIPTEN
+	int target = GL_TEXTURE_2D;
+#else
 	int target = GL_TEXTURE_RECTANGLE_ARB;
 	 
 	if (SsUtTextureisPow2(width) &&
@@ -32,13 +41,16 @@ GLuint	LoadTextureGL( const char* Filename ,int& width , int& height)
 	{
 		target = GL_TEXTURE_2D;
 	}
-
+#endif
 
 	GLuint glyphTexture = 0;
 	glGenTextures(1, &glyphTexture);
 	glBindTexture(target, glyphTexture);
 
+#ifndef EMSCRIPTEN
 	glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL );
+#endif
+
 	glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameterf(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -84,8 +96,6 @@ SSTextureGL::~SSTextureGL()
 
 bool SSTextureGL::Load( const char* fname )
 {
-	//int tex_width;
-	//int tex_height;
 
 	tex = LoadTextureGL( fname , tex_width , tex_height );
 	return tex != 0;

@@ -11,6 +11,49 @@
 #include "../Helper/DebugPrint.h"
 
 
+SsCelMapLinker::SsCelMapLinker(SsCellMap* cellmap ,SsString filePath )
+{
+
+	cellMap = cellmap;
+	size_t num = cellMap->cells.size();
+
+
+	//DEBUG_PRINTF( "====== cellmap list ======\n" );
+	//DEBUG_PRINTF( "cellmap num = %d\n" , num );
+
+	for ( size_t i = 0 ; i < num ; i++ )
+	{
+		//DEBUG_PRINTF( "[%d]cellmap = %s\n" , i , cellMap->cells[i]->name.c_str() );
+		CellDic[cellMap->cells[i]->name] = cellMap->cells[i];
+	}
+
+	if (!SSTextureFactory::isExist() )
+	{
+		DEBUG_PRINTF( "SSTextureFactory not created yet." );
+		throw;
+	}
+	
+	//DEBUG_PRINTF( "create Texture\n");
+	//DEBUG_PRINTF( "file path = %s\n" , filePath.c_str() );
+	//DEBUG_PRINTF( "cell file path = %s\n" , cellmap->imagePath.c_str() );
+	
+	tex = SSTextureFactory::create();
+
+	SsString fullpath = "";
+	fullpath = filePath + cellmap->imagePath;
+
+	//DEBUG_PRINTF( "full path = %s\n" , fullpath.c_str() );
+
+	if ( !tex->Load( fullpath.c_str() ) )
+	{
+		delete tex;
+		tex = 0;
+	}
+
+}
+
+
+
 void	SsCellMapList::clear()
 {
 	if (CellMapDic.size() > 0)

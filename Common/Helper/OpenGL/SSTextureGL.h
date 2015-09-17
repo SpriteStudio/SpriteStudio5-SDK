@@ -2,7 +2,8 @@
 #define __TKTEXTURE__
 
 #if EMSCRIPTEN
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
+#include <emscripten/emscripten.h>
 #else
 #include <GLFW/glfw3.h>
 #endif
