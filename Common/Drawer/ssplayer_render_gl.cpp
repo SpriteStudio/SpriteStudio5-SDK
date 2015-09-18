@@ -188,10 +188,12 @@ void	SsRenderGL::renderSpriteSimple( float matrix[16],
  	float w = width / 2.0f ;
 	float h = height / 2.0f ;
 
-	glEnable(GL_BLEND);
-	glBegin(GL_QUADS);
+//	glEnable(GL_BLEND);
+//	glBegin(GL_QUADS);
 	glColor4f(color.r, color.g, color.b, color.a);
 
+
+#ifndef EMSCRIPTEN
 	glTexCoord2d(uv1.x, uv1.y);
 	glVertex2f( -w - pivot.x ,  h - pivot.y );
 
@@ -203,7 +205,36 @@ void	SsRenderGL::renderSpriteSimple( float matrix[16],
 
 	glTexCoord2d(uv2.x, uv1.y);
 	glVertex2f(  w - pivot.x ,  h - pivot.y );
-	glEnd();
+#else
+	float vtx[8];
+	vtx[0] =  -w - pivot.x; 
+	vtx[1] =   h - pivot.y;
+
+	vtx[2] =  -w - pivot.x; 
+	vtx[3] =  -h - pivot.y;
+
+	vtx[4] =   w - pivot.x; 
+	vtx[5] =  -h - pivot.y;
+
+	vtx[6] =   w - pivot.x; 
+	vtx[7] =   h - pivot.y;
+	glVertexPointer(2, GL_FLOAT, 0, vtx);
+
+	float tuv[8];
+	tuv[0] = uv1.x; tuv[1] = uv1.y;
+	tuv[2] = uv1.x; tuv[3] = uv2.y;
+	tuv[4] = uv2.x; tuv[5] = uv2.y;
+	tuv[6] = uv2.x; tuv[7] = uv1.y;
+	glTexCoordPointer(2, GL_FLOAT, 0, tuv);
+	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDrawArrays(GL_QUADS, 0, 4);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);
+
+#endif
+//	glEnd();
 
 	glPopMatrix();
 

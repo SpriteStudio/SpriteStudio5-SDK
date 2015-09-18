@@ -200,8 +200,8 @@ static void	do_frame()
 
 int init_gl()
 {
-    const int width = 1024,
-             height = 720;
+    const int width = 512,
+             height = 512;
  
     if (glfwInit() != GL_TRUE) {
         printf("glfwInit() failed\n");
@@ -277,83 +277,6 @@ int init_gl()
 	glfwPollEvents();
 }
 
-#if 0
-void do_frame()
-{
-
-	//update();
-
-	static int m_InfoAnimeFps , m_InfoAnimeEndFrame;
-	static double back = glfwGetTime();
-	static int			m_nowPlayFrame;
-	static double		m_nowPlayFrameD;
-	static float m_Speed = 1.0f;
-	static float backframe = 0;
-	static bool m_isAnimeAutoPlay = true;
-
-	double t = glfwGetTime();
-	double delta = t - back;
-
-//	printf( "do_frame" );
-//	renderGame();
-
-	//====== Update =========================
-	float frameDelta = 0;
-	if ( m_player )
-	{
-		m_InfoAnimeFps = m_player->getAnimeFPS();
-		m_InfoAnimeEndFrame = m_player->getAnimeEndFrame();
-	}
-
-	if ( m_isAnimeAutoPlay )
-	{
-		double anime_fps = (double)m_player->getAnimeFPS();
-		double frameper_sec = (1.0 / anime_fps) ;
-		frameDelta = (delta*m_Speed / frameper_sec );
-
-		m_nowPlayFrameD+= frameDelta;
-		m_nowPlayFrame = (int)m_nowPlayFrameD;
-
-		if ( m_player->getAnimeEndFrame() < (int)m_nowPlayFrame )
-		{
-			m_nowPlayFrame = 0;
-			m_nowPlayFrameD = 0;
-			m_player->restart();
-		}
-	}
-	
-	m_player->setPlayFrame( (float)m_nowPlayFrame );
-	m_player->update(frameDelta);
-
-
-	backframe = m_nowPlayFrame;
-
-
-	//====== Draw =========================
-	glClearColor(0.0, 0.0, 0.0, 1.0);
-
-
-    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-    int phyWidth,phyHeight;
-    glfwGetMonitorPhysicalSize(monitor, &phyWidth , &phyHeight);
-
-	int width , height;
-	int fbwidth , fbheight;
-    glfwGetWindowSize( window, &width, &height);
-	glfwGetFramebufferSize( window , &fbwidth , &fbheight );
-    
-	glMatrixMode(GL_PROJECTION);
-	glViewport( 0 , 0 , fbwidth , fbheight );
-	glLoadIdentity();
-	glOrtho(-width / 2, width / 2, -height / 2, height / 2, -2048, 2048);
-
-	glScaled(0.5f, 0.5f, 1.f);
-
-	m_player->draw();
-
-    glfwSwapBuffers(window);
-}
-#endif
  
 void shutdown_gl()
 {
@@ -391,7 +314,7 @@ void renderGame()
 
 	float ratio;
 	int width, height;
-
+/*
 	glfwGetFramebufferSize(window, &width, &height);
     ratio = width / (float) height;
     glViewport(0, 0, width, height);
@@ -410,7 +333,7 @@ void renderGame()
     glColor3f(0.f, 0.f, 1.f);
     glVertex3f(0.f, 0.6f, 0.f);
     glEnd();
-
+*/
 	glfwSwapBuffers(window);
 	glfwPollEvents();
 }

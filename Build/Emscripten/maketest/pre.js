@@ -63,7 +63,7 @@ Module['preRun'] = function () {
         false
     );	
 */
-
+/*
     FS.createPreloadedFile(
         '/',
         'input.sspj',
@@ -119,4 +119,72 @@ Module['preRun'] = function () {
         true,
         false
     );	
+*/
+
+
+    FS.createPreloadedFile(
+        '/',
+        'input.sspj',
+        'data4/effect_sample.sspj',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
+    FS.createPreloadedFile(
+        '/',
+        'e001.ssae',
+        'data4/e001.ssae',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
+    FS.createPreloadedFile(
+        '/',
+        '001a.ssee',
+        'data4/001a.ssee',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
+    FS.createPreloadedFile(
+        '/',
+        '001b.ssee',
+        'data4/001b.ssee',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
+    FS.createPreloadedFile(
+        '/',
+        '001c.ssee',
+        'data4/001c.ssee',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
+    FS.createPreloadedFile(
+        '/',
+        '001d.ssee',
+        'data4/001d.ssee',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
+
+    FS.createPreloadedFile(
+        '/',
+        'ss_effect.png',
+        'data4/ss_effect.png',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );	
+
+    FS.createPreloadedFile(
+        '/',
+        'ss_effect.ssce',
+        'data4/ss_effect.ssce',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
+    FS.createPreloadedFile(
+        '/',
+        'ss_effect_c.ssce',
+        'data4/ss_effect_c.ssce',  // httpでアクセスする際のURLを指定
+        true,
+        false
+    );
 };
