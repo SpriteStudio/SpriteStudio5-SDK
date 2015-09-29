@@ -782,8 +782,11 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 		{
 			if ( state->hide )
 			{
-				effectRender->stop();
-				effectRender->reload();
+				if (effectRender->getPlayStatus() == true)
+				{
+					effectRender->stop();
+					effectRender->reload();
+				}
 			}else{
 				//if ( hideTriger )
 				{

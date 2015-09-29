@@ -448,6 +448,7 @@ public:
 	void	stop();
 	void    pause();
 	void	setLoop(bool flag);
+	bool	getPlayStatus(void);	//追加
 
 	int	getCurrentFPS(){
 		if (effectData)

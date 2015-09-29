@@ -748,6 +748,11 @@ void	SsEffectRenderer::setLoop(bool flag)
 }
 
 
+//再生ステータスを取得
+bool	SsEffectRenderer::getPlayStatus(void)
+{
+	return(m_isPlay);
+}
 
 
 
