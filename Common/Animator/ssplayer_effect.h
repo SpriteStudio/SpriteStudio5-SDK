@@ -363,8 +363,9 @@ public:
 
 
 
-#define SSEFFECTRENDER_EMMITER_MAX (512)
+#define SSEFFECTRENDER_EMMITER_MAX (256)
 #define SSEFFECTRENDER_PARTICLE_MAX (2048)
+#define SSEFFECTRENDER_BACTH_MAX (16)
 
 
 
@@ -389,10 +390,10 @@ private:
 
 
 #if PFMEM_TEST
-	SsEffectRenderEmitter    em_pool[SSEFFECTRENDER_EMMITER_MAX+16];
-	SsEffectRenderParticle   pa_pool[SSEFFECTRENDER_PARTICLE_MAX+16];
+	SsEffectRenderEmitter    em_pool[SSEFFECTRENDER_EMMITER_MAX+1];
+	SsEffectRenderParticle   pa_pool[SSEFFECTRENDER_PARTICLE_MAX+1];
 
-	SsEffectDrawBatch		 drawPr_pool[SSEFFECTRENDER_EMMITER_MAX+16];
+	SsEffectDrawBatch		 drawPr_pool[SSEFFECTRENDER_BACTH_MAX+1];
 
 
 	int						em_pool_count;
