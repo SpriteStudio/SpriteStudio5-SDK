@@ -81,15 +81,15 @@ SsEffectRenderAtom* SsEffectRenderer::CreateAtom( unsigned int seed , SsEffectRe
 			 return 0;
 		}
 		SsEffectRenderEmitter* p = &em_pool[em_pool_count];
-		SsEffectDrawBatch* bl = &drawPr_pool[dpr_pool_count];
+
+
 
 		p->InitParameter();
 		em_pool_count++;
-		dpr_pool_count++;
 
 		p->data = node;
 		p->parent = parent;
-		p->myBatchList = bl;
+
 #else
 		SsEffectRenderEmitter* p = new SsEffectRenderEmitter( node , parent);
 #endif
@@ -118,6 +118,42 @@ SsEffectRenderAtom* SsEffectRenderer::CreateAtom( unsigned int seed , SsEffectRe
 
 		updatelist.push_back( p );
 		createlist.push_back( p );
+
+#if 1
+		//バッチリストを調べる
+		SsEffectDrawBatch* bl = 0;
+
+		foreach( std::list<SsEffectDrawBatch*> , drawBatchList , e )
+		{
+			if ( (*e)->targetNode == node )
+			{
+				bl = (*e);
+			}
+		}
+
+		if ( bl ==0 )
+		{
+			if ( SSEFFECTRENDER_BACTH_MAX <= dpr_pool_count ){
+				 return 0;
+			}
+
+			bl = &drawPr_pool[dpr_pool_count];
+
+			dpr_pool_count++;
+			bl->targetNode = node;
+		}
+#else
+		if ( SSEFFECTRENDER_BACTH_MAX <= dpr_pool_count ){
+				return 0;
+		}
+
+		SsEffectDrawBatch* bl = 0;
+		bl = &drawPr_pool[dpr_pool_count];
+		dpr_pool_count++;
+
+#endif
+
+		p->myBatchList = bl;
 		drawBatchList.push_back( bl );
 
 		ret = p;
@@ -488,21 +524,23 @@ void	SsEffectRenderParticle::draw(SsEffectRenderer* render)
 	fcolor.fromARGB( _color.toARGB() );
 	fcolor.a = fcolor.a * this->alpha;
 
+	if ( dispCell->cell )
+	{
 
-	SsVector2 pivot = SsVector2( dispCell->cell->pivot.x ,dispCell->cell->pivot.y);
+		SsVector2 pivot = SsVector2( dispCell->cell->pivot.x ,dispCell->cell->pivot.y);
 
-	pivot.x = pivot.x * dispCell->cell->size.x;
-	pivot.y = pivot.y * dispCell->cell->size.y;
+		pivot.x = pivot.x * dispCell->cell->size.x;
+		pivot.y = pivot.y * dispCell->cell->size.y;
 
-	SsVector2 dispscale = dispCell->cell->size;
+		SsVector2 dispscale = dispCell->cell->size;
 
 
-	SsCurrentRenderer::getRender()->renderSpriteSimple(
-		matrix,
-		dispscale.x , dispscale.y ,  pivot,
-				dispCell->uvs[0],
-				dispCell->uvs[3], fcolor );
-
+		SsCurrentRenderer::getRender()->renderSpriteSimple(
+			matrix,
+			dispscale.x , dispscale.y ,  pivot,
+					dispCell->uvs[0],
+					dispCell->uvs[3], fcolor );
+	}
 }
 
 
