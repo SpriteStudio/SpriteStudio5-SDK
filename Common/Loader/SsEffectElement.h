@@ -640,7 +640,7 @@ public:
 	ParticlePointGravity()
 		: Position( 0 , 0 ) ,Power(0.0f)
 	{
-		setType( SsEffectFunctionType::Gravity );
+		setType( SsEffectFunctionType::PointGravity );
 	}
 	virtual ~ParticlePointGravity(){}
 
