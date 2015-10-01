@@ -185,7 +185,9 @@ IF(APPLE)
 	SET(LINK_LIB1 "ssloader")
 	SET(LINK_LIB2 "ssAnimater")
 	SET(LINK_LIB3 "ssHelper")	
-	SET(LINK_LIB4 "libAntTweakBar.dylib libglfw3.a -framework OpenGL -framework AppKit -framework IOKit" )
+#	SET(LINK_LIB4 "libAntTweakBar.dylib libglfw3.a -framework OpenGL -framework AppKit -framework IOKit" )
+	SET(LINK_LIB4 "" )
+
     ADD_DEFINITIONS(-APPLE)
 ENDIF()
 

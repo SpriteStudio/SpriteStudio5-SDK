@@ -86,7 +86,7 @@ public:
 
 		return (float)std::sqrtf( r );
 #else
-		return (float)std::sqrt( length_sq() );
+		return (float)sqrt( length_sq() );
 #endif
 	}
 
