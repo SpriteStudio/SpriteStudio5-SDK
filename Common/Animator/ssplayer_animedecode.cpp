@@ -1,4 +1,4 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <cstdlib>
 
 #include "../loader/ssloader.h"
@@ -488,7 +488,6 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 	state->is_vertex_transform = false;
 	state->is_color_blend = false;
 	state->alphaBlendType = part->alphaBlendType;
-
 
 	bool hidekey_find = false;
 	bool hideTriger = false;

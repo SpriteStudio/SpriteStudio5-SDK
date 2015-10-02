@@ -635,7 +635,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 //						break;
 //					}
 //				}
-				
+
 				// パーツごとのデータを出力する
 				Lump* frameData = Lump::set("ss::ss_u16[]", true);
 				frameDataIndexArray->add(frameData);
