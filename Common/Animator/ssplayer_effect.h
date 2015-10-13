@@ -138,7 +138,14 @@ public:
 	}
 	void	setRotation( float z  )
 	{
+#ifdef _WIN32
+        
 		rotation = std::fmod( z , 360 ) ;
+#else
+        rotation = fmod( z , 360 ) ;
+        
+#endif
+        
 	}
 
 	float		getRotation() const { return rotation; }

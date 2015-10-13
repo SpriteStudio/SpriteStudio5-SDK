@@ -413,10 +413,10 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			case SsPartType::instance:		// インスタンス。他アニメ、パーツへの参照。シーン編集モードの代替になるもの
 				//参照アニメのポインタが無い場合はNULLパーツになる。
 				{
-					//後で解決する----------------------
-					SsAnimePack* refpack = proj->findAnimationPack((const SsString)part->refAnimePack);
-					SsAnimation* refanime = refpack->findAnimation((const SsString)part->refAnime);
-					//----------------------------------
+					SsString packname = part->refAnimePack;
+					SsString animename = part->refAnime;
+					SsAnimePack* refpack = proj->findAnimationPack(packname);
+					SsAnimation* refanime = refpack->findAnimation(animename);
 					if (refanime == NULL)
 					{
 						partData->add(Lump::s16Data(SsPartType::null));
