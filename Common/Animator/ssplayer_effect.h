@@ -188,7 +188,7 @@ public:
 	//パーティクルパラメータ
     SsEffectNode*		param_particle;
 
-	CMersenneTwister	     MT;
+	CMersenneTwister*	     MT;
 
 	//以前からの移植
 	int				maxParticle;    //
@@ -217,6 +217,8 @@ public:
 public:
 	void	InitParameter()
 	{
+		if ( MT ==0 ) MT = new CMersenneTwister();
+
         SsEffectRenderAtom::Initialize();
 		delay = 0;
 		interval = 0;
@@ -233,20 +235,26 @@ public:
 
 	}
 
-	SsEffectRenderEmitter(){}
+	SsEffectRenderEmitter() : MT(0){}
 	SsEffectRenderEmitter( SsEffectNode* refdata , SsEffectRenderAtom* _p){
 		data = refdata;
 		parent = _p;
 		InitParameter();
 	}
 
-	virtual ~SsEffectRenderEmitter(){}
+	virtual ~SsEffectRenderEmitter()
+	{
+		if ( MT )
+		{
+			delete MT;
+		}
+	}
 	SsRenderType::_enum		getMyType(){ return SsRenderType::EmmiterNode;}
 	void			setMySeed( unsigned int seed );
 	void			TrushRandom(int loop)
 	{
 		for ( int i = 0 ; i < loop ; i++ )
-			MT.genrand_uint32();
+			MT->genrand_uint32();
 	}
 
 	virtual void	Initialize();
