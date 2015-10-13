@@ -201,10 +201,10 @@ void	SsEffectRenderEmitter::setMySeed( unsigned int seed )
 {
 
 	if ( seed > 31 ){
-		this->MT.init_genrand( seed );
+		this->MT->init_genrand( seed );
 
 	}else{
-		this->MT.init_genrand( seed_table[seed] );
+		this->MT->init_genrand( seed_table[seed] );
 	}
 	myseed = seed ;
 }
@@ -215,6 +215,8 @@ void	SsEffectRenderEmitter::setMySeed( unsigned int seed )
 //----------------------------------------------------------------------
 void	SsEffectRenderEmitter::Initialize()
 {
+
+
 	SsEffectNode* n = static_cast<SsEffectNode*>(this->data->ctop);
 
 	if ( !m_isInit )
