@@ -2,6 +2,8 @@
 #define __MERSENNETWISTER__
 
 /*
+The MIT License (MIT)
+
 A C-program for MT19937, with initialization improved 2002/1/26.
 Coded by Takuji Nishimura and Makoto Matsumoto.
 
