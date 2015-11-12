@@ -13,8 +13,7 @@
 
 #define USE_COMPATIBLE_SS4 (1)
 
-//実際にアプリに使用する場合はシードを時間等から設定してください。
-#define RANDOM_SEED (10000)		//ランダムシードのバリエーション
+//実際にアプリに使用する場合は起動時にsrandでシードを設定してください。
 
 
 SsAnimeDecoder::SsAnimeDecoder() : 
@@ -38,7 +37,7 @@ void	SsAnimeDecoder::restart()
 		SsPartState* state = (*e);
 		if ( state->refEffect )
 		{
-			state->refEffect->setSeed(rand() % RANDOM_SEED);
+			state->refEffect->setSeed(rand());
 			state->refEffect->reload();
 			state->refEffect->stop();
 		}
@@ -122,7 +121,7 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 					er->setParentAnimeState( &partState[i] );
 					er->setCellmapManager( this->curCellMapManager );
 					er->setEffectData( &f->effectData );
-					er->setSeed(rand() % RANDOM_SEED);
+					er->setSeed(rand());
 					er->reload();
 					er->stop();
 
@@ -793,7 +792,7 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 			}else{
 				//if ( hideTriger )
 				{
-					effectRender->setSeed(rand() % RANDOM_SEED);
+					effectRender->setSeed(rand());
 
 //					effectRender->setAnimeFrameOffset( nowtime );
 					effectRender->setLoop(false);
