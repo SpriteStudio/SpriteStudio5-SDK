@@ -14,14 +14,14 @@
 
 #define USE_COMPATIBLE_SS4 (1)
 
-//アプリ側で乱数シードに利用するユニークIDを作成してください。
+//乱数シードに利用するユニークIDを作成します。
 int seedMakeID = 123456;
 //エフェクトに与えるシードを取得する関数
 //こちらを移植してください。
 unsigned int getRandomSeed()
 {
 	seedMakeID++;	//ユニークIDを更新します。
-	//時間＋ユニークIDにする事で毎回シードが変わる用にします。
+	//時間＋ユニークIDにする事で毎回シードが変わるようにします。
 	unsigned int rc = (unsigned int)time(0) + ( seedMakeID );
 
 	return(rc);
