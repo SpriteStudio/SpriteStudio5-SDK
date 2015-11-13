@@ -1,5 +1,6 @@
 ﻿#include <stdio.h>
 #include <cstdlib>
+#include <time.h>   //時間
 
 #include "../loader/ssloader.h"
 #include "ssplayer_animedecode.h"
@@ -13,7 +14,18 @@
 
 #define USE_COMPATIBLE_SS4 (1)
 
-//実際にアプリに使用する場合は起動時にsrandでシードを設定してください。
+//アプリ側で乱数シードに利用するユニークIDを作成してください。
+int seedMakeID = 123456;
+//エフェクトに与えるシードを取得する関数
+//こちらを移植してください。
+unsigned int getRandomSeed()
+{
+	seedMakeID++;	//ユニークIDを更新します。
+	//時間＋ユニークIDにする事で毎回シードが変わる用にします。
+	unsigned int rc = (unsigned int)time(0) + ( seedMakeID );
+
+	return(rc);
+}
 
 
 SsAnimeDecoder::SsAnimeDecoder() : 
@@ -37,7 +49,7 @@ void	SsAnimeDecoder::restart()
 		SsPartState* state = (*e);
 		if ( state->refEffect )
 		{
-			state->refEffect->setSeed(rand());
+			state->refEffect->setSeed(getRandomSeed());
 			state->refEffect->reload();
 			state->refEffect->stop();
 		}
@@ -121,7 +133,7 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 					er->setParentAnimeState( &partState[i] );
 					er->setCellmapManager( this->curCellMapManager );
 					er->setEffectData( &f->effectData );
-					er->setSeed(rand());
+					er->setSeed(getRandomSeed());
 					er->reload();
 					er->stop();
 
@@ -792,7 +804,7 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 			}else{
 				//if ( hideTriger )
 				{
-					effectRender->setSeed(rand());
+					effectRender->setSeed(getRandomSeed());
 
 //					effectRender->setAnimeFrameOffset( nowtime );
 					effectRender->setLoop(false);
