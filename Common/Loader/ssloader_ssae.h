@@ -56,6 +56,8 @@ public:
 
 	SsString        refEffectName;	///< 割り当てたパーティクル名
 
+	SsString        colorLabel;		///< カラーラベル
+
 public:
 	SsPart() : 
 	  name("") , arrayIndex(0), parentIndex(0) , show(0) , locked(0)
@@ -95,6 +97,7 @@ public:
 		SSAR_DECLARE( locked );
 		SSAR_DECLARE( refAnimePack );
 		SSAR_DECLARE( refAnime );
+		SSAR_DECLARE( colorLabel );
 
 		if ( type == SsPartType::effect )
 		{
