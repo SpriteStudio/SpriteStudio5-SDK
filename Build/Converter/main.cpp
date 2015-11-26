@@ -30,9 +30,10 @@
 
 static const int DATA_VERSION_1			= 1;
 static const int DATA_VERSION_2         = 2;
+static const int DATA_VERSION_3         = 3;
 
 static const int DATA_ID				= 0x42505353;
-static const int CURRENT_DATA_VERSION	= DATA_VERSION_2;
+static const int CURRENT_DATA_VERSION	= DATA_VERSION_3;
 
 
 enum {
@@ -256,6 +257,8 @@ bool isZenkaku( const SsString* str )
 static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 {
 //	static SsPartStateLess _ssPartStateLess;
+	std::cerr << "Ss5Converter FormatVersion=" << CURRENT_DATA_VERSION << "\n";
+	std::cerr << "convert start!" << "\n";
 
 	CellList* cellList = makeCellList(proj);
 
@@ -473,6 +476,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				const SsString str = part->refEffectName;
 				partData->add(Lump::stringData(str));							//文字列
 			}
+			//パーツカラー
+			const SsString str = part->colorLabel;
+			partData->add(Lump::stringData(str));							//文字列
 
 		}
 
@@ -1029,7 +1035,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			animeData->add(hasLabelData ? LabelDataIndexArray : Lump::s32Data(0));
 			animeData->add(Lump::s16Data(decoder.getAnimeEndFrame()));
 			animeData->add(Lump::s16Data(anime->settings.fps));
-			animeData->add(Lump::s16Data(label_idx));				//ラベルデータ数
+			animeData->add(Lump::s16Data(label_idx));							//ラベルデータ数
+			animeData->add(Lump::s16Data(anime->settings.canvasSize.x));		//基準枠W
+			animeData->add(Lump::s16Data(anime->settings.canvasSize.y));		//基準枠H
 		}
 
 	}
@@ -1291,6 +1299,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			}
 		}
 	}
+	std::cerr << "convert end" << "\n";
 
 	return topLump;
 }
