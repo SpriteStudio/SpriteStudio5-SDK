@@ -4,6 +4,7 @@
 
 #include "sstypes.h"
 #include "ssarchiver.h"
+#include "ssstring_uty.h"
 
 /// プロジェクトファイルの設定が記載されているデータです。
 /// 以下のタグはエディタ編集用のデータなので読み飛ばします。
@@ -179,12 +180,22 @@ public:
 		return getSsaeBasepath() + animepackNames[index];
 	}
 
+
 	///CellMap(ssce)のファイル名をパス付きで取得する
 	SsString	getCellMapFilePath( size_t index ) { 
 		if ( cellmapNames.size() <= index ) return "";
         SsString str = getSsceBasepath();
-        str = str + cellmapNames[index];
-		return str ;
+
+
+		std::string f = cellmapNames[index];
+		
+		std::string ret = getFullPath( str , path2dir( cellmapNames[index] ) );
+		ret = ret + path2file( cellmapNames[index] );
+		ret = nomarizeFilename(ret);
+
+        //str = str + cellmapNames[index];
+		//return str ;
+		return ret;
 	}
 
 	SsString	getEffectFilePath( size_t index ) { 

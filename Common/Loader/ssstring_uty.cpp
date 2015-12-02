@@ -125,3 +125,23 @@ std::string getFullPath( const std::string& basePath , const std::string &relPat
 #endif
 
 }
+std::string Replace( std::string String1, std::string String2, std::string String3 )
+{
+    std::string::size_type  Pos( String1.find( String2 ) );
+
+    while( Pos != std::string::npos )
+    {
+        String1.replace( Pos, String2.length(), String3 );
+        Pos = String1.find( String2, Pos + String3.length() );
+    }
+
+    return String1;
+}
+
+std::string nomarizeFilename( std::string str )
+{
+	std::string ret = str;
+	ret = Replace( str , "\\\\" , "\\" );
+
+	return ret;
+}

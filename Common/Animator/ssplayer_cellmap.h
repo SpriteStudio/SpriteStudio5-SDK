@@ -51,7 +51,12 @@ public:
 		}
 
 		tex = SSTextureFactory::create();
-		SsString fullpath = filePath + cellmap->imagePath;
+
+		//SsString fullpath = filePath + cellmap->imagePath;
+
+		std::string fullpath = getFullPath( filePath , path2dir( cellmap->imagePath ) );
+		fullpath = fullpath + path2file( cellmap->imagePath );
+		fullpath = nomarizeFilename(fullpath);
 
 		if ( !tex->Load( fullpath.c_str() ) )
 		{

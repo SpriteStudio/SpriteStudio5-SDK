@@ -88,6 +88,8 @@ SsCelMapLinker*	SsCellMapList::getCellMapLink( const SsString& name )
 	{
 		return itr->second;
 	}else{
+
+#if 0
 		std::vector<SsString> slist;
 		split_string( name , '.' , slist );
 		
@@ -98,6 +100,16 @@ SsCelMapLinker*	SsCellMapList::getCellMapLink( const SsString& name )
 		}else{
 			DEBUG_PRINTF( "CellMapName not found : %s " , name.c_str() );
 		}
+#endif
+		for ( std::map<SsString,SsCelMapLinker*>::iterator itr=CellMapDic.begin() ; itr != CellMapDic.end() ; itr++)
+		{
+			if ( itr->second->cellMap->loadFilepath == name )
+			{
+				return itr->second;
+			}
+		}
+
+
 	}
 
 	return 0;
