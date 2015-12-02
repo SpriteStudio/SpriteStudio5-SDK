@@ -257,7 +257,8 @@ bool isZenkaku( const SsString* str )
 static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 {
 //	static SsPartStateLess _ssPartStateLess;
-	std::cerr << "Ss5Converter FormatVersion=" << CURRENT_DATA_VERSION << "\n";
+	std::cerr << SPRITESTUDIOSDK_VERSION << "\n";	//バージョン表記は ssloader.h　にあります。
+	std::cerr << "Ss5Converter ssbpFormatVersion=" << CURRENT_DATA_VERSION << "\n";
 	std::cerr << "convert start!" << "\n";
 
 	CellList* cellList = makeCellList(proj);
@@ -1309,6 +1310,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 void convertProject(const std::string& outPath, LumpExporter::StringEncoding encoding, const std::string& sspjPath, const std::string& imageBaseDir, const std::string& creatorComment)
 {
 	SSTextureFactory texFactory(new SSTextureBMP());
+	std::cerr << sspjPath << "\n";
 	SsProject* proj = ssloader_sspj::Load(sspjPath);
 	Lump* lump;
 	try

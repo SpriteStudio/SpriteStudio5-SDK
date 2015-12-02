@@ -123,7 +123,8 @@
 
 #include "ssInterpolation.h"
 
-
+//SDKを更新する場合はバージョン番号を変更してください
+#define SPRITESTUDIOSDK_VERSION "SpriteStudioSDK Version 1.6.1"
 
 
 
