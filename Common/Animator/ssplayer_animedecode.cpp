@@ -32,6 +32,7 @@ SsAnimeDecoder::SsAnimeDecoder() :
 	curAnimeFPS(0),
 	curAnimeEndFrame(0),
 	nowPlatTime(0) ,
+	nowPlatTimeOld(0),
 	curCellMapManager(0),
 	partState(0),
 	rootPartFunctionAsVer4(false),
@@ -783,7 +784,7 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 		updateVertices(part , anime , state);
 	}
 
-
+/*
 	if ( part->type == SsPartType::effect )
 	{
 
@@ -813,7 +814,7 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 			}
 		}
 	}
-
+*/
 
 
 }
@@ -1245,7 +1246,8 @@ void	SsAnimeDecoder::update(float frameDelta)
 			//if ( partState[cnt].refEffect->getEffectData()->effectName == "001c" )
 			{
 				updateMatrix( part , anime , &partState[cnt]);
-				updateEffect( frameDelta , time , part , anime , &partState[cnt] );
+				updateEffect(frameDelta, time, part, anime, &partState[cnt]);
+
 			}
 		}
 
@@ -1254,17 +1256,79 @@ void	SsAnimeDecoder::update(float frameDelta)
 
 	sortList.sort(_ssPartStateLess);
 
+	//今回再生した時間を保存しておく
+	nowPlatTimeOld = nowPlatTime;
+
 }
 
 
 void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state )
 {
-	if ( state && state->refEffect )
+	if (state && state->refEffect)
 	{
 		float fps = (float)state->refEffect->getCurrentFPS();
 		// 1 frameのsec * Stateのframeの変化値
-//		float f = (1.0f / fps) * frameDelta;				
-		state->refEffect->update( frameDelta );
+		//		float f = (1.0f / fps) * frameDelta;				
+
+		int	frameNo = (int)nowPlatTime;
+		int	_prevDrawFrameNo = (int)nowPlatTimeOld;
+
+
+		if (state->hide)
+		{
+			//パーツが非表示の場合はエフェクトをリセットする
+			if (state->refEffect->getPlayStatus() == true)
+			{
+				//毎回行うと負荷がかかるので、前回が再生中であればリセット
+				state->refEffect->setSeed(getRandomSeed());
+				state->refEffect->reload();
+				state->refEffect->stop();
+			}
+		}
+		else
+		{
+			//エフェクトアップデート
+			if (frameNo != _prevDrawFrameNo)
+			{
+				//前回からの差分分更新する
+				state->refEffect->setLoop(false);
+				int fdt = 1;
+				if (_prevDrawFrameNo < frameNo)			//差分フレームを計算
+				{
+					fdt = frameNo - _prevDrawFrameNo;
+					if (state->refEffect->getPlayStatus() == false)
+					{
+						state->refEffect->play();
+						//前回エフェクトの更新をしていない場合は初回を0でアップデートする
+						state->refEffect->update(0); //先頭フレームは0でアップデートする
+						fdt = fdt - 1;
+					}
+				}
+				else
+				{
+					//アニメーションループ時
+					state->refEffect->setSeed(getRandomSeed());
+					state->refEffect->reload();
+					state->refEffect->play();
+					state->refEffect->update(0); //先頭フレームは0でアップデートする
+					if (frameNo > 0)
+					{
+						fdt = frameNo - 1;
+					}
+					else
+					{
+						fdt = 0;
+					}
+				}
+				state->refEffect->play();
+				int f = 0;
+				for (f = 0; f < fdt; f++)
+				{
+					state->refEffect->update(1); //先頭から今のフレーム
+				}
+				//		state->refEffect->update(frameDelta);
+			}
+		}
 	}
 
 }

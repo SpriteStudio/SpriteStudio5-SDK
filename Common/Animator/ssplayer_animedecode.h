@@ -55,6 +55,7 @@ private:
 	std::list<SsPartState*>			sortList;			///ソート状態
 
 	float			nowPlatTime;
+	float			nowPlatTimeOld;						//前のフレームで再生した時間
 	float			frameDelta;
 	int				curAnimeEndFrame;
 	int				curAnimeFPS;
