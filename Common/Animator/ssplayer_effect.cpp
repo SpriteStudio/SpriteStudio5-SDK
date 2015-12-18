@@ -555,7 +555,7 @@ void	SsEffectRenderParticle::draw(SsEffectRenderer* render)
 	fcolor.fromARGB( _color.toARGB() );
 	fcolor.a = fcolor.a * this->alpha;
 
-	if ( dispCell->cell )
+	if ( ( dispCell->cell ) && ( fcolor.a != 0.0f ) )
 	{
 
 		SsVector2 pivot = SsVector2( dispCell->cell->pivot.x ,dispCell->cell->pivot.y);
