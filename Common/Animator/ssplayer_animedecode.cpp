@@ -1269,10 +1269,11 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 		float fps = (float)state->refEffect->getCurrentFPS();
 		// 1 frameのsec * Stateのframeの変化値
 		//		float f = (1.0f / fps) * frameDelta;				
+//		state->refEffect->update(frameDelta);
+
 
 		int	frameNo = (int)nowPlatTime;
 		int	_prevDrawFrameNo = (int)nowPlatTimeOld;
-
 
 		if (state->hide)
 		{
@@ -1295,13 +1296,15 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 				int fdt = 1;
 				if (_prevDrawFrameNo < frameNo)			//差分フレームを計算
 				{
-					fdt = frameNo - _prevDrawFrameNo;
+					fdt = ( frameNo - _prevDrawFrameNo ) * 2;
 					if (state->refEffect->getPlayStatus() == false)
 					{
 						state->refEffect->play();
 						//前回エフェクトの更新をしていない場合は初回を0でアップデートする
+
 						state->refEffect->update(0); //先頭フレームは0でアップデートする
 						fdt = fdt - 1;
+
 					}
 				}
 				else
@@ -1310,7 +1313,9 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 					state->refEffect->setSeed(getRandomSeed());
 					state->refEffect->reload();
 					state->refEffect->play();
-					state->refEffect->update(0); //先頭フレームは0でアップデートする
+					fdt = frameNo * 2;
+
+					state->refEffect->update(0.0f); //先頭フレームは0でアップデートする
 					if (frameNo > 0)
 					{
 						fdt = frameNo - 1;
@@ -1319,16 +1324,18 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 					{
 						fdt = 0;
 					}
+
 				}
-				state->refEffect->play();
-				int f = 0;
-				for (f = 0; f < fdt; f++)
 				{
-					state->refEffect->update(1); //先頭から今のフレーム
+					int f = 0;
+					for (f = 0; f < fdt; f++)
+					{
+						state->refEffect->update(0.5f); //先頭から今のフレーム
+					}
 				}
-				//		state->refEffect->update(frameDelta);
 			}
 		}
+
 	}
 
 }
