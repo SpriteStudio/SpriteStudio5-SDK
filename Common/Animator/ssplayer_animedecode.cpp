@@ -1288,10 +1288,10 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 		}
 		else
 		{
-					state->refEffect->play();
-					state->refEffect->update(frameDelta);
+//					state->refEffect->play();
+//					state->refEffect->update(frameDelta);
 
-#if 0
+#if 1
 			//エフェクトアップデート
 			if (frameNo != _prevDrawFrameNo)
 			{

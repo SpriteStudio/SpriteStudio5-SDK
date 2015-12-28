@@ -14,8 +14,8 @@ extern unsigned char cubeColor;
 
 extern TwBar *g_twbar;
 extern float bgColor[];
- int g_particle_num;
- int g_particle_draw_num;
+// int g_particle_num;
+// int g_particle_draw_num;
 
 
 struct SampleScene::AnimePackSelecterType
@@ -137,8 +137,8 @@ void	SampleScene::UIRebuild()
     //TwAddVarRW(g_twbar, "zoom", TW_TYPE_FLOAT, &m_Zoom, " min='0.1' max='10' step=0.1 ");
     TwAddVarRW(g_twbar, "speed", TW_TYPE_FLOAT, &m_Speed, " min='0'max='5' step=0.1 ");
     TwAddVarRW(g_twbar, "frame", TW_TYPE_INT32, &m_nowPlayFrame, " min='0' ");
-    TwAddVarRW(g_twbar, "particle", TW_TYPE_INT32, &g_particle_num, " min='0' ");
-    TwAddVarRW(g_twbar, "particle draw", TW_TYPE_INT32, &g_particle_draw_num, " min='0' ");
+//    TwAddVarRW(g_twbar, "particle", TW_TYPE_INT32, &g_particle_num, " min='0' ");
+//    TwAddVarRW(g_twbar, "particle draw", TW_TYPE_INT32, &g_particle_draw_num, " min='0' ");
 
 
 

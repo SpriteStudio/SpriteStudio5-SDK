@@ -645,7 +645,7 @@ void	SsEffectRenderer::update(float delta)
 
 		updatecount++;
 	}
-	g_particle_num = updatecount;
+//	g_particle_num = updatecount;
 	//後処理  寿命で削除
 	//死亡検出、削除の2段階
 	std::vector<SsEffectRenderAtom*>::iterator endi = remove_if( updatelist.begin(), updatelist.end(), particleDelete );
@@ -667,7 +667,7 @@ void	SsEffectRenderer::update(float delta)
 
 }
 
-extern int g_particle_draw_num;
+//extern int g_particle_draw_num;
 //------------------------------------------------------------------------------
 //
 //------------------------------------------------------------------------------
@@ -707,7 +707,7 @@ void	SsEffectRenderer::draw()
 		}
 
 	}
-	g_particle_draw_num = cnt;
+	//g_particle_draw_num = cnt;
 
 
 }
