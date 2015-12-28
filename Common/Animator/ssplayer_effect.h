@@ -506,6 +506,11 @@ public:
 
 	void	setCellmapManager( SsCellMapList* plist ) { curCellMapManager = plist; }
 
+	SsEffectDrawBatch*	findBatchList(SsEffectNode* n);
+
+	SsEffectDrawBatch*	findBatchListSub(SsEffectNode* n);
+
+
 };
 
 
