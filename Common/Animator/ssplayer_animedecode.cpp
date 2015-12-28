@@ -1322,7 +1322,7 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 					state->refEffect->update(0.0f); //先頭フレームは0でアップデートする
 					if (frameNo > 0)
 					{
-						fdt = frameNo - 1;
+						fdt = fdt - 1;
 					}
 					else
 					{
