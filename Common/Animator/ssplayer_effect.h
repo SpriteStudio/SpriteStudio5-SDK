@@ -393,7 +393,7 @@ public:
 #define SSEFFECTRENDER_EMMITER_MAX (256)
 #define SSEFFECTRENDER_PARTICLE_MAX (2048)
 //-------------------------------------------------------------
-#define SSEFFECTRENDER_BACTH_MAX (16)
+#define SSEFFECTRENDER_BACTH_MAX (256)
 
 
 
