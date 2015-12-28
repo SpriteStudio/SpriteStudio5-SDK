@@ -390,8 +390,11 @@ public:
 // パーツ単位でバッファを作成するので、バッファ数を多く設定すると
 // アニメーション初期化時にバッファ確保の時間が長くなります。
 // 再生するアニメーションにエフェクトパーツがない場合は初期化が行われなわれないので負荷は発生しません。
-#define SSEFFECTRENDER_EMMITER_MAX (256)
-#define SSEFFECTRENDER_PARTICLE_MAX (2048)
+//SpriteStudio本体の設定
+#define SSEFFECTRENDER_EMMITER_MAX (1024)
+#define SSEFFECTRENDER_PARTICLE_MAX (4096)
+//#define SSEFFECTRENDER_EMMITER_MAX (256)
+//#define SSEFFECTRENDER_PARTICLE_MAX (2048)
 //-------------------------------------------------------------
 #define SSEFFECTRENDER_BACTH_MAX (256)
 
