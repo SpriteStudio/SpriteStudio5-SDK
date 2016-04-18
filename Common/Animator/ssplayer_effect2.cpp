@@ -13,7 +13,7 @@
 
 
 #define DEBUG_DISP (0)
-
+#define BUILD_ERROR_0418 (0)
 
 
 static u8 blendNumber( u8 a , u8 b , float rate )
@@ -611,7 +611,7 @@ void SsEffectRenderV3::particleDraw(SsEffectEmitter* e , double time , SsEffectE
 //パラメータをコピーする
 void	SsEffectRenderV3::initEmitter( SsEffectEmitter* e , SsEffectNode* node)
 {
-
+#if BUILD_ERROR_0418
 	e->refData = node->GetMyBehavior();
     e->refData->setup();
 
@@ -624,7 +624,7 @@ void	SsEffectRenderV3::initEmitter( SsEffectEmitter* e , SsEffectNode* node)
 	{
 		e->emitterSeed = this->effectData->lockRandSeed * 8951;
 	}
-
+#endif
 
 	e->emitter.life+= e->particle.delay;//ディレイ分加算
 }
@@ -655,6 +655,7 @@ void	SsEffectRenderV3::setEffectData(SsEffectModel* data)
 
 void	SsEffectRenderV3::update(float delta)
 {
+#if BUILD_ERROR_0418
 	if ( !m_isPlay ) return;
 
 	if ( !m_isPause )
@@ -678,6 +679,7 @@ void	SsEffectRenderV3::update(float delta)
 
 		}
 	}
+#endif
 }
 
 void	SsEffectRenderV3::draw()
@@ -732,7 +734,7 @@ bool compare_priority( SsEffectEmitter* left,  SsEffectEmitter* right)
 
 void    SsEffectRenderV3::reload()
 {
-
+#if BUILD_ERROR_0418
 	nowFrame = 0;
 
     //updateが必要か
@@ -830,7 +832,7 @@ void    SsEffectRenderV3::reload()
 
 
 
-
+#endif
 
 }
 
