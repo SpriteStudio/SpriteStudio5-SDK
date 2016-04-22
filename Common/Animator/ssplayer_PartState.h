@@ -6,7 +6,9 @@
 
 
 class SsAnimeDecoder;
-class SsEffectRenderer;
+//class SsEffectRenderer;
+class SsEffectRenderV2;
+
 
 
 ///パーツの状態を保持するクラスです。
@@ -54,7 +56,7 @@ struct SsPartState
 	SsBlendType::_enum	alphaBlendType;
 		
 	SsAnimeDecoder*		refAnime;
-	SsEffectRenderer*	refEffect;
+	SsEffectRenderV2*	refEffect;
 
 	//V4互換計算用
 	SsVector3		_temp_position;

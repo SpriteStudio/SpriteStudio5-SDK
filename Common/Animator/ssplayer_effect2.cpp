@@ -451,9 +451,80 @@ const particleExistSt*	SsEffectEmitter::getParticleDataFromID(int id)
 }
 
 
+void	SsEffectRenderV2::drawSprite(
+		SsCellValue*		dispCell,
+		SsVector2 _position,
+		SsVector2 _size,
+		float     _rotation,
+		float	  direction,
+		SsFColor	_color,
+		SsRenderBlendType::_enum blendType
+	)
+{
+
+	//SsCellValue*			dispCell;
+
+	SsCurrentRenderer::getRender()->renderSetup();	
+
+	switch( blendType )
+	{
+		case SsRenderBlendType::Mix:
+			SsCurrentRenderer::getRender()->SetAlphaBlendMode(SsBlendType::mix);					
+			break;
+		case SsRenderBlendType::Add:
+			SsCurrentRenderer::getRender()->SetAlphaBlendMode(SsBlendType::add);					
+			break;
+	}
+
+	SsCurrentRenderer::getRender()->SetTexture( dispCell );
+
+
+	float		matrix[4 * 4];	///< 行列
+	IdentityMatrix( matrix );
+
+	float parentAlpha = 1.0f;
+
+	if ( parentState )
+	{
+		memcpy( matrix , parentState->matrix , sizeof( float ) * 16 );
+    	parentAlpha = parentState->alpha;
+	}
+
+
+	TranslationMatrixM( matrix , _position.x, _position.y, 0.0f );
+
+	RotationXYZMatrixM( matrix , 0 , 0 , DegreeToRadian(_rotation)+direction );
+
+    ScaleMatrixM(  matrix , _size.x, _size.y, 1.0f );
+
+	SsFColor fcolor;
+	fcolor.fromARGB( _color.toARGB() );
+	fcolor.a = fcolor.a * parentAlpha;
+
+
+	if ( ( dispCell->cell ) && ( fcolor.a != 0.0f ) )
+	{
+
+		SsVector2 pivot = SsVector2( dispCell->cell->pivot.x ,dispCell->cell->pivot.y);
+
+		pivot.x = pivot.x * dispCell->cell->size.x;
+		pivot.y = pivot.y * dispCell->cell->size.y;
+
+		SsVector2 dispscale = dispCell->cell->size;
+
+
+		SsCurrentRenderer::getRender()->renderSpriteSimple(
+			matrix,
+			dispscale.x , dispscale.y ,  pivot,
+					dispCell->uvs[0],
+					dispCell->uvs[3], fcolor );
+	}	
+
+
+}
 
 #if 0
-void	SsEffectRenderV3::drawSprite(
+void	SsEffectRenderV2::drawSprite(
 		SsCell*		dispCell,
 		SsVector2 _position,
 		SsVector2 _size,
@@ -543,7 +614,7 @@ void	SsEffectRenderV3::drawSprite(
 }
 #endif
 
-void SsEffectRenderV3::particleDraw(SsEffectEmitter* e , double time , SsEffectEmitter* parent , particleDrawData* plp )
+void SsEffectRenderV2::particleDraw(SsEffectEmitter* e , double time , SsEffectEmitter* parent , particleDrawData* plp )
 {
 	double t = time;
 
@@ -608,6 +679,11 @@ void SsEffectRenderV3::particleDraw(SsEffectEmitter* e , double time , SsEffectE
 			drawSprite( e->refCell , SsVector2(lp.x,lp.y) , lp.scale,
 				lp.rot , lp.direc , fcolor , btype );
 #endif
+			drawSprite( &e->dispCell ,
+						SsVector2(lp.x,lp.y),
+						lp.scale,
+						lp.rot , lp.direc , fcolor , e->refData->BlendType );
+
 
 
 			drawcnt++;
@@ -624,14 +700,33 @@ void SsEffectRenderV3::particleDraw(SsEffectEmitter* e , double time , SsEffectE
 
 
 //パラメータをコピーする
-void	SsEffectRenderV3::initEmitter( SsEffectEmitter* e , SsEffectNode* node)
+void	SsEffectRenderV2::initEmitter( SsEffectEmitter* e , SsEffectNode* node)
 {
 
 	e->refData = node->GetMyBehavior();
     //e->refData->setup();	////セルマップのロードを行う
 
-
 	e->refCell = e->refData->refCell;
+
+	//セルの初期化
+	SsCelMapLinker* link = this->curCellMapManager->getCellMapLink( e->refData->CellMapName );
+
+	if ( link )
+	{
+		SsCell * cell = link->findCell( e->refData->CellName );
+		
+		getCellValue(	this->curCellMapManager , 
+			e->refData->CellMapName ,
+			e->refData->CellName , 
+			e->dispCell ); 
+	}else{
+		DEBUG_PRINTF( "cell not found : %s , %s\n" , 
+			e->refData->CellMapName.c_str(), 
+			e->refData->CellName.c_str()
+			);
+	}
+
+
 
 	//e->refData->initializeParticle( e );
 	SsEffectFunctionExecuter::initializeEffect( e->refData , e );
@@ -654,7 +749,7 @@ void	SsEffectRenderV3::initEmitter( SsEffectEmitter* e , SsEffectNode* node)
 }
 
 
-void	SsEffectRenderV3::clearEmitterList()
+void	SsEffectRenderV2::clearEmitterList()
 {
 	for ( size_t i = 0 ; i < this->emmiterList.size(); i++)
 	{
@@ -668,7 +763,7 @@ void	SsEffectRenderV3::clearEmitterList()
 
 
 
-void	SsEffectRenderV3::setEffectData(SsEffectModel* data)
+void	SsEffectRenderV2::setEffectData(SsEffectModel* data)
 {
 	effectData = data;
 
@@ -677,7 +772,7 @@ void	SsEffectRenderV3::setEffectData(SsEffectModel* data)
 }
 
 
-void	SsEffectRenderV3::update(float delta)
+void	SsEffectRenderV2::update(float delta)
 {
 
 	loopcnt = 0;
@@ -712,7 +807,7 @@ void	SsEffectRenderV3::update(float delta)
 
 }
 
-void	SsEffectRenderV3::draw()
+void	SsEffectRenderV2::draw()
 {
 
 	float targetFrame = nowFrame;
@@ -769,7 +864,7 @@ bool compare_priority( SsEffectEmitter* left,  SsEffectEmitter* right)
 }
 
 
-void    SsEffectRenderV3::reload()
+void    SsEffectRenderV2::reload()
 {
 	//dataOfprofile.clear();
 
@@ -885,14 +980,14 @@ void    SsEffectRenderV3::reload()
 }
 
 
-size_t  SsEffectRenderV3::getEffectTimeLength()
+size_t  SsEffectRenderV2::getEffectTimeLength()
 {
 
 	return effectTimeLength;
 }
 
 
-int	SsEffectRenderV3::getCurrentFPS(){
+int	SsEffectRenderV2::getCurrentFPS(){
 	if (effectData)
 	{
 		if ( effectData->fps == 0 ) return 30;

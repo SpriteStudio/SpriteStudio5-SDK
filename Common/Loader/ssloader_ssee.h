@@ -167,11 +167,8 @@ public:
 
 	const std::vector<SsEffectNode*>& getNodeList()
 	{
-		updateNodeList();
 		return nodeList;
 	}
-
-	void	updateNodeList();
 
 
 };

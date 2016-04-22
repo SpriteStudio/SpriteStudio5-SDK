@@ -7,6 +7,7 @@
 #include "ssplayer_matrix.h"
 #include "ssplayer_render.h"
 #include "ssplayer_effect.h"
+#include "ssplayer_effect2.h"
 
 
 //stdでののforeach宣言　
@@ -130,8 +131,9 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 				SsEffectFile* f = sspj->findEffect( p->refEffectName );
 				if ( f )
 				{
-					SsEffectRenderer* er = new SsEffectRenderer();
+					SsEffectRenderV2* er = new SsEffectRenderV2();
 					er->setParentAnimeState( &partState[i] );
+
 					er->setCellmapManager( this->curCellMapManager );
 					er->setEffectData( &f->effectData );
 					er->setSeed(getRandomSeed());

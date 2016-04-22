@@ -247,6 +247,8 @@ struct particleParameter
 class SsEffectEmitter
 {
 public:
+	SsCellValue		 dispCell;
+
 
 	int					priority;
 
@@ -333,7 +335,7 @@ public:
 };
 
 
-class SsEffectRenderV3
+class SsEffectRenderV2
 {
 public:
 
@@ -365,6 +367,8 @@ public:
 	bool			m_isPause;
 	bool			m_isLoop;
 
+	SsCellMapList*	curCellMapManager;/// セルマップのリスト（アニメデコーダーからもらう
+
 public:
 	//デバッグ用
 	int  loopcnt;
@@ -386,8 +390,8 @@ protected:
 
 
 public:
-	SsEffectRenderV3() : effectTimeLength(0) , dataOfprofile(0),isIntFrame(true),isDebugDraw(false) {}
-	virtual ~SsEffectRenderV3(){}
+	SsEffectRenderV2() : effectTimeLength(0) , dataOfprofile(0),isIntFrame(true),isDebugDraw(false) {}
+	virtual ~SsEffectRenderV2(){}
 
 	virtual void    play(){ m_isPause = false;m_isPlay=true; }
 	virtual void	stop(){ m_isPlay = false;}
@@ -442,8 +446,24 @@ public:
 	virtual u32		getUpdateParticleNum(){ return loopcnt;}
 	virtual u32		getUpdateTime(){ return updateTime;}
 	virtual u32		getMaxDrawParticle(){return maxDrawCount;}
+	
+	void	setCellmapManager( SsCellMapList* plist ) { curCellMapManager = plist; }
 
 //	virtual void 	debugDraw();
+	bool	getPlayStatus(void){
+		return(m_isPlay);
+	}
+
+
+	void	drawSprite(
+			SsCellValue*		dispCell,
+			SsVector2	_position,
+			SsVector2 _size,
+			float     _rotation,
+			float	  direction,
+			SsFColor	_color,
+			SsRenderBlendType::_enum blendType
+		);
 
 };
 
