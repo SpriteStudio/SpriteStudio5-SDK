@@ -54,7 +54,4 @@ void	SsEffectBehavior::EffectElementLoader(ISsXmlArchiver* ar)
 		e = e->NextSiblingElement();
 	}
 
-	
-
 }
-

@@ -36,6 +36,7 @@ namespace SsEffectFunctionType
 		TransSize,
 		PointGravity,
 		TurnToDirectionEnabled,
+		InfiniteEmitEnabled,
 	};
 }
 
@@ -669,6 +670,8 @@ public:
 class  ParticleTurnToDirectionEnabled : public SsEffectElementBase
 {
 public:
+	float Rotation;
+
 
 	ParticleTurnToDirectionEnabled()
 	{
@@ -688,10 +691,27 @@ public:
 */
 	SSSERIALIZE_BLOCK
 	{
+		SSAR_DECLARE( Rotation );
 	}
 };
 
 
+//--------------------------------------------------------------------------------------
+class  ParticleInfiniteEmitEnabled : public SsEffectElementBase
+{
+public:
+
+	ParticleInfiniteEmitEnabled()
+	{
+		setType( SsEffectFunctionType::InfiniteEmitEnabled );
+	}
+	virtual ~ParticleInfiniteEmitEnabled(){}
+
+	SSSERIALIZE_BLOCK
+	{
+
+	}
+};
 
 
 

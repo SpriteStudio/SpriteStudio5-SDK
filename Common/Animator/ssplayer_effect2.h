@@ -10,6 +10,7 @@
 //#include "ISSEffectRender.h"
 
 
+
 class SsEffectModel;
 class SsRenderEffectBase;
 class SsEffectNode;
@@ -24,6 +25,12 @@ class SsCell;
 #define LOOP_TYPE2 (0)
 #define LOOP_TYPE3 (1)
 
+
+struct TimeAndValue
+{
+	float time;
+	float value;
+};
 
 
 //v3.1
@@ -65,6 +72,66 @@ struct particleDrawData
     SsVector2 scale;
 };
 
+
+#if 0
+//リングバッファだが実はもういらないかも
+template<class mytype>
+class particleRingBuffer
+{
+protected:
+
+	mytype*		ar;
+	int*		realIndex;
+	size_t		bufsize;
+
+
+public:
+	particleRingBuffer() {
+    	 resize(16);
+	}
+	particleRingBuffer(size_t size)
+	{
+           resize(size);
+	}
+	virtual ~particleRingBuffer()
+	{
+		delete[] ar;
+		delete[] realIndex;
+	}
+
+	void clear() {
+		memset(ar, 0, sizeof(mytype) *(bufsize + 1));
+		memset(realIndex, 0, sizeof(int) *(bufsize + 1));
+	}
+
+	void store(int index, mytype* t)
+	{
+		ar[index % bufsize] = *t;
+		realIndex[index % bufsize] = index;
+	}
+
+	void resize( size_t size )
+	{
+		bufsize = size*2;
+		ar = new mytype[bufsize +1];
+		realIndex = new int[bufsize + 1];
+		clear();
+	}
+
+	mytype& load(int index)
+	{
+		return ar[index % bufsize];
+	}
+
+	int loadRealIndex(int index)
+	{
+		return realIndex[index];
+	}
+	size_t	getBufsize() { return bufsize; }
+
+};
+
+#endif
 
 
 //エミッターが持つパラメータ
@@ -166,6 +233,7 @@ struct particleParameter
 	float	   	transSpeed2;
 
 	bool		useTurnDirec;
+    float		direcRotAdd;
 
     bool		userOverrideRSeed;
 	int			overrideRSeed;
@@ -265,7 +333,7 @@ public:
 };
 
 
-class SsEffectRenderV3 //: public ISsEffectRenderer
+class SsEffectRenderV3
 {
 public:
 
@@ -289,14 +357,25 @@ public:
 
     bool			Infinite;	//無限に発生出来るかどうか
 
-	SsPartState*		parentState;
+	SsPartState*	parentState;
 
+	bool			isIntFrame;
+
+	bool			m_isPlay;
+	bool			m_isPause;
+	bool			m_isLoop;
 
 public:
 	//デバッグ用
 	int  loopcnt;
 	int  drawcnt;
+	int	 updateTime;
+	int	 maxDrawCount;
 
+	//std::vector<TimeAndValue>   dataOfprofile;
+	//TimeAndValue*	dataOfprofile;
+	float*   dataOfprofile;
+    bool	isDebugDraw;
 
 protected:
 	void 	particleDraw(SsEffectEmitter* e , double t , SsEffectEmitter* parent = 0 , particleDrawData* plp = 0 );
@@ -307,9 +386,16 @@ protected:
 
 
 public:
-	SsEffectRenderV3() : effectTimeLength(0) {}
+	SsEffectRenderV3() : effectTimeLength(0) , dataOfprofile(0),isIntFrame(true),isDebugDraw(false) {}
 	virtual ~SsEffectRenderV3(){}
 
+	virtual void    play(){ m_isPause = false;m_isPlay=true; }
+	virtual void	stop(){ m_isPlay = false;}
+	virtual void    pause(){m_isPause = true;m_isPlay=false;}
+	virtual void	setLoop(bool flag){ m_isLoop = flag; }
+	virtual bool	isplay(){return m_isPlay;}
+	virtual bool	ispause(){return m_isPause;}
+	virtual bool	isloop(){return m_isLoop;}
 
 	virtual void	setEffectData(SsEffectModel* data);
 
@@ -338,7 +424,26 @@ public:
 
 	virtual  void	setParentAnimeState( SsPartState* state ){ parentState = state; }
 
-	virtual void stop(){}
+	virtual int	getCurrentFPS();
+
+#if 0
+	void	drawSprite(
+			SsCell*		dispCell,
+			SsVector2 _position,
+			SsVector2 _size,
+			float     _rotation,
+			float	  direction,
+			SsFColor	_color,
+			SsRenderBlendType blendType
+		);
+#endif
+
+	virtual u32		getDrawParticleNum(){ return drawcnt;}
+	virtual u32		getUpdateParticleNum(){ return loopcnt;}
+	virtual u32		getUpdateTime(){ return updateTime;}
+	virtual u32		getMaxDrawParticle(){return maxDrawCount;}
+
+//	virtual void 	debugDraw();
 
 };
 

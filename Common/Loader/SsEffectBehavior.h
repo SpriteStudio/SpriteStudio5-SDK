@@ -36,7 +36,7 @@ public:
 	SsEffectElementBase*	Factory(const char* name , XMLElement* e );
 
 	void	EffectElementLoader(ISsXmlArchiver* ar);
-
+	void	setup();
 /*
 	//エフェクトデータのセットアップ
 	void	initalize( SsEffectRenderEmitter* emmiter){}

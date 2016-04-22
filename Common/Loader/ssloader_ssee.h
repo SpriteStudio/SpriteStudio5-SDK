@@ -165,6 +165,14 @@ public:
 
 	void	EffectNodeLoader(ISsXmlArchiver* ar);
 
+	const std::vector<SsEffectNode*>& getNodeList()
+	{
+		updateNodeList();
+		return nodeList;
+	}
+
+	void	updateNodeList();
+
 
 };
 
