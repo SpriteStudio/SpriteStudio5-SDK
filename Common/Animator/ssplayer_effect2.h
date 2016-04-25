@@ -408,7 +408,7 @@ public:
 
     virtual float	getFrame(){ return nowFrame; }
 
-	virtual void	update(float delta);
+	virtual void	update();
 	virtual void	draw();
 
 	virtual void    reload();

@@ -1199,7 +1199,7 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 		{
 			state->effectTime += frameDelta* state->effectValue.speed;
 			state->refEffect->setFrame( state->effectTime );
-			state->refEffect->update(0);
+			state->refEffect->update();
 		}
 	}else{
 		if (state && state->refEffect)
@@ -1213,82 +1213,11 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 			_time = _time + state->effectValue.startTime;
 			_time*= state->effectValue.speed;
 			state->refEffect->setFrame( _time );
-			state->refEffect->update(0);
+			state->refEffect->update();
 		}
 	}
 
 
-#if 0
-	if (state && state->refEffect)
-	{
-		float fps = (float)state->refEffect->getCurrentFPS();
-
-		int	frameNo = (int)nowPlatTime;
-		int	_prevDrawFrameNo = (int)nowPlatTimeOld;
-
-		if (state->hide)
-		{
-			//パーツが非表示の場合はエフェクトをリセットする
-			if (state->refEffect->getPlayStatus() == true)
-			{
-				//毎回行うと負荷がかかるので、前回が再生中であればリセット
-				state->refEffect->setSeed(getRandomSeed());
-				state->refEffect->reload();
-				state->refEffect->stop();
-			}
-		}
-		else
-		{
-
-			//エフェクトアップデート
-			if (frameNo != _prevDrawFrameNo)
-			{
-				//前回からの差分分更新する
-				state->refEffect->setLoop(false);
-				int fdt = 1;
-				if (_prevDrawFrameNo < frameNo)			//差分フレームを計算
-				{
-					fdt = ( frameNo - _prevDrawFrameNo ) * 2;
-					if (state->refEffect->getPlayStatus() == false)
-					{
-						state->refEffect->play();
-						//前回エフェクトの更新をしていない場合は初回を0でアップデートする
-
-						state->refEffect->update(0); //先頭フレームは0でアップデートする
-						fdt = fdt - 1;
-
-					}
-				}
-				else
-				{
-					//アニメーションループ時
-					state->refEffect->setSeed(getRandomSeed());
-					state->refEffect->reload();
-					state->refEffect->play();
-					fdt = frameNo * 2;
-
-					state->refEffect->update(0.0f); //先頭フレームは0でアップデートする
-					if (frameNo > 0)
-					{
-						fdt = frameNo - 1;
-					}
-					else
-					{
-						fdt = 0;
-					}
-
-				}
-				{
-					int f = 0;
-					for (f = 0; f < fdt; f++)
-					{
-						state->refEffect->update(0.5f); //先頭から今のフレーム
-					}
-				}
-			}
-		}
-	}
-#endif
 
 }
 //描画

@@ -680,14 +680,11 @@ void	SsEffectRenderV2::setEffectData(SsEffectModel* data)
 }
 
 
-void	SsEffectRenderV2::update(float delta)
+void	SsEffectRenderV2::update()
 {
-
 
 	if ( !m_isPlay ) return;
 	if ( !m_isPause ) return;
-
-	nowFrame+=delta;
 
 	if ( !this->Infinite )
 	{
