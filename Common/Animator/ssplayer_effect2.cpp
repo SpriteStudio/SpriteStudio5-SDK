@@ -779,11 +779,8 @@ void	SsEffectRenderV2::update(float delta)
 
 	nowFrame+=delta;
 
-	if ( this->Infinite )
+	if ( !this->Infinite )
 	{
-
-	}else{
-
 		if ( (int)getEffectTimeLength() < nowFrame )
 		{
 			if ( this->isloop() )
@@ -792,7 +789,6 @@ void	SsEffectRenderV2::update(float delta)
 			}else{
 				this->stop();
 			}
-
 		}
 	}
 
@@ -809,7 +805,6 @@ void	SsEffectRenderV2::draw()
     	targetFrame = (int)nowFrame;
 	}
 
-//	u32 bt = SsGetTickCount();
 	for ( size_t i = 0 ; i < updateList.size() ; i++ )
 	{
 

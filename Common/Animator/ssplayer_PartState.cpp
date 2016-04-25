@@ -56,7 +56,12 @@ void	SsPartState::init()
 	
 	boundingRadius = 0;
 
+	effectValue.independent = false;
+	effectValue.speed = 1.0f;
+	effectValue.startTime = 0;
+
 	effectseed = 0;
+	effectTime = 0;
 
 }
 
