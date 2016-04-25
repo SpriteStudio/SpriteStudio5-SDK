@@ -674,6 +674,7 @@ public:
 
 
 	ParticleTurnToDirectionEnabled()
+		: Rotation(0.0f)
 	{
 		setType( SsEffectFunctionType::TurnToDirectionEnabled );
 	}
