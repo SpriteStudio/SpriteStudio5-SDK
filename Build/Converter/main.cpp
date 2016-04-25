@@ -31,9 +31,10 @@
 static const int DATA_VERSION_1			= 1;
 static const int DATA_VERSION_2         = 2;
 static const int DATA_VERSION_3         = 3;
+static const int DATA_VERSION_4			= 4;
 
 static const int DATA_ID				= 0x42505353;
-static const int CURRENT_DATA_VERSION	= DATA_VERSION_3;
+static const int CURRENT_DATA_VERSION	= DATA_VERSION_4;
 
 
 enum {
@@ -68,11 +69,7 @@ enum {
 	PART_FLAG_BOUNDINGRADIUS	= 1 << 24,
 
 	PART_FLAG_INSTANCE_KEYFRAME	= 1 << 25,
-	PART_FLAG_INSTANCE_START	= 1 << 26,
-	PART_FLAG_INSTANCE_END		= 1 << 27,
-	PART_FLAG_INSTANCE_SPEED	= 1 << 28,
-	PART_FLAG_INSTANCE_LOOP		= 1 << 29,
-	PART_FLAG_INSTANCE_LOOP_FLG	= 1 << 30,
+	PART_FLAG_EFFECT_KEYFRAME   = 1 << 26,
 
 	NUM_PART_FLAGS
 };
@@ -106,15 +103,7 @@ enum {
 };
 
 
-
-
-//座標を固定少数で出力　100＝1ドット
-#define DOT ( 10.0f )
-
-
 bool convert_error_exit = false;	//データにエラーがありコンバートを中止した
-
-
 
 
 
@@ -204,9 +193,9 @@ struct PartInitialData
 	int		index;
 	int		flags;
 	int		cellIndex;
-	int		posX;
-	int		posY;
-	int		posZ;
+	float	posX;
+	float	posY;
+	float	posZ;
 	float	pivotX;
 	float	pivotY;
 	float	rotationZ;
@@ -547,9 +536,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 //				key = findFirstKey(partAnime, SsAttributeKind::posy);
 //				init.posY = key != NULL ? (int)key->value._float : 0;
 
-				init.posX = (int)(state->position.x * DOT);
-				init.posY = (int)(state->position.y * DOT);
-				init.posZ = (int)(state->position.z * DOT);
+				init.posX = state->position.x;
+				init.posY = state->position.y;
+				init.posZ = state->position.z;
 				init.pivotX = state->pivotOffset.x;
 				init.pivotY = state->pivotOffset.y;
 				init.rotationX = state->rotation.x;
@@ -598,11 +587,10 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				initialData->add(Lump::s16Data(0)); //ダミーデータ
 				initialData->add(Lump::s32Data(init.flags));
 				initialData->add(Lump::s16Data(init.cellIndex));
-				initialData->add(Lump::s16Data(init.posX));
-				initialData->add(Lump::s16Data(init.posY));
-				initialData->add(Lump::s16Data(init.posZ));
 				initialData->add(Lump::s16Data(init.opacity));
-				initialData->add(Lump::s16Data(0)); //ダミーデータ
+				initialData->add(Lump::floatData(init.posX));
+				initialData->add(Lump::floatData(init.posY));
+				initialData->add(Lump::floatData(init.posZ));
 				initialData->add(Lump::floatData(init.pivotX));
 				initialData->add(Lump::floatData(init.pivotY));
 				initialData->add(Lump::floatData(init.rotationX));
@@ -698,9 +686,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					int p_flags = 0;
 					const PartInitialData& init = initialDataList.at(state->index);
 					if (cellIndex != init.cellIndex)						p_flags |= PART_FLAG_CELL_INDEX;
-					if ((int)( state->position.x * DOT ) != init.posX)		p_flags |= PART_FLAG_POSITION_X;
-					if ((int)( state->position.y * DOT ) != init.posY)		p_flags |= PART_FLAG_POSITION_Y;
-					if ((int)( state->position.z * DOT ) != init.posZ)		p_flags |= PART_FLAG_POSITION_Z;
+					if (state->position.x != init.posX)						p_flags |= PART_FLAG_POSITION_X;
+					if (state->position.y != init.posY)						p_flags |= PART_FLAG_POSITION_Y;
+					if (state->position.z != init.posZ)						p_flags |= PART_FLAG_POSITION_Z;
 					if (pivot.x != init.pivotX)								p_flags |= PART_FLAG_PIVOT_X;
 					if (pivot.y != init.pivotY)								p_flags |= PART_FLAG_PIVOT_Y;
 					if (state->rotation.x != init.rotationX)				p_flags |= PART_FLAG_ROTATIONX;
@@ -778,14 +766,12 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					//インスタンス情報出力チェック
 					if ( state->refAnime )
 					{
-						//とりあえず毎フレーム出力するが、更新があったときだけ出力しても済むかも。
-						//その場合は処理をプレイヤーと合わせる必要あり。
 						p_flags |= PART_FLAG_INSTANCE_KEYFRAME;
-						p_flags |= PART_FLAG_INSTANCE_START;
-						p_flags |= PART_FLAG_INSTANCE_END;
-						p_flags |= PART_FLAG_INSTANCE_SPEED;
-						p_flags |= PART_FLAG_INSTANCE_LOOP;
-						p_flags |= PART_FLAG_INSTANCE_LOOP_FLG;
+					}
+					//エフェクト情報の出力チェック
+					if (state->refEffect )
+					{
+						p_flags |= PART_FLAG_EFFECT_KEYFRAME;
 					}
 
 					
@@ -803,9 +789,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					frameData->add(Lump::s32Data(s_flags | p_flags));
 
 					if (p_flags & PART_FLAG_CELL_INDEX) frameData->add(Lump::s16Data(cellIndex));
-					if (p_flags & PART_FLAG_POSITION_X) frameData->add(Lump::s16Data((int)(state->position.x * DOT)));
-					if (p_flags & PART_FLAG_POSITION_Y) frameData->add(Lump::s16Data((int)(state->position.y * DOT)));
-					if (p_flags & PART_FLAG_POSITION_Z) frameData->add(Lump::s16Data((int)(state->position.z * DOT)));
+					if (p_flags & PART_FLAG_POSITION_X) frameData->add(Lump::floatData(state->position.x));
+					if (p_flags & PART_FLAG_POSITION_Y) frameData->add(Lump::floatData(state->position.y));
+					if (p_flags & PART_FLAG_POSITION_Z) frameData->add(Lump::floatData(state->position.z));
 
 					if (p_flags & PART_FLAG_PIVOT_X) frameData->add(Lump::floatData(pivot.x));
 					if (p_flags & PART_FLAG_PIVOT_Y) frameData->add(Lump::floatData(pivot.y));
@@ -874,27 +860,12 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					{
 						//ラベル位置にオフセットを加えた結果の開始フレーム
 						frameData->add(Lump::s16Data(state->instanceValue.curKeyframe));
-					}
-					if ( p_flags & PART_FLAG_INSTANCE_START )
-					{
 						//ラベル位置にオフセットを加えた結果の開始フレーム
 						frameData->add(Lump::s16Data(state->instanceValue.startFrame));
-					}
-					if ( p_flags & PART_FLAG_INSTANCE_END )
-					{
 						//ラベル位置にオフセットを加えた結果の終了フレーム
 						frameData->add(Lump::s16Data(state->instanceValue.endFrame));
-					}
-					if ( p_flags & PART_FLAG_INSTANCE_SPEED )
-					{
 						frameData->add(Lump::floatData(state->instanceValue.speed));
-					}
-					if ( p_flags & PART_FLAG_INSTANCE_LOOP )
-					{
 						frameData->add(Lump::s16Data(state->instanceValue.loopNum));
-					}
-					if ( p_flags & PART_FLAG_INSTANCE_LOOP_FLG )
-					{
 						int iflags = 0;
 						if ( state->instanceValue.infinity )
 						{
@@ -914,6 +885,14 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 						}
 						frameData->add(Lump::s16Data(iflags));
 					}
+					//エフェクト情報出力
+					if (p_flags & PART_FLAG_EFFECT_KEYFRAME)
+					{
+						//開始フレーム
+						//再生速度
+						//独立動作
+					}
+						
 				}
 				
 				// 出力されたパーツ数と、描画順の変更があるかのフラグ
@@ -1039,6 +1018,8 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			animeData->add(Lump::s16Data(label_idx));							//ラベルデータ数
 			animeData->add(Lump::s16Data(anime->settings.canvasSize.x));		//基準枠W
 			animeData->add(Lump::s16Data(anime->settings.canvasSize.y));		//基準枠H
+			animeData->add(Lump::floatData(anime->settings.pivot.x));			//基準枠位置
+			animeData->add(Lump::floatData(anime->settings.pivot.y));			//基準枠位置
 		}
 
 	}
@@ -1287,6 +1268,14 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				{
 					//進行方向に向ける
 					ParticleTurnToDirectionEnabled *element = (ParticleTurnToDirectionEnabled*)elementbase;
+					//コマンドがあれば有効
+					effectBehavior->add(Lump::floatData(element->Rotation));				//方向オフセット
+					break;
+				}
+				case SsEffectFunctionType::InfiniteEmitEnabled:
+				{
+					//無限にする
+					ParticleInfiniteEmitEnabled *element = (ParticleInfiniteEmitEnabled*)elementbase;
 					//コマンドがあれば有効
 					effectBehavior->add(Lump::s32Data(1));									//ダミーデータ
 					break;
