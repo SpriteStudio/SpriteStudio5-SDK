@@ -421,8 +421,6 @@ public:
 
 	virtual int	getCurrentFPS();
 
-
-	
 	void	setCellmapManager( SsCellMapList* plist ) { curCellMapManager = plist; }
 
 //	virtual void 	debugDraw();

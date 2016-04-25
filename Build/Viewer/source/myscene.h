@@ -61,14 +61,7 @@ public:
 
 	void	AnimePlay(){ m_isAnimeAutoPlay = true; }
 	void	AnimePause(){ m_isAnimeAutoPlay = false; }
-	void	AnimeReset(){ 
-		m_isAnimeAutoPlay = false; 
-		m_nowPlayFrame = 0;
-		m_nowPlayFrameD = 0;
-	}
-
-
-
+	void	AnimeReset();
 
 };
 

@@ -49,6 +49,8 @@ void	SampleScene::draw()
 	
 }
 
+
+
 void	SampleScene::update(double delta)
 {
 	float frameDelta = 0;
@@ -70,7 +72,7 @@ void	SampleScene::update(double delta)
 		{
 			m_nowPlayFrame = 0;
 			m_nowPlayFrameD = 0;
-			m_player->restart();
+			//m_player->restart();
 		}
 	}
 	static float backframe = 0;
@@ -95,6 +97,7 @@ void TW_CALL AnimePlayCB(void *clientData)
 	SampleScene* scene = (SampleScene*)clientData;
 	scene->AnimePlay();
 }
+
 void TW_CALL AnimePauseCB(void *clientData)
 {
 	SampleScene* scene = (SampleScene*)clientData;
@@ -102,6 +105,14 @@ void TW_CALL AnimePauseCB(void *clientData)
 	scene->AnimePause();
 
 }
+void TW_CALL AnimeResetCB(void *clientData)
+{
+	SampleScene* scene = (SampleScene*)clientData;
+
+	scene->AnimeReset();
+
+}
+
 
 
 void TW_CALL AnimeSelectCB(void *clientData)
@@ -125,6 +136,16 @@ void	SampleScene::AnimePackSelecterRelease()
 	AnimePackSelecter.clear();
 }
 
+
+void	SampleScene::AnimeReset(){ 
+
+	m_isAnimeAutoPlay = false; 
+	m_nowPlayFrame = 0;
+	m_nowPlayFrameD = 0;
+	m_player->reset();
+}
+
+
 void	SampleScene::UIRebuild()
 {
 
@@ -134,6 +155,8 @@ void	SampleScene::UIRebuild()
 	TwAddSeparator( g_twbar , "sep1" , "" );
 	TwAddButton( g_twbar , "Play" , AnimePlayCB , this , "" );
 	TwAddButton( g_twbar , "Pause" , AnimePauseCB , this , "" );
+	TwAddButton( g_twbar , "Reset" , AnimeResetCB , this , "" );
+
     //TwAddVarRW(g_twbar, "zoom", TW_TYPE_FLOAT, &m_Zoom, " min='0.1' max='10' step=0.1 ");
     TwAddVarRW(g_twbar, "speed", TW_TYPE_FLOAT, &m_Speed, " min='0'max='5' step=0.1 ");
     TwAddVarRW(g_twbar, "frame", TW_TYPE_INT32, &m_nowPlayFrame, " min='0' ");

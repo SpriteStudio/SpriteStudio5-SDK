@@ -116,6 +116,7 @@ public:
 		instancePartsHide = hide;
 	}
 	void	restart();
+	void	reset();
 
 };
 

@@ -57,6 +57,7 @@ void	SsPartState::init()
 	boundingRadius = 0;
 
 	effectValue.independent = false;
+	effectValue.attrInitialized = false;
 	effectValue.speed = 1.0f;
 	effectValue.startTime = 0;
 
@@ -66,3 +67,11 @@ void	SsPartState::init()
 }
 
 
+void	SsPartState::reset()
+{
+	effectValue.independent = false;
+	effectValue.attrInitialized = false;
+	effectValue.speed = 1.0f;
+	effectValue.startTime = 0;
+
+}

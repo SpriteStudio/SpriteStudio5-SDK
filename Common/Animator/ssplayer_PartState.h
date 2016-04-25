@@ -73,7 +73,7 @@ struct SsPartState
 	void	destroy();
 	void	init();
 	bool	inherits_(SsAttributeKind::_enum kind) const {return inheritRates[(int)kind] != 0.f;}
-
+	void	reset();
 };
 
 

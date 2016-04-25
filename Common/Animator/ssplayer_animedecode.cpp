@@ -42,10 +42,26 @@ SsAnimeDecoder::SsAnimeDecoder() :
 	{
 	}
 
-	
+
+void	SsAnimeDecoder::reset()
+{
+	foreach( std::list<SsPartState*> , sortList , e )
+	{
+		SsPartState* state = (*e);
+		if ( state->refEffect )
+		{
+			state->reset();
+			state->refEffect->setSeed(getRandomSeed());
+			state->refEffect->reload();
+			state->refEffect->stop();
+			//state->refEffect->reset();
+		}
+	}
+}
 
 void	SsAnimeDecoder::restart()
 {
+#if 0
 	foreach( std::list<SsPartState*> , sortList , e )
 	{
 		SsPartState* state = (*e);
@@ -56,7 +72,7 @@ void	SsAnimeDecoder::restart()
 			state->refEffect->stop();
 		}
 	}
-
+#endif
 
 }
 
@@ -627,7 +643,13 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 					break;
 				case SsAttributeKind::effect:
 					{
-						state->effectTime = SsGetKeyValue( nowTime , attr , state->effectValue );
+
+						int t = SsGetKeyValue( nowTime , attr , state->effectValue );
+						if ( !state->effectValue.attrInitialized )
+						{
+							state->effectValue.attrInitialized  = true;
+							state->effectTime = state->effectValue.startTime;
+						}
 					}
 					break;
 
@@ -1171,23 +1193,28 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 {
 	if ( state->hide ) return ;
 
-	if (state && state->refEffect)
-	{
-		float _time = nowTime - state->effectTime;
-		if ( _time < 0 )
-		{
-			return ;
-		}
-
-		_time = _time + state->effectValue.startTime;
-		_time*= state->effectValue.speed;
-		state->refEffect->setFrame( _time );
-		state->refEffect->update(0);
-	}
-
 	if ( state->effectValue.independent )
 	{
-		
+		if (state && state->refEffect && state->effectValue.attrInitialized )
+		{
+			state->effectTime += frameDelta* state->effectValue.speed;
+			state->refEffect->setFrame( state->effectTime );
+			state->refEffect->update(0);
+		}
+	}else{
+		if (state && state->refEffect)
+		{
+			float _time = nowTime - state->effectTime;
+			if ( _time < 0 )
+			{
+				return ;
+			}
+
+			_time = _time + state->effectValue.startTime;
+			_time*= state->effectValue.speed;
+			state->refEffect->setFrame( _time );
+			state->refEffect->update(0);
+		}
 	}
 
 

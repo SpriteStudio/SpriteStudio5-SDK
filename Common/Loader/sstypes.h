@@ -657,7 +657,7 @@ public:
 	int					startTime;				///< 開始フレーム
 	float				speed;					///< 再生速度
 	bool				independent;			///< 独立動作
-
+	bool				attrInitialized;
 };
 
 

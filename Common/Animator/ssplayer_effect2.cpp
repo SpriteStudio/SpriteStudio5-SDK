@@ -523,96 +523,6 @@ void	SsEffectRenderV2::drawSprite(
 
 }
 
-#if 0
-void	SsEffectRenderV2::drawSprite(
-		SsCell*		dispCell,
-		SsVector2 _position,
-		SsVector2 _size,
-		float     _rotation,
-		float	  direction,
-		SsFColor	_color,
-		SsRenderBlendType blendType
-	)
-{
-
-	if ( dispCell == 0 ) return ;
-
-	SsOpenGLMatrix ss_matrix;
-	float		matrix[4 * 4];	///< 行列
-	bool		renderTexture = false;
-	float parentAlpha = 1.0f;
-
-	if ( parentState )
-	{
-		ss_matrix.pushMatrix(parentState->matrix);
-    	parentAlpha = parentState->alpha;
-	}
-
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-	glBindTexture(GL_TEXTURE_2D, 0 );
-	glEnable(GL_BLEND);
-	glBlendEquation( GL_FUNC_ADD );
-	glBlendFunc(GL_ONE, GL_ZERO);
-	glEnable(GL_TEXTURE_2D);
-
-	if ( dispCell )
-	{
-		switch( blendType )
-		{
-			case SsRenderBlendType::Mix:	///< 0 ブレンド（ミックス）
-
-				//プリマルチα前提の式へ変更
-				glBindTexture(GL_TEXTURE_2D,  dispCell->map->image->texture->glOrgTexName());
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-				if ( renderTexture )
-				{
-					glBlendFuncSeparateEXT( GL_SRC_ALPHA , GL_ONE_MINUS_SRC_ALPHA , GL_ONE , GL_ONE_MINUS_SRC_ALPHA );
-				}else{
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-				}
-
-				break;
-			case SsRenderBlendType::Add:	///< 2 加算
-				glBindTexture(GL_TEXTURE_2D,  dispCell->map->image->texture->glTexName());
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-				break;
-		}
-
-	}
-
-	ss_matrix.Translation( _position.x, _position.y, 0.0f );
-	ss_matrix.RotationXYZ( DegreeToRadian(0) ,
-						   DegreeToRadian(0) ,
-						   DegreeToRadian(_rotation)+direction );
-
-	ss_matrix.Scaling( _size.x, _size.y, 1.0f );
-	ss_matrix.popMatrix( matrix );
-
-	SsFColor fcolor;
-	fcolor.fromARGB( _color.toARGB() );
-	fcolor.a = fcolor.a * parentAlpha;
-
-
-	SsVector2 pivot = SsVector2(dispCell->pivot.x,dispCell->pivot.y);
-	pivot*=dispCell->size;
-	SsVector2 dispscale = dispCell->size;
-
-
-	glPushMatrix();
-
-	// update で計算しておいた行列をロード
-	glLoadMatrixf(matrix);
-
-	DrawSprite2(  0 , 0 ,
-				dispscale.x , dispscale.y ,  pivot,
-				dispCell->uvs[0],
-				dispCell->uvs[3], fcolor );
-
-	glPopMatrix();
-}
-#endif
 
 void SsEffectRenderV2::particleDraw(SsEffectEmitter* e , double time , SsEffectEmitter* parent , particleDrawData* plp )
 {
@@ -970,4 +880,3 @@ int	SsEffectRenderV2::getCurrentFPS(){
 	}
 	return 30;
 }
-
