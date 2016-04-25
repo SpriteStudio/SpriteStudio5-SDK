@@ -46,6 +46,9 @@ struct SsPartState
 	SsCellValue		cellValue;		///< セルアニメの値
 	SsColorAnime	colorValue;		///< カラーアニメの値
 	SsVertexAnime	vertexValue;	///< 頂点アニメの値
+	SsEffectAttr	effectValue;	///< エフェクトの値
+	int				effectTime;
+	int				effectseed;
 
 	bool			noCells;				/// セル参照が見つからない
 	bool			is_color_blend;			/// カラーブレンドが使用される (描画コストが高いシェーダが使われるためフラグ化)

@@ -370,16 +370,7 @@ public:
 	SsCellMapList*	curCellMapManager;/// セルマップのリスト（アニメデコーダーからもらう
 
 public:
-	//デバッグ用
-	int  loopcnt;
-	int  drawcnt;
-	int	 updateTime;
-	int	 maxDrawCount;
 
-	//std::vector<TimeAndValue>   dataOfprofile;
-	//TimeAndValue*	dataOfprofile;
-	float*   dataOfprofile;
-    bool	isDebugDraw;
 
 protected:
 	void 	particleDraw(SsEffectEmitter* e , double t , SsEffectEmitter* parent = 0 , particleDrawData* plp = 0 );
@@ -390,7 +381,7 @@ protected:
 
 
 public:
-	SsEffectRenderV2() : effectTimeLength(0) , dataOfprofile(0),isIntFrame(true),isDebugDraw(false) {}
+	SsEffectRenderV2() : effectTimeLength(0) ,isIntFrame(true){}
 	virtual ~SsEffectRenderV2(){}
 
 	virtual void    play(){ m_isPause = false;m_isPlay=true; }
@@ -430,22 +421,7 @@ public:
 
 	virtual int	getCurrentFPS();
 
-#if 0
-	void	drawSprite(
-			SsCell*		dispCell,
-			SsVector2 _position,
-			SsVector2 _size,
-			float     _rotation,
-			float	  direction,
-			SsFColor	_color,
-			SsRenderBlendType blendType
-		);
-#endif
 
-	virtual u32		getDrawParticleNum(){ return drawcnt;}
-	virtual u32		getUpdateParticleNum(){ return loopcnt;}
-	virtual u32		getUpdateTime(){ return updateTime;}
-	virtual u32		getMaxDrawParticle(){return maxDrawCount;}
 	
 	void	setCellmapManager( SsCellMapList* plist ) { curCellMapManager = plist; }
 

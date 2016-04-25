@@ -547,6 +547,7 @@ namespace SsAttributeKind
 		boundr,		///< [BNDR]当たり判定用の半径
 		user,		///< [USER]ユーザーデータ
 		instance,	///< [IPRM]インスタンスパーツパラメータ
+		effect,		///< [EFCT]エフェクトパラメータ
 		num,
 	};
 };
@@ -649,7 +650,15 @@ namespace SsRenderBlendType
 };
 SS_DECLARE_ENUM_STRING_DEF( SsRenderBlendType );
 
+class SsEffectAttr
+{
+public:
+	// ↓5.7 で追加
+	int					startTime;				///< 開始フレーム
+	float				speed;					///< 再生速度
+	bool				independent;			///< 独立動作
 
+};
 
 
 

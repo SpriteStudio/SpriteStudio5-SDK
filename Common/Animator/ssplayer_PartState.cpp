@@ -56,6 +56,8 @@ void	SsPartState::init()
 	
 	boundingRadius = 0;
 
+	effectseed = 0;
+
 }
 
 

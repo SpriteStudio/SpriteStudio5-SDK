@@ -286,6 +286,7 @@ void	__StringToEnum_( SsString n , SsAttributeKind::_enum &out )
 	if ( n == "BNDR") out = SsAttributeKind::boundr;
 	if ( n == "USER") out = SsAttributeKind::user;
 	if ( n == "IPRM") out = SsAttributeKind::instance;
+	if ( n == "EFCT") out = SsAttributeKind::effect;
 
 }
 

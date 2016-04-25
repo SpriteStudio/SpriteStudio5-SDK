@@ -686,11 +686,9 @@ void SsEffectRenderV2::particleDraw(SsEffectEmitter* e , double time , SsEffectE
 
 
 
-			drawcnt++;
 
 		}
 
-		loopcnt++;
 	}
 
 
@@ -775,15 +773,11 @@ void	SsEffectRenderV2::setEffectData(SsEffectModel* data)
 void	SsEffectRenderV2::update(float delta)
 {
 
-	loopcnt = 0;
-	drawcnt = 0;
 
 	if ( !m_isPlay ) return;
+	if ( !m_isPause ) return;
 
-	if ( !m_isPause )
-	{
-		nowFrame+=delta;
-    }
+	nowFrame+=delta;
 
 	if ( this->Infinite )
 	{
@@ -794,7 +788,6 @@ void	SsEffectRenderV2::update(float delta)
 		{
 			if ( this->isloop() )
 			{
-				//dataOfprofile.clear();
 				nowFrame = 0;
 			}else{
 				this->stop();
@@ -866,9 +859,6 @@ bool compare_priority( SsEffectEmitter* left,  SsEffectEmitter* right)
 
 void    SsEffectRenderV2::reload()
 {
-	//dataOfprofile.clear();
-
-	maxDrawCount = 0;
 	nowFrame = 0;
 
     //updateが必要か
@@ -965,17 +955,6 @@ void    SsEffectRenderV2::reload()
 	//プライオリティソート
 	std::sort( updateList.begin() , updateList.end() , compare_priority );
 
-	if ( dataOfprofile == 0 )
-	{
-		delete [] dataOfprofile;
-	}
-
-	dataOfprofile = new float[getEffectTimeLength()];
-
-	for (size_t i = 0 ; i < getEffectTimeLength() ; i++ )
-	{
-		dataOfprofile[i] = 0;
-	}
 
 }
 

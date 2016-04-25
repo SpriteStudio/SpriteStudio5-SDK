@@ -317,24 +317,7 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 	getCellValue(	this->curCellMapManager ,
 					cell.mapid , cell.name , v );
 
-/*
-	SsCelMapLinker* l = this->curCellMapManager->getCellMapLink( cell.mapid );
-	v.cell = l->findCell( cell.name );
 
-	v.filterMode = l->cellMap->filterMode;
-	v.wrapMode = l->cellMap->wrapMode;
-
-	if ( l->tex )
-	{
-		v.texture = l->tex;
-	}
-	else
-	{
-		v.texture = 0;
-	}
-
-	calcUvs( &v );
-*/
 }
 
 //インスタンスアニメデータ
@@ -343,6 +326,14 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 	//補間は行わないので、常に左のキーを出力する
 	GetSsInstparamAnime( leftkey , v );
 }
+
+void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsEffectAttr& v )
+{
+	//補間は行わないので、常に左のキーを出力する
+	GetSsEffectParamAnime( leftkey , v );
+	
+}
+
 
 
 //float , int , bool基本型はこれで値の補間を行う
@@ -562,7 +553,6 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 				case SsAttributeKind::flipv:	///< 上下反転(セルの原点を軸にする)
 					SsGetKeyValue( nowTime , attr , state->vFlip );
 					break;
-#if 1
 				case SsAttributeKind::hide:		///< 非表示
 					{
 						int useTime = SsGetKeyValue( nowTime , attr , state->hide );
@@ -578,42 +568,6 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 						}
 					}
 					break;
-#else
-				case SsAttributeKind::hide:		///< 非表示
-				{
-						int useTime = SsGetKeyValue( nowTime , attr , state->hide );
-
-						// 非表示キーがないか、先頭の非表示キーより手前の場合は常に非表示にする。
-						if ( useTime > nowTime )
-						{
-							state->hide = true;
-						}
-						else
-						{
-							//非表示キーがあり、かつ最初のキーフレームを取得した
-							hidekey_find = true;
-						}
-
-						if (  nowTime == useTime )
-						{
-							bool hide2 = true;
-
-
-							int useTime2 = nowTime -1;
-							if ( nowTime >0 )
-								useTime2 = SsGetKeyValue( useTime2 , attr , hide2 );
-
-							
-							if ( (useTime2 !=useTime) && !state->hide && hide2 )
-							{
-								hideTriger = true;
-							}
-						}
-						break;
-				}
-#endif
-
-
 				case SsAttributeKind::color:	///< カラーブレンド
 					SsGetKeyValue( nowTime , attr , state->colorValue );
 					state->is_color_blend = true;
@@ -671,6 +625,12 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 				case SsAttributeKind::instance:	///インスタンスパラメータ
 					SsGetKeyValue( nowTime , attr , state->instanceValue );
 					break;
+				case SsAttributeKind::effect:
+					{
+						state->effectTime = SsGetKeyValue( nowTime , attr , state->effectValue );
+					}
+					break;
+
 			}
 		}
 	}
@@ -786,37 +746,6 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 		updateVertices(part , anime , state);
 	}
 
-/*
-	if ( part->type == SsPartType::effect )
-	{
-
-		SsString pname = part->refEffectName;
-
-		bool reload = false;
-		SsEffectRenderer * effectRender = state->refEffect;
-
-		if ( effectRender )
-		{
-			if ( state->hide )
-			{
-				if (effectRender->getPlayStatus() == true)
-				{
-					effectRender->stop();
-					effectRender->reload();
-				}
-			}else{
-				//if ( hideTriger )
-				{
-					effectRender->setSeed(getRandomSeed());
-
-//					effectRender->setAnimeFrameOffset( nowtime );
-					effectRender->setLoop(false);
-					effectRender->play();
-				}
-			}
-		}
-	}
-*/
 
 
 }
@@ -924,23 +853,7 @@ void	SsAnimeDecoder::updateMatrix(SsPart* part , SsPartAnime* anime , SsPartStat
 	RotationXYZMatrixM( state->matrix , DegreeToRadian(state->rotation.x) , DegreeToRadian(state->rotation.y) , DegreeToRadian( state->rotation.z) );
 	ScaleMatrixM(  state->matrix , state->scale.x, state->scale.y, 1.0f );
 
-#if 0
-	// 当たり判定用半径をスケーリングする。テスト
-	if (boundingRadius != 0)
-	{
-		if ( part->boundsType == SsBoundsType::circle_smin )
-		{
-			SsVector2 local_scale = GetLocalScale(matrix);
-			boundingRadius = boundingRadiusOrg * (local_scale.x <= local_scale.y ? local_scale.x : local_scale.y);
-		}
 
-		if ( part->boundsType == SsBoundsType::circle_smax )
-		{
-			SsVector2 local_scale = GetLocalScale(matrix);
-			boundingRadius = boundingRadiusOrg * ( local_scale.x >= local_scale.y ? local_scale.x : local_scale.y);
-		}
-	}
-#endif
 
 }
 
@@ -1143,12 +1056,6 @@ void	SsAnimeDecoder::updateInstance( int nowTime , SsPart* part , SsPartAnime* p
 		_time = temp_frame + startframe;
     }
 
-/*	//エディタではないから仮のサイズ値は要らない？
-	//再生
-    state->size.x = part->anime->settings.canvasSize.x;
-    state->size.y = part->anime->settings.canvasSize.y;
-*/
-
 	state->refAnime->setInstancePartsHide(state->hide);
 	state->refAnime->setPlayFrame(_time);
 	state->refAnime->update(this->frameDelta);
@@ -1245,12 +1152,8 @@ void	SsAnimeDecoder::update(float frameDelta)
 
 		if ( part->type == SsPartType::effect)
 		{
-			//if ( partState[cnt].refEffect->getEffectData()->effectName == "001c" )
-			{
-				updateMatrix( part , anime , &partState[cnt]);
-				updateEffect(frameDelta, time, part, anime, &partState[cnt]);
-
-			}
+			updateMatrix( part , anime , &partState[cnt]);
+			updateEffect(frameDelta, time, part, anime, &partState[cnt]);
 		}
 
 		cnt++;
@@ -1266,13 +1169,32 @@ void	SsAnimeDecoder::update(float frameDelta)
 
 void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state )
 {
+	if ( state->hide ) return ;
+
+	if (state && state->refEffect)
+	{
+		float _time = nowTime - state->effectTime;
+		if ( _time < 0 )
+		{
+			return ;
+		}
+
+		_time = _time + state->effectValue.startTime;
+		_time*= state->effectValue.speed;
+		state->refEffect->setFrame( _time );
+		state->refEffect->update(0);
+	}
+
+	if ( state->effectValue.independent )
+	{
+		
+	}
+
+
+#if 0
 	if (state && state->refEffect)
 	{
 		float fps = (float)state->refEffect->getCurrentFPS();
-		// 1 frameのsec * Stateのframeの変化値
-		//		float f = (1.0f / fps) * frameDelta;				
-//		state->refEffect->update(frameDelta);
-
 
 		int	frameNo = (int)nowPlatTime;
 		int	_prevDrawFrameNo = (int)nowPlatTimeOld;
@@ -1290,10 +1212,7 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 		}
 		else
 		{
-//					state->refEffect->play();
-//					state->refEffect->update(frameDelta);
 
-#if 1
 			//エフェクトアップデート
 			if (frameNo != _prevDrawFrameNo)
 			{
@@ -1340,10 +1259,9 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 					}
 				}
 			}
-#endif
 		}
-
 	}
+#endif
 
 }
 //描画

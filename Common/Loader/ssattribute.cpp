@@ -161,6 +161,16 @@ void	GetSsUserDataAnime( const SsKeyframe* key , SsUserDataAnime& v )
 
 }
 
+
+void	GetSsEffectParamAnime( const SsKeyframe* key , SsEffectAttr& v )
+{
+
+	v.startTime = key->value["startTime"].get<int>();
+	v.speed = key->value["speed"].get<float>();
+	v.independent = key->value["independent"].get<bool>();
+
+}
+
 void	GetSsInstparamAnime( const SsKeyframe* key , SsInstanceAttr& v )
 {
 	const SsString& sstartLabel = key->value["startLabel"].get<SsString>();
