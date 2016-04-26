@@ -2,7 +2,10 @@
 #include "ssplayer_animedecode.h"
 #include "ssplayer_PartState.h"
 
-SsPartState::SsPartState() : refAnime(0), index(-1), parent(nullptr), noCells(false), alphaBlendType(SsBlendType::invalid),	refEffect(0) {init();}
+SsPartState::SsPartState() : refAnime(0), index(-1), parent(nullptr), noCells(false), alphaBlendType(SsBlendType::invalid),	refEffect(0) {
+	init();
+	effectValue.attrInitialized = false;
+}
 
 SsPartState::~SsPartState(){
 	destroy();
@@ -57,7 +60,7 @@ void	SsPartState::init()
 	boundingRadius = 0;
 
 	effectValue.independent = false;
-	effectValue.attrInitialized = false;
+//
 	effectValue.speed = 1.0f;
 	effectValue.startTime = 0;
 

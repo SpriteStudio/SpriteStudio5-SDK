@@ -13,6 +13,7 @@ class SampleScene : public tkScene
 {
 public:
 	struct AnimePackSelecterType;
+	bool		isLoop;
 
 
 private:
@@ -38,6 +39,7 @@ private:
 
 	float		m_Zoom;
 	float		m_Speed;
+
 
 public:
 	SampleScene() : m_isAnimeAutoPlay (false) {}

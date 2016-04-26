@@ -155,6 +155,7 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 					er->setSeed(getRandomSeed());
 					er->reload();
 					er->stop();
+					er->setLoop(false);
 
 					partState[i].refEffect = er;
 				}
@@ -645,10 +646,12 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 					{
 
 						int t = SsGetKeyValue( nowTime , attr , state->effectValue );
+						state->effectTime = t;
 						if ( !state->effectValue.attrInitialized )
 						{
 							state->effectValue.attrInitialized  = true;
-							state->effectTime = state->effectValue.startTime;
+							state->effectTimeTotal = 0;
+							state->effectTime = t;//state->effectValue.startTime;
 						}
 					}
 					break;
@@ -1197,8 +1200,10 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 	{
 		if (state && state->refEffect && state->effectValue.attrInitialized )
 		{
-			state->effectTime += frameDelta* state->effectValue.speed;
-			state->refEffect->setFrame( state->effectTime );
+			state->effectTimeTotal += frameDelta* state->effectValue.speed;
+			state->refEffect->setLoop(true);
+			state->refEffect->setFrame( state->effectTimeTotal );
+			state->refEffect->play();
 			state->refEffect->update();
 		}
 	}else{
@@ -1213,6 +1218,7 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 			_time = _time + state->effectValue.startTime;
 			_time*= state->effectValue.speed;
 			state->refEffect->setFrame( _time );
+			state->refEffect->play();
 			state->refEffect->update();
 		}
 	}

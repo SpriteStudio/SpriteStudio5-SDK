@@ -684,33 +684,32 @@ void	SsEffectRenderV2::update()
 {
 
 	if ( !m_isPlay ) return;
-	if ( !m_isPause ) return;
+	//if ( !m_isPause ) return;
+
+	targetFrame = nowFrame;
 
 	if ( !this->Infinite )
 	{
-		if ( (int)getEffectTimeLength() < nowFrame )
+		if ( this->isloop() )
 		{
-			if ( this->isloop() )
+			if ( targetFrame > getEffectTimeLength() )
 			{
-				nowFrame = 0;
-			}else{
-				this->stop();
+				targetFrame = (int)((int)targetFrame % getEffectTimeLength());
 			}
 		}
 	}
-
-
-
+/*
+	if ( isIntFrame )
+	{
+    	targetFrame = (int)nowFrame;
+	}
+*/
 }
 
 void	SsEffectRenderV2::draw()
 {
 
-	float targetFrame = nowFrame;
-	if ( isIntFrame )
-	{
-    	targetFrame = (int)nowFrame;
-	}
+
 
 	for ( size_t i = 0 ; i < updateList.size() ; i++ )
 	{

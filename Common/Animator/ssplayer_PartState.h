@@ -48,6 +48,7 @@ struct SsPartState
 	SsVertexAnime	vertexValue;	///< 頂点アニメの値
 	SsEffectAttr	effectValue;	///< エフェクトの値
 	int				effectTime;
+	float			effectTimeTotal;
 	int				effectseed;
 
 	bool			noCells;				/// セル参照が見つからない

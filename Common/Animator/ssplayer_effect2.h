@@ -353,6 +353,7 @@ public:
 	SsVector3		layoutPosition;
 
 	float			nowFrame;
+	float			targetFrame;
     float			secondNowFrame;
 
 	size_t          effectTimeLength;
