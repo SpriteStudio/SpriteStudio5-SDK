@@ -889,8 +889,11 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (p_flags & PART_FLAG_EFFECT_KEYFRAME)
 					{
 						//開始フレーム
+						frameData->add(Lump::s16Data(state->effectValue.startTime));
 						//再生速度
+						frameData->add(Lump::floatData(state->effectValue.speed));
 						//独立動作
+						frameData->add(Lump::s16Data(state->effectValue.independent));
 					}
 						
 				}
