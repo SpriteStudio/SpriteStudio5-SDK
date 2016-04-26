@@ -333,7 +333,7 @@ void	SsEffectEmitter::precalculate2()
 
 
 	int shot = 0;
-	int offset = 0;
+	int offset = particle.delay;
 	for ( int i = 0 ; i < emitter.emitmax ; i++ )
 	{
 		emitPattern e;
@@ -405,7 +405,7 @@ void SsEffectEmitter::updateEmitter( double _time )
 
             particleExistList[i].cycle = loopnum;
 
-			particleExistList[i].stime = cycle_top + _emitpattern[i].offsetTime + 0 + this->particle.delay;
+			particleExistList[i].stime = cycle_top + _emitpattern[i].offsetTime;//
 			particleExistList[i].endtime = particleExistList[i].stime + _emitpattern[i].life;
 
 			if ( (double)particleExistList[i].stime <= _time &&  (double)particleExistList[i].endtime > _time )
@@ -426,8 +426,8 @@ void SsEffectEmitter::updateEmitter( double _time )
 
 					int cycle_top = loopnum * _emitpattern[i].cycle;
 
-					particleExistList[i].stime = cycle_top + _emitpattern[i].offsetTime + this->particle.delay;    //ディレイは別なところにもっていくかも
-					particleExistList[i].endtime = particleExistList[i].stime + _emitpattern[i].life + this->particle.delay;
+					particleExistList[i].stime = cycle_top + _emitpattern[i].offsetTime;    //ディレイは別なところにもっていくかも
+					particleExistList[i].endtime = particleExistList[i].stime + _emitpattern[i].life;
 					particleExistList[i].born = false;
 				}else{
 					particleExistList[i].born = true;
