@@ -831,14 +831,11 @@ public:
 
 	virtual void	initializeParticle( SsEffectElementBase* ele , SsEffectRenderEmitter* e , SsEffectRenderParticle* particle )
 	{
-		particle->isTurnDirection = true;
 	}
 
 	virtual void	initalizeEffect ( SsEffectElementBase* ele , SsEffectEmitter* e)
 	{
-		ParticleTurnToDirectionEnabled* source = static_cast<ParticleTurnToDirectionEnabled*>(ele);
-		e->particle.useTurnDirec = true;
-		e->particle.direcRotAdd = source->Rotation;
+		e->emitter.Infinite = true;
 	}
 };
 static FuncParticleInfiniteEmitEnabled		funcParticleInfiniteEmitEnabled;
