@@ -83,13 +83,6 @@ enum {
 };
 
 enum {
-	INSTANCE_LOOP_FLAG_INFINITY		= 1 << 0,
-	INSTANCE_LOOP_FLAG_REVERSE		= 1 << 1,
-	INSTANCE_LOOP_FLAG_PINGPONG		= 1 << 2,
-	INSTANCE_LOOP_FLAG_INDEPENDENT	= 1 << 3,
-};
-
-enum {
 	USER_DATA_FLAG_INTEGER	= 1 << 0,
 	USER_DATA_FLAG_RECT		= 1 << 1,
 	USER_DATA_FLAG_POINT	= 1 << 2,
@@ -212,6 +205,18 @@ struct PartInitialData
 	float	uv_scale_X;
 	float	uv_scale_Y;
 	float	boundingRadius;
+
+	//インスタンスアトリビュート
+	int		instanceValue_curKeyframe;
+	int		instanceValue_startFrame;
+	int		instanceValue_endFrame;
+	int		instanceValue_loopNum;
+	float	instanceValue_speed;
+	int		instanceValue_loopflag;
+	//エフェクトアトリビュート
+	int		effectValue_startTime;
+	float	effectValue_speed;
+	int		effectValue_loopflag;
 };
 
 
@@ -576,8 +581,17 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				init.uv_scale_X = 1;
 				init.uv_scale_Y = 1;
 				init.boundingRadius = state->boundingRadius;
-
-
+				//インスタンス関連
+				init.instanceValue_curKeyframe = state->instanceValue.curKeyframe;
+				init.instanceValue_startFrame = state->instanceValue.startFrame;
+				init.instanceValue_endFrame = state->instanceValue.endFrame;
+				init.instanceValue_loopNum = state->instanceValue.loopNum;
+				init.instanceValue_speed = state->instanceValue.speed;
+				init.instanceValue_loopflag = state->instanceValue.loopflag;
+				//エフェクト関連
+				init.effectValue_startTime = state->effectValue.startTime;
+				init.effectValue_speed = state->effectValue.speed;
+				init.effectValue_loopflag = state->effectValue.loopflag;
 
 				initialDataList.push_back(init);
 				
@@ -606,6 +620,19 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				initialData->add(Lump::floatData(init.uv_scale_X));
 				initialData->add(Lump::floatData(init.uv_scale_Y));
 				initialData->add(Lump::floatData(init.boundingRadius));
+				//インスタンス関連
+				initialData->add(Lump::s32Data(init.instanceValue_curKeyframe));
+				initialData->add(Lump::s32Data(init.instanceValue_startFrame));
+				initialData->add(Lump::s32Data(init.instanceValue_endFrame));
+				initialData->add(Lump::s32Data(init.instanceValue_loopNum));
+				initialData->add(Lump::floatData(init.instanceValue_speed));
+				initialData->add(Lump::s32Data(init.instanceValue_loopflag));
+				//エフェクト関連
+				initialData->add(Lump::s32Data(init.effectValue_startTime));
+				initialData->add(Lump::floatData(init.effectValue_speed));
+				initialData->add(Lump::s32Data(init.effectValue_loopflag));
+
+
 			}
 
 
@@ -708,6 +735,35 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (state->uvScale.x != init.uv_scale_X)				p_flags |= PART_FLAG_U_SCALE;
 					if (state->uvScale.y != init.uv_scale_Y)				p_flags |= PART_FLAG_V_SCALE;
 					if (state->boundingRadius != init.boundingRadius)		p_flags |= PART_FLAG_BOUNDINGRADIUS;
+					//インスタンス情報出力チェック
+					if (state->refAnime)
+					{
+						//インスタンス関連
+						if (
+							(state->instanceValue.curKeyframe != init.instanceValue_curKeyframe)
+							|| (state->instanceValue.startFrame != init.instanceValue_startFrame)
+							|| (state->instanceValue.endFrame != init.instanceValue_endFrame)
+							|| (state->instanceValue.loopNum != init.instanceValue_loopNum)
+							|| (state->instanceValue.speed != init.instanceValue_speed)
+							|| (state->instanceValue.loopflag != init.instanceValue_loopflag)
+							)
+						{
+							p_flags |= PART_FLAG_INSTANCE_KEYFRAME;
+						}
+					}
+					//エフェクト情報の出力チェック
+					if (state->refEffect)
+					{
+						//エフェクト関連
+						if (
+							(state->effectValue.startTime != init.effectValue_startTime)
+							|| (state->effectValue.speed != init.effectValue_speed)
+							|| (state->effectValue.loopflag != init.effectValue_loopflag)
+							)
+						{
+							p_flags |= PART_FLAG_EFFECT_KEYFRAME;
+						}
+					}
 
 
 					// カラーブレンド値を格納する必要があるかチェック
@@ -763,16 +819,6 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 						if (vt_flags) p_flags |= PART_FLAG_VERTEX_TRANSFORM;
 					}
 
-					//インスタンス情報出力チェック
-					if ( state->refAnime )
-					{
-						p_flags |= PART_FLAG_INSTANCE_KEYFRAME;
-					}
-					//エフェクト情報の出力チェック
-					if (state->refEffect )
-					{
-						p_flags |= PART_FLAG_EFFECT_KEYFRAME;
-					}
 
 					
 
@@ -812,6 +858,26 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					if (p_flags & PART_FLAG_V_SCALE) frameData->add(Lump::floatData(state->uvScale.y));
 
 					if (p_flags & PART_FLAG_BOUNDINGRADIUS) frameData->add(Lump::floatData(state->boundingRadius));
+					//インスタンス情報出力
+					if (p_flags & PART_FLAG_INSTANCE_KEYFRAME)
+					{
+						frameData->add(Lump::s32Data(state->instanceValue.curKeyframe));
+						frameData->add(Lump::s32Data(state->instanceValue.startFrame));
+						frameData->add(Lump::s32Data(state->instanceValue.endFrame));
+						frameData->add(Lump::s32Data(state->instanceValue.loopNum));
+						frameData->add(Lump::floatData(state->instanceValue.speed));
+						frameData->add(Lump::s32Data(state->instanceValue.loopflag));
+					}
+					//エフェクト情報出力
+					if (p_flags & PART_FLAG_EFFECT_KEYFRAME)
+					{
+						//開始フレーム
+						frameData->add(Lump::s32Data(state->effectValue.startTime));
+						//再生速度
+						frameData->add(Lump::floatData(state->effectValue.speed));
+						//独立動作
+						frameData->add(Lump::s32Data(state->effectValue.loopflag));
+					}
 
 
 					// 頂点変形データ
@@ -855,47 +921,6 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 							}
 						}
 					}
-					//インスタンス情報出力
-					if ( p_flags & PART_FLAG_INSTANCE_KEYFRAME )
-					{
-						//ラベル位置にオフセットを加えた結果の開始フレーム
-						frameData->add(Lump::s16Data(state->instanceValue.curKeyframe));
-						//ラベル位置にオフセットを加えた結果の開始フレーム
-						frameData->add(Lump::s16Data(state->instanceValue.startFrame));
-						//ラベル位置にオフセットを加えた結果の終了フレーム
-						frameData->add(Lump::s16Data(state->instanceValue.endFrame));
-						frameData->add(Lump::floatData(state->instanceValue.speed));
-						frameData->add(Lump::s16Data(state->instanceValue.loopNum));
-						int iflags = 0;
-						if ( state->instanceValue.infinity )
-						{
-							iflags = iflags | INSTANCE_LOOP_FLAG_INFINITY;
-						}
-						if ( state->instanceValue.reverse )
-						{
-							iflags = iflags | INSTANCE_LOOP_FLAG_REVERSE;
-						}
-						if ( state->instanceValue.pingpong )
-						{
-							iflags = iflags | INSTANCE_LOOP_FLAG_PINGPONG;
-						}
-						if ( state->instanceValue.independent )
-						{
-							iflags = iflags | INSTANCE_LOOP_FLAG_INDEPENDENT;
-						}
-						frameData->add(Lump::s16Data(iflags));
-					}
-					//エフェクト情報出力
-					if (p_flags & PART_FLAG_EFFECT_KEYFRAME)
-					{
-						//開始フレーム
-						frameData->add(Lump::s16Data(state->effectValue.startTime));
-						//再生速度
-						frameData->add(Lump::floatData(state->effectValue.speed));
-						//独立動作
-						frameData->add(Lump::s16Data(state->effectValue.independent));
-					}
-						
 				}
 				
 				// 出力されたパーツ数と、描画順の変更があるかのフラグ

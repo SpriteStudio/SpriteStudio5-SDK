@@ -657,7 +657,24 @@ public:
 	int					startTime;				///< 開始フレーム
 	float				speed;					///< 再生速度
 	bool				independent;			///< 独立動作
+	int					loopflag;				///ループ時の動作フラグをビット対応でまとめたもの
 	bool				attrInitialized;
+	SsEffectAttr() :
+		startTime(0),
+		speed(1.0f),
+		independent(false),
+		loopflag(0),
+		attrInitialized(false)
+	{}
+
+	void init()
+	{
+		startTime = 0;
+		speed = 1.0f;
+		independent = false;
+		loopflag = 0;
+		attrInitialized = false;
+	}
 };
 
 
@@ -687,7 +704,8 @@ public:
 		useInteger(false),
 		usePoint(false),
 		useRect(false),
-		useString(false){}
+		useString(false)
+	{}
 };
 
 class SsInstanceAttr
@@ -697,7 +715,8 @@ public:
     bool   		reverse;		///逆再生フラグ
     bool   		pingpong;		///往復再生フラグ
 	bool		independent;	///独立動作フラグ
-    int			loopNum;		///ループ回数　無限ループフラグ=trueの時には無効
+	int			loopflag;		///ループフラグをビット対応でまとめたもの
+	int			loopNum;		///ループ回数　無限ループフラグ=trueの時には無効
     SsString	startLabel;		///再生開始位置 ラベル名称
     int			startOffset;	///再生開始位置 ラベル名称からのオフセット
     SsString	endLabel;		///再生終了位置 ラベル名称
@@ -715,7 +734,8 @@ public:
     	infinity( false ),
     	reverse( false ),
     	pingpong( false ),
-    	independent( false ),
+		independent(false),
+		loopflag(0),
 		loopNum( 1 ),
      	startLabel("_start"),
      	startOffset(0),
@@ -728,6 +748,19 @@ public:
 		liveFrame(0.0f)
    {}
 
+};
+
+//インスタンスアトリビュートのループフラグ
+enum {
+	INSTANCE_LOOP_FLAG_INFINITY = 1 << 0,
+	INSTANCE_LOOP_FLAG_REVERSE = 1 << 1,
+	INSTANCE_LOOP_FLAG_PINGPONG = 1 << 2,
+	INSTANCE_LOOP_FLAG_INDEPENDENT = 1 << 3,
+};
+
+//エフェクトアトリビュートのループフラグ
+enum {
+	EFFECT_LOOP_FLAG_INFINITY = 1 << 0,
 };
 
 

@@ -169,6 +169,13 @@ void	GetSsEffectParamAnime( const SsKeyframe* key , SsEffectAttr& v )
 	v.speed = key->value["speed"].get<float>();
 	v.independent = key->value["independent"].get<bool>();
 
+	int iflags = 0;
+	if (v.independent)
+	{
+		iflags = iflags | EFFECT_LOOP_FLAG_INFINITY;
+	}
+	v.loopflag = iflags;
+
 }
 
 void	GetSsInstparamAnime( const SsKeyframe* key , SsInstanceAttr& v )
@@ -199,5 +206,24 @@ void	GetSsInstparamAnime( const SsKeyframe* key , SsInstanceAttr& v )
 	v.pingpong = spingpong;
 	v.independent = sindependent;
 	v.curKeyframe = key->time;
+
+	int iflags = 0;
+	if (sinfinity)
+	{
+		iflags = iflags | INSTANCE_LOOP_FLAG_INFINITY;
+	}
+	if (sreverse)
+	{
+		iflags = iflags | INSTANCE_LOOP_FLAG_REVERSE;
+	}
+	if (spingpong)
+	{
+		iflags = iflags | INSTANCE_LOOP_FLAG_PINGPONG;
+	}
+	if (sindependent)
+	{
+		iflags = iflags | INSTANCE_LOOP_FLAG_INDEPENDENT;
+	}
+	v.loopflag = iflags;
 
 }

@@ -650,7 +650,7 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 						if ( !state->effectValue.attrInitialized )
 						{
 							state->effectValue.attrInitialized  = true;
-							state->effectTimeTotal = 0;
+							state->effectTimeTotal = state->effectValue.startTime;
 							state->effectTime = t;//state->effectValue.startTime;
 						}
 					}
