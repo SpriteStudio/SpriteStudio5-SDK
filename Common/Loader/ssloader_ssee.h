@@ -119,8 +119,11 @@ public:
 	int			lockRandSeed; 	 // ランダムシード固定値
 	bool    	isLockRandSeed;  // ランダムシードを固定するか否か
 	int			fps;             //
-	SsString	   bgcolor;
-	SsString			effectName;
+	SsString	bgcolor;
+	SsString	effectName;
+	int			layoutScaleX;
+	int			layoutScaleY;
+
 
 public:
 	SsEffectModel() : root(0)
@@ -145,6 +148,12 @@ public:
 		SSAR_DECLARE(isLockRandSeed);
 		SSAR_DECLARE(fps);
 		SSAR_DECLARE(bgcolor);
+		SSAR_DECLARE(layoutScaleX);
+		if ( layoutScaleX == 0 ) layoutScaleX = 100;
+
+		SSAR_DECLARE(layoutScaleY);
+		if ( layoutScaleY == 0 ) layoutScaleY = 100;
+
 		SSAR_DECLARE_LISTEX(nodeList,"node");
 
 		//ツリーの構築

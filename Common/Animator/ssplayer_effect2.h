@@ -351,6 +351,7 @@ public:
 	u32				mySeed;
 
 	SsVector3		layoutPosition;
+	SsVector2		layoutScale;
 
 	float			nowFrame;
 	float			targetFrame;

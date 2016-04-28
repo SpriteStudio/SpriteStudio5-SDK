@@ -364,7 +364,7 @@ void	SsEffectEmitter::precalculate2()
 	{
 		delete[] seedList;
 	}
-
+	particleListBufferSize = emitter.emitmax;
 	seedList = new unsigned long[particleListBufferSize];
 
 	rand.init_genrand((emitterSeed));
@@ -491,7 +491,7 @@ void	SsEffectRenderV2::drawSprite(
 	}
 
 
-	TranslationMatrixM( matrix , _position.x, _position.y, 0.0f );
+	TranslationMatrixM( matrix , _position.x * layoutScale.x , _position.y * layoutScale.y , 0.0f );
 
 	RotationXYZMatrixM( matrix , 0 , 0 , DegreeToRadian(_rotation)+direction );
 
@@ -684,7 +684,6 @@ void	SsEffectRenderV2::update()
 {
 
 	if ( !m_isPlay ) return;
-	//if ( !m_isPause ) return;
 
 	targetFrame = nowFrame;
 
@@ -698,12 +697,7 @@ void	SsEffectRenderV2::update()
 			}
 		}
 	}
-/*
-	if ( isIntFrame )
-	{
-    	targetFrame = (int)nowFrame;
-	}
-*/
+
 }
 
 void	SsEffectRenderV2::draw()
@@ -772,6 +766,8 @@ void    SsEffectRenderV2::reload()
     //this->effectData->updateNodeList();//ツールじゃないので要らない
     const std::vector<SsEffectNode*>& list = this->effectData->getNodeList();
 
+	layoutScale.x = (float)(this->effectData->layoutScaleX) / 100.0f;
+	layoutScale.y = (float)(this->effectData->layoutScaleY) / 100.0f;
 
 	bool _Infinite = false;
 	//パラメータを取得
