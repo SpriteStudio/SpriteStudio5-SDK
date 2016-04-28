@@ -74,6 +74,9 @@ void	SampleScene::update(double delta)
 			{
 				m_nowPlayFrame = 0;
 				m_nowPlayFrameD = 0;
+				sceneLoop++;
+				//seedOffset
+				m_player->setSeedOffset( sceneLoop );
 				//m_player->restart();
 			}
 		}
@@ -146,6 +149,7 @@ void	SampleScene::AnimeReset(){
 	m_nowPlayFrame = 0;
 	m_nowPlayFrameD = 0;
 	m_player->reset();
+	sceneLoop = 0;
 }
 
 
@@ -169,8 +173,9 @@ void	SampleScene::UIRebuild()
 //    TwAddVarRW(g_twbar, "particle", TW_TYPE_INT32, &g_particle_num, " min='0' ");
 //    TwAddVarRW(g_twbar, "particle draw", TW_TYPE_INT32, &g_particle_draw_num, " min='0' ");
 
+	
 
-
+    TwAddVarRW(g_twbar, "Loop num", TW_TYPE_INT32, &sceneLoop, " group='Anime Info' ");
     TwAddVarRW(g_twbar, "Endframe", TW_TYPE_INT32, &m_InfoAnimeEndFrame, " group='Anime Info' ");
     TwAddVarRW(g_twbar, "FPS", TW_TYPE_INT32, &m_InfoAnimeFps, " group='Anime Info' ");
 

@@ -257,14 +257,11 @@ public:
 	xorshift32			rand;
 
 
-	int				emitterSeed;
+	int					emitterSeed;
+	int					seedOffset;
 
 	//生成用のリングバッファ
-	//particleRingBuffer<particleLifeSt>	_tempbuf;
-
-//	emitPattern*    	_emitpattern;
 	std::vector<emitPattern>    	_emitpattern;
-
 
     particleExistSt*     particleExistList;
 
@@ -304,7 +301,7 @@ public:
 	}
 	virtual ~SsEffectEmitter(){}
 
-
+	void	setSeedOffset( int offset ) { seedOffset = offset; }
 
 //	const particleLifeSt*	getParticleDataFromID(int id) { return &particleList[id]; }
 
@@ -369,6 +366,8 @@ public:
 	bool			m_isPause;
 	bool			m_isLoop;
 
+	int				seedOffset;
+
 	SsCellMapList*	curCellMapManager;/// セルマップのリスト（アニメデコーダーからもらう
 
 public:
@@ -380,10 +379,8 @@ protected:
 
 	void	clearEmitterList();
 
-
-
 public:
-	SsEffectRenderV2() : effectTimeLength(0) ,isIntFrame(true){}
+	SsEffectRenderV2() : effectTimeLength(0) ,isIntFrame(true),seedOffset(0){}
 	virtual ~SsEffectRenderV2(){}
 
 	virtual void    play(){ m_isPause = false;m_isPlay=true; }
@@ -440,6 +437,10 @@ public:
 			SsFColor	_color,
 			SsRenderBlendType::_enum blendType
 		);
+	
+	
+	void	setSeedOffset( int offset ) { seedOffset = offset; }
+
 
 };
 

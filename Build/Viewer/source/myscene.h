@@ -18,6 +18,8 @@ public:
 
 private:
 
+	int		sceneLoop;
+
 	SsAnimeDecoder*	m_player;
 	SsCellMapList*	m_cellmap;
 
@@ -42,7 +44,7 @@ private:
 
 
 public:
-	SampleScene() : m_isAnimeAutoPlay (false) {}
+	SampleScene() : m_isAnimeAutoPlay (false),sceneLoop(0) {}
 	virtual ~SampleScene()
 	{
 		destroy();

@@ -54,6 +54,8 @@ private:
 	SsPartState*					partState;			///パーツの現在の状態が格納されています。
 	std::list<SsPartState*>			sortList;			///ソート状態
 
+
+	int				seedOffset;							//エフェクトのシードへ影響
 	float			nowPlatTime;
 	float			nowPlatTimeOld;						//前のフレームで再生した時間
 	float			frameDelta;
@@ -118,6 +120,8 @@ public:
 	void	restart();
 	void	reset();
 
+	void	setSeedOffset(int a ){ seedOffset = a; }
+	int		getSeedOffset(){ return seedOffset; }
 };
 
 

@@ -38,7 +38,8 @@ SsAnimeDecoder::SsAnimeDecoder() :
 	partState(0),
 	rootPartFunctionAsVer4(false),
 	dontUseMatrixForTransform(false),
-	instancePartsHide(false)
+	instancePartsHide(false),
+	seedOffset(0)
 	{
 	}
 
@@ -1217,6 +1218,8 @@ void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part
 
 			_time = _time + state->effectValue.startTime;
 			_time*= state->effectValue.speed;
+
+			state->refEffect->setSeedOffset( seedOffset );
 			state->refEffect->setFrame( _time );
 			state->refEffect->play();
 			state->refEffect->update();

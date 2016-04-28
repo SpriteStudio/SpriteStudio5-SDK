@@ -70,7 +70,7 @@ void	SsEffectEmitter::updateParticle(float time, particleDrawData* p, bool recal
 
 
 	//自身のシード値、エミッターのシード値、親パーティクルのＩＤをシード値とする
-	rand.init_genrand(( pseed + emitterSeed + p->pid ));
+	rand.init_genrand(( pseed + emitterSeed + p->pid + seedOffset ));
 
 
 	float rad = particle.angle + (rand.genrand_float32() * (particle.angleVariance ) - particle.angleVariance/2.0f);
@@ -689,11 +689,13 @@ void	SsEffectRenderV2::update()
 
 	if ( !this->Infinite )
 	{
-		if ( this->isloop() )
+		if ( this->isloop() ) //自動ループの場合
 		{
-			if ( targetFrame > getEffectTimeLength() )
+			if ( nowFrame > getEffectTimeLength() )
 			{
-				targetFrame = (int)((int)targetFrame % getEffectTimeLength());
+				targetFrame = (int)((int)nowFrame % getEffectTimeLength());
+				int l = ( nowFrame / getEffectTimeLength() );
+				this->seedOffset = l;
 			}
 		}
 	}
@@ -704,11 +706,11 @@ void	SsEffectRenderV2::draw()
 {
 
 
-
 	for ( size_t i = 0 ; i < updateList.size() ; i++ )
 	{
 
 		SsEffectEmitter* e = updateList[i];
+		e->setSeedOffset( seedOffset ); 
 
 		if ( e->_parent )
 		{
