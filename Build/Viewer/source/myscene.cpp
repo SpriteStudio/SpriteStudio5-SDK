@@ -68,6 +68,9 @@ void	SampleScene::update(double delta)
 		m_nowPlayFrameD+= frameDelta;
 		m_nowPlayFrame = (int)m_nowPlayFrameD;
 
+		
+		m_player->setSeedOffset( sceneLoop );
+
 		if ( isLoop )
 		{
 			if ( m_player->getAnimeEndFrame() < (int)m_nowPlayFrame )
@@ -75,9 +78,6 @@ void	SampleScene::update(double delta)
 				m_nowPlayFrame = 0;
 				m_nowPlayFrameD = 0;
 				sceneLoop++;
-				//seedOffset
-				m_player->setSeedOffset( sceneLoop );
-				//m_player->restart();
 			}
 		}
 	}

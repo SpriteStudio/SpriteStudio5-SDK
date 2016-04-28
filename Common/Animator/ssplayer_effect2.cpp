@@ -584,17 +584,10 @@ void SsEffectRenderV2::particleDraw(SsEffectEmitter* e , double time , SsEffectE
 			SsFColor fcolor;
 			fcolor.fromARGB(lp.color.toARGB());
 
-#if 0
-			SsRenderBlendType btype = e->refData->blendType;
-			drawSprite( e->refCell , SsVector2(lp.x,lp.y) , lp.scale,
-				lp.rot , lp.direc , fcolor , btype );
-#endif
 			drawSprite( &e->dispCell ,
 						SsVector2(lp.x,lp.y),
 						lp.scale,
 						lp.rot , lp.direc , fcolor , e->refData->BlendType );
-
-
 
 
 		}
@@ -612,8 +605,6 @@ void	SsEffectRenderV2::initEmitter( SsEffectEmitter* e , SsEffectNode* node)
 {
 
 	e->refData = node->GetMyBehavior();
-    //e->refData->setup();	////セルマップのロードを行う
-
 	e->refCell = e->refData->refCell;
 
 	//セルの初期化
@@ -634,13 +625,9 @@ void	SsEffectRenderV2::initEmitter( SsEffectEmitter* e , SsEffectNode* node)
 			);
 	}
 
-
-
-	//e->refData->initializeParticle( e );
 	SsEffectFunctionExecuter::initializeEffect( e->refData , e );
 
 	e->emitterSeed = this->mySeed;
-
 
 	if ( e->particle.userOverrideRSeed )
 	{
@@ -695,7 +682,7 @@ void	SsEffectRenderV2::update()
 			{
 				targetFrame = (int)((int)nowFrame % getEffectTimeLength());
 				int l = ( nowFrame / getEffectTimeLength() );
-				this->seedOffset = l;
+				setSeedOffset( l );
 			}
 		}
 	}
@@ -714,10 +701,8 @@ void	SsEffectRenderV2::draw()
 
 		if ( e->_parent )
 		{
-
 			//グローバルの時間で現在親がどれだけ生成されているのかをチェックする
 			e->_parent->updateEmitter(targetFrame);
-
 
 			int loopnum =  e->_parent->getParticleIDMax();
 			for ( int n = 0 ; n < loopnum ; n ++ )
@@ -761,7 +746,6 @@ void    SsEffectRenderV2::reload()
     //updateが必要か
 	stop();
 	clearEmitterList();
-
 
 	SsEffectNode* root = this->effectData->GetRoot();
 

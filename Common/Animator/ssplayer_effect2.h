@@ -278,8 +278,6 @@ public:
 //	SsEffectEmitter*			_child;
 	SsEffectEmitter*			_parent;
 
-
-
     int							_parentIndex;
 
 	SsCell*						refCell;    //•`‰æ—pƒZƒ‹
@@ -301,7 +299,9 @@ public:
 	}
 	virtual ~SsEffectEmitter(){}
 
-	void	setSeedOffset( int offset ) { seedOffset = offset; }
+	void	setSeedOffset( int offset ) { 
+		seedOffset = offset; 
+	}
 
 //	const particleLifeSt*	getParticleDataFromID(int id) { return &particleList[id]; }
 
@@ -422,11 +422,9 @@ public:
 
 	void	setCellmapManager( SsCellMapList* plist ) { curCellMapManager = plist; }
 
-//	virtual void 	debugDraw();
 	bool	getPlayStatus(void){
 		return(m_isPlay);
 	}
-
 
 	void	drawSprite(
 			SsCellValue*		dispCell,
@@ -439,7 +437,14 @@ public:
 		);
 	
 	
-	void	setSeedOffset( int offset ) { seedOffset = offset; }
+	void	setSeedOffset( int offset ) { 
+		if ( effectData->isLockRandSeed )
+		{
+			seedOffset = 0;
+		}else{
+			seedOffset = offset; 
+		}
+	}
 
 
 };
