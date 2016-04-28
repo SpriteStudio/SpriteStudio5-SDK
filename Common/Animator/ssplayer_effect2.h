@@ -297,7 +297,12 @@ public:
 	{
 		emitterSeed = SEED_MAGIC;
 	}
-	virtual ~SsEffectEmitter(){}
+	virtual ~SsEffectEmitter()
+	{
+		delete [] particleExistList;
+		delete [] seedList;
+
+	}
 
 	void	setSeedOffset( int offset ) { 
 		seedOffset = offset; 
@@ -381,7 +386,10 @@ protected:
 
 public:
 	SsEffectRenderV2() : effectTimeLength(0) ,isIntFrame(true),seedOffset(0){}
-	virtual ~SsEffectRenderV2(){}
+	virtual ~SsEffectRenderV2()
+	{
+		clearEmitterList();
+	}
 
 	virtual void    play(){ m_isPause = false;m_isPlay=true; }
 	virtual void	stop(){ m_isPlay = false;}
