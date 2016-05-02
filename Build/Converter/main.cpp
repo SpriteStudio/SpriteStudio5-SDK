@@ -1064,7 +1064,9 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 		effectFile->add(Lump::s16Data(effectmodel->fps));					//FPS
 		effectFile->add(Lump::s16Data(effectmodel->isLockRandSeed));		//乱数を固定するかどうか
 		effectFile->add(Lump::s16Data(effectmodel->lockRandSeed));			//固定する場合の乱数の種
-		//エフェクトノードの出力
+		effectFile->add(Lump::s16Data(effectmodel->layoutScaleX));			//レイアウトスケールX
+		effectFile->add(Lump::s16Data(effectmodel->layoutScaleY));			//レイアウトスケールY
+																			//エフェクトノードの出力
 		effectFile->add(Lump::s16Data((int)effectmodel->nodeList.size()));	//エフェクトノード数
 		Lump* effectNodeArray = Lump::set("ss::EffectNode[]", true);
 		effectFile->add(effectNodeArray);									//ノード配列
