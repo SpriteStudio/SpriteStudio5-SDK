@@ -1046,6 +1046,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			animeData->add(Lump::s16Data(label_idx));							//ラベルデータ数
 			animeData->add(Lump::s16Data(anime->settings.canvasSize.x));		//基準枠W
 			animeData->add(Lump::s16Data(anime->settings.canvasSize.y));		//基準枠H
+			animeData->add(Lump::s16Data(0));									//ダミーデータ
 			animeData->add(Lump::floatData(anime->settings.pivot.x));			//基準枠位置
 			animeData->add(Lump::floatData(anime->settings.pivot.y));			//基準枠位置
 		}
