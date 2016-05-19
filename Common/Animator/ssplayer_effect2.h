@@ -385,7 +385,7 @@ protected:
 	void	clearEmitterList();
 
 public:
-	SsEffectRenderV2() : effectTimeLength(0) ,isIntFrame(true),seedOffset(0){}
+	SsEffectRenderV2() : effectTimeLength(0) ,isIntFrame(true),seedOffset(0), mySeed(0){}
 	virtual ~SsEffectRenderV2()
 	{
 		clearEmitterList();
