@@ -168,6 +168,7 @@ void	GetSsEffectParamAnime( const SsKeyframe* key , SsEffectAttr& v )
 	v.startTime = key->value["startTime"].get<int>();
 	v.speed = key->value["speed"].get<float>();
 	v.independent = key->value["independent"].get<bool>();
+	v.curKeyframe = key->time;
 
 	int iflags = 0;
 	if (v.independent)
