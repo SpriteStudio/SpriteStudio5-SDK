@@ -63,6 +63,7 @@ void	SsPartState::init()
 	effectValue.loopflag = 0;
 	effectValue.speed = 1.0f;
 	effectValue.startTime = 0;
+	effectValue.curKeyframe = 0;
 
 	effectseed = 0;
 	effectTime = 0;

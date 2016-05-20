@@ -657,14 +657,16 @@ public:
 	int					startTime;				///< 開始フレーム
 	float				speed;					///< 再生速度
 	bool				independent;			///< 独立動作
-	int					loopflag;				///ループ時の動作フラグをビット対応でまとめたもの
+	int					loopflag;				///< ループ時の動作フラグをビット対応でまとめたもの
 	bool				attrInitialized;
+	int					curKeyframe;			///< キーが配置されたフレーム 
 	SsEffectAttr() :
 		startTime(0),
 		speed(1.0f),
 		independent(false),
 		loopflag(0),
-		attrInitialized(false)
+		attrInitialized(false),
+		curKeyframe(0)
 	{}
 
 	void init()
@@ -674,6 +676,7 @@ public:
 		independent = false;
 		loopflag = 0;
 		attrInitialized = false;
+		curKeyframe = 0;
 	}
 };
 

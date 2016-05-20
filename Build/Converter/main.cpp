@@ -214,6 +214,7 @@ struct PartInitialData
 	float	instanceValue_speed;
 	int		instanceValue_loopflag;
 	//エフェクトアトリビュート
+	int		effectValue_curKeyframe;
 	int		effectValue_startTime;
 	float	effectValue_speed;
 	int		effectValue_loopflag;
@@ -592,6 +593,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				init.effectValue_startTime = state->effectValue.startTime;
 				init.effectValue_speed = state->effectValue.speed;
 				init.effectValue_loopflag = state->effectValue.loopflag;
+				init.effectValue_curKeyframe = state->effectValue.curKeyframe;
 
 				initialDataList.push_back(init);
 				
@@ -628,6 +630,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 				initialData->add(Lump::floatData(init.instanceValue_speed));
 				initialData->add(Lump::s32Data(init.instanceValue_loopflag));
 				//エフェクト関連
+				initialData->add(Lump::s32Data(init.effectValue_curKeyframe));
 				initialData->add(Lump::s32Data(init.effectValue_startTime));
 				initialData->add(Lump::floatData(init.effectValue_speed));
 				initialData->add(Lump::s32Data(init.effectValue_loopflag));
@@ -759,6 +762,7 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 							(state->effectValue.startTime != init.effectValue_startTime)
 							|| (state->effectValue.speed != init.effectValue_speed)
 							|| (state->effectValue.loopflag != init.effectValue_loopflag)
+							|| (state->effectValue.curKeyframe != init.effectValue_curKeyframe)
 							)
 						{
 							p_flags |= PART_FLAG_EFFECT_KEYFRAME;
@@ -871,12 +875,10 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 					//エフェクト情報出力
 					if (p_flags & PART_FLAG_EFFECT_KEYFRAME)
 					{
-						//開始フレーム
-						frameData->add(Lump::s32Data(state->effectValue.startTime));
-						//再生速度
-						frameData->add(Lump::floatData(state->effectValue.speed));
-						//独立動作
-						frameData->add(Lump::s32Data(state->effectValue.loopflag));
+						frameData->add(Lump::s32Data(state->effectValue.curKeyframe));	//キー配置フレーム
+						frameData->add(Lump::s32Data(state->effectValue.startTime));	//開始フレーム
+						frameData->add(Lump::floatData(state->effectValue.speed));		//再生速度
+						frameData->add(Lump::s32Data(state->effectValue.loopflag));		//独立動作
 					}
 
 
