@@ -641,18 +641,34 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 				case SsAttributeKind::user:		///< Ver.4 互換ユーザーデータ
 					break;
 				case SsAttributeKind::instance:	///インスタンスパラメータ
-					SsGetKeyValue( nowTime , attr , state->instanceValue );
+					{
+						int t = SsGetKeyValue( nowTime , attr , state->instanceValue );
+						//先頭にキーが無い場合
+						if ( t  > nowTime )
+						{
+							SsInstanceAttr d;
+							state->instanceValue = d;
+						}
+					}
 					break;
 				case SsAttributeKind::effect:
 					{
 
 						int t = SsGetKeyValue( nowTime , attr , state->effectValue );
-						state->effectTime = t;
-						if ( !state->effectValue.attrInitialized )
+
+						//先頭にキーが無い場合
+						if ( t > nowTime )
 						{
-							state->effectValue.attrInitialized  = true;
-							state->effectTimeTotal = state->effectValue.startTime;
-							state->effectTime = t;//state->effectValue.startTime;
+							SsEffectAttr d;
+							state->effectValue = d;
+						}else{
+							state->effectTime = t;
+							if ( !state->effectValue.attrInitialized )
+							{
+								state->effectValue.attrInitialized  = true;
+								state->effectTimeTotal = state->effectValue.startTime;
+								state->effectTime = t;//state->effectValue.startTime;
+							}
 						}
 					}
 					break;
