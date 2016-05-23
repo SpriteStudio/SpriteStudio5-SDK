@@ -313,13 +313,13 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 		if (cellMap->overrideTexSettings == true )							///< テクスチャ設定をプロジェクトの設定ではなく下記設定を使う
 		{
 			//個別の設定を使う
-			cellMapData->add(Lump::s16Data(cellMap->wrapMode));			///< テクスチャのラップモード
-			cellMapData->add(Lump::s16Data(cellMap->filterMode));		///< テクスチャのフィルタモード
+			cellMapData->add(Lump::s16Data(cellMap->wrapMode));				///< テクスチャのラップモード
+			cellMapData->add(Lump::s16Data(cellMap->filterMode));			///< テクスチャのフィルタモード
 		}
 		else
 		{
 			//プロジェクトの設定を使う
-			cellMapData->add(Lump::s16Data(proj->settings.wrapMode));			///< テクスチャのラップモード
+			cellMapData->add(Lump::s16Data(proj->settings.wrapMode));		///< テクスチャのラップモード
 			cellMapData->add(Lump::s16Data(proj->settings.filterMode));		///< テクスチャのフィルタモード
 		}
 		cellMapData->add(Lump::s16Data(0));	// reserved
@@ -350,6 +350,14 @@ static Lump* parseParts(SsProject* proj, const std::string& imageBaseDir)
 			cellData->add(Lump::s16Data(0));	// reserved
 			cellData->add(Lump::floatData(cell->pivot.x));
 			cellData->add(Lump::floatData(-cell->pivot.y));
+			float u1 = cell->pos.x / cellMap->pixelSize.x;
+			float v1 = cell->pos.y / cellMap->pixelSize.y;
+			float u2 = ( cell->pos.x + cell->size.x ) / cellMap->pixelSize.x;
+			float v2 = ( cell->pos.y + cell->size.y ) / cellMap->pixelSize.y;
+			cellData->add(Lump::floatData(u1));			//テクスチャのサイズを出力
+			cellData->add(Lump::floatData(v1));
+			cellData->add(Lump::floatData(u2));			//テクスチャのサイズを出力
+			cellData->add(Lump::floatData(v2));
 		}
 	}
 
