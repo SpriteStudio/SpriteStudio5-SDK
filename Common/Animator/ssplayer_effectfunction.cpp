@@ -254,8 +254,8 @@ public:
 		ParticleElementRndSeedChange* source = static_cast<ParticleElementRndSeedChange*>(ele);
 		e->particle.userOverrideRSeed = true;
 
-		e->particle.overrideRSeed  =  source->Seed;
-		e->emitterSeed = source->Seed;
+		e->particle.overrideRSeed  =  source->Seed + SEED_MAGIC;
+		e->emitterSeed = source->Seed + SEED_MAGIC;
 	}
 	
 };
