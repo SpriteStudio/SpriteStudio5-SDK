@@ -50,6 +50,13 @@ double OutQuart(double t,double totaltime,double max ,double min )
 	return -max*( t*t*t*t-1) +min;
 }
 
+double OutQuad(double t,double totaltime,double max ,double min )
+{
+	max -= min;
+	t /= totaltime;
+	return -max*t*(t-2)+min;
+}
+
 //現在時間から産出される位置を求める
 //time変数から求められる式とする
 //パーティクル座標計算のコア
@@ -276,9 +283,12 @@ void	SsEffectEmitter::updateParticle(float time, particleDrawData* p, bool recal
 	if ( particle.usePGravity )
 	{
 
-		float gx = OutQuart( _t , _life ,  particle.gravityPos.x , ox + position.x );
-		float gy = OutQuart( _t , _life ,  particle.gravityPos.y , oy + position.y );
-       p->x = blendFloat( p->x , gx , particle.gravityPower );
+		//float gx = OutQuart( _t , _life ,  particle.gravityPos.x , ox + position.x );
+		//float gy = OutQuart( _t , _life ,  particle.gravityPos.y , oy + position.y );
+		float gx = OutQuad( _t *0.8f , _life ,  particle.gravityPos.x , ox + position.x );
+		float gy = OutQuad( _t *0.8f  , _life ,  particle.gravityPos.y , oy + position.y );
+
+		p->x = blendFloat( p->x , gx , particle.gravityPower );
         p->y = blendFloat( p->y , gy , particle.gravityPower );
 
 
@@ -293,7 +303,7 @@ void	SsEffectEmitter::updateParticle(float time, particleDrawData* p, bool recal
 
 //		if ( time > 0.0f )
 		{
-			updateParticle( time + 0.1f , &dp , true );
+			updateParticle( time + 1.0f , &dp , true );
 			p->direc =  SsVector2::get_angle_360(
 								SsVector2( 1 , 0 ) ,
 								SsVector2(p->x - dp.x, p->y - dp.y) ) + DegreeToRadian(90) + DegreeToRadian(particle.direcRotAdd);
