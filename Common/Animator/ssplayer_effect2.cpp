@@ -73,7 +73,7 @@ void	SsEffectEmitter::updateParticle(float time, particleDrawData* p, bool recal
 
 	//_t = 0時点の値を作る
 	//シード値で固定化されることが前提
-  	unsigned long pseed = seedList[p->id];
+  	unsigned long pseed = seedList[p->id % seedTableLen];
 
 
 	//自身のシード値、エミッターのシード値、親パーティクルのＩＤをシード値とする
@@ -378,9 +378,11 @@ void	SsEffectEmitter::precalculate2()
 	seedList = new unsigned long[particleListBufferSize];
 
 	rand.init_genrand((emitterSeed));
+	
+	seedTableLen = particleListBufferSize * 3;
 
 	//各パーティクルＩＤから参照するシード値をテーブルとして作成する
-	for ( size_t i = 0 ; i < particleListBufferSize ; i++ )
+	for ( size_t i = 0 ; i < seedTableLen ; i++ )
 	{
     	seedList[i] = rand.genrand_uint32();
 	}
