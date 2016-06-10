@@ -163,7 +163,7 @@ void	SsEffectEmitter::updateParticle(float time, particleDrawData* p, bool recal
 				p->rot+=addrf;
 			}else{
 				//1ƒtƒŒ[ƒ€‚Å‰ÁŽZ‚³‚ê‚é—Ê
-				addf = (add * particle.rotationFactor) / lastt;
+				addf = ( add * particle.rotationFactor - add ) / lastt;
 
 				//‚ ‚Ü‚èŽžŠÔ
 				float mod_t = _t - lastt;
@@ -174,8 +174,10 @@ void	SsEffectEmitter::updateParticle(float time, particleDrawData* p, bool recal
 				if ( nowt > lastt ) nowt = lastt;
 
 				//ÅI€ + ‰€ x F / 2
-				float addrf = (( addf * nowt ) + add ) * (nowt+1.0f) / 2.0f;
-				addrf+= ( mod_t * ( addf * nowt ) ); //‚ ‚Ü‚è‚ÆI€‚ÌÏ‚ð‰ÁŽZ
+				float final_soul = add + addf * nowt;
+				float addrf = ( final_soul + add ) * (nowt+1.0f) / 2.0f;
+				addrf-=add;
+				addrf+= ( mod_t * ( final_soul ) ); //‚ ‚Ü‚è‚ÆI€‚ÌÏ‚ð‰ÁŽZ
 				p->rot+=addrf;
 			}
 		}else{
