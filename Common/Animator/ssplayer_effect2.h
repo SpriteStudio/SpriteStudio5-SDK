@@ -48,6 +48,7 @@ struct particleExistSt
 //v3.1
 struct emitPattern
 {
+	int	  uid;
 	int   offsetTime;//0フレームからの開始オフセット
 	int   life;
     int   cycle;

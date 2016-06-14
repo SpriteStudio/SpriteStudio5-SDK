@@ -318,7 +318,13 @@ void	SsEffectEmitter::updateParticle(float time, particleDrawData* p, bool recal
 
 bool compare_life( emitPattern& left,  emitPattern& right)
 {
-  return left.life < right.life ;
+	if ( left.life == right.life )
+	{
+        if ( left.uid < right.uid ) return true;
+
+	}
+
+	return left.life < right.life ;
 }
 
 void	SsEffectEmitter::precalculate2()
@@ -350,6 +356,7 @@ void	SsEffectEmitter::precalculate2()
 	{
 		emitPattern e;
 
+		e.uid = i;
 		e.life = emitter.particleLife + emitter.particleLife2 * rand.genrand_float32();
 		e.cycle = cycle;
 
