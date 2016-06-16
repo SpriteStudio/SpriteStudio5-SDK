@@ -19,8 +19,10 @@ class SsEffectRenderAtom;
 class SsCell;
 
 
-
 #define SEED_MAGIC (7573)
+#define LIFE_EXTEND_SCALE (8)
+#define LIFE_EXTEND_MIN	  (64)
+
 #define LOOP_TYPE1 (0)
 #define LOOP_TYPE2 (0)
 #define LOOP_TYPE3 (1)
@@ -49,11 +51,9 @@ struct particleExistSt
 struct emitPattern
 {
 	int	  uid;
-	int   offsetTime;//0フレームからの開始オフセット
 	int   life;
     int   cycle;
 };
-
 
 //最終描画用データ
 struct particleDrawData
@@ -263,6 +263,7 @@ public:
 
 	//生成用のリングバッファ
 	std::vector<emitPattern>    	_emitpattern;
+	std::vector<int>				_offsetPattern;
 
     particleExistSt*     particleExistList;
 
@@ -286,6 +287,8 @@ public:
 
 	size_t						globaltime;
 	size_t						seedTableLen;
+
+
 
 public:
 	SsEffectEmitter() :
@@ -313,9 +316,10 @@ public:
 
 #if  LOOP_TYPE3
 
-	int	getParticleIDMax() { return _emitpattern.size(); }
+	int	getParticleIDMax() { return _offsetPattern.size(); }
+
 	const 	particleExistSt*	getParticleDataFromID(int id);
-	void	updateEmitter( double time );
+	void	updateEmitter( double time  , int slide );
 
 #else
 
@@ -376,6 +380,7 @@ public:
 
 	SsCellMapList*	curCellMapManager;/// セルマップのリスト（アニメデコーダーからもらう
 
+	bool		_isWarningData;
 public:
 
 
@@ -455,6 +460,8 @@ public:
 		}
 	}
 
+	virtual bool	isInfinity(){ return Infinite; }
+    virtual bool	isWarning(){ return _isWarningData; }
 
 };
 

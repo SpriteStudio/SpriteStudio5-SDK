@@ -284,16 +284,20 @@ void	SsEffectEmitter::updateParticle(float time, particleDrawData* p, bool recal
   	//指定の点へよせる
 	if ( particle.usePGravity )
 	{
-
-		//float gx = OutQuart( _t , _life ,  particle.gravityPos.x , ox + position.x );
-		//float gy = OutQuart( _t , _life ,  particle.gravityPos.y , oy + position.y );
 		float gx = OutQuad( _t *0.8f , _life ,  particle.gravityPos.x , ox + position.x );
-		float gy = OutQuad( _t *0.8f  , _life ,  particle.gravityPos.y , oy + position.y );
+		float gy = OutQuad( _t *0.8f , _life ,  particle.gravityPos.y , oy + position.y );
 
-		p->x = blendFloat( p->x , gx , particle.gravityPower );
-        p->y = blendFloat( p->y , gy , particle.gravityPower );
+		float gp = particle.gravityPower;
 
+		if ( gp < 0 )
+		{
+			p->x = blendFloat( p->x , -gx , -gp);
+			p->y = blendFloat( p->y , -gy , -gp);
 
+		}else{
+			p->x = blendFloat( p->x , gx , gp);
+			p->y = blendFloat( p->y , gy , gp);
+		}
 	}
 
     //前のフレームからの方向を取る
@@ -329,73 +333,77 @@ bool compare_life( emitPattern& left,  emitPattern& right)
 
 void	SsEffectEmitter::precalculate2()
 {
-
 	rand.init_genrand( emitterSeed );
 
 	_emitpattern.clear();
+	//_lifeExtend.clear();
+	_offsetPattern.clear();
 
 	if ( particleExistList == 0 )
 	{
-		//_emitpattern = new emitPattern[emitter.emitmax];
 		particleExistList = new particleExistSt[emitter.emitmax]; //存在しているパーティクルが入る計算用バッファ
 	}
 
-	//memset( _emitpattern , 0 , sizeof(emitPattern) * emitter.emitmax );
 	memset( particleExistList , 0 , sizeof(particleExistSt) * emitter.emitmax );
-
 
 	if ( emitter.emitnum < 1 ) emitter.emitnum = 1;
 
-	int cycle =  (int)(( (float)(emitter.emitmax *emitter.interval)  / (float)emitter.emitnum ) + 0.5f) ;
+	int cycle =  (int)(( (float)(emitter.emitmax * emitter.interval)  / (float)emitter.emitnum ) + 0.5f) ;
     int group =  emitter.emitmax / emitter.emitnum;
+
+	int extendsize = emitter.emitmax*LIFE_EXTEND_SCALE;
+    if ( extendsize < LIFE_EXTEND_MIN ) extendsize = LIFE_EXTEND_MIN;
+
+
 
 
 	int shot = 0;
 	int offset = particle.delay;
 	for ( int i = 0 ; i < emitter.emitmax ; i++ )
 	{
-		emitPattern e;
-
-		e.uid = i;
-		e.life = emitter.particleLife + emitter.particleLife2 * rand.genrand_float32();
-		e.cycle = cycle;
-
 		if ( shot >= emitter.emitnum )
 		{
 			shot = 0;
 			offset+= emitter.interval;
 		}
+		_offsetPattern.push_back(offset);
+		shot++;
+	}
 
-		e.offsetTime = offset;
+
+	for ( int i = 0 ; i < extendsize ; i++ )
+	{
+		emitPattern e;
+		e.uid = i;
+		e.life = emitter.particleLife + emitter.particleLife2 * rand.genrand_float32();
+		e.cycle = cycle;
+
 		if ( e.life > cycle )
 		{
 			e.cycle = e.life;
 		}
-		_emitpattern.push_back( e );
-		shot++;
 
+		_emitpattern.push_back( e );
 	}
 
-	//ライフでソートする
-    std::sort( _emitpattern.begin() , _emitpattern.end() , compare_life );
 
 	if (seedList != NULL)
 	{
 		delete[] seedList;
 	}
-	particleListBufferSize = emitter.emitmax;
+
+    particleListBufferSize = emitter.emitmax;
+
 
 	rand.init_genrand((emitterSeed));
-	
+
 	seedTableLen = particleListBufferSize * 3;
 	seedList = new unsigned long[seedTableLen];
-
 	//各パーティクルＩＤから参照するシード値をテーブルとして作成する
 	for ( size_t i = 0 ; i < seedTableLen ; i++ )
 	{
     	seedList[i] = rand.genrand_uint32();
 	}
-
 
 }
 
@@ -406,28 +414,33 @@ void	SsEffectEmitter::precalculate2()
 
 
 
-void SsEffectEmitter::updateEmitter( double _time )
+void SsEffectEmitter::updateEmitter( double _time , int slide ) 
 {
+	int onum = _offsetPattern.size();
 	int pnum = _emitpattern.size();
+	slide = slide * SEED_MAGIC;
 
-	//int itime = _time;
 
-	for ( int i = 0 ; i < pnum ; i ++ )
+	for ( int i = 0 ; i < onum ; i ++ )
 	{
-		int t = (int)(_time - _emitpattern[i].offsetTime);
+		int slide_num = ( i + slide ) % pnum;
+
+		emitPattern* targetEP = &_emitpattern[slide_num];
+
+		int t = (int)(_time - _offsetPattern[i]);
+
 		particleExistList[i].exist = false;
 		particleExistList[i].born = false;
 
-
-		if ( _emitpattern[i].cycle != 0 )
+		if ( targetEP->cycle != 0 )
 		{
-			int loopnum = t / _emitpattern[i].cycle;
-			int cycle_top = loopnum * _emitpattern[i].cycle;
+			int loopnum = t / targetEP->cycle;
+			int cycle_top = loopnum * targetEP->cycle;
 
             particleExistList[i].cycle = loopnum;
 
-			particleExistList[i].stime = cycle_top + _emitpattern[i].offsetTime;//
-			particleExistList[i].endtime = particleExistList[i].stime + _emitpattern[i].life;
+			particleExistList[i].stime = cycle_top + _offsetPattern[i];
+			particleExistList[i].endtime = particleExistList[i].stime + targetEP->life;// + _lifeExtend[slide_num];
 
 			if ( (double)particleExistList[i].stime <= _time &&  (double)particleExistList[i].endtime > _time )
 			{
@@ -442,13 +455,14 @@ void SsEffectEmitter::updateEmitter( double _time )
 					particleExistList[i].exist = false;    //作られてない
 
 					//最終的な値に計算し直し <-事前計算しておくといいかも・
-					int t = this->emitter.life - _emitpattern[i].offsetTime;
-					int loopnum = t / _emitpattern[i].cycle;
+					int t = this->emitter.life - _offsetPattern[i];
+					int loopnum = t / targetEP->cycle;
 
-					int cycle_top = loopnum * _emitpattern[i].cycle;
+					int cycle_top = loopnum * targetEP->cycle;
 
-					particleExistList[i].stime = cycle_top + _emitpattern[i].offsetTime;    //ディレイは別なところにもっていくかも
-					particleExistList[i].endtime = particleExistList[i].stime + _emitpattern[i].life;
+					particleExistList[i].stime = cycle_top + _offsetPattern[i];
+
+					particleExistList[i].endtime = particleExistList[i].stime + targetEP->life;// + _lifeExtend[slide_num];
 					particleExistList[i].born = false;
 				}else{
 					particleExistList[i].born = true;
@@ -553,7 +567,10 @@ void SsEffectRenderV2::particleDraw(SsEffectEmitter* e , double time , SsEffectE
 
 	int pnum = e->getParticleIDMax();
 
-	e->updateEmitter(time);         // <-メインのアップデートと一緒にやると良さげ？
+	int slide = (parent == 0) ? 0 : plp->id;
+
+	e->updateEmitter( time, slide ); 
+
 
 	for (auto id = 0; id < pnum; id++)
 	{
@@ -723,7 +740,7 @@ void	SsEffectRenderV2::draw()
 		if ( e->_parent )
 		{
 			//グローバルの時間で現在親がどれだけ生成されているのかをチェックする
-			e->_parent->updateEmitter(targetFrame);
+			e->_parent->updateEmitter(targetFrame , 0);
 
 			int loopnum =  e->_parent->getParticleIDMax();
 			for ( int n = 0 ; n < loopnum ; n ++ )
@@ -776,6 +793,9 @@ void    SsEffectRenderV2::reload()
 	layoutScale.x = (float)(this->effectData->layoutScaleX) / 100.0f;
 	layoutScale.y = (float)(this->effectData->layoutScaleY) / 100.0f;
 
+	int* cnum = new int[list.size()];
+    memset( cnum , 0 , sizeof(int) * list.size() );
+
 	bool _Infinite = false;
 	//パラメータを取得
 	//以前のデータ形式から変換
@@ -783,36 +803,50 @@ void    SsEffectRenderV2::reload()
 	{
 		SsEffectNode *node =  list[i];
 
-
 		if ( node->GetType() == SsEffectNodeType::emmiter )
 		{
-			//int pi = list[i]->parentIndex;
-
 			SsEffectEmitter* e = new SsEffectEmitter();
 			//パラメータをコピー
 
 			e->_parentIndex = node->parentIndex;
-			//繋ぎ先は恐らくパーティクルなので
+			//繋ぎ先は恐らくパーティクルなのでエミッタに変換
 			if ( e->_parentIndex != 0 )
 			{
 				e->_parentIndex = list[e->_parentIndex]->parentIndex;
+
+			}
+
+			cnum[e->_parentIndex]++;
+			if ( cnum[e->_parentIndex] > 10 )
+			{
+				_isWarningData = true;
+				continue; //子１０ノード表示制限
+			}
+
+			//孫抑制対策
+			if ( e->_parentIndex != 0 )
+			{
+				int a = list[e->_parentIndex]->parentIndex;
+				if ( a != 0 )
+				{
+				   if ( list[a]->parentIndex > 0 ) {
+						_isWarningData = true;
+						continue;
+				   }
+				}
 			}
 
 			initEmitter( e , node );
-
 			this->emmiterList.push_back(e);
-
 			if ( e->emitter.Infinite ) _Infinite = true;
-
 		}else
 		{
             //エミッター同士を繋ぎたいので
 			this->emmiterList.push_back(0);
-
 		}
 	}
 
-
+	delete[] cnum;
 	Infinite = _Infinite;
 
 
@@ -832,7 +866,7 @@ void    SsEffectRenderV2::reload()
 
 			int  pi =  emmiterList[i]->_parentIndex;
 
-			if ( emmiterList[i]->_parentIndex == 0 )
+			if ( emmiterList[i]->_parentIndex == 0 )  //ルート直下
 			{
 				emmiterList[i]->_parent = 0;
 				emmiterList[i]->globaltime = emmiterList[i]->getTimeLength();
@@ -840,7 +874,7 @@ void    SsEffectRenderV2::reload()
 			}else{
 
 				void* t = this->emmiterList[pi];
-				//this->emmiterList[pi]->_child = emmiterList[i];
+
                 emmiterList[i]->_parent = emmiterList[pi];
 
 				emmiterList[i]->globaltime = emmiterList[i]->getTimeLength() + this->emmiterList[pi]->getTimeLength();
@@ -854,8 +888,6 @@ void    SsEffectRenderV2::reload()
 			}
 		}
 	}
-
-
 	//プライオリティソート
 	std::sort( updateList.begin() , updateList.end() , compare_priority );
 

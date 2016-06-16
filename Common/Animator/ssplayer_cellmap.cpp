@@ -156,6 +156,7 @@ void calcUvs( SsCellValue* cellv )
 {
 	//SsCellMap* map = cellv->cellmapl->cellMap;
 	SsCell* cell = cellv->cell;
+	if ( cellv->texture == 0 ) return ;
 
 //	if ( cell == 0 || map == 0)
 	if ( cell == 0 )
