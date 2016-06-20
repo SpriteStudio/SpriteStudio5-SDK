@@ -1045,8 +1045,10 @@ void	SsAnimeDecoder::updateInstance( int nowTime , SsPart* part , SsPartAnime* p
     int	selfTopKeyframe = instanceValue.curKeyframe;
 
 
-    int	reftime = (time*instanceValue.speed) - selfTopKeyframe; //開始から現在の経過時間
-    if ( reftime < 0 ) return ; //そもそも生存時間に存在していない
+    int reftime = ( time - selfTopKeyframe) * instanceValue.speed;
+    //int	reftime = (time*instanceValue.speed) - selfTopKeyframe; //開始から現在の経過時間
+	if ( reftime < 0 ) return ; //そもそも生存時間に存在していない
+	if ( selfTopKeyframe > time ) return ;
 
     int inst_scale = (endframe - startframe) + 1; //インスタンスの尺
 
