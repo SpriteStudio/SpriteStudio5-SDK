@@ -297,7 +297,8 @@ public:
 			seedList(0),
 			particleListBufferSize(180*100),  //生成出来るパーティクルの最大値
 			_emitpattern(0),
-			particleExistList(0)
+			particleExistList(0),
+			globaltime(0)
 	{
 		emitterSeed = SEED_MAGIC;
 	}

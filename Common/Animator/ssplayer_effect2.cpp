@@ -30,6 +30,8 @@ static float blendFloat( float a,float b , float rate )
 
 double OutQuad(double t,double totaltime,double max ,double min )
 {
+	if( totaltime == 0.0 ) return 0.0;
+
 	if ( t > totaltime ) t = totaltime;
 	max -= min;
 	t /= totaltime;
@@ -273,28 +275,36 @@ void	SsEffectEmitter::updateParticle(float time, particleDrawData* p, bool recal
 		SsVector2::normalize( v , &nv );
 
 		float gp = particle.gravityPower;
-		nv = nv*gp*_t;
+		if (gp > 0) {
+			SsVector2 v2 = SsVector2(p->x, p->y);
+			float len = v.length(); // 生成位置からの距離
+			float et = (len / gp)*0.90f;;
 
-		if ( gp > 0 )
-		{
-			p->x+=nv.x;
-			p->y+=nv.y;
-
-			SsVector2 v2 = SsVector2( p->x , p->y );
-			float len = v.length();          //生成位置からの距離
-			float et = len / gp;
 			float _gt = _t;
+			if ( _gt >= (int)et )
+			{
+				_gt = et*0.90f;// + (_t / _life *0.1f);
+			}
 
-			float blend = OutQuad( _gt , et , 1.0f , 0.0f );
-			blend = blend;//*gp;
-			p->x = blendFloat( p->x , particle.gravityPos.x , blend );
-			p->y = blendFloat( p->y , particle.gravityPos.y , blend );
+			nv = nv * gp * _gt;
+			p->x += nv.x;
+			p->y += nv.y;
 
-		}else{
-			//パワーマイナスの場合は単純に反発させる
-			//距離による減衰はない
-			p->x+=nv.x;
-			p->y+=nv.y;
+
+			float blend = OutQuad(_gt, et, 0.9f, 0.0f);
+			blend = blend; // *gp;
+			blend += (_t / _life *0.1f);
+
+			p->x = blendFloat(p->x, particle.gravityPos.x, blend);
+			p->y = blendFloat(p->y, particle.gravityPos.y, blend);
+
+		}
+		else {
+			nv = nv * gp * _t;
+			// パワーマイナスの場合は単純に反発させる
+			// 距離による減衰はない
+			p->x += nv.x;
+			p->y += nv.y;
 		}
 
 #if 0
