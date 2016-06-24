@@ -755,7 +755,6 @@ void	SsEffectRenderV2::update()
 void	SsEffectRenderV2::draw()
 {
 
-
 	for ( size_t i = 0 ; i < updateList.size() ; i++ )
 	{
 
