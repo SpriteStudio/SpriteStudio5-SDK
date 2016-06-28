@@ -758,7 +758,6 @@ void	SsEffectRenderV2::draw()
 
 	for ( size_t i = 0 ; i < updateList.size() ; i++ )
 	{
-
 		SsEffectEmitter* e = updateList[i];
 		e->setSeedOffset( seedOffset ); 
 
@@ -797,6 +796,10 @@ void	SsEffectRenderV2::draw()
 
 bool compare_priority( SsEffectEmitter* left,  SsEffectEmitter* right)
 {
+	if ( left->priority == right->priority )
+	{
+		if ( left->uid < right->uid ) return true;
+	}
   //	return true;
   return left->priority < right->priority ;
 }
@@ -882,9 +885,9 @@ void    SsEffectRenderV2::reload()
 	//事前計算計算  updateListにルートの子を配置し親子関係を結ぶ
 	for ( size_t i = 0 ; i < this->emmiterList.size(); i++)
 	{
-
 		if (emmiterList[i] != 0 )
 		{
+			emmiterList[i]->uid = i;
 			//emmiterList[i]->precalculate();
 			emmiterList[i]->precalculate2(); //ループ対応形式
 
