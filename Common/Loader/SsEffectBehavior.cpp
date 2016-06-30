@@ -24,6 +24,7 @@ SsEffectElementBase*	SsEffectBehavior::Factory(const char* name , XMLElement* e 
 	if ( strcmp( name , "trans_size" ) == 0 ) ret = new ParticleElementTransSize();
 	if ( strcmp( name , "add_pointgravity" ) == 0 ) ret = new ParticlePointGravity();
 	if ( strcmp( name , "TurnToDirection" ) == 0 ) ret = new ParticleTurnToDirectionEnabled();
+	if ( strcmp( name , "InfiniteEmit" ) == 0 ) ret = new ParticleInfiniteEmitEnabled();
 
 	if ( ret )
 	{

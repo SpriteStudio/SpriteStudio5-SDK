@@ -19,8 +19,10 @@ class SsEffectRenderAtom;
 class SsCell;
 
 
-
 #define SEED_MAGIC (7573)
+#define LIFE_EXTEND_SCALE (8)
+#define LIFE_EXTEND_MIN	  (64)
+
 #define LOOP_TYPE1 (0)
 #define LOOP_TYPE2 (0)
 #define LOOP_TYPE3 (1)
@@ -48,11 +50,10 @@ struct particleExistSt
 //v3.1
 struct emitPattern
 {
-	int   offsetTime;//0フレームからの開始オフセット
+	int	  uid;
 	int   life;
     int   cycle;
 };
-
 
 //最終描画用データ
 struct particleDrawData
@@ -247,6 +248,8 @@ struct particleParameter
 class SsEffectEmitter
 {
 public:
+	SsCellValue		 dispCell;
+
 
 	int					priority;
 
@@ -255,14 +258,12 @@ public:
 	xorshift32			rand;
 
 
-	int				emitterSeed;
+	int					emitterSeed;
+	int					seedOffset;
 
 	//生成用のリングバッファ
-	//particleRingBuffer<particleLifeSt>	_tempbuf;
-
-//	emitPattern*    	_emitpattern;
 	std::vector<emitPattern>    	_emitpattern;
-
+	std::vector<int>				_offsetPattern;
 
     particleExistSt*     particleExistList;
 
@@ -279,15 +280,15 @@ public:
 //	SsEffectEmitter*			_child;
 	SsEffectEmitter*			_parent;
 
-
-
     int							_parentIndex;
 
 	SsCell*						refCell;    //描画用セル
 	SsEffectBehavior*           refData;	//データ更新用
 
 	size_t						globaltime;
+	size_t						seedTableLen;
 
+	int							uid;
 
 public:
 	SsEffectEmitter() :
@@ -296,21 +297,31 @@ public:
 			seedList(0),
 			particleListBufferSize(180*100),  //生成出来るパーティクルの最大値
 			_emitpattern(0),
-			particleExistList(0)
+			particleExistList(0),
+			globaltime(0),
+			seedOffset(0)
 	{
 		emitterSeed = SEED_MAGIC;
 	}
-	virtual ~SsEffectEmitter(){}
+	virtual ~SsEffectEmitter()
+	{
+		delete [] particleExistList;
+		delete [] seedList;
 
+	}
 
+	void	setSeedOffset( int offset ) { 
+		seedOffset = offset; 
+	}
 
 //	const particleLifeSt*	getParticleDataFromID(int id) { return &particleList[id]; }
 
 #if  LOOP_TYPE3
 
-	int	getParticleIDMax() { return _emitpattern.size(); }
+	int	getParticleIDMax() { return _offsetPattern.size(); }
+
 	const 	particleExistSt*	getParticleDataFromID(int id);
-	void	updateEmitter( double time );
+	void	updateEmitter( double time  , int slide );
 
 #else
 
@@ -333,7 +344,7 @@ public:
 };
 
 
-class SsEffectRenderV3
+class SsEffectRenderV2
 {
 public:
 
@@ -349,8 +360,10 @@ public:
 	u32				mySeed;
 
 	SsVector3		layoutPosition;
+	SsVector2		layoutScale;
 
 	float			nowFrame;
+	float			targetFrame;
     float			secondNowFrame;
 
 	size_t          effectTimeLength;
@@ -365,17 +378,13 @@ public:
 	bool			m_isPause;
 	bool			m_isLoop;
 
-public:
-	//デバッグ用
-	int  loopcnt;
-	int  drawcnt;
-	int	 updateTime;
-	int	 maxDrawCount;
+	int				seedOffset;
 
-	//std::vector<TimeAndValue>   dataOfprofile;
-	//TimeAndValue*	dataOfprofile;
-	float*   dataOfprofile;
-    bool	isDebugDraw;
+	SsCellMapList*	curCellMapManager;/// セルマップのリスト（アニメデコーダーからもらう
+
+	bool		_isWarningData;
+public:
+
 
 protected:
 	void 	particleDraw(SsEffectEmitter* e , double t , SsEffectEmitter* parent = 0 , particleDrawData* plp = 0 );
@@ -383,11 +392,12 @@ protected:
 
 	void	clearEmitterList();
 
-
-
 public:
-	SsEffectRenderV3() : effectTimeLength(0) , dataOfprofile(0),isIntFrame(true),isDebugDraw(false) {}
-	virtual ~SsEffectRenderV3(){}
+	SsEffectRenderV2() : effectTimeLength(0) ,isIntFrame(true),seedOffset(0), mySeed(0){}
+	virtual ~SsEffectRenderV2()
+	{
+		clearEmitterList();
+	}
 
 	virtual void    play(){ m_isPause = false;m_isPlay=true; }
 	virtual void	stop(){ m_isPlay = false;}
@@ -413,7 +423,7 @@ public:
 
     virtual float	getFrame(){ return nowFrame; }
 
-	virtual void	update(float delta);
+	virtual void	update();
 	virtual void	draw();
 
 	virtual void    reload();
@@ -426,24 +436,34 @@ public:
 
 	virtual int	getCurrentFPS();
 
-#if 0
+	void	setCellmapManager( SsCellMapList* plist ) { curCellMapManager = plist; }
+
+	bool	getPlayStatus(void){
+		return(m_isPlay);
+	}
+
 	void	drawSprite(
-			SsCell*		dispCell,
-			SsVector2 _position,
+			SsCellValue*		dispCell,
+			SsVector2	_position,
 			SsVector2 _size,
 			float     _rotation,
 			float	  direction,
 			SsFColor	_color,
-			SsRenderBlendType blendType
+			SsRenderBlendType::_enum blendType
 		);
-#endif
+	
+	
+	void	setSeedOffset( int offset ) { 
+		if ( effectData->isLockRandSeed )
+		{
+			seedOffset = 0;
+		}else{
+			seedOffset = offset; 
+		}
+	}
 
-	virtual u32		getDrawParticleNum(){ return drawcnt;}
-	virtual u32		getUpdateParticleNum(){ return loopcnt;}
-	virtual u32		getUpdateTime(){ return updateTime;}
-	virtual u32		getMaxDrawParticle(){return maxDrawCount;}
-
-//	virtual void 	debugDraw();
+	virtual bool	isInfinity(){ return Infinite; }
+    virtual bool	isWarning(){ return _isWarningData; }
 
 };
 

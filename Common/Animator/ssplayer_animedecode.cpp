@@ -7,6 +7,7 @@
 #include "ssplayer_matrix.h"
 #include "ssplayer_render.h"
 #include "ssplayer_effect.h"
+#include "ssplayer_effect2.h"
 
 
 //stdでののforeach宣言　
@@ -37,14 +38,31 @@ SsAnimeDecoder::SsAnimeDecoder() :
 	partState(0),
 	rootPartFunctionAsVer4(false),
 	dontUseMatrixForTransform(false),
-	instancePartsHide(false)
+	instancePartsHide(false),
+	seedOffset(0)
 	{
 	}
 
-	
+
+void	SsAnimeDecoder::reset()
+{
+	foreach( std::list<SsPartState*> , sortList , e )
+	{
+		SsPartState* state = (*e);
+		if ( state->refEffect )
+		{
+			state->reset();
+			state->refEffect->setSeed(getRandomSeed());
+			state->refEffect->reload();
+			state->refEffect->stop();
+			//state->refEffect->reset();
+		}
+	}
+}
 
 void	SsAnimeDecoder::restart()
 {
+#if 0
 	foreach( std::list<SsPartState*> , sortList , e )
 	{
 		SsPartState* state = (*e);
@@ -55,7 +73,7 @@ void	SsAnimeDecoder::restart()
 			state->refEffect->stop();
 		}
 	}
-
+#endif
 
 }
 
@@ -130,13 +148,15 @@ void	SsAnimeDecoder::setAnimation( SsModel*	model , SsAnimation* anime , SsCellM
 				SsEffectFile* f = sspj->findEffect( p->refEffectName );
 				if ( f )
 				{
-					SsEffectRenderer* er = new SsEffectRenderer();
+					SsEffectRenderV2* er = new SsEffectRenderV2();
 					er->setParentAnimeState( &partState[i] );
+
 					er->setCellmapManager( this->curCellMapManager );
 					er->setEffectData( &f->effectData );
 					er->setSeed(getRandomSeed());
 					er->reload();
 					er->stop();
+					er->setLoop(false);
 
 					partState[i].refEffect = er;
 				}
@@ -315,24 +335,7 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 	getCellValue(	this->curCellMapManager ,
 					cell.mapid , cell.name , v );
 
-/*
-	SsCelMapLinker* l = this->curCellMapManager->getCellMapLink( cell.mapid );
-	v.cell = l->findCell( cell.name );
 
-	v.filterMode = l->cellMap->filterMode;
-	v.wrapMode = l->cellMap->wrapMode;
-
-	if ( l->tex )
-	{
-		v.texture = l->tex;
-	}
-	else
-	{
-		v.texture = 0;
-	}
-
-	calcUvs( &v );
-*/
 }
 
 //インスタンスアニメデータ
@@ -341,6 +344,14 @@ void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey 
 	//補間は行わないので、常に左のキーを出力する
 	GetSsInstparamAnime( leftkey , v );
 }
+
+void	SsAnimeDecoder::SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsEffectAttr& v )
+{
+	//補間は行わないので、常に左のキーを出力する
+	GetSsEffectParamAnime( leftkey , v );
+	
+}
+
 
 
 //float , int , bool基本型はこれで値の補間を行う
@@ -560,7 +571,6 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 				case SsAttributeKind::flipv:	///< 上下反転(セルの原点を軸にする)
 					SsGetKeyValue( nowTime , attr , state->vFlip );
 					break;
-#if 1
 				case SsAttributeKind::hide:		///< 非表示
 					{
 						int useTime = SsGetKeyValue( nowTime , attr , state->hide );
@@ -576,42 +586,6 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 						}
 					}
 					break;
-#else
-				case SsAttributeKind::hide:		///< 非表示
-				{
-						int useTime = SsGetKeyValue( nowTime , attr , state->hide );
-
-						// 非表示キーがないか、先頭の非表示キーより手前の場合は常に非表示にする。
-						if ( useTime > nowTime )
-						{
-							state->hide = true;
-						}
-						else
-						{
-							//非表示キーがあり、かつ最初のキーフレームを取得した
-							hidekey_find = true;
-						}
-
-						if (  nowTime == useTime )
-						{
-							bool hide2 = true;
-
-
-							int useTime2 = nowTime -1;
-							if ( nowTime >0 )
-								useTime2 = SsGetKeyValue( useTime2 , attr , hide2 );
-
-							
-							if ( (useTime2 !=useTime) && !state->hide && hide2 )
-							{
-								hideTriger = true;
-							}
-						}
-						break;
-				}
-#endif
-
-
 				case SsAttributeKind::color:	///< カラーブレンド
 					SsGetKeyValue( nowTime , attr , state->colorValue );
 					state->is_color_blend = true;
@@ -667,8 +641,38 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 				case SsAttributeKind::user:		///< Ver.4 互換ユーザーデータ
 					break;
 				case SsAttributeKind::instance:	///インスタンスパラメータ
-					SsGetKeyValue( nowTime , attr , state->instanceValue );
+					{
+						int t = SsGetKeyValue( nowTime , attr , state->instanceValue );
+						//先頭にキーが無い場合
+						if ( t  > nowTime )
+						{
+							SsInstanceAttr d;
+							state->instanceValue = d;
+						}
+					}
 					break;
+				case SsAttributeKind::effect:
+					{
+
+						int t = SsGetKeyValue( nowTime , attr , state->effectValue );
+
+						//先頭にキーが無い場合
+						if ( t > nowTime )
+						{
+							SsEffectAttr d;
+							state->effectValue = d;
+						}else{
+							state->effectTime = t;
+							if ( !state->effectValue.attrInitialized )
+							{
+								state->effectValue.attrInitialized  = true;
+								state->effectTimeTotal = state->effectValue.startTime;
+								state->effectTime = t;//state->effectValue.startTime;
+							}
+						}
+					}
+					break;
+
 			}
 		}
 	}
@@ -784,37 +788,6 @@ void	SsAnimeDecoder::updateState( int nowTime , SsPart* part , SsPartAnime* anim
 		updateVertices(part , anime , state);
 	}
 
-/*
-	if ( part->type == SsPartType::effect )
-	{
-
-		SsString pname = part->refEffectName;
-
-		bool reload = false;
-		SsEffectRenderer * effectRender = state->refEffect;
-
-		if ( effectRender )
-		{
-			if ( state->hide )
-			{
-				if (effectRender->getPlayStatus() == true)
-				{
-					effectRender->stop();
-					effectRender->reload();
-				}
-			}else{
-				//if ( hideTriger )
-				{
-					effectRender->setSeed(getRandomSeed());
-
-//					effectRender->setAnimeFrameOffset( nowtime );
-					effectRender->setLoop(false);
-					effectRender->play();
-				}
-			}
-		}
-	}
-*/
 
 
 }
@@ -922,23 +895,7 @@ void	SsAnimeDecoder::updateMatrix(SsPart* part , SsPartAnime* anime , SsPartStat
 	RotationXYZMatrixM( state->matrix , DegreeToRadian(state->rotation.x) , DegreeToRadian(state->rotation.y) , DegreeToRadian( state->rotation.z) );
 	ScaleMatrixM(  state->matrix , state->scale.x, state->scale.y, 1.0f );
 
-#if 0
-	// 当たり判定用半径をスケーリングする。テスト
-	if (boundingRadius != 0)
-	{
-		if ( part->boundsType == SsBoundsType::circle_smin )
-		{
-			SsVector2 local_scale = GetLocalScale(matrix);
-			boundingRadius = boundingRadiusOrg * (local_scale.x <= local_scale.y ? local_scale.x : local_scale.y);
-		}
 
-		if ( part->boundsType == SsBoundsType::circle_smax )
-		{
-			SsVector2 local_scale = GetLocalScale(matrix);
-			boundingRadius = boundingRadiusOrg * ( local_scale.x >= local_scale.y ? local_scale.x : local_scale.y);
-		}
-	}
-#endif
 
 }
 
@@ -1088,8 +1045,10 @@ void	SsAnimeDecoder::updateInstance( int nowTime , SsPart* part , SsPartAnime* p
     int	selfTopKeyframe = instanceValue.curKeyframe;
 
 
-    int	reftime = (time*instanceValue.speed) - selfTopKeyframe; //開始から現在の経過時間
-    if ( reftime < 0 ) return ; //そもそも生存時間に存在していない
+    int reftime = ( time - selfTopKeyframe) * instanceValue.speed;
+    //int	reftime = (time*instanceValue.speed) - selfTopKeyframe; //開始から現在の経過時間
+	if ( reftime < 0 ) return ; //そもそも生存時間に存在していない
+	if ( selfTopKeyframe > time ) return ;
 
     int inst_scale = (endframe - startframe) + 1; //インスタンスの尺
 
@@ -1140,12 +1099,6 @@ void	SsAnimeDecoder::updateInstance( int nowTime , SsPart* part , SsPartAnime* p
 		//通常時
 		_time = temp_frame + startframe;
     }
-
-/*	//エディタではないから仮のサイズ値は要らない？
-	//再生
-    state->size.x = part->anime->settings.canvasSize.x;
-    state->size.y = part->anime->settings.canvasSize.y;
-*/
 
 	state->refAnime->setInstancePartsHide(state->hide);
 	state->refAnime->setPlayFrame(_time);
@@ -1243,12 +1196,8 @@ void	SsAnimeDecoder::update(float frameDelta)
 
 		if ( part->type == SsPartType::effect)
 		{
-			//if ( partState[cnt].refEffect->getEffectData()->effectName == "001c" )
-			{
-				updateMatrix( part , anime , &partState[cnt]);
-				updateEffect(frameDelta, time, part, anime, &partState[cnt]);
-
-			}
+			updateMatrix( part , anime , &partState[cnt]);
+			updateEffect(frameDelta, time, part, anime, &partState[cnt]);
 		}
 
 		cnt++;
@@ -1264,84 +1213,38 @@ void	SsAnimeDecoder::update(float frameDelta)
 
 void	SsAnimeDecoder::updateEffect( float frameDelta , int nowTime , SsPart* part , SsPartAnime* part_anime , SsPartState* state )
 {
-	if (state && state->refEffect)
+	if ( state->hide ) return ;
+
+	if ( state->effectValue.independent )
 	{
-		float fps = (float)state->refEffect->getCurrentFPS();
-		// 1 frameのsec * Stateのframeの変化値
-		//		float f = (1.0f / fps) * frameDelta;				
-//		state->refEffect->update(frameDelta);
-
-
-		int	frameNo = (int)nowPlatTime;
-		int	_prevDrawFrameNo = (int)nowPlatTimeOld;
-
-		if (state->hide)
+		if (state && state->refEffect && state->effectValue.attrInitialized )
 		{
-			//パーツが非表示の場合はエフェクトをリセットする
-			if (state->refEffect->getPlayStatus() == true)
-			{
-				//毎回行うと負荷がかかるので、前回が再生中であればリセット
-				state->refEffect->setSeed(getRandomSeed());
-				state->refEffect->reload();
-				state->refEffect->stop();
-			}
+			state->effectTimeTotal += frameDelta* state->effectValue.speed;
+			state->refEffect->setLoop(true);
+			state->refEffect->setFrame( state->effectTimeTotal );
+			state->refEffect->play();
+			state->refEffect->update();
 		}
-		else
+	}else{
+		if (state && state->refEffect)
 		{
-//					state->refEffect->play();
-//					state->refEffect->update(frameDelta);
-
-#if 1
-			//エフェクトアップデート
-			if (frameNo != _prevDrawFrameNo)
+			float _time = nowTime - state->effectTime;
+			if ( _time < 0 )
 			{
-				//前回からの差分分更新する
-				state->refEffect->setLoop(false);
-				int fdt = 1;
-				if (_prevDrawFrameNo < frameNo)			//差分フレームを計算
-				{
-					fdt = ( frameNo - _prevDrawFrameNo ) * 2;
-					if (state->refEffect->getPlayStatus() == false)
-					{
-						state->refEffect->play();
-						//前回エフェクトの更新をしていない場合は初回を0でアップデートする
-
-						state->refEffect->update(0); //先頭フレームは0でアップデートする
-						fdt = fdt - 1;
-
-					}
-				}
-				else
-				{
-					//アニメーションループ時
-					state->refEffect->setSeed(getRandomSeed());
-					state->refEffect->reload();
-					state->refEffect->play();
-					fdt = frameNo * 2;
-
-					state->refEffect->update(0.0f); //先頭フレームは0でアップデートする
-					if (frameNo > 0)
-					{
-						fdt = frameNo - 1;
-					}
-					else
-					{
-						fdt = 0;
-					}
-
-				}
-				{
-					int f = 0;
-					for (f = 0; f < fdt; f++)
-					{
-						state->refEffect->update(0.5f); //先頭から今のフレーム
-					}
-				}
+				return ;
 			}
-#endif
-		}
 
+			_time*= state->effectValue.speed;
+			_time += state->effectValue.startTime;
+
+			state->refEffect->setSeedOffset( seedOffset );
+			state->refEffect->setFrame( _time );
+			state->refEffect->play();
+			state->refEffect->update();
+		}
 	}
+
+
 
 }
 //描画

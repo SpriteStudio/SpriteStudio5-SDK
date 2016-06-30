@@ -6,7 +6,9 @@
 
 
 class SsAnimeDecoder;
-class SsEffectRenderer;
+//class SsEffectRenderer;
+class SsEffectRenderV2;
+
 
 
 ///パーツの状態を保持するクラスです。
@@ -44,6 +46,10 @@ struct SsPartState
 	SsCellValue		cellValue;		///< セルアニメの値
 	SsColorAnime	colorValue;		///< カラーアニメの値
 	SsVertexAnime	vertexValue;	///< 頂点アニメの値
+	SsEffectAttr	effectValue;	///< エフェクトの値
+	int				effectTime;
+	float			effectTimeTotal;
+	int				effectseed;
 
 	bool			noCells;				/// セル参照が見つからない
 	bool			is_color_blend;			/// カラーブレンドが使用される (描画コストが高いシェーダが使われるためフラグ化)
@@ -54,7 +60,7 @@ struct SsPartState
 	SsBlendType::_enum	alphaBlendType;
 		
 	SsAnimeDecoder*		refAnime;
-	SsEffectRenderer*	refEffect;
+	SsEffectRenderV2*	refEffect;
 
 	//V4互換計算用
 	SsVector3		_temp_position;
@@ -68,7 +74,7 @@ struct SsPartState
 	void	destroy();
 	void	init();
 	bool	inherits_(SsAttributeKind::_enum kind) const {return inheritRates[(int)kind] != 0.f;}
-
+	void	reset();
 };
 
 

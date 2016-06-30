@@ -100,5 +100,7 @@ void	GetSsVertexAnime( const SsKeyframe* key , SsVertexAnime& v );
 void	GetSsRefCell( const SsKeyframe* key , SsRefCell& v );
 void	GetSsUserDataAnime( const SsKeyframe* key , SsUserDataAnime& v );
 void	GetSsInstparamAnime( const SsKeyframe* key , SsInstanceAttr& v );
+void	GetSsEffectParamAnime( const SsKeyframe* key , SsEffectAttr& v );
+
 
 #endif

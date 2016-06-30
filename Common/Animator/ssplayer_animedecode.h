@@ -54,6 +54,8 @@ private:
 	SsPartState*					partState;			///パーツの現在の状態が格納されています。
 	std::list<SsPartState*>			sortList;			///ソート状態
 
+
+	int				seedOffset;							//エフェクトのシードへ影響
 	float			nowPlatTime;
 	float			nowPlatTimeOld;						//前のフレームで再生した時間
 	float			frameDelta;
@@ -109,12 +111,17 @@ public:
 	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsColorAnime& v );
 	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsVertexAnime& v );
 	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsInstanceAttr& v );
+	void	SsInterpolationValue( int time , const SsKeyframe* leftkey , const SsKeyframe* rightkey , SsEffectAttr& v );
+
 
 	void	setInstancePartsHide(bool hide){
 		instancePartsHide = hide;
 	}
 	void	restart();
+	void	reset();
 
+	void	setSeedOffset(int a ){ seedOffset = a; }
+	int		getSeedOffset(){ return seedOffset; }
 };
 
 

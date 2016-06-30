@@ -13,9 +13,12 @@ class SampleScene : public tkScene
 {
 public:
 	struct AnimePackSelecterType;
+	bool		isLoop;
 
 
 private:
+
+	int		sceneLoop;
 
 	SsAnimeDecoder*	m_player;
 	SsCellMapList*	m_cellmap;
@@ -39,8 +42,9 @@ private:
 	float		m_Zoom;
 	float		m_Speed;
 
+
 public:
-	SampleScene() : m_isAnimeAutoPlay (false) {}
+	SampleScene() : m_isAnimeAutoPlay (false),sceneLoop(0) {}
 	virtual ~SampleScene()
 	{
 		destroy();
@@ -61,14 +65,7 @@ public:
 
 	void	AnimePlay(){ m_isAnimeAutoPlay = true; }
 	void	AnimePause(){ m_isAnimeAutoPlay = false; }
-	void	AnimeReset(){ 
-		m_isAnimeAutoPlay = false; 
-		m_nowPlayFrame = 0;
-		m_nowPlayFrameD = 0;
-	}
-
-
-
+	void	AnimeReset();
 
 };
 

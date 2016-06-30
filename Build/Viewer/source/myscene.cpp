@@ -49,6 +49,8 @@ void	SampleScene::draw()
 	
 }
 
+
+
 void	SampleScene::update(double delta)
 {
 	float frameDelta = 0;
@@ -66,11 +68,17 @@ void	SampleScene::update(double delta)
 		m_nowPlayFrameD+= frameDelta;
 		m_nowPlayFrame = (int)m_nowPlayFrameD;
 
-		if ( m_player->getAnimeEndFrame() < (int)m_nowPlayFrame )
+		
+		m_player->setSeedOffset( sceneLoop );
+
+		if ( isLoop )
 		{
-			m_nowPlayFrame = 0;
-			m_nowPlayFrameD = 0;
-			m_player->restart();
+			if ( m_player->getAnimeEndFrame() < (int)m_nowPlayFrame )
+			{
+				m_nowPlayFrame = 0;
+				m_nowPlayFrameD = 0;
+				sceneLoop++;
+			}
 		}
 	}
 	static float backframe = 0;
@@ -95,11 +103,20 @@ void TW_CALL AnimePlayCB(void *clientData)
 	SampleScene* scene = (SampleScene*)clientData;
 	scene->AnimePlay();
 }
+
 void TW_CALL AnimePauseCB(void *clientData)
 {
 	SampleScene* scene = (SampleScene*)clientData;
 
 	scene->AnimePause();
+
+}
+
+void TW_CALL AnimeResetCB(void *clientData)
+{
+	SampleScene* scene = (SampleScene*)clientData;
+
+	scene->AnimeReset();
 
 }
 
@@ -125,6 +142,17 @@ void	SampleScene::AnimePackSelecterRelease()
 	AnimePackSelecter.clear();
 }
 
+
+void	SampleScene::AnimeReset(){ 
+
+	m_isAnimeAutoPlay = false; 
+	m_nowPlayFrame = 0;
+	m_nowPlayFrameD = 0;
+	m_player->reset();
+	sceneLoop = 0;
+}
+
+
 void	SampleScene::UIRebuild()
 {
 
@@ -134,14 +162,20 @@ void	SampleScene::UIRebuild()
 	TwAddSeparator( g_twbar , "sep1" , "" );
 	TwAddButton( g_twbar , "Play" , AnimePlayCB , this , "" );
 	TwAddButton( g_twbar , "Pause" , AnimePauseCB , this , "" );
+	TwAddButton( g_twbar , "Reset" , AnimeResetCB , this , "" );
+
+//	TwAddButton( g_twbar , "Loop" , TW_TYPE_BOOL8 , this , "" );
+    TwAddVarRW(g_twbar, "Loop", TW_TYPE_BOOL32, &isLoop, "");
+
     //TwAddVarRW(g_twbar, "zoom", TW_TYPE_FLOAT, &m_Zoom, " min='0.1' max='10' step=0.1 ");
     TwAddVarRW(g_twbar, "speed", TW_TYPE_FLOAT, &m_Speed, " min='0'max='5' step=0.1 ");
     TwAddVarRW(g_twbar, "frame", TW_TYPE_INT32, &m_nowPlayFrame, " min='0' ");
 //    TwAddVarRW(g_twbar, "particle", TW_TYPE_INT32, &g_particle_num, " min='0' ");
 //    TwAddVarRW(g_twbar, "particle draw", TW_TYPE_INT32, &g_particle_draw_num, " min='0' ");
 
+	
 
-
+    TwAddVarRW(g_twbar, "Loop num", TW_TYPE_INT32, &sceneLoop, " group='Anime Info' ");
     TwAddVarRW(g_twbar, "Endframe", TW_TYPE_INT32, &m_InfoAnimeEndFrame, " group='Anime Info' ");
     TwAddVarRW(g_twbar, "FPS", TW_TYPE_INT32, &m_InfoAnimeFps, " group='Anime Info' ");
 

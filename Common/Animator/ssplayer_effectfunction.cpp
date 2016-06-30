@@ -254,8 +254,8 @@ public:
 		ParticleElementRndSeedChange* source = static_cast<ParticleElementRndSeedChange*>(ele);
 		e->particle.userOverrideRSeed = true;
 
-		e->particle.overrideRSeed  =  source->Seed;
-		e->emitterSeed = source->Seed;
+		e->particle.overrideRSeed  =  source->Seed + SEED_MAGIC;
+		e->emitterSeed = source->Seed + SEED_MAGIC;
 	}
 	
 };
@@ -293,7 +293,7 @@ public:
 	virtual void	initalizeEffect ( SsEffectElementBase* ele , SsEffectEmitter* e)
 	{
 		ParticleElementDelay* source = static_cast<ParticleElementDelay*>(ele);
-		e->particle.delay = source->DelayTime + 1;
+		e->particle.delay = source->DelayTime;
 
 	}
 	
@@ -789,7 +789,8 @@ public:
 		ParticlePointGravity* source = static_cast<ParticlePointGravity*>(ele);
 	   e->particle.usePGravity = true;
 	   e->particle.gravityPos = source->Position;
-	   e->particle.gravityPower = source->Power / 100.0f;
+//	   e->particle.gravityPower = source->Power / 100.0f;
+	   e->particle.gravityPower = source->Power;
 
 	}
 };
@@ -831,14 +832,11 @@ public:
 
 	virtual void	initializeParticle( SsEffectElementBase* ele , SsEffectRenderEmitter* e , SsEffectRenderParticle* particle )
 	{
-		particle->isTurnDirection = true;
 	}
 
 	virtual void	initalizeEffect ( SsEffectElementBase* ele , SsEffectEmitter* e)
 	{
-		ParticleTurnToDirectionEnabled* source = static_cast<ParticleTurnToDirectionEnabled*>(ele);
-		e->particle.useTurnDirec = true;
-		e->particle.direcRotAdd = source->Rotation;
+		e->emitter.Infinite = true;
 	}
 };
 static FuncParticleInfiniteEmitEnabled		funcParticleInfiniteEmitEnabled;
