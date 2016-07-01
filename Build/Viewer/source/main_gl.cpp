@@ -140,12 +140,21 @@ void	MouseScrollCB(  GLFWwindow* window, double x , double y )
 	TwEventMouseWheelGLFW( (int)y );
 }
 
+GLFWwindow* window;
+
+
+void    GlContexMakeCurrent()
+{
+    glfwMakeContextCurrent(nullptr);
+    glfwMakeContextCurrent(window);
+    
+}
+
 /* =====================================================================================
 	main
 ===================================================================================== */
 int main(void)
 {
-    GLFWwindow* window;
 
     /* Initialize the library */
     if (!glfwInit())

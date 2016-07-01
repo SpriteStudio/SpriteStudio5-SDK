@@ -15,7 +15,7 @@
 #import <Foundation/Foundation.h>
 
 
-
+extern void GlContexMakeCurrent();
 
 bool MacOSXFileOpenDlg::show()
 {
@@ -25,6 +25,7 @@ bool MacOSXFileOpenDlg::show()
     [openPanel setAllowedFileTypes:allowedFileTypes];
     NSInteger pressedButton = [openPanel runModal];
     
+    GlContexMakeCurrent();
     if( pressedButton == NSOKButton ){
         
         // get file path
@@ -40,7 +41,6 @@ bool MacOSXFileOpenDlg::show()
     }else{
      	// error
     }
-    
     return false;
 }
 
