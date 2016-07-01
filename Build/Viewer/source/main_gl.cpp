@@ -46,9 +46,11 @@ float displayscale = 1.0f;
 ===================================================================================== */
 static void	update()
 {
+
 	static double back = glfwGetTime();
 	double t = glfwGetTime();
 	double delta = t - back;
+
 	back = t;
 
 	task_manager_singleton::getinst()->exec_resist_tasks(delta);
