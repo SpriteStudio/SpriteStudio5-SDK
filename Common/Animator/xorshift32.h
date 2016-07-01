@@ -3,9 +3,12 @@
 #define __XORSHIFT32__
 
 #ifdef WIN32
-#ifndef uint32_t	
-	typedef unsigned long uint32_t;
-#endif
+
+	#ifndef uint32_t	
+		typedef unsigned int _uint32_t;
+	#endif
+#else
+	typedef  uint32_t	_uint32_t;
 #endif
 
 class xorshift32
@@ -13,7 +16,7 @@ class xorshift32
 protected:
 
 
-	uint32_t	y;
+	_uint32_t	y;
 
 
 public:
