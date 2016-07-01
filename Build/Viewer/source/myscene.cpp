@@ -40,7 +40,9 @@ void	SampleScene::destroy()
 
 void	SampleScene::draw()
 {
-/*
+	if ( m_isLoading ) return ;
+
+	/*
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
@@ -53,6 +55,14 @@ void	SampleScene::draw()
 
 void	SampleScene::update(double delta)
 {
+
+	if ( m_isLoading ) return ;
+	if ( m_framereset )
+	{
+		m_framereset = false;
+		return;
+	}
+
 	float frameDelta = 0;
 	if ( m_player )
 	{
@@ -192,6 +202,7 @@ void	SampleScene::UIRebuild()
 
 void	SampleScene::ChangeAnimation( int packIndex , int animeIndex )
 {
+	m_isLoading = true;
 
 	//アニメパックを選択
 	SsAnimePack* animepack = m_proj->getAnimePackList()[packIndex]; 
@@ -212,6 +223,11 @@ void	SampleScene::ChangeAnimation( int packIndex , int animeIndex )
 //		abort();	//インスタンスのみのアニメでは使用しているセルが０があり得るためコメント
 	}
 	m_player->setAnimation( model , anime , m_cellmap , m_proj );
+
+	AnimeReset();
+
+	m_isLoading = false;
+	m_framereset = true;
 
 }
 
@@ -250,6 +266,8 @@ void	SampleScene::init()
 
 void	SampleScene::ProjectFileLoad()
 {
+	m_isLoading = true;
+
     XPFileOpenDlg dlg;
     if ( dlg.Show() )
 	{    	

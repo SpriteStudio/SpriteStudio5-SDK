@@ -42,9 +42,11 @@ private:
 	float		m_Zoom;
 	float		m_Speed;
 
+	bool		m_isLoading;
+	bool		m_framereset;
 
 public:
-	SampleScene() : m_isAnimeAutoPlay (false),sceneLoop(0) {}
+	SampleScene() : m_isAnimeAutoPlay (false),sceneLoop(0) , m_isLoading(false),m_framereset(false){}
 	virtual ~SampleScene()
 	{
 		destroy();
