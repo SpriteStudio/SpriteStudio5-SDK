@@ -25,7 +25,6 @@ bool MacOSXFileOpenDlg::show()
     [openPanel setAllowedFileTypes:allowedFileTypes];
     NSInteger pressedButton = [openPanel runModal];
     
-    GlContexMakeCurrent();
     if( pressedButton == NSOKButton ){
         
         // get file path
@@ -35,12 +34,15 @@ bool MacOSXFileOpenDlg::show()
         NSLog(@"file opened '%@'", filePath);
                 
         filepath = (char*)[urlString UTF8String];//形式を変換
+        GlContexMakeCurrent();
         return true;
     }else if( pressedButton == NSCancelButton ){
      	NSLog(@"Cancel button was pressed.");
     }else{
      	// error
     }
+
+    GlContexMakeCurrent();
     return false;
 }
 
