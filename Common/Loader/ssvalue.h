@@ -32,6 +32,7 @@ public:
 public:
 	int			type;
 	SsString	name;
+	SsString	org_txt;
 
 	union{
 		SsString*				_str;
@@ -49,9 +50,19 @@ public:
 
 	SsValue() : type(unkown) , _str(0){}
 
-	explicit SsValue(bool b) : type(boolean_type) {  _bool = b; }
-	explicit SsValue(int n) : type(int_type) {  _int = n; }
-	explicit SsValue(float n) : type(float_type) { _float = n; }
+	explicit SsValue(bool b ) : type(boolean_type) {  _bool = b; }
+	explicit SsValue(int n, char* org = 0) : type(int_type) {
+		_int = n; 
+		if (org)
+			org_txt = SsString(org);
+	}
+	explicit SsValue(float n, char* org = 0) : type(float_type)
+	{ 
+		_float = n; 
+		if (org)
+			org_txt = SsString(org);
+
+	}
 	explicit SsValue(SsString& str)   {  type = string_type; _str = new SsString(str); }
 	explicit SsValue(const char* str)   {  type = string_type; _str = new SsString(str); }
 	explicit SsValue(SsArray& n)
@@ -95,6 +106,7 @@ public:
 				break;
 		}
 		type = x.type;
+		org_txt = x.org_txt;
 
 	}
     SsValue& operator=(const SsValue& x)
@@ -175,9 +187,10 @@ template <> inline const SsString& SsValue::get<SsString>() const {
 	{
 		if (this->type == int_type )
 		{
-			char tmp[64+1];
-//			sprintf_s( tmp , 64 , "%d" , _int );
-			ret = tmp;
+			//char tmp[64+1];
+			//sprintf_s( tmp , 64 , "%d" , _int );
+			//ret = tmp;
+			ret = org_txt;
 		}
 
 		return ret;
@@ -199,8 +212,6 @@ template <> inline SsString& SsValue::get<SsString>() {
             ret = std::to_string( (int)(_int) );
 #endif
 		}
-
-
 		return ret;
 	}
 	return *_str;
@@ -309,9 +320,10 @@ static  SsValue	SsValueSeriarizer__MakeValue( const char* v )
 	{
 		if ( is_priod )
 		{
-			return SsValue( (float)atof( v ));
+			return SsValue( (float)atof( v ) , (char*)v );
 		}
-		return SsValue( (int)atoi( v ));
+
+		return SsValue( (int)atoi( v ), (char*)v);
 
 	}else{
 		return  SsValue( v );
