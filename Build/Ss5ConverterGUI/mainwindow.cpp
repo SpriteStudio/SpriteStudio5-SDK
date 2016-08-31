@@ -26,6 +26,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //ウィンドウのタイトルをつける
     setWindowTitle("Ss5ConverterGUI");
 
+    //ウィンドウサイズ固定
+    setFixedSize( QSize(734,616) );
+
     //初期化
     convert_exec = false;
     cnvOutputStr.clear();
@@ -153,6 +156,7 @@ void MainWindow::on_pushButton_convert_clicked()
                 str = execstr + " \"" + fileName + "\"";
                 cnvProcess->start(str); //パスと引数
 
+                button_enable(false);
                 convert_exec = true;  //コンバート中か
                 convet_index++;
             }
@@ -166,6 +170,10 @@ void MainWindow::processErrOutput()
     QByteArray output = cnvProcess->readAllStandardError();
     cnvOutputStr = cnvOutputStr + QString::fromLocal8Bit( output );
     ui->textBrowser_err->setText(cnvOutputStr);
+
+    //カーソルを最終行へ移動
+    QScrollBar *sb = ui->textBrowser_err->verticalScrollBar();
+    sb->setValue(sb->maximum());
 }
 void MainWindow::processFinished( int exitCode, QProcess::ExitStatus exitStatus)
 {
@@ -226,6 +234,7 @@ void MainWindow::processFinished( int exitCode, QProcess::ExitStatus exitStatus)
     }
     else
     {
+        button_enable(true);
         convert_exec = false;  //コンバート中か
         if ( convert_error == false )
         {
@@ -237,6 +246,9 @@ void MainWindow::processFinished( int exitCode, QProcess::ExitStatus exitStatus)
             ui->textBrowser_err->setText(cnvOutputStr);
         }
     }
+    //カーソルを最終行へ移動
+    QScrollBar *sb = ui->textBrowser_err->verticalScrollBar();
+    sb->setValue(sb->maximum());
 
 }
 
@@ -296,4 +308,12 @@ void MainWindow::on_pushButton_listsave_clicked()
             out << str << endl; //書込み
         }
     }
+}
+
+void MainWindow::button_enable(bool flag)
+{
+    ui->pushButton_listsave->setEnabled(flag);
+    ui->pushButton_listload->setEnabled(flag);
+    ui->pushButton_listclear->setEnabled(flag);
+    ui->pushButton_convert->setEnabled(flag);
 }

@@ -10,6 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Ss5ConveterGUI
 TEMPLATE = app
+RC_ICONS = Application-000.ico
 
 
 SOURCES += main.cpp\
@@ -18,3 +19,6 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
+
+DISTFILES += \
+    Application-000.ico

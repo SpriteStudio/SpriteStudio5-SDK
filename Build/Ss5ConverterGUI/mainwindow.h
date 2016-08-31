@@ -9,6 +9,7 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QScrollBar>
 
 namespace Ui {
 class MainWindow;
@@ -35,6 +36,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QProcess *cnvProcess;
+    void button_enable(bool flag);
 
 private slots:
     void processErrOutput();

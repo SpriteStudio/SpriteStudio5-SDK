@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>736</width>
-    <height>709</height>
+    <width>734</width>
+    <height>616</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>330</y>
+      <y>270</y>
       <width>131</width>
       <height>61</height>
      </rect>
@@ -47,7 +47,7 @@
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>330</y>
+      <y>270</y>
       <width>131</width>
       <height>61</height>
      </rect>
@@ -60,7 +60,7 @@
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>640</y>
+      <y>540</y>
       <width>131</width>
       <height>61</height>
      </rect>
@@ -73,7 +73,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>400</y>
+      <y>340</y>
       <width>50</width>
       <height>31</height>
      </rect>
@@ -86,7 +86,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>440</y>
+      <y>380</y>
       <width>50</width>
       <height>31</height>
      </rect>
@@ -99,9 +99,9 @@
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>440</y>
+      <y>380</y>
       <width>651</width>
-      <height>191</height>
+      <height>151</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -112,7 +112,7 @@
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>400</y>
+      <y>340</y>
       <width>651</width>
       <height>31</height>
      </rect>
@@ -127,7 +127,7 @@
       <x>70</x>
       <y>40</y>
       <width>651</width>
-      <height>281</height>
+      <height>221</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -151,7 +151,7 @@
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>330</y>
+      <y>270</y>
       <width>131</width>
       <height>61</height>
      </rect>
@@ -164,7 +164,7 @@
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>330</y>
+      <y>270</y>
       <width>131</width>
       <height>61</height>
      </rect>
