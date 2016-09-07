@@ -53,7 +53,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Convet Start</string>
+     <string>Convert Start</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_exit">
